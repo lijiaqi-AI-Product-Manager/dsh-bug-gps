@@ -148,10 +148,22 @@ const RECORDER_SCRIPT = String.raw`(() => {
     const name = role ? nameOf(el, role) : '';
     const caption = editorCaption(el);
     if (caption) { out.push(caption); return out; }
-    if (role && name) out.push({ by: 'role', role, name });
-    // Generic names ("Toggle bold" on every option) are told apart by a named image inside.
+    // Preserve both the repeated action label and its unique image. The browser may
+    // include that image name in the accessible name; an unrelated action must not match.
     const img = role ? el.querySelector('img[alt],[role=img][aria-label]') : null;
     const imgName = img && clean(img.getAttribute('alt') || img.getAttribute('aria-label'));
+    if (role && name && imgName && imgName !== name) {
+      const selector = '[role=' + role + ']' + (ROLE_TAGS[role] ? ',' + ROLE_TAGS[role] : '');
+      const peers = [...document.querySelectorAll(selector)].filter((node) => roleOf(node) === role && visible(node));
+      const repeatedName = peers.filter((node) => nameOf(node, role) === name).length > 1;
+      const imagePeers = peers.filter((node) => [...node.querySelectorAll('img[alt],[role=img][aria-label]')].some((child) => clean(child.getAttribute('alt') || child.getAttribute('aria-label')) === imgName));
+      if (repeatedName && imagePeers.length === 1 && imagePeers[0] === el) {
+        out.push({ by: 'role', role, name, child: { role: 'img', name: imgName }, nameWithChild: true });
+        return out;
+      }
+    }
+    if (role && name) out.push({ by: 'role', role, name });
+    // Keep a meaningful unique action name even when it also contains an image.
     if (imgName && imgName !== name) out.push({ by: 'role', role, ...(name ? { name } : {}), child: { role: 'img', name: imgName } });
     const label = labelText(el);
     if (label) out.push({ by: 'label', value: label });

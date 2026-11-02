@@ -74,8 +74,26 @@ try {
   if (id === 'chartdb-1031') {
     await page.getByRole('textbox', { name: 'Name', exact: true }).waitFor({ state: 'visible' });
     assert.equal(await page.getByRole('textbox', { name: 'Name', exact: true }).inputValue(), 'amount');
-    expectation = { kind: 'count', target: [{ by: 'css', value: 'aside :text-is("numeric(15,2)")' }], equals: 1 };
-    also = [{ kind: 'value', target: [{ by: 'role', role: 'textbox', name: 'Name' }], equals: 'amount' }];
+    if (revision >= 4) {
+      const actions = page.getByRole('region', { name: 'Fields', exact: true }).locator('button:has(svg.lucide-ellipsis)');
+      assert.equal(await actions.count(), 1);
+      await actions.click();
+      await page.getByRole('dialog').waitFor({ state: 'visible' });
+      const precision = '[role="dialog"] label:text-is("Precision") + input';
+      const scale = '[role="dialog"] label:text-is("Scale") + input';
+      assert.equal(await page.locator(precision).count(), 1);
+      assert.equal(await page.locator(scale).count(), 1);
+      assert.equal(await page.locator(precision).inputValue(), '', 'The original code loses the declared precision');
+      assert.equal(await page.locator(scale).inputValue(), '', 'The original code loses the declared scale');
+      expectation = { kind: 'value', target: [{ by: 'css', value: scale }], equals: '2' };
+      also = [
+        { kind: 'value', target: [{ by: 'css', value: precision }], equals: '15' },
+        { kind: 'value', target: [{ by: 'role', role: 'textbox', name: 'Name' }], equals: 'amount' },
+      ];
+    } else {
+      expectation = { kind: 'count', target: [{ by: 'css', value: 'aside :text-is("numeric(15,2)")' }], equals: 1 };
+      also = [{ kind: 'value', target: [{ by: 'role', role: 'textbox', name: 'Name' }], equals: 'amount' }];
+    }
   } else {
     await page.getByRole('heading', { name: 'Indexes', exact: true }).click();
     const actions = page.getByRole('region', { name: 'Indexes', exact: true }).locator('button:not([disabled]):has(svg.lucide-ellipsis)');
@@ -97,8 +115,15 @@ try {
     assert.equal(steps[pasteIndex].wasEnabled, true);
     assert.ok(steps.some((step) => step.action === 'click' && step.wasEnabled === true && step.target.some((target) => target.by === 'role' && target.role === 'button' && target.name === table || target.by === 'text' && target.value === table && target.within?.role === 'button' && target.within.name === table)), 'The table action must retain its unique button scope');
   }
+  if (revision >= 4) {
+    const database = steps.find((step) => step.action === 'click' && step.target.some((target) => target.child?.name === 'PostgreSQL'));
+    assert.ok(database?.target.some((target) => target.nameWithChild === true && target.name && target.child?.name === 'PostgreSQL'), 'Retain both the database option label and its exact named image');
+  }
   steps[pasteIndex].check = { kind: 'value', target: structuredClone(steps[pasteIndex].target), equals: content };
-  const input = { schema: 'buggps.draft/v1', source: 'scripted', definitionRevision: revision, definitionBasis: { repository: spec.repo, commit: spec.buggyCommit, upstream: spec.pr, previousInputSha256: hash(previous), inputMethod: 'Select All and a scripted ClipboardEvent; not native clipboard capture', note: id === 'chartdb-1031' ? 'Preserve the original precision/scale expectation. Replace an ambiguous hidden textarea fill with captured editor paste.' : 'Use a valid PostgreSQL JSONB field for the GIN index; verify the named imported index in its actual properties.', producer: 'bench/capture-editor.mjs', producerSha256: hash(await readFile(fileURLToPath(import.meta.url))), recorderSha256: hash(await readFile(join(source, 'src/core/recorder.js'))), evaluator: EVALUATOR_VERSION, runtimeCommit: (await git(source, ['rev-parse', 'HEAD'])).trim() }, browser: rec.result.browser, steps, rawSteps, expectation, also, observeMs: 1000, authoredCheckpoints: [{ afterStepIndex: pasteIndex, check: steps[pasteIndex].check }], targetOverrides: [], dropped: 0 };
+  const note = id === 'chartdb-1031'
+    ? revision >= 4 ? 'Verify precision 15 and scale 2 in the amount field properties, as required by the upstream regression test. The previous sidebar count used numeric(15,2), while the fixed UI displays numeric(15, 2); retain that failed definition and establish a new original-code basis.' : 'Preserve the original precision/scale expectation. Replace an ambiguous hidden textarea fill with captured editor paste.'
+    : 'Use a valid PostgreSQL JSONB field for the GIN index; verify the named imported index in its actual properties.';
+  const input = { schema: 'buggps.draft/v1', source: 'scripted', definitionRevision: revision, definitionBasis: { repository: spec.repo, commit: spec.buggyCommit, upstream: spec.pr, previousInputSha256: hash(previous), inputMethod: 'Select All and a scripted ClipboardEvent; not native clipboard capture', note, producer: 'bench/capture-editor.mjs', producerSha256: hash(await readFile(fileURLToPath(import.meta.url))), recorderSha256: hash(await readFile(join(source, 'src/core/recorder.js'))), evaluator: EVALUATOR_VERSION, runtimeCommit: (await git(source, ['rev-parse', 'HEAD'])).trim() }, browser: rec.result.browser, steps, rawSteps, expectation, also, observeMs: 1000, authoredCheckpoints: [{ afterStepIndex: pasteIndex, check: steps[pasteIndex].check }], targetOverrides: [], dropped: 0 };
   await mkdir(dirname(output), { recursive: true });
   await writeFile(output, JSON.stringify(input, null, 2) + '\n', { flag: 'wx' });
   console.log(JSON.stringify({ case: id, revision, steps: steps.length, pasteIndex, captureIssues: 0, output: relative(source, output).replaceAll('\\', '/') }));

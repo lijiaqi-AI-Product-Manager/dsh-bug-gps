@@ -4,6 +4,14 @@
 import { TestDefinitionError } from './errors.js';
 import { canonicalJson } from './canonical.js';
 
+function validateImageName(candidate) {
+  if (candidate?.nameWithChild === undefined) return;
+  if (candidate.nameWithChild !== true || candidate.by !== 'role' || typeof candidate.name !== 'string' || !candidate.name || candidate.child?.role !== 'img' || typeof candidate.child.name !== 'string' || !candidate.child.name) {
+    throw new TestDefinitionError('nameWithChild needs a role name, an exact named image, and the value true');
+  }
+}
+const escapePattern = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 export function targetScope(page, c) {
   if (c.index !== undefined && (!c.within || !Number.isInteger(c.index))) throw new TestDefinitionError('A locator index needs an integer and an explicit container');
   if (!c.within) return null;
@@ -13,11 +21,15 @@ export function targetScope(page, c) {
 }
 
 export function candidateLocator(page, c, { loose = false } = {}) {
+  validateImageName(c);
   const scope = targetScope(page, c) ?? page;
   switch (c.by) {
     case 'testId': return page.getByTestId(c.value);
     case 'role': {
-      let loc = scope.getByRole(c.role, c.name ? { name: c.name, exact: !loose } : {});
+      const name = c.nameWithChild
+        ? new RegExp('^(?:' + [...new Set([c.name, c.child.name + ' ' + c.name, c.name + ' ' + c.child.name])].map(escapePattern).join('|') + ')$')
+        : c.name;
+      let loc = scope.getByRole(c.role, name ? { name, exact: !loose } : {});
       if (c.child) loc = loc.filter({ has: page.getByRole(c.child.role, { name: c.child.name, exact: true }) });
       return c.within && Number.isInteger(c.index) ? loc.nth(c.index) : loc;
     }
@@ -36,6 +48,7 @@ export function candidatesOf(target) {
   if (!target) throw new TestDefinitionError('Step has no target');
   const list = Array.isArray(target) ? target : [target];
   if (list.length === 0) throw new TestDefinitionError('Step target has no candidates');
+  for (const candidate of list) validateImageName(candidate);
   return list;
 }
 
@@ -84,7 +97,7 @@ export async function resolveTarget(page, target, { timeoutMs = 2000, signal } =
     // (e.g. icon labels prepended). Still must be unique.
     const looseAllowed = fallbackReady();
     for (const c of looseAllowed ? candidates : []) {
-      if (c.by !== 'role' || !c.name) continue;
+      if (c.by !== 'role' || !c.name || c.nameWithChild) continue;
       if (signal?.aborted) return { ok: false, reason: 'aborted' };
       const scope = targetScope(page, c);
       if (scope && (await scope.count()) !== 1) continue;
@@ -107,7 +120,7 @@ export async function resolveTarget(page, target, { timeoutMs = 2000, signal } =
 export function targetKey(target) {
   const c = candidatesOf(target)[0];
   switch (c.by) {
-    case 'role': return `${c.within ? `${c.within.role}[name=${c.within.name}] >> ` : ''}role=${c.role}[name=${c.name ?? ''}]${c.child ? `>>${c.child.role}[name=${c.child.name}]` : ''}${c.within ? `#${c.index}` : ''}`;
+    case 'role': return `${c.within ? `${c.within.role}[name=${c.within.name}] >> ` : ''}role=${c.role}[name=${c.name ?? ''}${c.nameWithChild ? ' (+ image name)' : ''}]${c.child ? `>>${c.child.role}[name=${c.child.name}]` : ''}${c.within ? `#${c.index}` : ''}`;
     case 'page': return 'page';
     default: return `${c.by}=${c.value}`;
   }

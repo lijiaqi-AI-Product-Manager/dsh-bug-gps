@@ -1,0 +1,447 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v7",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "chartdb-1031",
+  "upstream": "https://github.com/chartdb/chartdb/pull/1031",
+  "buggyCommit": "fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68",
+  "fixCommit": "674ed2249ee46b0dce14b1cc10be45755460b03d",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T23:15:30.962Z",
+  "runtime": {
+    "commit": "02e70a756770990794b4c77ca0adf1ae52b8ecb6",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "303784caf0bcadb6f6c22fcfd72f22ad27642c298e19be6f9b47839d642101d6",
+    "engineFilesSha256": "00de492266ae8ddb6987f7e6117be20de0524e8279f6cbe00b18ae64649007d3",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\chartdb.git worktree add --detach <run-root>\\cases\\chartdb-1031 fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68\nPreparing worktree (detached HEAD fb19a7a)\nerror: unable to read sha1 file of CHANGELOG.md (85d2ea8689b38d5e6b9bd80bb030b7f175e93a27)\nerror: unable to read sha1 file of src/context/chartdb-context/chartdb-context.tsx (c8450528dfecb5a8932833487f7b9ec53eac69e4)\nerror: unable to read sha1 file of src/context/history-context/history-provider.tsx (8c814daac43546fbb655c57352c208e51292cc90)\nerror: unable to read sha1 file of src/context/history-context/redo-undo-action.ts (ef32f6b04b9a62859319985e2c4567fb1569a19d)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mssql.ts (36a2653a24132a0b5e3b45e290512a386f099faf)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mysql.ts (b52a4b3012748ef173c9c94f6a93fe39e6caf04d)\nerror: unable to read sha1 file of src/lib/data/sql-export/export-sql-script.ts (12c95ed9025f626deab0fe37754595ac3de913f8)\nUpdating files:  66% (491/743)\rUpdating files:  67% (498/743)\rUpdating files:  68% (506/743)\rUpdating files:  6"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "cac799326dc439d8addd45debb5bc8759c25709bd5715ad109cad9ec26919a25",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "04b631ea81a6f07d0ddf1986a23c59779db7e99a2b9925fb1856ebd079db5d13",
+    "canonicalSha256": "a8f5b46c424d2bb853a3097e5abf0d1ac11be677ed67a027bd4de423f2f21caf",
+    "definitionRevision": 3,
+    "definitionBasis": {
+      "repository": "https://github.com/chartdb/chartdb",
+      "commit": "fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68",
+      "upstream": "https://github.com/chartdb/chartdb/pull/1031",
+      "previousInputSha256": "3b10364a477d071702aff34cc84df404e80b5460fad7b12c2509fb38266c9936",
+      "inputMethod": "Select All and a scripted ClipboardEvent; not native clipboard capture",
+      "note": "Preserve the original precision/scale expectation. Replace an ambiguous hidden textarea fill with captured editor paste.",
+      "producer": "bench/capture-editor.mjs",
+      "producerSha256": "d91870c5096b49cf3a6723391de4c1cd81f9f69c59e4b6bddfcdbaca761f9c78",
+      "recorderSha256": "aeeb13fb4955aacec2bb9fb8b0f15bf8a739b94c6afb2ebc1cdccc2c71191f72",
+      "evaluator": "buggps.oracle/v7",
+      "runtimeCommit": "fe7ed8165c7924f674d242d83dce1c93e3cad0c7"
+    },
+    "authoredCheckpoints": [
+      {
+        "afterStepIndex": 3,
+        "check": {
+          "kind": "value",
+          "target": [
+            {
+              "by": "css",
+              "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+            }
+          ],
+          "equals": "CREATE TABLE invoice (amount decimal(15,2));"
+        }
+      }
+    ],
+    "steps": 6,
+    "authoredTargets": [],
+    "dropped": 0,
+    "expectation": {
+      "kind": "count",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside :text-is(\"numeric(15,2)\")"
+        }
+      ],
+      "equals": 1
+    },
+    "also": [
+      {
+        "kind": "value",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          }
+        ],
+        "equals": "amount"
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-chartdb-serve.mjs",
+    "sha256": "0f058cc653f232b73a998955a25acee14f4d9228d52eea0540a2063c8c61ec91",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "fixture": "github_repo_opened=true suppresses the promotional dialog only"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "0 matching elements",
+    "signature": {
+      "kind": "count",
+      "target": "css=aside :text-is(\"numeric(15,2)\")",
+      "actual": "0",
+      "resolution": {
+        "by": "css",
+        "value": "aside :text-is(\"numeric(15,2)\")",
+        "collection": true
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "count",
+            "target": "css=aside :text-is(\"numeric(15,2)\")",
+            "actual": "0",
+            "resolution": {
+              "by": "css",
+              "value": "aside :text-is(\"numeric(15,2)\")",
+              "collection": true
+            }
+          }
+        },
+        {
+          "check": 1,
+          "outcome": "pass",
+          "resolution": {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          }
+        }
+      ]
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"SQL Script\",\"role\":\"radio\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"invoice\",\"within\":{\"name\":\"invoice\",\"role\":\"button\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"aside :text-is(\\\"numeric(15,2)\\\")\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+      ]
+    },
+    "durationMs": 9187
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "0 matching elements",
+      "signature": {
+        "kind": "count",
+        "target": "css=aside :text-is(\"numeric(15,2)\")",
+        "actual": "0",
+        "resolution": {
+          "by": "css",
+          "value": "aside :text-is(\"numeric(15,2)\")",
+          "collection": true
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "count",
+              "target": "css=aside :text-is(\"numeric(15,2)\")",
+              "actual": "0",
+              "resolution": {
+                "by": "css",
+                "value": "aside :text-is(\"numeric(15,2)\")",
+                "collection": true
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "pass",
+            "resolution": {
+              "by": "role",
+              "role": "textbox",
+              "name": "Name"
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"SQL Script\",\"role\":\"radio\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "checkpoint:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"invoice\",\"within\":{\"name\":\"invoice\",\"role\":\"button\"}}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"aside :text-is(\\\"numeric(15,2)\\\")\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+        ]
+      },
+      "durationMs": 20205
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": false,
+    "original": 6,
+    "shortened": 6,
+    "stats": {
+      "trials": 4,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 4,
+      "differentFailure": 0,
+      "stepTimeoutMs": 6587,
+      "durationMs": 30084,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold"
+          },
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold",
+            "child": {
+              "role": "img",
+              "name": "PostgreSQL"
+            }
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "SQL Script"
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "paste",
+        "editor": "monaco",
+        "mode": "replace-all",
+        "target": [
+          {
+            "by": "css",
+            "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+          }
+        ],
+        "wasEnabled": true,
+        "value": "CREATE TABLE invoice (amount decimal(15,2));",
+        "check": {
+          "kind": "value",
+          "target": [
+            {
+              "by": "css",
+              "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+            }
+          ],
+          "equals": "CREATE TABLE invoice (amount decimal(15,2));"
+        }
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Import"
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "invoice",
+            "within": {
+              "role": "button",
+              "name": "invoice"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "invoice"
+          }
+        ],
+        "wasEnabled": true
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "0 matching elements",
+    "resolutionChanges": [
+      "step:1"
+    ],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"loose\":true,\"name\":\"Toggle bold\",\"role\":\"radio\"}",
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"SQL Script\",\"role\":\"radio\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "checkpoint:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"invoice\",\"within\":{\"name\":\"invoice\",\"role\":\"button\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"aside :text-is(\\\"numeric(15,2)\\\")\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+      ]
+    },
+    "durationMs": 19047,
+    "caseSha256": "88bb461b3a3a65add0cb3edc1997dc9e0009374760b8c03a3a5bb485f0adcc45",
+    "lockSha256": "4472c1f7454b0f98bfb8a2c657b5fa6f7ec9cdb2f864ca44526cd2427e872bd4"
+  },
+  "fixed": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "0 matching elements",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"SQL Script\",\"role\":\"radio\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "checkpoint:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"invoice\",\"within\":{\"name\":\"invoice\",\"role\":\"button\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"aside :text-is(\\\"numeric(15,2)\\\")\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+      ]
+    },
+    "durationMs": 21660,
+    "caseSha256": "88bb461b3a3a65add0cb3edc1997dc9e0009374760b8c03a3a5bb485f0adcc45",
+    "lockSha256": "4472c1f7454b0f98bfb8a2c657b5fa6f7ec9cdb2f864ca44526cd2427e872bd4"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "1da023489fab5441e1848cb4ed6f6f6722a804b6e1854054fd92778ff294c87c",
+    "lockSha256": "ccb5e60491c6154cf8f60a1f74adb2701f89d492f2ccbe9d134a0d8ebae7fe77"
+  },
+  "status": "STILL_FAILING",
+  "expectedOutcome": false,
+  "durationMs": 298222
+}
