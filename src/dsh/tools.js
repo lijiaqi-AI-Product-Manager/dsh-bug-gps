@@ -54,7 +54,7 @@ const NEXT = {
 
 const REVIEW_TEXT = {
   'disabled-control': 'a recorded action now hits a DISABLED control; the checks may pass only because the trigger was blocked',
-  'negative-only': 'the case only checks that no error happens; removing the feature would pass too. Ask the user for a positive check (record again and add one)',
+  'negative-only': 'the case only checks absence (no errors, a hidden target or zero matches); removing the feature could pass too. A positive outcome check is needed',
   'locator-drift': 'a locator candidate or evaluator changed, or the original resolution provenance is unavailable; review the affected actions and checks before recording a new case',
   'baseline-not-reproduced': 'a fresh baseline did not reproduce the locked failure; inspect the startup root, dependencies and development environment',
 };
@@ -235,7 +235,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
           recorded_steps: draft.steps.length,
           ...(kept ? { shortened_steps: minimizedSteps.map(stepLabel) } : { steps: draft.steps.map(stepLabel) }),
           minimization: m ? { from: m.originalSteps, to: kept ? m.minimizedSteps : m.originalSteps, trials: m.stats.trials, probe_runs: m.stats.probeRuns, model_calls: 0, note: 'A verified shorter path that still shows the same failure, for reading the code. Not proven minimal and not a cause; the full recording decides verification.' } : 'skipped',
-          ...(hasPositiveCheck(testCase) ? {} : { warning: 'Only "no error" is checked, so verify can return at most NEEDS_REVIEW.' }),
+          ...(hasPositiveCheck(testCase) ? {} : { warning: 'Only absence is checked, so verify can return at most NEEDS_REVIEW.' }),
           next: `Find and fix the cause in the application code (never edit .buggps/), then call buggps_verify with case_id="${id}".`,
         };
       }));

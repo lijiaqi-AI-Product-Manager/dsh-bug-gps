@@ -54,13 +54,15 @@ node bin/buggps.js doctor --repo ../buggps-demo
 - 锁定时 `serve` 会写进用例并参与哈希计算，之后修改配置文件不会影响已锁定的用例。
 - CLI 与插件工具使用相同的配置校验。`observeMs` 在建立场景时覆盖输入草稿中的观察窗口；插件显式传入的 `observe_ms` 优先。锁定后验证使用保存的条件，不重新套用当前项目配置。
 
+已有草稿可以直接锁定。字符串检查默认严格相等；需要验证动态文件名时，可在锁定前明确声明 `comparison: "startsWith"` 与固定前缀。`count` 检查使用一个明确的集合选择器和整数 `equals`，例如检查收藏入口数量。这些条件均参与用例指纹，不由修复过程自动放宽。检查器升级后，缺少兼容依据的旧锁需要重新确认和锁定。
+
 ## 判定
 
 | 判定 | 含义 |
 |---|---|
 | `VERIFIED` | 候选版本的完整录制 3 次满足全部检查，独立基线对照也重新出现锁定的原失败；补丁是锁定基线到候选代码的差异 |
 | `PASSED_UNBOUND` | 检查通过了，但服务器不是 BugGPS 启动的，证明不了它运行的是这份补丁。没有 `serve` 时最多只能得到这个 |
-| `NEEDS_REVIEW` | 检查通过了，但证据弱于“修好了”，需要人判断。原因见 `review_reasons`：<br>`disabled-control`：录制的操作打到了被禁用的控件<br>`negative-only`：只检查了“不报错”，删掉这个功能也会通过<br>`locator-drift`：动作、检查点或预期改用了其他定位候选，或旧记录缺少定位依据；需要重新确认场景<br>`baseline-not-reproduced`：独立基线对照未能重新出现锁定的原失败 |
+| `NEEDS_REVIEW` | 检查通过了，但证据弱于“修好了”，需要人判断。原因见 `review_reasons`：<br>`disabled-control`：录制的操作打到了被禁用的控件<br>`negative-only`：仅检查不报错、目标消失或零匹配，仍缺少正向结果<br>`locator-drift`：动作、检查点或预期改用了其他定位候选，或旧记录缺少定位依据；需要重新确认场景<br>`baseline-not-reproduced`：独立基线对照未能重新出现锁定的原失败 |
 | `STILL_FAILING` | 还是原来那个失败 |
 | `DIFFERENT_FAILURE` | 症状变了但预期仍未满足，或者录制的检查点不再成立 |
 | `NO_CODE_CHANGE` | 锁定之后代码没有变化 |

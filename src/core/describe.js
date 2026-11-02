@@ -17,8 +17,9 @@ export function expectationLabel(e) {
   const t = e.target?.[0];
   const what = t ? `"${t.name ?? t.value ?? t.role}"` : '';
   switch (e.kind) {
-    case 'text': return `${what} shows ${JSON.stringify(e.equals)}`;
-    case 'value': return `${what} has value ${JSON.stringify(e.equals)}`;
+    case 'text': return `${what} ${e.comparison === 'startsWith' ? 'starts with' : 'shows'} ${JSON.stringify(e.equals)}`;
+    case 'value': return `${what} ${e.comparison === 'startsWith' ? 'has value starting with' : 'has value'} ${JSON.stringify(e.equals)}`;
+    case 'count': return `${what} matches ${e.equals} elements`;
     case 'visible': return `${what} stays visible`;
     case 'hidden': return `${what} is not visible`;
     case 'no-page-error': return 'no uncaught page error';

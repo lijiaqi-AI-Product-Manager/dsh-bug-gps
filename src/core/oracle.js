@@ -1,19 +1,19 @@
 // Evaluates the confirmed expectation after replay and turns an observed failure into a
 // signature. A candidate reproduction only counts if its signature matches the original's:
 // "it still fails somehow" is not enough (that is how wrong minimizations slip through).
-import { resolveTarget, targetKey } from './locator.js';
+import { candidateLocator, candidatesOf, resolveTarget, targetKey } from './locator.js';
 import { TestDefinitionError } from './errors.js';
 import { validateObserveMs } from './observation.js';
 import { browserOptions, validateViewport } from './browser-options.js';
 import { canonicalJson } from './canonical.js';
 
-export const EVALUATOR_VERSION = 'buggps.oracle/v2';
+export const EVALUATOR_VERSION = 'buggps.oracle/v3';
 
-export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'no-page-error', 'no-console-error', 'no-failed-request'];
+export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'count', 'no-page-error', 'no-console-error', 'no-failed-request'];
 // "Nothing went wrong" kinds. On their own they cannot show the feature works again (deleting
 // the handler also removes the error), so a fix checked only by these is never VERIFIED.
 export const NEGATIVE_KINDS = new Set(['no-page-error', 'no-console-error', 'no-failed-request']);
-const STATE_KINDS = ['text', 'value', 'visible', 'hidden'];
+const STATE_KINDS = ['text', 'value', 'visible', 'hidden', 'count'];
 // How long a passing result must keep passing after the last step. Recorded in the case.
 export { DEFAULT_OBSERVE_MS } from './observation.js';
 
@@ -27,6 +27,12 @@ export function validateExpectation(exp, { checkpoint = false } = {}) {
   }
   if (['text', 'value'].includes(exp.kind) && typeof exp.equals !== 'string') {
     throw new TestDefinitionError(`Expectation "${exp.kind}" needs a string "equals"`);
+  }
+  if (exp.comparison !== undefined && (!['text', 'value'].includes(exp.kind) || !['exact', 'startsWith'].includes(exp.comparison))) throw new TestDefinitionError('comparison must be exact or startsWith on a text/value check');
+  if (exp.comparison === 'startsWith' && !exp.equals.length) throw new TestDefinitionError('startsWith needs a non-empty expected prefix');
+  if (exp.kind === 'count') {
+    if (!Number.isSafeInteger(exp.equals) || exp.equals < 0) throw new TestDefinitionError('count needs a non-negative integer equals');
+    if (candidatesOf(exp.target).length !== 1) throw new TestDefinitionError('count needs one explicit collection selector');
   }
 }
 
@@ -42,7 +48,7 @@ export function validateCase(testCase) {
 
 /** True when some final check proves a positive outcome (not just "no error"). */
 export function hasPositiveCheck(testCase) {
-  return [testCase.expectation, ...(testCase.also ?? [])].some((e) => e && !NEGATIVE_KINDS.has(e.kind));
+  return [testCase.expectation, ...(testCase.also ?? [])].some((e) => e && !NEGATIVE_KINDS.has(e.kind) && e.kind !== 'hidden' && (e.kind !== 'count' || e.equals > 0));
 }
 
 /**
@@ -73,14 +79,19 @@ async function evaluateOnce(page, exp, obs) {
       const r = await resolveTarget(page, exp.target, { timeoutMs: 0 });
       if (!r.ok) return fail(exp, `target ${r.reason}`, `target:${r.reason}`);
       const actual = normalizeSpace(await r.locator.textContent());
-      return resolved(r, actual === exp.equals ? { pass: true } : fail(exp, actual, actual));
+      return resolved(r, compareString(exp, actual));
     }
     case 'value': {
       const r = await resolveTarget(page, exp.target, { timeoutMs: 0 });
       if (!r.ok) return fail(exp, `target ${r.reason}`, `target:${r.reason}`);
       const actual = await r.locator.inputValue().catch(() => null);
       if (actual === null) return resolved(r, { invalid: 'expectation target has no input value' });
-      return resolved(r, actual === exp.equals ? { pass: true } : fail(exp, actual, actual));
+      return resolved(r, compareString(exp, actual));
+    }
+    case 'count': {
+      const candidate = candidatesOf(exp.target)[0];
+      const count = await candidateLocator(page, candidate).count();
+      return resolved({ ok: true, used: { ...candidate, collection: true } }, count === exp.equals ? { pass: true } : fail(exp, `${count} matching elements`, String(count)));
     }
     case 'visible':
     case 'hidden': {
@@ -112,6 +123,13 @@ async function evaluateOnce(page, exp, obs) {
 
 function resolved(resolution, result) {
   return { ...result, ...(resolution.ok ? { resolvedBy: resolution.used, ...(result.signature ? { signature: { ...result.signature, resolution: resolution.used } } : {}) } : {}) };
+}
+
+function compareString(exp, actual) {
+  if (exp.comparison === 'startsWith') {
+    return actual.startsWith(exp.equals) ? { pass: true } : fail(exp, actual, { comparison: 'startsWith', value: actual.slice(0, exp.equals.length) });
+  }
+  return actual === exp.equals ? { pass: true } : fail(exp, actual, actual);
 }
 
 function fail(exp, observed, actualKey) {
