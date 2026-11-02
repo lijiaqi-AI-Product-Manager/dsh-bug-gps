@@ -70,6 +70,7 @@ for (const spec of selected) {
     const draft = JSON.parse(bytes);
     out.input = { source: draft.source, sha256: hash(bytes), canonicalSha256: hash(JSON.stringify(draft)), definitionRevision: draft.definitionRevision ?? 1, definitionBasis: draft.definitionBasis, authoredCheckpoints: draft.authoredCheckpoints ?? [], steps: draft.steps.length, authoredTargets: draft.targetOverrides ?? [], dropped: draft.dropped ?? null, expectation: draft.expectation, also: draft.also ?? [] };
     if (draft.captureFailure) { out.status = 'TEST_INVALID'; out.reason = draft.captureFailure.reason; out.captureFailure = draft.captureFailure; continue; }
+    if (draft.captureIssues !== undefined && (!Array.isArray(draft.captureIssues) || draft.captureIssues.length)) { out.status = 'TEST_INVALID'; out.reason = 'Recording includes unsupported input or invalid capture diagnostics'; out.captureIssues = draft.captureIssues; continue; }
     for (const [name, value] of Object.entries(draft.fixtureSecrets ?? {})) {
       if (!/^BUGGPS_SECRET_HOLDOUT_[A-Z0-9_]+$/.test(name) || draft.fixtureKind !== 'synthetic') throw new Error('Only namespaced synthetic fixture secrets are accepted');
       oldSecrets.set(name, process.env[name]); process.env[name] = value;

@@ -61,5 +61,5 @@ export async function recordSession(browser, baseUrl, name) {
   const rec = await startRecording(browser, { baseUrl, startPath: s.startPath ?? '/' });
   await s.drive(rec.page);
   const steps = await rec.stop();
-  return { name, steps, expectation: s.expectation, dropped: rec.dropped.length };
+  return { name, steps, expectation: s.expectation, dropped: rec.dropped.length, ...(rec.result.captureIssues.length ? { captureIssues: rec.result.captureIssues } : {}) };
 }

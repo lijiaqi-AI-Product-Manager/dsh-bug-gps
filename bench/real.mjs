@@ -79,7 +79,7 @@ switch (cmd) {
       const steps = await rec.stop();
       await mkdir('bench/real-recordings', { recursive: true });
       const file = resolve(`bench/real-recordings/${id}.scripted.json`);
-      await writeFile(file, JSON.stringify({ schema: 'buggps.draft/v1', kind: 'REAL app, scripted session', baseUrl, steps, expectation: s.expectation, dropped: rec.dropped.length }, null, 2));
+      await writeFile(file, JSON.stringify({ schema: 'buggps.draft/v1', kind: 'REAL app, scripted session', baseUrl, steps, expectation: s.expectation, dropped: rec.dropped.length, ...(rec.result.captureIssues.length ? { captureIssues: rec.result.captureIssues } : {}) }, null, 2));
       console.log(`recorded ${steps.length} steps (dropped ${rec.dropped.length}) -> ${file}`);
       for (const st of steps) console.log(' ', st.action, JSON.stringify(st.target?.[0] ?? st.url), st.value ?? '');
     } finally {

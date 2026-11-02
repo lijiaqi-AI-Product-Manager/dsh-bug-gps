@@ -142,9 +142,10 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
         const draftId = randomUUID();
         const file = join(cwd, '.buggps', 'drafts', `${draftId}.json`);
         await mkdir(join(cwd, '.buggps', 'drafts'), { recursive: true });
-        const { expectation, also, expectedFrom, browser } = rec.result;
-        await writeFile(file, JSON.stringify({ schema: 'buggps.draft/v1', id: draftId, name: String(args.name ?? '').slice(0, 200), source: 'recorded', baseUrl: args.url, steps, expectation, ...(also.length ? { also } : {}), browser, expectedFrom, recordedAt: new Date().toISOString(), endedBy: how }, null, 2), { flag: 'wx' });
+        const { expectation, also, expectedFrom, browser, captureIssues } = rec.result;
+        await writeFile(file, JSON.stringify({ schema: 'buggps.draft/v1', id: draftId, name: String(args.name ?? '').slice(0, 200), source: 'recorded', baseUrl: args.url, steps, expectation, ...(also.length ? { also } : {}), ...(captureIssues.length ? { captureIssues } : {}), browser, expectedFrom, recordedAt: new Date().toISOString(), endedBy: how }, null, 2), { flag: 'wx' });
         const draft = relative(cwd, file).replace(/\\/g, '/');
+        if (captureIssues.length) return { status: 'TEST_INVALID', draft, message: 'recording contains input that cannot be replayed faithfully', capture_issues: captureIssues, next: 'Start a new recording. In a supported Monaco editor use Select All followed by Paste; unsupported editor actions must be resolved before locking.' };
         if (!expectation) {
           return { status: 'NO_EXPECTATION', draft, steps: steps.length, next: 'The user did not set the correct expectation. Ask them to record again and use the toolbar ("预期文本 / 预期输入值 / 应可见 / 不应报错") before pressing stop. Do not invent one.' };
         }
@@ -185,6 +186,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
       const draftPath = isAbsolute(args.draft) ? args.draft : resolve(cwd, args.draft);
       let draft;
       try { draft = JSON.parse(await readFile(draftPath, 'utf8')); } catch (err) { return json({ status: 'TEST_INVALID', message: `cannot read draft ${args.draft}: ${err.message}` }); }
+      if (draft.captureIssues?.length) return json({ status: 'TEST_INVALID', message: 'recording is incomplete', capture_issues: draft.captureIssues, next: 'Record the input again using a supported input method; incomplete drafts cannot be locked.' });
       let serve;
       let config;
       try {

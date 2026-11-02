@@ -8,6 +8,7 @@ export function stepLabel(s) {
   const t = s.target?.[0] ?? {};
   const what = t.name ?? t.value ?? t.role ?? '?';
   const where = t.within ? ` (in ${t.within.name})` : '';
+  if (s.action === 'paste') return `paste into "${what}"${where} (replace all, ${s.value?.secret ? 'secret reference' : String(s.value ?? '').length + ' characters'})${s.pinned ? ' [key step]' : ''}${s.check ? ' [checkpoint]' : ''}`;
   const val = s.value?.secret ? ` = <secret ${s.value.secret}>`
     : s.action === 'fill' || s.action === 'select' ? ` = ${JSON.stringify(s.value)}` : s.action === 'check' ? ` = ${s.value}` : '';
   return `${s.action} "${what}"${where}${val}${s.pinned ? ' [key step]' : ''}${s.check ? ' [checkpoint]' : ''}`;

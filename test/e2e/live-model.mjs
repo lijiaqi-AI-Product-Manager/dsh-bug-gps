@@ -98,7 +98,7 @@ async function scenario(name, prepare, prompt) {
     try {
       const rec = await startRecording(browser.browser, { baseUrl: server.url });
       await SESSIONS[name].drive(rec.page);
-      definition = { steps: await rec.stop(), browser: rec.result.browser, expectation: SESSIONS[name].expectation };
+      definition = { steps: await rec.stop(), browser: rec.result.browser, expectation: SESSIONS[name].expectation, ...(rec.result.captureIssues.length ? { captureIssues: rec.result.captureIssues } : {}) };
       await mkdir(join(project.root, '.buggps/drafts'), { recursive: true });
       await writeFile(join(project.root, '.buggps/drafts/input.json'), JSON.stringify({ schema: 'buggps.draft/v1', source: 'scripted', ...definition }));
     } finally { await server.close(); }

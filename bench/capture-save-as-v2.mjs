@@ -47,6 +47,7 @@ try {
   steps[checkpointAfter].check = { kind: 'text', target: [{ by: 'css', value: 'nav .text-xl' }], equals: before };
   const input = { schema: 'buggps.draft/v1', source: 'scripted', definitionRevision: 2, definitionBasis: { repository: spec.repo, commit: spec.buggyCommit, file: 'src/components/EditorHeader/ControlPanel.jsx', observedBeforeSaveAs: before, previousInputSha256: createHash('sha256').update(previous).digest('hex'), note: 'New capture from the buggy revision. The exact breadcrumb uses adjacent spans without spaces; require the pre-Save-As caption to stay identical and retain creation of the Copy link.' }, browser: rec.result.browser, steps, rawSteps, observeMs: 1000, expectation: { kind: 'text', target: [{ by: 'css', value: 'nav .text-xl' }], equals: before }, also: [{ kind: 'count', target: [{ by: 'css', value: 'a[href^="/editor/diagrams/"]:text-is("Copy")' }], equals: 1 }], authoredCheckpoints: [{ afterStepIndex: checkpointAfter, check: steps[checkpointAfter].check }], dropped: rec.dropped.length };
   await mkdir(dirname(output), { recursive: true });
+  if (rec.result.captureIssues.length) input.captureIssues = rec.result.captureIssues;
   await writeFile(output, JSON.stringify(input, null, 2) + '\n', { flag: 'wx' });
   console.log(JSON.stringify({ case: spec.id, revision: 2, steps: steps.length, expectedUnchangedCaption: before }));
 } finally { await env?.browser.close(); await server.stop(); }

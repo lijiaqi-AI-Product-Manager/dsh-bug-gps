@@ -4,10 +4,13 @@
 
 import { secretName } from './secrets.js';
 import { EnvBlockedError, TestDefinitionError } from './errors.js';
+import { CODE_EDITOR_SELECTOR, MAX_EDITOR_CLIPBOARD_BYTES } from './editor-input.js';
 
 const RECORDER_SCRIPT = String.raw`(() => {
   if (window.__buggpsRecorderInstalled) return;
   window.__buggpsRecorderInstalled = true;
+  const clipboardLimit = ${MAX_EDITOR_CLIPBOARD_BYTES};
+  const codeEditorSelector = ${JSON.stringify(CODE_EDITOR_SELECTOR)};
   const send = (ev) => { try { window.__buggpsRecord(ev); } catch {} };
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   const documentId = Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -142,6 +145,8 @@ const RECORDER_SCRIPT = String.raw`(() => {
     if (tid) out.push({ by: 'testId', value: tid });
     const role = roleOf(el);
     const name = role ? nameOf(el, role) : '';
+    const caption = editorCaption(el);
+    if (caption) out.push(caption);
     if (role && name) out.push({ by: 'role', role, name });
     // Generic names ("Toggle bold" on every option) are told apart by a named image inside.
     const img = role ? el.querySelector('img[alt],[role=img][aria-label]') : null;
@@ -164,6 +169,25 @@ const RECORDER_SCRIPT = String.raw`(() => {
       out.push({ by: 'text', value: text });
     }
     return out;
+  }
+
+  // A code editor's generic textarea name may also describe read-only examples.
+  // Use an adjacent short caption only when it identifies exactly this one textarea.
+  function editorCaption(el) {
+    const editor = el.closest('.monaco-editor');
+    const label = el.getAttribute('aria-label');
+    if (!editor || !label || el.tagName !== 'TEXTAREA') return null;
+    for (let container = editor.parentElement, depth = 0; container && container !== document.body && depth < 6; container = container.parentElement, depth++) {
+      for (const caption of container.children) {
+        if (caption.contains(editor) || caption.children.length || !visible(caption) || ['SCRIPT', 'STYLE'].includes(caption.tagName)) continue;
+        const text = clean(caption.textContent);
+        if (!text || text.length > 80 || /[\u0000-\u001f\\]/.test(text + label)) continue;
+        const matches = new Set([...document.querySelectorAll(container.tagName)].filter((node) => [...node.children].some((child) => child.tagName === caption.tagName && !child.children.length && clean(child.textContent) === text && visible(child)))
+          .flatMap((node) => [...node.querySelectorAll('.monaco-editor textarea[aria-label]')].filter((field) => field.getAttribute('aria-label') === label && visible(field))));
+        if (matches.size === 1 && matches.has(el)) return { by: 'css', value: container.tagName.toLowerCase() + ':has(> ' + caption.tagName.toLowerCase() + ':text-is(' + JSON.stringify(text) + ')) .monaco-editor textarea[aria-label=' + JSON.stringify(label) + ']' };
+      }
+    }
+    return null;
   }
 
   // A hover only matters if it alone opened a menu or listbox (tooltips are informational).
@@ -204,9 +228,51 @@ const RECORDER_SCRIPT = String.raw`(() => {
   }
   const secretLabel = (el) => clean(el.getAttribute('aria-label') || labelText(el) || el.placeholder || el.name || el.id || 'password');
   const fromToolbar = (e) => e.target instanceof Element && e.target.closest('#__buggps_toolbar');
+  let replacementTarget = null;
+  let pastedTarget = null;
+  const captureIssue = (message) => {
+    send({ type: 'capture-issue', code: 'editor-input', message });
+    window.__buggpsToast && window.__buggpsToast(message);
+  };
+  document.addEventListener('pointerdown', (e) => {
+    if (fromToolbar(e)) return;
+    replacementTarget = null;
+    pastedTarget = null;
+  }, true);
+  document.addEventListener('paste', (e) => {
+    if (fromToolbar(e) || !(e.target instanceof Element)) return;
+    const el = e.target;
+    if (!el.closest('.monaco-editor')) {
+      if (el.isContentEditable || el.closest(codeEditorSelector)) captureIssue('This rich editor is not supported for replay; use a supported input control.');
+      return; // Ordinary native fields are captured by their resulting input event.
+    }
+    pastedTarget = el;
+    if (replacementTarget !== el) { captureIssue('Code editor input needs Select All followed by Paste; partial paste cannot be replayed reliably.'); return; }
+    replacementTarget = null;
+    const types = e.clipboardData && [...e.clipboardData.types];
+    if (!types || e.clipboardData.files.length || types.some((type) => !type || type.toLowerCase() === 'files' || type.toLowerCase() !== type || type.length > 128) || !types.includes('text/plain') || types.length > 32) { captureIssue('Code editor replay requires string clipboard formats including plain text, without files.'); return; }
+    if (isSecret(el) && types.length > 1) { captureIssue('Secret editor input supports plain text only; formatted clipboard data was not stored.'); return; }
+    const text = e.clipboardData.getData('text/plain');
+    let size = text.length > clipboardLimit ? clipboardLimit + 1 : new TextEncoder().encode(text).length;
+    const clipboard = [];
+    for (const type of types) {
+      if (size > clipboardLimit) break;
+      if (type === 'text/plain') { clipboard.push({ type }); continue; }
+      const value = e.clipboardData.getData(type);
+      size += value.length > clipboardLimit ? clipboardLimit + 1 : new TextEncoder().encode(value).length;
+      clipboard.push({ type, value });
+    }
+    if (size > clipboardLimit) { captureIssue('Code editor clipboard exceeds the 1 MiB capture limit; the payload was not stored.'); return; }
+    pastedTarget = el;
+    const payload = { action: 'paste', editor: 'monaco', mode: 'replace-all', target: candidates(el), identity: identityOf(el), ...(types.length > 1 ? { clipboard } : {}) };
+    if (isSecret(el)) send({ ...payload, secret: secretLabel(el) });
+    else send({ ...payload, value: text });
+    setTimeout(() => { if (!e.defaultPrevented) captureIssue('The code editor did not handle the paste event; this recording is not replayable.'); }, 0);
+  }, true);
   let lastApplicationFocus = null;
   let spaceClickTarget = null;
   document.addEventListener('focusin', (e) => {
+    if (e.target !== replacementTarget) replacementTarget = null;
     if (!fromToolbar(e) && e.target instanceof HTMLElement) lastApplicationFocus = e.target;
   }, true);
 
@@ -279,6 +345,12 @@ const RECORDER_SCRIPT = String.raw`(() => {
   document.addEventListener('input', (e) => {
     if (fromToolbar(e)) return;
     const el = e.target;
+    if (el instanceof Element && el.closest(codeEditorSelector)) {
+      if (!el.closest('.monaco-editor')) captureIssue('This code editor is not supported for replay; its hidden textarea is not a normal input.');
+      else if (pastedTarget !== el) captureIssue('Typing into this code editor cannot be captured faithfully; use Select All followed by Paste.');
+      return;
+    }
+    if (el instanceof Element && el.isContentEditable) { captureIssue('This rich editor is not supported for replay; use a supported input control.'); return; }
     if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) return;
     if (['checkbox', 'radio'].includes(el.type)) return;
     const identity = identityOf(el);
@@ -305,6 +377,11 @@ const RECORDER_SCRIPT = String.raw`(() => {
     }
     if (fromToolbar(e)) return;
     const el = e.target;
+    pastedTarget = null;
+    if (el instanceof HTMLTextAreaElement && el.closest('.monaco-editor')) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') { replacementTarget = el; return; }
+      if (!['Control', 'Meta', 'Shift', 'Alt'].includes(e.key) && !((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v')) replacementTarget = null;
+    }
     if (e.key === 'Enter' && (el instanceof HTMLInputElement)) send({ action: 'press', target: candidates(el), value: 'Enter' });
     else if (e.key === ' ' && !e.repeat && el instanceof Element && !el.closest('input,textarea,[contenteditable=true]')) {
       const control = el.closest('button,[role=button],[role=combobox]');
@@ -382,7 +459,7 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   const dropped = [];
   // The first check remains primary; additional targets and kinds remain independent.
   // Selecting the same target and kind again edits only that condition.
-  const result = { expectation: null, also: [], expectedFrom: null };
+  const result = { expectation: null, also: [], expectedFrom: null, captureIssues: [] };
   let finish;
   const finished = new Promise((r) => { finish = r; });
   let lastFillIdentity = null;
@@ -398,6 +475,11 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
     if (ev?.type === 'pin') { if (steps.length > 1) steps[steps.length - 1].pinned = true; return; }
     if (ev?.type === 'viewport') { steps.push({ action: 'viewport', width: ev.width, height: ev.height, pinned: true }); return; }
     if (ev?.type === 'fullscreen-exit') { steps.push({ action: 'exit-fullscreen', pinned: true }); return; }
+    if (ev?.type === 'capture-issue') {
+      const issue = { code: String(ev.code), message: String(ev.message) };
+      if (!result.captureIssues.some((item) => item.code === issue.code && item.message === issue.message)) { result.captureIssues.push(issue); dropped.push(issue); }
+      return;
+    }
     if (!ev?.target?.length) { dropped.push(ev); return; }
     const { identity, ...action } = ev;
     ev = action;
@@ -411,7 +493,7 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
         secretNames.add(name);
         secretFields.set(field, name);
       }
-      ev = { action: ev.action, target: ev.target, value: { secret: secretFields.get(field) } };
+      ev = { action: ev.action, target: ev.target, ...(ev.action === 'paste' ? { editor: ev.editor, mode: ev.mode } : {}), value: { secret: secretFields.get(field) } };
     }
     const prev = steps[steps.length - 1];
     if (ev.action === 'fill' && prev?.action === 'fill' && identity && identity === lastFillIdentity && !prev.check && !prev.pinned) {

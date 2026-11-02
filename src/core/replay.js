@@ -7,6 +7,7 @@ import { TestDefinitionError } from './errors.js';
 import { browserOptions, validateViewport } from './browser-options.js';
 import { canonicalJson } from './canonical.js';
 import { executionBudget } from './execution-budget.js';
+import { CODE_EDITOR_SELECTOR, replaceEditorByPaste, validatePasteStep } from './editor-input.js';
 
 const NETWORK_DOWN = /ERR_CONNECTION_REFUSED|ERR_NAME_NOT_RESOLVED|ERR_CONNECTION_RESET|ERR_ADDRESS_UNREACHABLE|ERR_UNSAFE_PORT|ERR_INTERNET_DISCONNECTED/;
 
@@ -229,6 +230,7 @@ async function evaluateAll(page, checks, observations, { settleMs, targetWaitMs,
 }
 
 async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs, signal }) {
+  if (step.action === 'paste') validatePasteStep(step);
   if (step.action === 'goto') {
     try {
       await page.goto(new URL(step.url, baseUrl).href, { waitUntil: 'domcontentloaded', timeout: navTimeoutMs });
@@ -259,6 +261,11 @@ async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs, signa
   if (!t.ok) return { ok: false, reason: `target ${targetFailureReason(t)}` };
   const loose = Boolean(t.used?.loose);
   const opts = { timeout: stepTimeoutMs };
+  if (step.action === 'fill' && await t.locator.evaluate((element, selector) => Boolean(element.isContentEditable || element.closest(selector)), CODE_EDITOR_SELECTOR)) throw new TestDefinitionError('Rich/code editor fill cannot preserve its model; supported Monaco inputs need Select All followed by Paste, and other editors need an adapter');
+  if (step.action === 'paste') {
+    const state = await replaceEditorByPaste(t.locator, String(value.value), { ...opts, signal, clipboard: step.clipboard });
+    return { ok: true, ...state, loose, resolvedBy: t.used };
+  }
   // A user acting on a disabled control gets no effect; replay does the same but reports it,
   // so "fixed by disabling the trigger" can never pass silently.
   if (['click', 'fill', 'select', 'check', 'press'].includes(step.action) && (await t.locator.isDisabled().catch(() => false))) {

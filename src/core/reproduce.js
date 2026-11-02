@@ -1,9 +1,10 @@
 // Runs a case k times and classifies the result. Only k/k failures with one identical
 // signature count as REPRODUCED; anything mixed is FLAKY, never a reproduction.
 import { runTrial } from './replay.js';
-import { DEFAULT_OBSERVE_MS, signatureKey } from './oracle.js';
+import { DEFAULT_OBSERVE_MS, signatureKey, validateCase } from './oracle.js';
 import { mergeResolutionProfiles } from './canonical.js';
 import { executionBudget, integerOption } from './execution-budget.js';
+import { TestDefinitionError } from './errors.js';
 
 export const Status = Object.freeze({
   REPRODUCED: 'REPRODUCED',
@@ -32,6 +33,12 @@ export async function reproduce(browser, testCase, { baseUrl, runs = 3, match = 
   const trials = [];
   const stopped = () => budget.stopped() === 'budget-exhausted' ? Status.BUDGET_EXHAUSTED : Status.ABORTED;
   try {
+    if (budget.stopped()) return summarize(stopped(), trials, started);
+    try { validateCase(testCase); }
+    catch (error) {
+      if (!(error instanceof TestDefinitionError)) throw error;
+      return { ...summarize(Status.TEST_INVALID, trials, started), reason: error.message };
+    }
     for (let i = 0; i < runs; i++) {
       if (budget.stopped()) return summarize(stopped(), trials, started);
       const t = await runTrial(browser, { baseUrl, steps: testCase.steps, ...contractOf(testCase), stepTimeoutMs, maxMs: budget.remainingMs(), signal: budget.signal });
