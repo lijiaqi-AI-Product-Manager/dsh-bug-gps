@@ -1,0 +1,230 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted",
+  "definitionRevision": 2,
+  "definitionBasis": {
+    "repository": "https://github.com/chartdb/chartdb",
+    "commit": "fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68",
+    "upstream": "https://github.com/chartdb/chartdb/pull/1031",
+    "previousInputSha256": "1391909ce2c4174c772a6894cf82bfb5758bd81be7e138101bca73df296035f1",
+    "inputMethod": "Select All and a scripted ClipboardEvent; not native clipboard capture",
+    "note": "Preserve the original precision/scale expectation. Replace an ambiguous hidden textarea fill with captured editor paste.",
+    "producer": "bench/capture-editor-v2.mjs",
+    "producerSha256": "cd3539f27bb5b34d1b57a7ffb362e0e95875e4c3de6d869b5d4243fd049abbf7",
+    "recorderSha256": "224fdd0e9a5edea7246be0e5d0010c246f3da5712620a8d56025a45b0b5c5dd5",
+    "evaluator": "buggps.oracle/v7",
+    "runtimeCommit": "ab2f91bafb63c9cb13ac7458f2c4cd96c922b755"
+  },
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "SQL Script"
+        }
+      ]
+    },
+    {
+      "action": "paste",
+      "editor": "monaco",
+      "mode": "replace-all",
+      "target": [
+        {
+          "by": "css",
+          "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+        },
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Editor content"
+        }
+      ],
+      "value": "CREATE TABLE invoice (amount decimal(15,2));",
+      "check": {
+        "kind": "value",
+        "target": [
+          {
+            "by": "css",
+            "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+          },
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Editor content"
+          }
+        ],
+        "equals": "CREATE TABLE invoice (amount decimal(15,2));"
+      }
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Import"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "invoice"
+        }
+      ]
+    }
+  ],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "SQL Script"
+        }
+      ]
+    },
+    {
+      "action": "paste",
+      "editor": "monaco",
+      "mode": "replace-all",
+      "target": [
+        {
+          "by": "css",
+          "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+        },
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Editor content"
+        }
+      ],
+      "value": "CREATE TABLE invoice (amount decimal(15,2));"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Import"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "invoice"
+        }
+      ]
+    }
+  ],
+  "expectation": {
+    "kind": "count",
+    "target": [
+      {
+        "by": "css",
+        "value": "aside :text-is(\"numeric(15,2)\")"
+      }
+    ],
+    "equals": 1
+  },
+  "also": [
+    {
+      "kind": "value",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Name"
+        }
+      ],
+      "equals": "amount"
+    }
+  ],
+  "observeMs": 1000,
+  "authoredCheckpoints": [
+    {
+      "afterStepIndex": 3,
+      "check": {
+        "kind": "value",
+        "target": [
+          {
+            "by": "css",
+            "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+          },
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Editor content"
+          }
+        ],
+        "equals": "CREATE TABLE invoice (amount decimal(15,2));"
+      }
+    }
+  ],
+  "targetOverrides": [],
+  "dropped": 0
+}
