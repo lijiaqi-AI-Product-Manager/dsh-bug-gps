@@ -6,12 +6,12 @@
 //
 //   node test/e2e/dsh-e2e.mjs        (needs DSH from spikes/s1-dsh/dsh or BUGGPS_DSH_DIR)
 import { spawn, spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync, readFileSync, realpathSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
+import { copyFileSync, existsSync, readFileSync, realpathSync, rmSync, writeFileSync, mkdirSync, mkdtempSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
-import { join, resolve, sep } from 'node:path';
+import { basename, dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { tempRepo } from '../helpers.js';
+import { tempRepo, freePort } from '../helpers.js';
 import { startStaticServer } from '../../examples/serve.js';
 import { launchBrowser } from '../../src/core/browser.js';
 import { recordSession } from '../../bench/sessions.js';
@@ -19,12 +19,13 @@ import { recordSession } from '../../bench/sessions.js';
 const REPO = realpathSync.native(fileURLToPath(new URL('../../', import.meta.url)));
 const DSH_DIR = process.env.BUGGPS_DSH_DIR ?? join(REPO, 'spikes', 's1-dsh', 'dsh');
 const DSH_BIN = join(DSH_DIR, 'node_modules', '@deepseek-ai', 'dsh', 'lib', 'bin.js');
-// Short DSH_HOME: deep paths break `dsh plugin` on Windows (ENAMETOOLONG, see S1 report).
-const DSH_HOME = join(process.env.LOCALAPPDATA ?? process.env.TMPDIR ?? '/tmp', 'Temp', 'bgr', 'dsh-home-e2e');
-const PORT = 8766;
-const APP_PORT = 8797; // the app server BugGPS itself starts for lock/verify (managed binding)
-const WORK = join(process.env.LOCALAPPDATA ?? '/tmp', 'Temp', 'bgr', 'e2e-work');
 if (!existsSync(DSH_BIN)) { console.error(`DSH not found at ${DSH_BIN}`); process.exit(2); }
+// Every run owns a short, unique directory and free ports; no pre-existing test state is removed.
+const RUN_ROOT = mkdtempSync(join(tmpdir(), 'bg-e2e-'));
+const DSH_HOME = join(RUN_ROOT, 'd');
+const WORK = join(RUN_ROOT, 'w');
+const PORT = await freePort();
+const APP_PORT = await freePort();
 
 const env = {
   ...process.env,
@@ -36,10 +37,10 @@ const env = {
 const dsh = (args, opts = {}) => spawnSync(process.execPath, [DSH_BIN, ...args], { env, encoding: 'utf8', ...opts });
 const out = { at: new Date().toISOString(), kind: 'REAL DSH, scripted model, SEEDED example app', checks: [] };
 const check = (name, ok, detail) => { out.checks.push({ name, ok: Boolean(ok), detail }); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${detail ? `  — ${detail}` : ''}`); };
+let project; let server; let mock;
 
+try {
 // 1. Fresh isolated DSH_HOME, real plugin install (linked checkout).
-rmSync(DSH_HOME, { recursive: true, force: true });
-rmSync(WORK, { recursive: true, force: true });
 mkdirSync(WORK, { recursive: true });
 const ver = dsh(['--version']);
 out.dshVersion = ver.stdout.trim();
@@ -60,8 +61,8 @@ const dump = dsh(['--profile', 'headless', '--dump-config']);
 check('--dump-config shows the dsh-bug-gps layer', /dsh-bug-gps/.test(dump.stdout));
 
 // 2. Project: git repo copy of the seeded app, served, plus a draft as buggps_record saves it.
-const project = await tempRepo();
-const server = await startStaticServer(project.root);
+project = await tempRepo();
+server = await startStaticServer(project.root);
 const b = await launchBrowser();
 const s = await recordSession(b.browser, server.url, 'stale-discount');
 await b.browser.close();
@@ -91,8 +92,15 @@ const scenario = [
 const scenarioFile = join(WORK, 'scenario.json');
 const logFile = join(WORK, 'mock.jsonl');
 writeFileSync(scenarioFile, JSON.stringify(scenario));
-const mock = spawn(process.execPath, [fileURLToPath(new URL('./mock-model.mjs', import.meta.url)), String(PORT), scenarioFile, logFile, caseFile], { stdio: 'ignore' });
-await new Promise((r) => setTimeout(r, 800));
+mock = spawn(process.execPath, [fileURLToPath(new URL('./mock-model.mjs', import.meta.url)), String(PORT), scenarioFile, logFile, caseFile, basename(RUN_ROOT)], { stdio: 'ignore' });
+let ready = false;
+for (let i = 0; i < 50; i++) {
+  if (mock.exitCode !== null) throw new Error('scripted server exited before readiness');
+  ready = await fetch(`http://127.0.0.1:${PORT}/health`, { signal: AbortSignal.timeout(500) }).then((r) => r.json()).then((v) => v.instance === basename(RUN_ROOT), () => false);
+  if (ready) break;
+  await new Promise((r) => setTimeout(r, 100));
+}
+if (!ready) throw new Error('scripted server did not establish its run identity');
 
 const caseHashNow = () => { try { return createHash('sha256').update(readFileSync(caseFile)).digest('hex'); } catch { return null; } };
 const t0 = Date.now();
@@ -105,8 +113,6 @@ const turn = await new Promise((done) => {
   p.on('exit', (code) => { clearTimeout(kill); done({ code, stdout, stderr }); });
 });
 out.turnSeconds = Math.round((Date.now() - t0) / 1000);
-mock.kill();
-await server.close();
 
 // 4. Read back what DSH actually returned for each tool call.
 const reqs = readFileSync(logFile, 'utf8').trim().split('\n').map((l) => JSON.parse(l)).filter((r) => r.tools?.length);
@@ -128,7 +134,7 @@ out.calls = calls.map((c) => ({ tool: c.name, status: c.name.startsWith('buggps_
 check('dsh exited 0 with no plugin load warnings', turn.code === 0 && !/skipping profile bundle|did not activate/i.test(turn.stderr), `exit=${turn.code}`);
 check('tools offered to the model include the 4 BugGPS tools', ['buggps_record', 'buggps_lock', 'buggps_verify', 'buggps_status'].every((t) => reqs[0].tools.includes(t)));
 check('skill catalog lists buggps; body loads on demand', /buggps/.test(JSON.stringify(reqs[0].messages)) && /BugGPS workflow/.test(calls[0]?.result ?? ''));
-check('status: write protection active, serve configured, browser usable', /write_protection: active/.test(calls[1]?.result ?? '') && /serve: node .*-> http:\/\/127\.0\.0\.1:8797\//.test(calls[1]?.result ?? '') && /browser: (msedge|chrome)/.test(calls[1]?.result ?? ''));
+check('status: write protection active, serve configured, browser usable', /write_protection: active/.test(calls[1]?.result ?? '') && (calls[1]?.result ?? '').includes(`-> http://127.0.0.1:${APP_PORT}/`) && /browser: (msedge|chrome)/.test(calls[1]?.result ?? ''));
 check('lock: LOCKED, managed binding, model_calls 0', statusOf(calls[2]) === 'LOCKED' && /binding: managed/.test(calls[2]?.result ?? '') && /"model_calls":0/.test(calls[2]?.result ?? ''), statusOf(calls[2]));
 check('verify before any change: NO_CODE_CHANGE', statusOf(calls[3]) === 'NO_CODE_CHANGE');
 check('agent write into .buggps/ denied by the guard', calls[4]?.isError === true && /write-protected/.test(calls[4]?.result ?? ''), (calls[4]?.result ?? '').slice(0, 120));
@@ -141,11 +147,26 @@ const seen = [reqs[3]?.watchSha, reqs[5]?.watchSha, reqs[reqs.length - 1]?.watch
 check('locked case unchanged at every point of the turn', seen[0] && seen.every((h) => h === seen[0]), seen.map((h) => String(h).slice(0, 8)).join(' '));
 
 out.passed = out.checks.every((c) => c.ok);
-mkdirSync(join(REPO, 'bench', 'results'), { recursive: true });
-const file = join(REPO, 'bench', 'results', `dsh-e2e-${out.at.replace(/[:.]/g, '-')}.json`);
+const file = process.env.BUGGPS_E2E_OUT ? resolve(process.env.BUGGPS_E2E_OUT) : join(REPO, 'bench', 'results', `dsh-e2e-${out.at.replace(/[:.]/g, '-')}.json`);
+mkdirSync(dirname(file), { recursive: true });
 // Results are committed: replace local directories (they contain the user name) with placeholders.
 const esc = (p) => JSON.stringify(p).slice(1, -1);
-writeFileSync(file, JSON.stringify({ ...out, stderrTail: turn.stderr.slice(-1500) }, null, 2).split(esc(REPO)).join('<repo>').split(esc(tmpdir() + sep)).join('%TEMP%\\\\'));
+let serialized = JSON.stringify({ ...out, stderrTail: turn.stderr.slice(-1500) }, null, 2);
+for (const [path, replacement] of [[REPO, '<repo>'], [DSH_DIR, '<dsh>'], [RUN_ROOT, '<run>'], [tmpdir() + sep, '%TEMP%\\\\']]) {
+  serialized = serialized.split(esc(path)).join(replacement).split(esc(path.replaceAll('\\', '/'))).join(replacement);
+}
+writeFileSync(file, serialized);
 console.log(`\n${out.passed ? 'ALL PASS' : 'FAILURES'} — dsh ${out.dshVersion}, turn ${out.turnSeconds}s — ${file}`);
-await project.cleanup();
-process.exit(out.passed ? 0 : 1);
+process.exitCode = out.passed ? 0 : 1;
+} finally {
+  mock?.kill();
+  await server?.close();
+  if (project) {
+    const path = realpathSync.native(project.root);
+    if (dirname(path) !== realpathSync.native(tmpdir()) || !basename(path).startsWith('buggps repo ')) throw new Error('Unexpected project cleanup path');
+    await project.cleanup();
+  }
+  const path = realpathSync.native(RUN_ROOT);
+  if (dirname(path) !== realpathSync.native(tmpdir()) || !basename(path).startsWith('bg-e2e-')) throw new Error('Unexpected run cleanup path');
+  rmSync(path, { recursive: true, force: true });
+}

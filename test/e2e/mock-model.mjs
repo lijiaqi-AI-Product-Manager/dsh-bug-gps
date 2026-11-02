@@ -8,7 +8,7 @@ import { createServer } from 'node:http';
 import { appendFileSync, readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
-const [port, scenarioFile, logFile, watchFile] = process.argv.slice(2);
+const [port, scenarioFile, logFile, watchFile, instance] = process.argv.slice(2);
 const watchSha = () => { if (!watchFile) return undefined; try { return createHash('sha256').update(readFileSync(watchFile)).digest('hex'); } catch { return null; } };
 const steps = JSON.parse(readFileSync(scenarioFile, 'utf8'));
 let step = 0;
@@ -31,6 +31,10 @@ function sse(res, out, n) {
 }
 
 createServer((req, res) => {
+  if (req.method === 'GET' && req.url === '/health') {
+    res.writeHead(200, { 'content-type': 'application/json' });
+    return res.end(JSON.stringify({ instance }));
+  }
   let raw = '';
   req.on('data', (d) => { raw += d; });
   req.on('end', () => {

@@ -6,7 +6,7 @@ import { protectedReason } from './guard.js';
 import { SKILL } from './skill.js';
 
 export const name = 'dsh-bug-gps';
-export const inject = ['tools', 'skills'];
+export const inject = ['tools', 'skills', 'subprocess'];
 
 // Set only after the guard registered successfully. DSH loads a broken plugin silently (stderr
 // warning, exit 0), so buggps_verify checks this before giving any verdict.
@@ -34,7 +34,7 @@ export function apply(ctx) {
   ctx.tools.guard((exec) => protectedReason(exec, bases(exec)));
   guardActive = true;
 
-  for (const spec of createToolSpecs({ resolveCwd, guardActive: () => guardActive, onProject: (d) => projects.add(d) })) {
+  for (const spec of createToolSpecs({ resolveCwd, guardActive: () => guardActive, onProject: (d) => projects.add(d), subprocess: ctx.subprocess })) {
     ctx.tools.register(defineTool(spec));
   }
   ctx.skills.register({ ...SKILL, source: 'runtime' });
