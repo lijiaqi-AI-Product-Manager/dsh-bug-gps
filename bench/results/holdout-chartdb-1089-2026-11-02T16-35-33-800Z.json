@@ -1,0 +1,55 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "chartdb-1089",
+  "upstream": "https://github.com/chartdb/chartdb/pull/1089",
+  "buggyCommit": "0b73295922f87b3b59bc8ef98b27a7328b6d66c0",
+  "fixCommit": "0e7fa6c75efb3fb3ac0406fdca2796941a7de87d",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T16:35:33.801Z",
+  "runtime": {
+    "commit": "986e6c57d157fa6343b269dbf9a1f134c096a514",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "3bf6dade15c9a621d62dcadd831a006f3edc2e6ad7b62163ed767132ff54dbf1",
+    "engineFilesSha256": "a76885fc85d6d19f0ea465e6816706332122128e4a0bb6d48c164e7471353392",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\chartdb.git worktree add --detach <run-root>\\cases\\chartdb-1089 0b73295922f87b3b59bc8ef98b27a7328b6d66c0\nPreparing worktree (detached HEAD 0b73295)\nerror: unable to read sha1 file of CHANGELOG.md (85d2ea8689b38d5e6b9bd80bb030b7f175e93a27)\nerror: unable to read sha1 file of src/lib/domain/db-table.ts (246542cd3a19360eae4fbe618afd1cf23fee4c77)\nUpdating files:  77% (591/759)\rUpdating files:  78% (593/759)\rerror: unable to read sha1 file of src/lib/utils/area-utils.ts (22f423749bd782a188827007349a8b5fd387338f)\nUpdating files:  79% (600/759)\rerror: unable to read sha1 file of src/pages/editor-page/canvas/area-node/area-node-context-menu.tsx (c1aeca67f1eb759ae9776e25d5fdc198750ca2c3)\nUpdating files:  80% (608/759)\rUpdating files:  81% (615/759)\rUpdating files:  82% (623/759)\rerror: unable to read sha1 file of src/pages/editor-page/canvas/table-node/table-node-context-menu.tsx (b89efef2b18aab42031ad366dda9ce728af1fb66)\nUpdating files:  83% (630/759)\rUpdating files:  84% (638/759)\rUpdating files:  85% (646/759)\rUpdating files:  86% (653/759)\rUpdating files:  87% (661/759)\rUpdating files:  88% (668/759)\rUpdating files:  8"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "cac799326dc439d8addd45debb5bc8759c25709bd5715ad109cad9ec26919a25",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted-incomplete",
+    "sha256": "0ee3e895f8dc114facacd82239121bcc10dc5df58413a5048a79be3d9a1afb74",
+    "canonicalSha256": "f501b689222c369be40c8ecfe88f6165a214a1dd08323634a192007745720724",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 4,
+    "authoredTargets": [],
+    "dropped": 0,
+    "also": []
+  },
+  "status": "TEST_INVALID",
+  "reason": "locator.click: Timeout 30000ms exceeded.",
+  "captureFailure": {
+    "phase": "input-authoring",
+    "name": "TimeoutError",
+    "reason": "locator.click: Timeout 30000ms exceeded."
+  },
+  "durationMs": 2705
+}

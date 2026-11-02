@@ -1,0 +1,324 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "chartdb-1045",
+  "upstream": "https://github.com/chartdb/chartdb/pull/1045",
+  "buggyCommit": "ded5b14a62eaf352b372cb5f2f6e225de9d53a44",
+  "fixCommit": "84e55f5df654be47c27f17fac55359d6a454d87d",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T16:35:36.515Z",
+  "runtime": {
+    "commit": "986e6c57d157fa6343b269dbf9a1f134c096a514",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "3bf6dade15c9a621d62dcadd831a006f3edc2e6ad7b62163ed767132ff54dbf1",
+    "engineFilesSha256": "a76885fc85d6d19f0ea465e6816706332122128e4a0bb6d48c164e7471353392",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\chartdb.git worktree add --detach <run-root>\\cases\\chartdb-1045 ded5b14a62eaf352b372cb5f2f6e225de9d53a44\nPreparing worktree (detached HEAD ded5b14)\nerror: unable to read sha1 file of CHANGELOG.md (85d2ea8689b38d5e6b9bd80bb030b7f175e93a27)\nerror: unable to read sha1 file of src/context/chartdb-context/chartdb-context.tsx (c8450528dfecb5a8932833487f7b9ec53eac69e4)\nerror: unable to read sha1 file of src/context/history-context/history-provider.tsx (8c814daac43546fbb655c57352c208e51292cc90)\nerror: unable to read sha1 file of src/context/history-context/redo-undo-action.ts (ef32f6b04b9a62859319985e2c4567fb1569a19d)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mssql.ts (36a2653a24132a0b5e3b45e290512a386f099faf)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mysql.ts (b52a4b3012748ef173c9c94f6a93fe39e6caf04d)\nerror: unable to read sha1 file of src/lib/data/sql-export/export-sql-script.ts (12c95ed9025f626deab0fe37754595ac3de913f8)\nerror: unable to read sha1 file of src/lib/domain/database-capabilities.ts (8fad91bb8cfcb669ba16ace331e61c4265e"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "cac799326dc439d8addd45debb5bc8759c25709bd5715ad109cad9ec26919a25",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted-with-authored-targets",
+    "sha256": "2989746903ee4b01a9ef1c2aa275969369d38abe09882b264f80b1453b29bc0b",
+    "canonicalSha256": "964c9fad8bf9c0505137def6e8fd800c5e6468d2663756aa511cb412165f08f2",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 9,
+    "authoredTargets": [
+      {
+        "index": 3,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"Add Table\") >> nth=0"
+          }
+        ],
+        "reason": "Use the toolbar Add Table control among the two empty-state buttons."
+      },
+      {
+        "index": 7,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "[role=application] button:has(svg.lucide-search)"
+          }
+        ],
+        "reason": "The unnamed search icon opens the table filter."
+      },
+      {
+        "index": 8,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "[role=application] button:has(svg.lucide-eye) >> nth=1"
+          }
+        ],
+        "reason": "Toggle the first table in the schema, after the schema-wide visibility control."
+      }
+    ],
+    "dropped": null,
+    "expectation": {
+      "kind": "count",
+      "target": [
+        {
+          "by": "css",
+          "value": "[role=application] :text-is(\"1/2\")"
+        }
+      ],
+      "equals": 1
+    },
+    "also": [
+      {
+        "kind": "count",
+        "target": [
+          {
+            "by": "css",
+            "value": ".react-flow__node:has-text(\"table_2\")"
+          }
+        ],
+        "equals": 1
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-chartdb-serve.mjs",
+    "sha256": "0f058cc653f232b73a998955a25acee14f4d9228d52eea0540a2063c8c61ec91",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "fixture": "github_repo_opened=true suppresses the promotional dialog only"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "TEST_INVALID",
+    "tally": {
+      "step-error": 1
+    },
+    "reason": "target not-found",
+    "stepIndex": 1,
+    "durationMs": 13904
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "0 matching elements",
+      "signature": {
+        "kind": "count",
+        "target": "css=[role=application] :text-is(\"1/2\")",
+        "actual": "0",
+        "resolution": {
+          "by": "css",
+          "value": "[role=application] :text-is(\"1/2\")",
+          "collection": true
+        }
+      },
+      "durationMs": 37941
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": true,
+    "original": 9,
+    "shortened": 7,
+    "stats": {
+      "trials": 2,
+      "probeRuns": 1,
+      "cacheHits": 1,
+      "unresolved": 0,
+      "differentFailure": 0,
+      "stepTimeoutMs": 8000,
+      "durationMs": 66983,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold"
+          },
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold",
+            "child": {
+              "role": "img",
+              "name": "PostgreSQL"
+            }
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Empty database"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"Add Table\") >> nth=0"
+          }
+        ]
+      },
+      {
+        "action": "key",
+        "target": [
+          {
+            "by": "page"
+          }
+        ],
+        "value": "Escape"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Add Table"
+          }
+        ]
+      },
+      {
+        "action": "key",
+        "target": [
+          {
+            "by": "page"
+          }
+        ],
+        "value": "Escape"
+      }
+    ],
+    "fixedComparison": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "0 matching elements",
+      "signature": {
+        "kind": "count",
+        "target": "css=[role=application] :text-is(\"1/2\")",
+        "actual": "0",
+        "resolution": {
+          "by": "css",
+          "value": "[role=application] :text-is(\"1/2\")",
+          "collection": true
+        }
+      },
+      "durationMs": 18714
+    },
+    "agreesWithFullRecording": false
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "0 matching elements",
+    "durationMs": 26590,
+    "caseSha256": "67be8453337ffff75890ac649a56fb45c30e381f3c6571d88a6372da7935ee3e",
+    "lockSha256": "ee88eb378cc99f4d3f81bcbdb48a76ffdc4f7bf0477503e5ae345503e9ab8f4b"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "0 matching elements",
+      "signatureKey": "{\"actual\":\"0\",\"kind\":\"count\",\"resolution\":{\"by\":\"css\",\"collection\":true,\"value\":\"[role=application] :text-is(\\\"1/2\\\")\"},\"target\":\"css=[role=application] :text-is(\\\"1/2\\\")\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"Empty database\",\"role\":\"button\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"Add Table\\\") >> nth=0\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"role\",\"name\":\"Add Table\",\"role\":\"button\"}"
+        ],
+        "step:7": [
+          "{\"by\":\"css\",\"value\":\"[role=application] button:has(svg.lucide-search)\"}"
+        ],
+        "step:8": [
+          "{\"by\":\"css\",\"value\":\"[role=application] button:has(svg.lucide-eye) >> nth=1\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"[role=application] :text-is(\\\"1/2\\\")\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\".react-flow__node:has-text(\\\"table_2\\\")\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 19460
+    },
+    "durationMs": 20700,
+    "caseSha256": "67be8453337ffff75890ac649a56fb45c30e381f3c6571d88a6372da7935ee3e",
+    "lockSha256": "ee88eb378cc99f4d3f81bcbdb48a76ffdc4f7bf0477503e5ae345503e9ab8f4b"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "bd1e23f0bd80fe83a3ebf5745a71acd1c8b9e7079b96858be702f0d761519dca",
+    "lockSha256": "dec17a6b56490fc39a7492b436c7cfe03f4e602cc4087aa2b19715c910a9111e"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 655185
+}
