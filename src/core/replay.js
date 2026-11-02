@@ -4,6 +4,8 @@ import { resolveTarget } from './locator.js';
 import { evaluate } from './oracle.js';
 import { resolveValue } from './secrets.js';
 import { TestDefinitionError } from './errors.js';
+import { browserOptions, validateViewport } from './browser-options.js';
+import { canonicalJson } from './canonical.js';
 
 const NETWORK_DOWN = /ERR_CONNECTION_REFUSED|ERR_NAME_NOT_RESOLVED|ERR_CONNECTION_RESET|ERR_ADDRESS_UNREACHABLE|ERR_UNSAFE_PORT|ERR_INTERNET_DISCONNECTED/;
 
@@ -15,29 +17,37 @@ const NETWORK_DOWN = /ERR_CONNECTION_REFUSED|ERR_NAME_NOT_RESOLVED|ERR_CONNECTIO
  *   - after initial success, checks are sampled throughout `observeMs` with a 50 ms target interval.
  * @returns {Promise<{outcome:'pass'|'fail'|'precondition-fail'|'step-error'|'env-error'|'test-invalid'|'aborted', ...}>}
  */
-export async function runTrial(browser, { baseUrl, steps, expectation, also = [], observeMs = 0, stepTimeoutMs = 5000, navTimeoutMs = 45_000, settleMs = 250, signal, probe }) {
+export async function runTrial(browser, { baseUrl, steps, expectation, also = [], observeMs = 0, browser: settings, stepTimeoutMs = 5000, navTimeoutMs = 45_000, settleMs = 250, signal, probe }) {
   const started = Date.now();
   const obs = { pageErrors: [], consoleErrors: [], failedRequests: [] };
   let context;
   try {
-    context = await browser.newContext();
+    context = await browser.newContext(browserOptions(settings));
   } catch (err) {
+    if (err instanceof TestDefinitionError) return { outcome: 'test-invalid', reason: err.message, durationMs: Date.now() - started };
     return { outcome: 'env-error', reason: `newContext failed: ${err.message}`, durationMs: Date.now() - started };
   }
   const page = await context.newPage();
   page.on('pageerror', (e) => obs.pageErrors.push(e?.name ? `${e.name}: ${e.message}` : String(e)));
   page.on('console', (m) => { if (m.type() === 'error') obs.consoleErrors.push(m.text()); });
-  page.on('response', (r) => { if (r.status() >= 400) obs.failedRequests.push(`${r.status()} ${r.request().method()} ${r.url()}`); });
+  page.on('response', (r) => { if (r.status() >= 400) obs.failedRequests.push(`${r.status()} ${r.request().method()} ${requestUrl(r.url())}`); });
+  page.on('requestfailed', (r) => obs.failedRequests.push(`${r.failure()?.errorText ?? 'request failed'} ${r.method()} ${requestUrl(r.url())}`));
 
   const disabledSteps = [];
   // Steps whose target only resolved through the loose (substring) fallback: weaker evidence
   // that the same element was used. caselock compares them with the lock-time runs.
   const looseSteps = [];
   const looseChecks = new Set();
+  const resolutionProfile = {};
+  const resolved = (key, value) => {
+    if (!value) return;
+    const encoded = canonicalJson(value);
+    resolutionProfile[key] = [...new Set([...(resolutionProfile[key] ?? []), encoded])].sort();
+  };
   let observation;
   const stepMs = [];
-  const done = (r) => ({ ...r, ...(disabledSteps.length ? { disabledSteps } : {}), ...(looseSteps.length ? { looseSteps } : {}), ...(looseChecks.size ? { looseChecks: [...looseChecks].sort() } : {}), ...(observation ? { observation } : {}), stepMs, durationMs: Date.now() - started, observations: obs });
-  const checked = (key, result) => { if (result.resolvedBy?.loose) looseChecks.add(key); };
+  const done = (r) => ({ ...r, resolutionProfile, ...(disabledSteps.length ? { disabledSteps } : {}), ...(looseSteps.length ? { looseSteps } : {}), ...(looseChecks.size ? { looseChecks: [...looseChecks].sort() } : {}), ...(observation ? { observation } : {}), stepMs, durationMs: Date.now() - started, observations: obs });
+  const checked = (key, value) => { resolved(key, value); if (value?.loose) looseChecks.add(key); };
   // Poll (not just between steps): content that renders asynchronously, then vanishes, would
   // otherwise be missed depending on timing.
   let poll;
@@ -56,6 +66,7 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
       const step = steps[i];
       const t0 = Date.now();
       const r = await runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs });
+      resolved(`step:${i}`, r.resolvedBy);
       stepMs.push(Date.now() - t0);
       if (!r.ok) {
         if (r.env) return done({ outcome: 'env-error', stepIndex: i, reason: r.reason });
@@ -65,8 +76,7 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
       if (r.loose) looseSteps.push(i);
       await settle(page);
       if (step.check) {
-        const c = await evaluate(page, step.check, obs, { settleMs: 1000 });
-        checked(`checkpoint:${i}`, c);
+        const c = await evaluate(page, step.check, obs, { settleMs: 1000, onResolution: (value) => checked(`checkpoint:${i}`, value) });
         if (!c.pass) return done({ outcome: 'precondition-fail', stepIndex: i, observed: c.observed ?? null, reason: `checkpoint after step ${i + 1} not met: ${c.invalid ?? c.observed}` });
       }
       // Deterministic check after every step, in addition to the background poll.
@@ -74,7 +84,7 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
       if (probe) await probe(page, i);
     }
     const checks = [expectation, ...also];
-    const onCheck = (index, result) => checked(`final:${index}`, result);
+    const onCheck = (index, value) => checked(`final:${index}`, value);
     const first = await evaluateAll(page, checks, obs, { settleMs, onCheck });
     if (first) return done(first);
     if (observeMs > 0) {
@@ -110,18 +120,18 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
 // First failing check in order (primary first, so the RED signature is always the primary's),
 // or null when all pass.
 async function evaluateAll(page, checks, obs, { settleMs, targetWaitMs, late = false, onCheck }) {
+  let failure = null;
   for (let k = 0; k < checks.length; k++) {
-    const v = await evaluate(page, checks[k], obs, { settleMs, ...(targetWaitMs !== undefined ? { targetWaitMs } : {}) });
-    onCheck?.(k, v);
+    const v = await evaluate(page, checks[k], obs, { settleMs, ...(targetWaitMs !== undefined ? { targetWaitMs } : {}), onResolution: (value) => onCheck?.(k, value) });
     if (v.pass) continue;
     if (v.invalid) {
       // Seen once and then gone is a real failure, not an unusable expectation.
-      if (late) return { outcome: 'fail', check: k, observed: v.invalid, signature: { kind: checks[k].kind, target: '', actual: `late:${v.invalid}` } };
-      return { outcome: 'test-invalid', reason: v.invalid };
+      failure ??= late ? { outcome: 'fail', check: k, observed: v.invalid, signature: { kind: checks[k].kind, target: '', actual: `late:${v.invalid}` } } : { outcome: 'test-invalid', reason: v.invalid };
+      continue;
     }
-    return { outcome: 'fail', check: k, signature: v.signature, observed: v.observed };
+    failure ??= { outcome: 'fail', check: k, signature: v.signature, observed: v.observed };
   }
-  return null;
+  return failure;
 }
 
 async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
@@ -140,6 +150,10 @@ async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
     await page.keyboard.press(String(step.value));
     return { ok: true };
   }
+  if (step.action === 'viewport') {
+    await page.setViewportSize(validateViewport(step));
+    return { ok: true };
+  }
   const value = resolveValue(step.value);
   if (!value.ok) return { ok: false, env: true, reason: value.reason };
   const t = await resolveTarget(page, step.target, { timeoutMs: stepTimeoutMs });
@@ -149,7 +163,7 @@ async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
   // A user acting on a disabled control gets no effect; replay does the same but reports it,
   // so "fixed by disabling the trigger" can never pass silently.
   if (['click', 'fill', 'select', 'check', 'press'].includes(step.action) && (await t.locator.isDisabled().catch(() => false))) {
-    return { ok: true, disabled: true, loose };
+    return { ok: true, disabled: true, loose, resolvedBy: t.used };
   }
   try {
     switch (step.action) {
@@ -165,7 +179,12 @@ async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
     if (err instanceof TestDefinitionError) throw err;
     return { ok: false, reason: firstLine(err) };
   }
-  return { ok: true, loose };
+  return { ok: true, loose, resolvedBy: t.used };
+}
+
+function requestUrl(raw) {
+  try { const url = new URL(raw); url.username = ''; url.password = ''; url.search = ''; url.hash = ''; return url.href; }
+  catch { return '<unavailable URL>'; }
 }
 
 // For "should be visible" expectations: was the target ever visible during this trial? A bug

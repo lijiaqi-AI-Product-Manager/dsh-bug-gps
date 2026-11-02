@@ -16,6 +16,18 @@ const RECORDER_SCRIPT = String.raw`(() => {
     if (!elementIds.has(el)) elementIds.set(el, documentId + ':' + (++elementCount));
     return elementIds.get(el);
   };
+  // A responsive-layout trigger is an action, not just presentation. Keep it pinned so
+  // shortening cannot silently remove the viewport in which the user saw the problem.
+  if (window === window.top) {
+    let width = innerWidth;
+    let height = innerHeight;
+    window.addEventListener('resize', () => {
+      if (innerWidth === width && innerHeight === height) return;
+      width = innerWidth;
+      height = innerHeight;
+      send({ type: 'viewport', width, height });
+    });
+  }
 
   function roleOf(el) {
     const explicit = el.getAttribute('role');
@@ -358,6 +370,7 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
     if (ev?.type === 'checkpoint') { steps[steps.length - 1].check = ev.check; return; }
     if (ev?.type === 'stop') { finish('stop'); return; }
     if (ev?.type === 'pin') { if (steps.length > 1) steps[steps.length - 1].pinned = true; return; }
+    if (ev?.type === 'viewport') { steps.push({ action: 'viewport', width: ev.width, height: ev.height, pinned: true }); return; }
     if (!ev?.target?.length) { dropped.push(ev); return; }
     const { identity, ...action } = ev;
     ev = action;
@@ -386,6 +399,7 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   const page = await context.newPage();
   page.on('close', () => finish('closed'));
   await page.goto(new URL(startPath, baseUrl).href);
+  result.browser = await page.evaluate(() => ({ viewport: { width: innerWidth, height: innerHeight }, locale: navigator.language, timezoneId: Intl.DateTimeFormat().resolvedOptions().timeZone, deviceScaleFactor: devicePixelRatio }));
   let stopped = false;
   return {
     page,

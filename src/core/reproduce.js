@@ -2,6 +2,7 @@
 // signature count as REPRODUCED; anything mixed is FLAKY, never a reproduction.
 import { runTrial } from './replay.js';
 import { DEFAULT_OBSERVE_MS, signatureKey } from './oracle.js';
+import { mergeResolutionProfiles } from './canonical.js';
 
 export const Status = Object.freeze({
   REPRODUCED: 'REPRODUCED',
@@ -18,7 +19,7 @@ export const Status = Object.freeze({
 
 /** Trial options that come from the case contract itself (see replay.runTrial). */
 export function contractOf(testCase) {
-  return { expectation: testCase.expectation, also: testCase.also ?? [], observeMs: testCase.observeMs ?? DEFAULT_OBSERVE_MS };
+  return { expectation: testCase.expectation, also: testCase.also ?? [], observeMs: testCase.observeMs ?? DEFAULT_OBSERVE_MS, browser: testCase.browser };
 }
 
 // stepTimeoutMs only costs time when a target is really missing; heavy apps on a loaded machine
@@ -78,6 +79,7 @@ function summarize(status, trials, started, match = 'strict') {
     stepIndex: invalid?.stepIndex ?? blocked?.stepIndex ?? null,
     looseSteps: [...new Set(trials.flatMap((t) => t.looseSteps ?? []))].sort((a, b) => a - b),
     looseChecks: [...new Set(trials.flatMap((t) => t.looseChecks ?? []))].sort(),
+    resolutionProfile: mergeResolutionProfiles(trials.map((t) => t.resolutionProfile)),
     ...(trials.some((t) => t.observation) ? { observation: { method: 'poll', intervalMs: 50, runs: trials.map((t) => t.observation ?? null) } } : {}),
     durationMs: Date.now() - started,
     trials: trials.map(({ observations, ...rest }) => ({ ...rest, pageErrors: observations?.pageErrors?.length ?? 0 })),

@@ -54,7 +54,7 @@ test('lock -> verify(no change) -> verify(wrong fix) -> verify(real fix)', async
   assert.match(locked.binding, /^managed/);
   assert.equal(locked.observed_now, '$17.00');
   assert.equal(locked.minimization.model_calls, 0);
-  assert.ok(locked.shortest_steps.length < locked.recorded_steps);
+  assert.ok(locked.shortened_steps.length < locked.recorded_steps);
 
   assert.equal((await run('buggps_verify', { case_id: 'coupon' })).status, 'NO_CODE_CHANGE');
 
@@ -71,6 +71,16 @@ test('lock -> verify(no change) -> verify(wrong fix) -> verify(real fix)', async
   assert.equal(ok.shortened_case_agrees, true);
   const runRecord = JSON.parse(await readFile(join(repo.root, ok.run_record), 'utf8'));
   assert.equal(runRecord.verdict, 'VERIFIED');
+});
+
+test('changing only lock metadata is CASE_TAMPERED in-session', async () => {
+  const file = join(repo.root, '.buggps', 'cases', 'coupon', 'lock.json');
+  const original = await readFile(file, 'utf8');
+  const manifest = JSON.parse(original);
+  manifest.red.observed = 'changed evidence';
+  await writeFile(file, JSON.stringify(manifest));
+  try { assert.equal((await run('buggps_verify', { case_id: 'coupon' })).status, 'CASE_TAMPERED'); }
+  finally { await writeFile(file, original); }
 });
 
 test('rewriting case.json AND lock.json consistently (shell bypass) is still CASE_TAMPERED in-session', async () => {
@@ -102,6 +112,7 @@ test('status lists the case with its latest verdict', async () => {
   assert.ok(st.cases[0].latest.verdict);
   assert.equal(st.cases[0].binding, 'managed');
   assert.equal(typeof st.cases[0].latest.applies_to_current_code, 'boolean');
+  assert.equal(st.cases[0].latest.applies_to_current_code, false, 'changed conditions invalidate the historical verdict');
 });
 
 test('record: toolbar flow saves a draft the agent can lock', async () => {
@@ -130,6 +141,7 @@ test('record: toolbar flow saves a draft the agent can lock', async () => {
   assert.equal(r.status, 'RECORDED', JSON.stringify(r));
   assert.match(r.draft, /^\.buggps\/drafts\/[0-9a-f-]+\.json$/);
   assert.equal(JSON.parse(await readFile(join(repo.root, r.draft), 'utf8')).name, 'by hand');
+  assert.ok(JSON.parse(await readFile(join(repo.root, r.draft), 'utf8')).browser.viewport.width > 0);
   assert.equal(r.user_saw, '$18.00'); // the repo's code is fixed by now, so the page is right
   assert.equal(r.key_steps.length, 1);
 });
