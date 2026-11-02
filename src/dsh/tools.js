@@ -2,6 +2,7 @@
 // execute}). index.js wraps each with DSH's defineTool; tests call execute() directly, so
 // nothing here imports DSH packages. Every verdict comes from the core, never from the model.
 import { realpathSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve } from 'node:path';
 import { launchBrowser } from '../core/browser.js';
@@ -96,7 +97,6 @@ async function withBrowser(signal, { headless = true } = {}, fn) {
   }
 }
 
-const safeName = (s) => String(s).replace(/[^a-zA-Z0-9._-]+/g, '-').slice(0, 60) || 'case';
 const realKey = (dir) => { try { return realpathSync.native(dir).toLowerCase(); } catch { return resolve(dir).toLowerCase(); } };
 
 async function readConfig(cwd) {
@@ -140,10 +140,11 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
         const how = await Promise.race([rec.finished, aborted]);
         const steps = await rec.stop();
         if (how === 'aborted') return { status: 'ABORTED', message: 'recording cancelled; nothing saved', next: NEXT[Verdict.ABORTED] };
-        const file = join(cwd, '.buggps', 'drafts', `${safeName(args.name ?? `case-${Date.now()}`)}.json`);
+        const draftId = randomUUID();
+        const file = join(cwd, '.buggps', 'drafts', `${draftId}.json`);
         await mkdir(join(cwd, '.buggps', 'drafts'), { recursive: true });
         const { expectation, also, expectedFrom } = rec.result;
-        await writeFile(file, JSON.stringify({ schema: 'buggps.draft/v1', source: 'recorded', baseUrl: args.url, steps, expectation, ...(also.length ? { also } : {}), expectedFrom, recordedAt: new Date().toISOString(), endedBy: how }, null, 2));
+        await writeFile(file, JSON.stringify({ schema: 'buggps.draft/v1', id: draftId, name: String(args.name ?? '').slice(0, 200), source: 'recorded', baseUrl: args.url, steps, expectation, ...(also.length ? { also } : {}), expectedFrom, recordedAt: new Date().toISOString(), endedBy: how }, null, 2), { flag: 'wx' });
         const draft = relative(cwd, file).replace(/\\/g, '/');
         if (!expectation) {
           return { status: 'NO_EXPECTATION', draft, steps: steps.length, next: 'The user did not set the correct expectation. Ask them to record again and use the toolbar ("预期文本 / 预期输入值 / 应可见 / 不应报错") before pressing stop. Do not invent one.' };
@@ -195,7 +196,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
       if (!serve && !(await reachable(args.url))) return json(envBlocked(`dev server not reachable at ${args.url}`, 'Start the dev server and retry.'));
       const observeMs = args.observe_ms !== undefined ? Math.round(args.observe_ms) : config.observeMs;
       const testCase = { ...draft, ...(observeMs !== undefined ? { observeMs } : {}), ...(serve ? { serve } : {}) };
-      const id = safeName(args.case_id ?? draftPath.split(/[\\/]/).pop().replace(/\.json$/, ''));
+      const id = args.case_id ?? draftPath.split(/[\\/]/).pop().replace(/\.json$/, '');
       return json(await withBrowser(exec.signal, {}, async (env) => {
         validateCase(testCase);
         const work = async (url) => {
@@ -257,7 +258,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
         return json({ status: 'ENV_BLOCKED', message: 'BugGPS write protection is not active in this DSH process, so a verdict cannot be trusted.', next: 'Check the dsh-bug-gps plugin loaded without warnings (dsh --profile <p> --dump-config).' });
       }
       const cwd = await projectOf(exec);
-      const id = safeName(args.case_id);
+      const id = args.case_id;
       let lockFile;
       try { lockFile = await loadCase(cwd, id); } catch { return json({ status: 'TEST_INVALID', message: `no locked case "${id}" in ${cwd}/.buggps/cases`, next: 'Use buggps_status to list cases.' }); }
       const remembered = lockedHere.get(`${realKey(cwd)}|${id}`);

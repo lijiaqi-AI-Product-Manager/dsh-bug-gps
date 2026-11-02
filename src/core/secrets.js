@@ -1,12 +1,14 @@
-// Sensitive inputs (passwords, tokens, card numbers) are never written into a recording. The
+// Recognized sensitive inputs (passwords, tokens, card numbers) use references in a recording. The
 // step stores a reference, { secret: 'NAME' }, and replay reads BUGGPS_SECRET_NAME from the
 // environment of the process that replays. Nothing that holds the value reaches the model.
+
+import { createHash } from 'node:crypto';
 
 export const secretEnvVar = (name) => `BUGGPS_SECRET_${name}`;
 
 export function secretName(label) {
   const n = String(label ?? '').normalize('NFKD').replace(/[^A-Za-z0-9]+/g, '_').replace(/^_+|_+$/g, '').toUpperCase().slice(0, 40);
-  return n || 'FIELD';
+  return n || 'FIELD_' + createHash('sha256').update(String(label ?? '')).digest('hex').slice(0, 10).toUpperCase();
 }
 
 export const isSecretRef = (v) => Boolean(v && typeof v === 'object' && typeof v.secret === 'string');

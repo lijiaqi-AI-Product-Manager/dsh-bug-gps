@@ -128,7 +128,8 @@ test('record: toolbar flow saves a draft the agent can lock', async () => {
   });
   const r = await recTools[0].execute({ url: server.url, name: 'by hand' }, exec());
   assert.equal(r.status, 'RECORDED', JSON.stringify(r));
-  assert.equal(r.draft, '.buggps/drafts/by-hand.json');
+  assert.match(r.draft, /^\.buggps\/drafts\/[0-9a-f-]+\.json$/);
+  assert.equal(JSON.parse(await readFile(join(repo.root, r.draft), 'utf8')).name, 'by hand');
   assert.equal(r.user_saw, '$18.00'); // the repo's code is fixed by now, so the page is right
   assert.equal(r.key_steps.length, 1);
 });

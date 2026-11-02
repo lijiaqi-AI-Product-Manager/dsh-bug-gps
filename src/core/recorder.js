@@ -2,7 +2,6 @@
 // the capture phase and reports each action with locator candidates (testid > role+name >
 // label > #id), computed at event time. Coordinates are never recorded.
 
-import { NEGATIVE_KINDS } from './oracle.js';
 import { secretName } from './secrets.js';
 
 const RECORDER_SCRIPT = String.raw`(() => {
@@ -10,6 +9,13 @@ const RECORDER_SCRIPT = String.raw`(() => {
   window.__buggpsRecorderInstalled = true;
   const send = (ev) => { try { window.__buggpsRecord(ev); } catch {} };
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
+  const documentId = Date.now().toString(36) + Math.random().toString(36).slice(2);
+  const elementIds = new WeakMap();
+  let elementCount = 0;
+  const identityOf = (el) => {
+    if (!elementIds.has(el)) elementIds.set(el, documentId + ':' + (++elementCount));
+    return elementIds.get(el);
+  };
 
   function roleOf(el) {
     const explicit = el.getAttribute('role');
@@ -175,13 +181,17 @@ const RECORDER_SCRIPT = String.raw`(() => {
   // Fields whose value must never leave the page: the step stores a reference instead.
   const SECRET_HINT = /pass(word|wd|code)?|secret|token|otp|one.?time|cvv|cvc|card.?(num|no)|cc.?num|api.?key|pin.?code|密码|口令|验证码|卡号/i;
   function isSecret(el) {
-    if (!(el instanceof HTMLInputElement)) return false;
+    if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) return false;
     if (el.type === 'password') return true;
     if (/password|one-time-code|cc-number|cc-csc|cc-exp/.test(el.autocomplete || '')) return true;
     return SECRET_HINT.test([el.name, el.id, el.getAttribute('aria-label'), el.placeholder, labelText(el)].join(' '));
   }
   const secretLabel = (el) => clean(el.getAttribute('aria-label') || labelText(el) || el.placeholder || el.name || el.id || 'password');
   const fromToolbar = (e) => e.target instanceof Element && e.target.closest('#__buggps_toolbar');
+  let lastApplicationFocus = null;
+  document.addEventListener('focusin', (e) => {
+    if (!fromToolbar(e) && e.target instanceof HTMLElement) lastApplicationFocus = e.target;
+  }, true);
 
   // Expectation picking: while window.__buggpsPickKind is set, the next click selects an
   // element for the expectation instead of acting on the page (and is not recorded).
@@ -251,8 +261,9 @@ const RECORDER_SCRIPT = String.raw`(() => {
     const el = e.target;
     if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) return;
     if (['checkbox', 'radio'].includes(el.type)) return;
-    if (isSecret(el)) { send({ action: 'fill', target: candidates(el), secret: secretLabel(el) }); return; }
-    send({ action: 'fill', target: candidates(el), value: el.value });
+    const identity = identityOf(el);
+    if (isSecret(el)) { send({ action: 'fill', target: candidates(el), secret: secretLabel(el), identity }); return; }
+    send({ action: 'fill', target: candidates(el), value: el.value, identity });
   }, true);
 
   document.addEventListener('change', (e) => {
@@ -262,6 +273,16 @@ const RECORDER_SCRIPT = String.raw`(() => {
   }, true);
 
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && window.__buggpsPickKind) {
+      window.__buggpsPickKind = null;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const focused = e.composedPath()[0];
+      if (fromToolbar(e) && focused instanceof HTMLElement) focused.blur();
+      if (lastApplicationFocus?.isConnected) lastApplicationFocus.focus({ preventScroll: true });
+      window.__buggpsToast && window.__buggpsToast('已取消选择 / selection cancelled');
+      return;
+    }
     if (fromToolbar(e)) return;
     const el = e.target;
     if (e.key === 'Enter' && (el instanceof HTMLInputElement)) send({ action: 'press', target: candidates(el), value: 'Enter' });
@@ -291,6 +312,7 @@ const TOOLBAR_SCRIPT = String.raw`(() => {
     root.querySelectorAll('button[data-k]').forEach((b) => b.addEventListener('click', () => {
       const k = b.dataset.k;
       if (k === 'no-page-error') {
+        window.__buggpsPickKind = null;
         window.__buggpsRecord({ type: 'expect', expectation: { kind: k } });
         msg.textContent = '✓ 不应报错。再用「应可见 / 预期文本」标出正确结果 / now also mark what SHOULD show';
         return;
@@ -303,6 +325,7 @@ const TOOLBAR_SCRIPT = String.raw`(() => {
       msg.textContent = '⚑ 已标记关键步骤 / key step pinned';
     });
     root.querySelector('.stop').addEventListener('click', () => {
+      window.__buggpsPickKind = null;
       msg.textContent = '已结束 / stopped';
       window.__buggpsRecord({ type: 'stop' });
     });
@@ -321,25 +344,42 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   const context = await browser.newContext({ viewport: toolbar ? null : undefined });
   const steps = [{ action: 'goto', url: startPath }];
   const dropped = [];
-  // expectation: the primary check (its failure is the bug's signature). also: further checks
-  // that must pass after the fix. "No error" plus a positive check keeps both; a second
-  // positive check of the same kind replaces the first (the user corrected themselves).
+  // The first check remains primary; additional targets and kinds remain independent.
+  // Selecting the same target and kind again edits only that condition.
   const result = { expectation: null, also: [], expectedFrom: null };
   let finish;
   const finished = new Promise((r) => { finish = r; });
+  let lastFillIdentity = null;
+  const secretFields = new Map();
+  const secretNames = new Set();
   await context.exposeBinding('__buggpsRecord', (_src, ev) => {
+    if (ev?.type) lastFillIdentity = null;
     if (ev?.type === 'expect') { addExpectation(result, ev.expectation, ev.current); return; }
     if (ev?.type === 'checkpoint') { steps[steps.length - 1].check = ev.check; return; }
     if (ev?.type === 'stop') { finish('stop'); return; }
     if (ev?.type === 'pin') { if (steps.length > 1) steps[steps.length - 1].pinned = true; return; }
     if (!ev?.target?.length) { dropped.push(ev); return; }
-    if (ev.secret !== undefined) { ev = { action: ev.action, target: ev.target, value: { secret: secretName(ev.secret) } }; }
+    const { identity, ...action } = ev;
+    ev = action;
+    if (ev.secret !== undefined) {
+      const field = identity || JSON.stringify(ev.target);
+      if (!secretFields.has(field)) {
+        const base = secretName(ev.secret);
+        let name = base;
+        let suffix = 2;
+        while (secretNames.has(name)) name = base + '_' + suffix++;
+        secretNames.add(name);
+        secretFields.set(field, name);
+      }
+      ev = { action: ev.action, target: ev.target, value: { secret: secretFields.get(field) } };
+    }
     const prev = steps[steps.length - 1];
-    if (ev.action === 'fill' && prev?.action === 'fill' && sameTarget(prev.target, ev.target)) {
+    if (ev.action === 'fill' && prev?.action === 'fill' && identity && identity === lastFillIdentity && !prev.check && !prev.pinned) {
       prev.value = ev.value; // one human "type into field" action, not one step per keystroke
       return;
     }
     steps.push(ev);
+    lastFillIdentity = ev.action === 'fill' ? identity : null;
   });
   await context.addInitScript(RECORDER_SCRIPT);
   if (toolbar) await context.addInitScript(TOOLBAR_SCRIPT);
@@ -366,19 +406,13 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
 }
 
 function addExpectation(result, exp, current) {
-  const negative = (e) => NEGATIVE_KINDS.has(e.kind);
   const p = result.expectation;
-  if (!p || negative(p) === negative(exp)) {
+  const keyOf = (e) => JSON.stringify([e.kind, e.target ?? null]);
+  if (!p || keyOf(p) === keyOf(exp)) {
     result.expectation = exp;
     result.expectedFrom = current ?? null;
     return;
   }
-  // One positive and one negative: the earlier one stays primary (it is what the user saw go
-  // wrong first), the other must hold after the fix too.
-  const key = JSON.stringify([exp.kind, exp.target ?? null]);
-  result.also = [...result.also.filter((e) => JSON.stringify([e.kind, e.target ?? null]) !== key), exp];
-}
-
-function sameTarget(a, b) {
-  return JSON.stringify(a?.[0]) === JSON.stringify(b?.[0]);
+  const key = keyOf(exp);
+  result.also = [...result.also.filter((e) => keyOf(e) !== key), exp];
 }
