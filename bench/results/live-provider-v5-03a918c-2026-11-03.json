@@ -1,0 +1,228 @@
+{
+  "schema": "buggps.provider-check/v1",
+  "at": "2026-11-02T18:32:04.323Z",
+  "provider": "deepseek-account",
+  "model": "deepseek-flash",
+  "input": "scripted-recording",
+  "application": "seeded-example",
+  "checks": [
+    {
+      "scenario": "stale-discount",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 134198,
+      "calls": [
+        {
+          "tool": "skill",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_status",
+          "status": "OK"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "glob",
+          "status": "completed"
+        },
+        {
+          "tool": "grep",
+          "status": "completed"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_lock",
+          "status": "LOCKED"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "NO_CODE_CHANGE"
+        },
+        {
+          "tool": "edit",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "VERIFIED"
+        }
+      ],
+      "usageByStep": [
+        {
+          "step": 1,
+          "inputTokens": 669,
+          "outputTokens": 67,
+          "cacheReadTokens": 4864,
+          "cacheWriteTokens": 0,
+          "totalTokens": 5600
+        },
+        {
+          "step": 2,
+          "inputTokens": 841,
+          "outputTokens": 82,
+          "cacheReadTokens": 5504,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6427
+        },
+        {
+          "step": 3,
+          "inputTokens": 724,
+          "outputTokens": 220,
+          "cacheReadTokens": 6400,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7344
+        },
+        {
+          "step": 4,
+          "inputTokens": 1932,
+          "outputTokens": 665,
+          "cacheReadTokens": 7296,
+          "cacheWriteTokens": 0,
+          "totalTokens": 9893
+        },
+        {
+          "step": 5,
+          "inputTokens": 278,
+          "outputTokens": 178,
+          "cacheReadTokens": 9856,
+          "cacheWriteTokens": 0,
+          "totalTokens": 10312
+        },
+        {
+          "step": 6,
+          "inputTokens": 199,
+          "outputTokens": 322,
+          "cacheReadTokens": 10240,
+          "cacheWriteTokens": 0,
+          "totalTokens": 10761
+        },
+        {
+          "step": 7,
+          "inputTokens": 182,
+          "outputTokens": 98,
+          "cacheReadTokens": 10624,
+          "cacheWriteTokens": 0,
+          "totalTokens": 10904
+        },
+        {
+          "step": 8,
+          "inputTokens": 1043,
+          "outputTokens": 679,
+          "cacheReadTokens": 10880,
+          "cacheWriteTokens": 0,
+          "totalTokens": 12602
+        }
+      ],
+      "rawSha256": "2b922a287df1316532d2fc47c8f22da4bda157947e2db4e384bc4706004832b3",
+      "recordedSteps": 19,
+      "verdict": "VERIFIED",
+      "tally": {
+        "pass": 3
+      },
+      "reviewReasons": [],
+      "baselineMatches": true,
+      "caseSha256": "408931cc061afb32367c862835f3c25e7ab82b2ffdf3fe8eb6cd053aacd1e4d5",
+      "lockSha256": "284492bdcfc96132dbd6cc3eb7d1474d80eaa06d258b59b789f2d511ae7aa16c",
+      "patchSha256": "add285c92e3803f1c937bf4a50bb65e5dd741b353b181af49276235d0337983f",
+      "finalNamesVerdict": true,
+      "protectedSnapshots": 4,
+      "protectedSnapshotsUnchanged": true
+    },
+    {
+      "scenario": "changelog-crash",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 40855,
+      "calls": [
+        {
+          "tool": "skill",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_status",
+          "status": "OK"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "NEEDS_REVIEW"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        }
+      ],
+      "usageByStep": [
+        {
+          "step": 1,
+          "inputTokens": 620,
+          "outputTokens": 54,
+          "cacheReadTokens": 4864,
+          "cacheWriteTokens": 0,
+          "totalTokens": 5538
+        },
+        {
+          "step": 2,
+          "inputTokens": 697,
+          "outputTokens": 91,
+          "cacheReadTokens": 5504,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6292
+        },
+        {
+          "step": 3,
+          "inputTokens": 150,
+          "outputTokens": 68,
+          "cacheReadTokens": 6272,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6490
+        },
+        {
+          "step": 4,
+          "inputTokens": 464,
+          "outputTokens": 158,
+          "cacheReadTokens": 6400,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7022
+        },
+        {
+          "step": 5,
+          "inputTokens": 389,
+          "outputTokens": 1022,
+          "cacheReadTokens": 6912,
+          "cacheWriteTokens": 0,
+          "totalTokens": 8323
+        }
+      ],
+      "rawSha256": "af186b9837b502ea4da4d1bae84a5a891c46f6a169ea8a0201dcae7427e55013",
+      "recordedSteps": 13,
+      "verdict": "NEEDS_REVIEW",
+      "tally": {
+        "pass": 3
+      },
+      "reviewReasons": [
+        "disabled-control"
+      ],
+      "baselineMatches": null,
+      "caseSha256": "38686a5f7f64e2d62695673244a6759e66d06cf3889c464d5fa68a485e61e29e",
+      "lockSha256": "d19e6d1c4bb9f6e163b298fcbb2e6064c7902bb5c542bc72c852a11a6133ffdb",
+      "patchSha256": "0a628b35f80698492b6d3514e191bf0cc6b35db4576c9801dc06d8c60f0aaf17",
+      "finalNamesVerdict": true,
+      "protectedSnapshots": 5,
+      "protectedSnapshotsUnchanged": true
+    }
+  ],
+  "expectedScenarios": [
+    "stale-discount",
+    "changelog-crash"
+  ],
+  "monetaryCost": null,
+  "dshVersion": "0.2.1-rc.5",
+  "pluginCommit": "03a918cac942bc918c311cdeb518fdca59f7cb8a",
+  "outcome": "PASSED"
+}
