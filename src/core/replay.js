@@ -6,6 +6,7 @@ import { resolveValue } from './secrets.js';
 import { TestDefinitionError } from './errors.js';
 import { browserOptions, validateViewport } from './browser-options.js';
 import { canonicalJson } from './canonical.js';
+import { executionBudget } from './execution-budget.js';
 
 const NETWORK_DOWN = /ERR_CONNECTION_REFUSED|ERR_NAME_NOT_RESOLVED|ERR_CONNECTION_RESET|ERR_ADDRESS_UNREACHABLE|ERR_UNSAFE_PORT|ERR_INTERNET_DISCONNECTED/;
 
@@ -15,23 +16,26 @@ const NETWORK_DOWN = /ERR_CONNECTION_REFUSED|ERR_NAME_NOT_RESOLVED|ERR_CONNECTIO
  *     'precondition-fail': the recorded situation was not reached, so the end result says nothing;
  *   - after the last step the primary `expectation` is evaluated, then every check in `also`;
  *   - after initial success, checks are sampled throughout `observeMs` with a 50 ms target interval.
- * @returns {Promise<{outcome:'pass'|'fail'|'precondition-fail'|'step-error'|'env-error'|'test-invalid'|'aborted', ...}>}
+ * maxMs covers the whole trial. Closing its own context gets at most 2 s of cleanup
+ * grace; an unfinished cleanup is reported, never hidden behind a passing result.
+ * @returns {Promise<{outcome:'pass'|'fail'|'precondition-fail'|'step-error'|'env-error'|'test-invalid'|'aborted'|'budget-exhausted', ...}>}
  */
-export async function runTrial(browser, { baseUrl, steps, expectation, also = [], observeMs = 0, browser: settings, stepTimeoutMs = 5000, navTimeoutMs = 45_000, settleMs = 250, signal, probe }) {
-  const started = Date.now();
+export async function runTrial(browser, { baseUrl, steps, expectation, also = [], observeMs = 0, browser: settings, stepTimeoutMs = 5000, navTimeoutMs = 45_000, settleMs = 250, maxMs = 180_000, signal: parentSignal, probe }) {
+  const started = performance.now();
+  const budget = executionBudget(maxMs, parentSignal);
+  const signal = budget.signal;
   const obs = { pageErrors: [], consoleErrors: [], failedRequests: [] };
   let context;
-  try {
-    context = await browser.newContext(browserOptions(settings));
-  } catch (err) {
-    if (err instanceof TestDefinitionError) return { outcome: 'test-invalid', reason: err.message, durationMs: Date.now() - started };
-    return { outcome: 'env-error', reason: `newContext failed: ${err.message}`, durationMs: Date.now() - started };
-  }
-  const page = await context.newPage();
-  page.on('pageerror', (e) => obs.pageErrors.push(e?.name ? `${e.name}: ${e.message}` : String(e)));
-  page.on('console', (m) => { if (m.type() === 'error') obs.consoleErrors.push(m.text()); });
-  page.on('response', (r) => { if (r.status() >= 400) obs.failedRequests.push(`${r.status()} ${r.request().method()} ${requestUrl(r.url())}`); });
-  page.on('requestfailed', (r) => obs.failedRequests.push(`${r.failure()?.errorText ?? 'request failed'} ${r.method()} ${requestUrl(r.url())}`));
+  let page;
+  let opening = false;
+  let closing;
+  const closeContext = () => {
+    if (!context) return undefined;
+    closing ??= Promise.resolve().then(() => context.close());
+    // A late context may arrive after the caller has already returned.
+    void closing.catch(() => {});
+    return closing;
+  };
 
   const disabledSteps = [];
   // Steps whose target only resolved through the loose (substring) fallback: weaker evidence
@@ -46,7 +50,7 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
   };
   let observation;
   const stepMs = [];
-  const done = (r) => ({ ...r, resolutionProfile, ...(disabledSteps.length ? { disabledSteps } : {}), ...(looseSteps.length ? { looseSteps } : {}), ...(looseChecks.size ? { looseChecks: [...looseChecks].sort() } : {}), ...(observation ? { observation } : {}), stepMs, durationMs: Date.now() - started, observations: obs });
+  const done = (r) => ({ ...r, resolutionProfile, ...(disabledSteps.length ? { disabledSteps } : {}), ...(looseSteps.length ? { looseSteps } : {}), ...(looseChecks.size ? { looseChecks: [...looseChecks].sort() } : {}), ...(observation ? { observation } : {}), stepMs, durationMs: Math.ceil(performance.now() - started), observations: obs });
   const checked = (key, value) => { resolved(key, value); if (value?.loose) looseChecks.add(key); };
   const checks = [expectation, ...also];
   const history = checks.map((check) => check?.kind === 'visible' ? { seen: false } : null);
@@ -54,7 +58,7 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
   let currentStep = -1;
   const sawVisible = (index, candidate, source) => {
     if (!active || !history[index]) return;
-    Object.assign(history[index], { seen: true, candidate, source, stepIndex: currentStep, elapsedMs: Date.now() - started });
+    Object.assign(history[index], { seen: true, candidate, source, stepIndex: currentStep, elapsedMs: Math.ceil(performance.now() - started) });
   };
   const checkObservations = checks.map((_, index) => ({
     ...obs,
@@ -81,17 +85,46 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
   // Poll between actions as well as after them: an asynchronous element may disappear
   // before the next action completes. Only a missing final target uses the earlier candidate.
   let poll;
-  if (history.some(Boolean)) poll = setInterval(() => { void sampleVisibility().catch(() => {}); }, 100);
   const complete = (r) => done({ ...r, ...(history.some(Boolean) ? { visibilityHistory: visibilityHistory() } : {}) });
-  try {
+  const interrupted = () => complete({ outcome: budget.stopped() ?? 'aborted', ...(currentStep >= 0 ? { stepIndex: currentStep } : {}) });
+  let interrupt;
+  const interruption = new Promise((resolve) => { interrupt = resolve; });
+  const onAbort = () => { active = false; void closeContext(); interrupt(interrupted()); };
+  signal.addEventListener('abort', onAbort, { once: true });
+
+  const execute = async () => {
+    if (budget.stopped()) return interrupted();
+    try {
+      opening = true;
+      context = await browser.newContext(browserOptions(settings));
+      opening = false;
+      if (budget.stopped()) { void closeContext(); return interrupted(); }
+    } catch (err) {
+      opening = false;
+      if (budget.stopped()) return interrupted();
+      if (err instanceof TestDefinitionError) return done({ outcome: 'test-invalid', reason: err.message });
+      return done({ outcome: 'env-error', reason: `newContext failed: ${firstLine(err)}` });
+    }
+    try {
+      page = await context.newPage();
+    } catch (err) {
+      if (budget.stopped()) return interrupted();
+      return done({ outcome: 'env-error', reason: `newPage failed: ${firstLine(err)}` });
+    }
+    if (budget.stopped()) return interrupted();
+    page.on('pageerror', (e) => obs.pageErrors.push(e?.name ? `${e.name}: ${e.message}` : String(e)));
+    page.on('console', (m) => { if (m.type() === 'error') obs.consoleErrors.push(m.text()); });
+    page.on('response', (r) => { if (r.status() >= 400) obs.failedRequests.push(`${r.status()} ${r.request().method()} ${requestUrl(r.url())}`); });
+    page.on('requestfailed', (r) => obs.failedRequests.push(`${r.failure()?.errorText ?? 'request failed'} ${r.method()} ${requestUrl(r.url())}`));
+    if (history.some(Boolean)) poll = setInterval(() => { void sampleVisibility().catch(() => {}); }, 100);
     for (let i = 0; i < steps.length; i++) {
       currentStep = i;
       if (signal?.aborted) return done({ outcome: 'aborted', stepIndex: i });
       const step = steps[i];
-      const t0 = Date.now();
+      const t0 = performance.now();
       const r = await runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs, signal });
       resolved(`step:${i}`, r.resolvedBy);
-      stepMs.push(Date.now() - t0);
+      stepMs.push(Math.ceil(performance.now() - t0));
       if (signal?.aborted) return done({ outcome: 'aborted', stepIndex: i });
       if (!r.ok) {
         if (r.env) return done({ outcome: 'env-error', stepIndex: i, reason: r.reason });
@@ -100,6 +133,7 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
       if (r.disabled) disabledSteps.push(i);
       if (r.loose) looseSteps.push(i);
       await settle(page);
+      if (budget.stopped()) return interrupted();
       if (step.check) {
         const c = await evaluate(page, step.check, obs, { settleMs: 1000, onResolution: (value) => checked(`checkpoint:${i}`, value) });
         if (!c.pass) return done({ outcome: 'precondition-fail', stepIndex: i, observed: c.observed ?? null, reason: `checkpoint after step ${i + 1} not met: ${c.invalid ?? c.observed}` });
@@ -129,18 +163,44 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
       } while (performance.now() < deadline);
     }
     return complete({ outcome: 'pass', ...(observeMs > 0 ? { observedMs: observeMs } : {}) });
+  };
+  let result;
+  let cleanup;
+  try {
+    result = await Promise.race([execute(), interruption]);
   } catch (err) {
-    if (signal?.aborted) return done({ outcome: 'aborted' });
-    if (err instanceof TestDefinitionError) return done({ outcome: 'test-invalid', reason: err.message });
-    if (NETWORK_DOWN.test(err.message)) return done({ outcome: 'env-error', reason: firstLine(err) });
-    return done({ outcome: 'step-error', reason: firstLine(err) });
+    if (budget.stopped()) result = interrupted();
+    else if (err instanceof TestDefinitionError) result = done({ outcome: 'test-invalid', reason: err.message });
+    else if (NETWORK_DOWN.test(err.message)) result = done({ outcome: 'env-error', reason: firstLine(err) });
+    else result = done({ outcome: 'step-error', reason: firstLine(err) });
   } finally {
     active = false;
     clearInterval(poll);
-    // Closing the target cancels outstanding DOM reads, including a frozen renderer.
-    await context.close().catch(() => {});
-    await pendingSample?.catch(() => {});
+    signal.removeEventListener('abort', onAbort);
+    // Closing only this trial's context cancels pending DOM reads, including a frozen
+    // renderer. Do not close the browser shared with unrelated tasks.
+    const close = closeContext();
+    cleanup = close ? await finishCleanup(close) : opening ? { status: 'pending', reason: 'context creation has not finished; late contexts will be closed' } : null;
+    void pendingSample?.catch(() => {});
+    const stopped = budget.stopped();
+    budget.dispose();
+    if (stopped) result = interrupted();
   }
+  if (cleanup && cleanup.status !== 'closed') {
+    if (!['aborted', 'budget-exhausted'].includes(result.outcome)) result = complete({ outcome: 'env-error', reason: `context cleanup ${cleanup.status}` });
+    result.cleanup = cleanup;
+  }
+  return { ...result, durationMs: Math.ceil(performance.now() - started) };
+}
+
+async function finishCleanup(close) {
+  let timer;
+  try {
+    return await Promise.race([
+      close.then(() => ({ status: 'closed' }), (err) => ({ status: 'failed', reason: firstLine(err) })),
+      new Promise((resolve) => { timer = setTimeout(() => resolve({ status: 'pending', reason: 'context close exceeded 2000 ms cleanup grace' }), 2000); }),
+    ]);
+  } finally { clearTimeout(timer); }
 }
 
 // Keep the first business failure for the summary, but bind its fingerprint to every

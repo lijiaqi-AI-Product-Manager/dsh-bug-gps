@@ -13,6 +13,7 @@ import { runTrial } from './replay.js';
 import { signatureKey } from './oracle.js';
 import { contractOf, reproduce, Status } from './reproduce.js';
 import { resolveTarget } from './locator.js';
+import { executionBudget, integerOption } from './execution-budget.js';
 
 const FAIL = 'FAIL';
 const PASS = 'PASS';
@@ -36,96 +37,117 @@ export async function minimize(browser, testCase, {
   // judged PASS, which keeps steps (never a wrong reduction), and a PASS stops costing the
   // window. The final k/k confirmation always uses the case's own window.
   late = false,
-  signal,
+  signal: parentSignal,
 } = {}) {
-  const started = Date.now();
-  const contract = { ...contractOf(testCase), ...(late ? {} : { observeMs: 0 }) };
-  if (stepTimeoutMs === undefined) {
-    const timing = await runTrial(browser, { baseUrl, steps: testCase.steps, ...contract, signal });
-    const slowest = Math.max(0, ...timing.stepMs.filter((_, i) => testCase.steps[i]?.action !== 'goto'));
-    stepTimeoutMs = Math.min(8000, Math.max(2000, 3 * slowest + 500));
-  }
+  const started = performance.now();
+  integerOption(maxTrials, 'maxTrials', 0);
+  integerOption(confirmRuns, 'confirmRuns');
+  integerOption(concurrency, 'concurrency');
+  if (!['units', 'ddmin'].includes(strategy)) throw new Error('Unknown minimization strategy');
   const steps = testCase.steps;
   const want = signatureKey(signature, match);
   if (!want) throw new Error('minimize() needs the signature of a REPRODUCED case');
-
-  // First goto is the precondition; steps the user pinned or attached a checkpoint to are kept
-  // as well (a candidate must also still pass every checkpoint, see replay.runTrial).
-  const pinned = new Set(steps.map((s, i) => (i === 0 || s.pinned || s.check ? i : -1)).filter((i) => i >= 0));
-  const cache = new Map();
+  const budget = executionBudget(maxMs, parentSignal);
+  const signal = budget.signal;
   const stats = { trials: 0, probeRuns: 0, cacheHits: 0, unresolved: 0, differentFailure: 0 };
   let exhausted = false;
-
-  const build = (idx) => [...new Set([...pinned, ...idx])].sort((a, b) => a - b);
-
-  async function trial(keep) {
-    stats.trials++;
-    const t = await runTrial(browser, { baseUrl, steps: keep.map((i) => steps[i]), ...contract, stepTimeoutMs, signal });
-    if (process.env.BUGGPS_DEBUG) console.error(`[minimize] keep=${keep.join(',')} -> ${t.outcome} ${t.observed ?? t.reason ?? ''} (${t.durationMs}ms)`);
-    if (t.outcome === 'pass') return PASS;
-    if (t.outcome === 'fail' && signatureKey(t.signature, match) === want) return FAIL;
-    if (t.outcome === 'fail') stats.differentFailure++;
-    else stats.unresolved++;
-    return UNRESOLVED;
-  }
-
-  // Tests candidates in parallel (each in its own BrowserContext); callers pick the first FAIL
-  // in candidate order, so the result does not depend on scheduling.
-  async function testMany(candidates) {
-    const keys = candidates.map((idx) => build(idx).join(','));
-    const todo = [...new Set(keys.filter((k) => !cache.has(k)))];
-    stats.cacheHits += keys.length - todo.length;
-    let next = 0;
-    const worker = async () => {
-      while (next < todo.length) {
-        if (stats.trials >= maxTrials || Date.now() - started > maxMs || signal?.aborted) { exhausted = true; return; }
-        const key = todo[next++];
-        cache.set(key, await trial(key.split(',').map(Number)));
-      }
-    };
-    await Promise.all(Array.from({ length: Math.min(concurrency, todo.length) }, worker));
-    return keys.map((k) => cache.get(k) ?? UNRESOLVED);
-  }
-
-  let current = steps.map((_, i) => i).filter((i) => !pinned.has(i));
-
-  // Domain rule: of consecutive fills into the same target only the last one matters.
-  const collapsed = collapseFills(steps, current);
-  if (collapsed.length < current.length && (await testMany([collapsed]))[0] === FAIL) current = collapsed;
-
-  if (strategy === 'ddmin') {
-    current = await ddmin(current, testMany, () => exhausted);
-  } else {
-    // Dependencies are re-probed on the current reduced case each round: a step that was only
-    // needed to undo an earlier (now deleted) step stops looking like a precondition.
-    const depsFor = async (idx) => {
-      stats.probeRuns++;
-      const keep = build(idx);
-      const local = await probeDependencies(browser, { baseUrl, steps: keep.map((i) => steps[i]), expectation: testCase.expectation, browser: testCase.browser, signal });
-      const deps = new Map();
-      local.forEach(({ all, last }, k) => deps.set(keep[k], { all: new Set([...all].map((j) => keep[j])), last: last === null ? null : keep[last] }));
-      if (process.env.BUGGPS_DEBUG) console.error(`[minimize] deps ${[...deps].map(([k, d]) => `${k}<-{${[...d.all]}} last=${d.last}`).join('  ')}`);
-      return deps;
-    };
-    current = await unitsPass(current, depsFor, pinned, testMany, () => exhausted);
-  }
-
-  const kept = build(current);
-  const minimized = { ...testCase, steps: kept.map((i) => steps[i]) };
-  // Re-confirm k/k: a candidate accepted on a single trial must hold up like the original.
-  const confirm = await reproduce(browser, minimized, { baseUrl, runs: confirmRuns, match, signal });
-  const confirmed = confirm.status === Status.REPRODUCED && confirm.signatureKey === want;
-  return {
-    status: exhausted ? Status.BUDGET_EXHAUSTED : 'DONE',
-    strategy,
-    confirmed,
-    originalSteps: steps.length,
-    minimizedSteps: confirmed ? kept.length : steps.length,
-    keptIndices: confirmed ? kept : steps.map((_, i) => i),
-    testCase: confirmed ? minimized : testCase,
-    confirm: { status: confirm.status, tally: confirm.tally },
-    stats: { ...stats, stepTimeoutMs, durationMs: Date.now() - started, modelCalls: 0 },
+  const stoppedStatus = () => budget.stopped() === 'aborted' ? Status.ABORTED : Status.BUDGET_EXHAUSTED;
+  const isExhausted = () => {
+    if (budget.stopped() || stats.trials >= maxTrials) exhausted = true;
+    return exhausted;
   };
+  const result = (kept = steps.map((_, i) => i), confirm = { status: stoppedStatus(), tally: {} }) => {
+    const confirmed = confirm.status === Status.REPRODUCED && confirm.signatureKey === want;
+    return {
+      status: budget.stopped() ? stoppedStatus() : exhausted ? Status.BUDGET_EXHAUSTED : 'DONE',
+      strategy,
+      confirmed,
+      originalSteps: steps.length,
+      minimizedSteps: confirmed ? kept.length : steps.length,
+      keptIndices: confirmed ? kept : steps.map((_, i) => i),
+      testCase: confirmed ? { ...testCase, steps: kept.map((i) => steps[i]) } : testCase,
+      confirm: { status: confirm.status, tally: confirm.tally },
+      stats: { ...stats, ...(stepTimeoutMs !== undefined ? { stepTimeoutMs } : {}), durationMs: Math.ceil(performance.now() - started), modelCalls: 0 },
+    };
+  };
+  try {
+    if (budget.stopped()) return result();
+    const contract = { ...contractOf(testCase), ...(late ? {} : { observeMs: 0 }) };
+    if (stepTimeoutMs === undefined) {
+      const timing = await runTrial(browser, { baseUrl, steps, ...contract, maxMs: budget.remainingMs(), signal });
+      if (budget.stopped()) return result();
+      const slowest = Math.max(0, ...timing.stepMs.filter((_, i) => testCase.steps[i]?.action !== 'goto'));
+      stepTimeoutMs = Math.min(8000, Math.max(2000, 3 * slowest + 500));
+    }
+
+    // First goto is the precondition; steps the user pinned or attached a checkpoint to are kept
+    // as well (a candidate must also still pass every checkpoint, see replay.runTrial).
+    const pinned = new Set(steps.map((s, i) => (i === 0 || s.pinned || s.check ? i : -1)).filter((i) => i >= 0));
+    const cache = new Map();
+
+    const build = (idx) => [...new Set([...pinned, ...idx])].sort((a, b) => a - b);
+
+    async function trial(keep) {
+      stats.trials++;
+      const t = await runTrial(browser, { baseUrl, steps: keep.map((i) => steps[i]), ...contract, stepTimeoutMs, maxMs: budget.remainingMs(), signal });
+      if (process.env.BUGGPS_DEBUG) console.error(`[minimize] keep=${keep.join(',')} -> ${t.outcome} ${t.observed ?? t.reason ?? ''} (${t.durationMs}ms)`);
+      if (t.outcome === 'pass') return PASS;
+      if (t.outcome === 'fail' && signatureKey(t.signature, match) === want) return FAIL;
+      if (t.outcome === 'fail') stats.differentFailure++;
+      else stats.unresolved++;
+      return UNRESOLVED;
+    }
+
+    // Tests candidates in parallel (each in its own BrowserContext); callers pick the first FAIL
+    // in candidate order, so the result does not depend on scheduling.
+    async function testMany(candidates) {
+      const keys = candidates.map((idx) => build(idx).join(','));
+      const todo = [...new Set(keys.filter((k) => !cache.has(k)))];
+      stats.cacheHits += keys.length - todo.length;
+      let next = 0;
+      const worker = async () => {
+        while (next < todo.length) {
+          if (isExhausted()) return;
+          const key = todo[next++];
+          cache.set(key, await trial(key.split(',').map(Number)));
+        }
+      };
+      await Promise.all(Array.from({ length: Math.min(concurrency, todo.length) }, worker));
+      return keys.map((k) => cache.get(k) ?? UNRESOLVED);
+    }
+
+    let current = steps.map((_, i) => i).filter((i) => !pinned.has(i));
+
+    // Domain rule: of consecutive fills into the same target only the last one matters.
+    const collapsed = collapseFills(steps, current);
+    if (collapsed.length < current.length && (await testMany([collapsed]))[0] === FAIL) current = collapsed;
+
+    if (strategy === 'ddmin') {
+      current = await ddmin(current, testMany, isExhausted);
+    } else {
+      // Dependencies are re-probed on the current reduced case each round: a step that was only
+      // needed to undo an earlier (now deleted) step stops looking like a precondition.
+      const depsFor = async (idx) => {
+        if (isExhausted()) return [];
+        stats.probeRuns++;
+        const keep = build(idx);
+        const local = await probeDependencies(browser, { baseUrl, steps: keep.map((i) => steps[i]), expectation: testCase.expectation, browser: testCase.browser, maxMs: budget.remainingMs(), signal });
+        const deps = new Map();
+        local.forEach(({ all, last }, k) => deps.set(keep[k], { all: new Set([...all].map((j) => keep[j])), last: last === null ? null : keep[last] }));
+        if (process.env.BUGGPS_DEBUG) console.error(`[minimize] deps ${[...deps].map(([k, d]) => `${k}<-{${[...d.all]}} last=${d.last}`).join('  ')}`);
+        return deps;
+      };
+      current = await unitsPass(current, depsFor, pinned, testMany, isExhausted);
+    }
+
+    const kept = build(current);
+    const minimized = { ...testCase, steps: kept.map((i) => steps[i]) };
+    // Re-confirm k/k: a candidate accepted on a single trial must hold up like the original.
+    if (budget.stopped()) return result();
+    const confirm = await reproduce(browser, minimized, { baseUrl, runs: confirmRuns, match, maxMs: budget.remainingMs(), signal });
+    if (budget.stopped() && confirm.status !== Status.REPRODUCED) confirm.status = stoppedStatus();
+    return result(kept, confirm);
+  } finally { budget.dispose(); }
 }
 
 async function ddmin(current, testMany, isExhausted) {
@@ -196,19 +218,20 @@ async function unitsPass(current, depsFor, pinned, testMany, isExhausted) {
  * targets are usable (unique and visible); step k depends on step j when its target turned
  * usable right after j. Only an efficiency hint: every deletion is still tested by replay.
  */
-export async function probeDependencies(browser, { baseUrl, steps, expectation, browser: settings, signal }) {
+export async function probeDependencies(browser, { baseUrl, steps, expectation, browser: settings, maxMs = 180_000, signal }) {
   const ready = steps.map(() => []);
   const probe = async (page, i) => {
     // Open/close transitions leave elements visible for a few hundred ms; wait them out so a
     // closing dialog does not look like it is still there.
     await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== 'running'), null, { timeout: 1500 }).catch(() => {});
     for (let k = i + 1; k < steps.length; k++) {
+      if (signal?.aborted) return;
       if (!steps[k].target || steps[k].action === 'key') { ready[k][i] = true; continue; }
-      const r = await resolveTarget(page, steps[k].target, { timeoutMs: 0 });
+      const r = await resolveTarget(page, steps[k].target, { timeoutMs: 0, signal });
       ready[k][i] = r.ok && (await r.locator.isVisible().catch(() => false));
     }
   };
-  await runTrial(browser, { baseUrl, steps, expectation, browser: settings, signal, probe });
+  await runTrial(browser, { baseUrl, steps, expectation, browser: settings, maxMs, signal, probe });
   return steps.map((_, k) => {
     const all = new Set();
     let last = null;

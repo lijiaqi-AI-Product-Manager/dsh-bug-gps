@@ -3,6 +3,7 @@
 import { runTrial } from './replay.js';
 import { DEFAULT_OBSERVE_MS, signatureKey } from './oracle.js';
 import { mergeResolutionProfiles } from './canonical.js';
+import { executionBudget, integerOption } from './execution-budget.js';
 
 export const Status = Object.freeze({
   REPRODUCED: 'REPRODUCED',
@@ -25,22 +26,29 @@ export function contractOf(testCase) {
 // stepTimeoutMs only costs time when a target is really missing; heavy apps on a loaded machine
 // can need several seconds for a lazily loaded view, which must not read as a broken replay.
 export async function reproduce(browser, testCase, { baseUrl, runs = 3, match = testCase.match ?? 'strict', maxMs = 180_000, stepTimeoutMs = 10_000, signal } = {}) {
-  const started = Date.now();
+  const started = performance.now();
+  integerOption(runs, 'runs');
+  const budget = executionBudget(maxMs, signal);
   const trials = [];
-  for (let i = 0; i < runs; i++) {
-    if (signal?.aborted) return summarize(Status.ABORTED, trials, started);
-    if (Date.now() - started > maxMs) return summarize(Status.BUDGET_EXHAUSTED, trials, started);
-    const t = await runTrial(browser, { baseUrl, steps: testCase.steps, ...contractOf(testCase), stepTimeoutMs, signal });
-    trials.push(t);
-    // An environment failure makes later runs meaningless; stop early.
-    if (t.outcome === 'env-error') break;
-    if (t.outcome === 'aborted') return summarize(Status.ABORTED, trials, started);
-  }
-  return summarize(classify(trials, runs, match), trials, started, match);
+  const stopped = () => budget.stopped() === 'budget-exhausted' ? Status.BUDGET_EXHAUSTED : Status.ABORTED;
+  try {
+    for (let i = 0; i < runs; i++) {
+      if (budget.stopped()) return summarize(stopped(), trials, started);
+      const t = await runTrial(browser, { baseUrl, steps: testCase.steps, ...contractOf(testCase), stepTimeoutMs, maxMs: budget.remainingMs(), signal: budget.signal });
+      trials.push(t);
+      if (budget.stopped()) return summarize(stopped(), trials, started);
+      // An environment failure makes later runs meaningless; stop early.
+      if (t.outcome === 'env-error') break;
+      if (t.outcome === 'aborted') return summarize(Status.ABORTED, trials, started);
+    }
+    return summarize(classify(trials, runs, match), trials, started, match);
+  } finally { budget.dispose(); }
 }
 
 export function classify(trials, runs, match = 'strict') {
   if (trials.some((t) => t.outcome === 'env-error')) return Status.ENV_BLOCKED;
+  if (trials.some((t) => t.outcome === 'aborted')) return Status.ABORTED;
+  if (trials.some((t) => t.outcome === 'budget-exhausted')) return Status.BUDGET_EXHAUSTED;
   if (trials.length < runs) return Status.BUDGET_EXHAUSTED;
   if (trials.some((t) => t.outcome === 'test-invalid')) return Status.TEST_INVALID;
   const outcomes = new Set(trials.map((t) => t.outcome));
@@ -82,7 +90,7 @@ function summarize(status, trials, started, match = 'strict') {
     resolutionProfile: mergeResolutionProfiles(trials.map((t) => t.resolutionProfile)),
     ...(trials.some((t) => t.visibilityHistory) ? { visibilityHistory: trials.map((t) => t.visibilityHistory ?? {}) } : {}),
     ...(trials.some((t) => t.observation) ? { observation: { method: 'poll', intervalMs: 50, runs: trials.map((t) => t.observation ?? null) } } : {}),
-    durationMs: Date.now() - started,
+    durationMs: Math.ceil(performance.now() - started),
     trials: trials.map(({ observations, ...rest }) => ({ ...rest, pageErrors: observations?.pageErrors?.length ?? 0 })),
   };
 }
