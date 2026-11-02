@@ -1,0 +1,80 @@
+{
+  "case": "chartdb-896",
+  "kind": "REAL app",
+  "input": "REAL app, scripted session + human-style pins on steps 13,14",
+  "binding": "managed",
+  "at": "2026-11-02T02:47:57.756Z",
+  "recordedSteps": 16,
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "No default"
+      }
+    ],
+    "equals": ""
+  },
+  "reproduce": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "0",
+    "reason": null,
+    "stepIndex": null,
+    "ms": 43673
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "steps": "16 -> 16",
+    "kept": [
+      "/",
+      "click Toggle bold",
+      "click Empty diagram",
+      "click Skip & Empty",
+      "click Add Table",
+      "key undefined=\"Escape\"",
+      "click Add Table",
+      "key undefined=\"Escape\"",
+      "click Refs",
+      "click Tables",
+      "click button",
+      "fill No default=\"0\"",
+      "key undefined=\"Escape\"",
+      "click bigint",
+      "click text",
+      "click button"
+    ],
+    "stats": {
+      "trials": 17,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 17,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2716,
+      "durationMs": 117649,
+      "modelCalls": 0
+    }
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "minimizedKept": null,
+    "reason": null,
+    "tally": {
+      "fail": 3
+    }
+  },
+  "verifyBeforeFix": "NO_CODE_CHANGE",
+  "verifyWithRealFix": {
+    "verdict": "FLAKY",
+    "tally": {
+      "step-error": 1,
+      "pass": 2
+    },
+    "observed": null,
+    "reason": "target not-found"
+  }
+}

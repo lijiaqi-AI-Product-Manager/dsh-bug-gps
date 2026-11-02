@@ -1,0 +1,63 @@
+{
+  "case": "chartdb-896",
+  "kind": "REAL app",
+  "input": "REAL app, scripted session + human-style pins on steps 13,14",
+  "binding": "managed",
+  "at": "2026-11-02T02:37:22.146Z",
+  "recordedSteps": 16,
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "No default"
+      }
+    ],
+    "equals": ""
+  },
+  "reproduce": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "0",
+    "reason": null,
+    "stepIndex": null,
+    "ms": 46226
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "steps": "16 -> 12",
+    "kept": [
+      "/",
+      "click Empty diagram",
+      "click Skip & Empty",
+      "click Add Table",
+      "key undefined=\"Escape\"",
+      "key undefined=\"Escape\"",
+      "click Tables",
+      "click button",
+      "fill No default=\"0\"",
+      "click bigint",
+      "click text",
+      "click button"
+    ],
+    "stats": {
+      "trials": 53,
+      "probeRuns": 4,
+      "cacheHits": 8,
+      "unresolved": 44,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2454,
+      "durationMs": 362060,
+      "modelCalls": 0
+    }
+  },
+  "lock": {
+    "status": "FLAKY",
+    "minimizedKept": null,
+    "reason": null
+  }
+}

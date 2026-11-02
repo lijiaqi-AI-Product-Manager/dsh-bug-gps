@@ -1,10 +1,15 @@
 // Scripted Messages-API SSE server (adapted from spikes/s1-dsh/mock/server.mjs). Each
 // request that carries tools consumes the next scripted step; requests without tools (session
-// titles) get plain text. Usage: node mock-model.mjs <port> <scenario.json> <log.jsonl>
+// titles) get plain text. With [watch-file], every logged request also records that file's
+// sha256 at the moment the request arrived (null if absent), so a test can see changes made
+// DURING the agent turn, not just before and after it.
+// Usage: node mock-model.mjs <port> <scenario.json> <log.jsonl> [watch-file]
 import { createServer } from 'node:http';
 import { appendFileSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
-const [port, scenarioFile, logFile] = process.argv.slice(2);
+const [port, scenarioFile, logFile, watchFile] = process.argv.slice(2);
+const watchSha = () => { if (!watchFile) return undefined; try { return createHash('sha256').update(readFileSync(watchFile)).digest('hex'); } catch { return null; } };
 const steps = JSON.parse(readFileSync(scenarioFile, 'utf8'));
 let step = 0;
 
@@ -37,7 +42,7 @@ createServer((req, res) => {
     try { body = JSON.parse(raw || '{}'); } catch { /* keep empty */ }
     const tools = (body.tools ?? []).map((t) => t.name);
     const out = tools.length === 0 ? { text: 'BugGPS e2e' } : steps[Math.min(step++, steps.length - 1)];
-    appendFileSync(logFile, JSON.stringify({ t: new Date().toISOString(), tools, messages: body.messages, reply: out }) + '\n');
+    appendFileSync(logFile, JSON.stringify({ t: new Date().toISOString(), tools, watchSha: watchSha(), messages: body.messages, reply: out }) + '\n');
     sse(res, out, step);
   });
 }).listen(Number(port), '127.0.0.1', () => console.log(`mock ready ${port}`));

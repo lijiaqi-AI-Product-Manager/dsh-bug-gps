@@ -40,6 +40,43 @@ test('a junction that points into .buggps/ is followed and denied', (t) => {
   rmSync(link, { force: true, recursive: false });
 });
 
+test('relative paths resolve against the session directory, not only the process cwd', (t) => {
+  const elsewhere = mkdtempSync(join(tmpdir(), 'buggps host cwd '));
+  const link = join(repo, 'innocent2');
+  try { symlinkSync(join(repo, '.buggps', 'cases'), link, 'junction'); } catch (err) { t.skip(`cannot create junction: ${err.message}`); return; }
+  try {
+    const exec = { name: 'write', arguments: { file_path: 'innocent2/c1/case.json' } };
+    // Resolved only against an unrelated host cwd the junction is not seen (the old behaviour).
+    assert.equal(protectedReason(exec, [elsewhere]), undefined);
+    // With the session directory among the bases it is followed and denied.
+    assert.ok(protectedReason(exec, [repo, elsewhere]));
+    assert.ok(protectedReason(exec, [elsewhere, repo]));
+  } finally {
+    rmSync(link, { force: true, recursive: false });
+    rmSync(elsewhere, { force: true, recursive: true });
+  }
+});
+
+test('plugin entry: the registered guard resolves against the DSH session directory', async (t) => {
+  const { apply } = await import('../src/dsh/index.js');
+  let guardFn;
+  const registered = [];
+  const ctx = {
+    get: (n) => (n === 'workingDirectory' ? { get: () => repo, ensure: async () => repo } : undefined),
+    tools: { guard: (f) => { guardFn = f; }, register: (tool) => registered.push(tool) },
+    skills: { register: () => {} },
+  };
+  apply(ctx);
+  assert.equal(registered.length, 4);
+  const link = join(repo, 'innocent3');
+  try { symlinkSync(join(repo, '.buggps', 'cases'), link, 'junction'); } catch (err) { t.skip(`cannot create junction: ${err.message}`); return; }
+  try {
+    assert.notEqual(process.cwd(), repo);
+    assert.ok(guardFn({ name: 'write', arguments: { file_path: 'innocent3/c1/case.json' }, agent: { session: {} } }));
+    assert.equal(guardFn({ name: 'write', arguments: { file_path: 'src/app.js' }, agent: { session: {} } }), undefined);
+  } finally { rmSync(link, { force: true, recursive: false }); }
+});
+
 test('shell: obvious writes are denied, reads pass (best effort only; the hash is the real check)', () => {
   assert.ok(call('pwsh', { command: 'Set-Content -Path .buggps/cases/c1/case.json -Value x' }));
   assert.ok(call('bash', { command: 'echo {} > .buggps/cases/c1/lock.json' }));

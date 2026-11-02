@@ -5,17 +5,39 @@ import { resolveTarget, targetKey } from './locator.js';
 import { TestDefinitionError } from './errors.js';
 
 export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'no-page-error', 'no-console-error', 'no-failed-request'];
+// "Nothing went wrong" kinds. On their own they cannot show the feature works again (deleting
+// the handler also removes the error), so a fix checked only by these is never VERIFIED.
+export const NEGATIVE_KINDS = new Set(['no-page-error', 'no-console-error', 'no-failed-request']);
+const STATE_KINDS = ['text', 'value', 'visible', 'hidden'];
+// How long a passing result must keep passing after the last step. Recorded in the case.
+export const DEFAULT_OBSERVE_MS = 1000;
 
-export function validateExpectation(exp) {
-  if (!exp || !EXPECTATION_KINDS.includes(exp.kind)) {
-    throw new TestDefinitionError(`Expectation kind must be one of ${EXPECTATION_KINDS.join(', ')}`);
+export function validateExpectation(exp, { checkpoint = false } = {}) {
+  const kinds = checkpoint ? STATE_KINDS : EXPECTATION_KINDS;
+  if (!exp || !kinds.includes(exp.kind)) {
+    throw new TestDefinitionError(`${checkpoint ? 'Checkpoint' : 'Expectation'} kind must be one of ${kinds.join(', ')}`);
   }
-  if (['text', 'value', 'visible', 'hidden'].includes(exp.kind) && !exp.target) {
+  if (STATE_KINDS.includes(exp.kind) && !exp.target) {
     throw new TestDefinitionError(`Expectation "${exp.kind}" needs a target`);
   }
   if (['text', 'value'].includes(exp.kind) && typeof exp.equals !== 'string') {
     throw new TestDefinitionError(`Expectation "${exp.kind}" needs a string "equals"`);
   }
+}
+
+/** Validates the whole contract of a case: primary expectation, extra checks, checkpoints. */
+export function validateCase(testCase) {
+  validateExpectation(testCase.expectation);
+  for (const e of testCase.also ?? []) validateExpectation(e);
+  for (const s of testCase.steps ?? []) if (s.check) validateExpectation(s.check, { checkpoint: true });
+  if (testCase.observeMs !== undefined && !(Number.isInteger(testCase.observeMs) && testCase.observeMs >= 0 && testCase.observeMs <= 30_000)) {
+    throw new TestDefinitionError('observeMs must be an integer between 0 and 30000');
+  }
+}
+
+/** True when some final check proves a positive outcome (not just "no error"). */
+export function hasPositiveCheck(testCase) {
+  return [testCase.expectation, ...(testCase.also ?? [])].some((e) => e && !NEGATIVE_KINDS.has(e.kind));
 }
 
 /**

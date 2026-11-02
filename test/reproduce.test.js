@@ -65,3 +65,17 @@ test('uncaught page error is reproduced with a normalized signature', async () =
   assert.equal(r.status, Status.REPRODUCED);
   assert.match(r.signature.actual, /TypeError/);
 });
+
+test('a page that never finishes loading is ENV_BLOCKED, never TEST_INVALID', async () => {
+  const { createServer } = await import('node:http');
+  const { runTrial } = await import('../src/core/replay.js');
+  const { classify } = await import('../src/core/reproduce.js');
+  const hang = createServer(() => { /* accepts, never answers */ });
+  await new Promise((r) => hang.listen(0, '127.0.0.1', r));
+  try {
+    const t = await runTrial(env.browser, { baseUrl: `http://127.0.0.1:${hang.address().port}/`, steps: [{ action: 'goto', url: '/' }], expectation: { kind: 'no-page-error' }, navTimeoutMs: 1500 });
+    assert.equal(t.outcome, 'env-error');
+    assert.match(t.reason, /page load did not finish/);
+    assert.equal(classify([t], 1), Status.ENV_BLOCKED);
+  } finally { hang.closeAllConnections?.(); await new Promise((r) => hang.close(r)); }
+});

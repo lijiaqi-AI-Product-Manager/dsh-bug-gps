@@ -2,14 +2,20 @@
 // steps executed in order, then the expectation is evaluated. No model calls happen here.
 import { resolveTarget } from './locator.js';
 import { evaluate } from './oracle.js';
+import { resolveValue } from './secrets.js';
 import { TestDefinitionError } from './errors.js';
 
 const NETWORK_DOWN = /ERR_CONNECTION_REFUSED|ERR_NAME_NOT_RESOLVED|ERR_CONNECTION_RESET|ERR_ADDRESS_UNREACHABLE|ERR_UNSAFE_PORT|ERR_INTERNET_DISCONNECTED/;
 
 /**
- * @returns {Promise<{outcome:'pass'|'fail'|'step-error'|'env-error'|'test-invalid', ...}>}
+ * One trial of the case contract:
+ *   - after step i, `steps[i].check` (a checkpoint) must hold, or the trial is
+ *     'precondition-fail': the recorded situation was not reached, so the end result says nothing;
+ *   - after the last step the primary `expectation` is evaluated, then every check in `also`;
+ *   - a passing result must still pass `observeMs` later (late errors, values that flip back).
+ * @returns {Promise<{outcome:'pass'|'fail'|'precondition-fail'|'step-error'|'env-error'|'test-invalid'|'aborted', ...}>}
  */
-export async function runTrial(browser, { baseUrl, steps, expectation, stepTimeoutMs = 5000, navTimeoutMs = 15_000, settleMs = 250, signal, probe }) {
+export async function runTrial(browser, { baseUrl, steps, expectation, also = [], observeMs = 0, stepTimeoutMs = 5000, navTimeoutMs = 45_000, settleMs = 250, signal, probe }) {
   const started = Date.now();
   const obs = { pageErrors: [], consoleErrors: [], failedRequests: [] };
   let context;
@@ -24,8 +30,11 @@ export async function runTrial(browser, { baseUrl, steps, expectation, stepTimeo
   page.on('response', (r) => { if (r.status() >= 400) obs.failedRequests.push(`${r.status()} ${r.request().method()} ${r.url()}`); });
 
   const disabledSteps = [];
+  // Steps whose target only resolved through the loose (substring) fallback: weaker evidence
+  // that the same element was used. caselock compares them with the lock-time runs.
+  const looseSteps = [];
   const stepMs = [];
-  const done = (r) => ({ ...r, ...(disabledSteps.length ? { disabledSteps } : {}), stepMs, durationMs: Date.now() - started, observations: obs });
+  const done = (r) => ({ ...r, ...(disabledSteps.length ? { disabledSteps } : {}), ...(looseSteps.length ? { looseSteps } : {}), stepMs, durationMs: Date.now() - started, observations: obs });
   // Poll (not just between steps): content that renders asynchronously, then vanishes, would
   // otherwise be missed depending on timing.
   let poll;
@@ -50,15 +59,25 @@ export async function runTrial(browser, { baseUrl, steps, expectation, stepTimeo
         return done({ outcome: 'step-error', stepIndex: i, reason: r.reason });
       }
       if (r.disabled) disabledSteps.push(i);
+      if (r.loose) looseSteps.push(i);
       await settle(page);
+      if (step.check) {
+        const c = await evaluate(page, step.check, obs, { settleMs: 1000 });
+        if (!c.pass) return done({ outcome: 'precondition-fail', stepIndex: i, observed: c.observed ?? null, reason: `checkpoint after step ${i + 1} not met: ${c.invalid ?? c.observed}` });
+      }
       // Deterministic check after every step, in addition to the background poll.
       if (expectation?.kind === 'visible' && !obs.seenTarget && i < steps.length - 1) obs.seenTarget = await isVisibleNow(page, expectation.target);
       if (probe) await probe(page, i);
     }
-    const verdict = await evaluate(page, expectation, obs, { settleMs });
-    if (verdict.invalid) return done({ outcome: 'test-invalid', reason: verdict.invalid });
-    if (verdict.pass) return done({ outcome: 'pass' });
-    return done({ outcome: 'fail', signature: verdict.signature, observed: verdict.observed });
+    const checks = [expectation, ...also];
+    const first = await evaluateAll(page, checks, obs, { settleMs });
+    if (first) return done(first);
+    if (observeMs > 0) {
+      await page.waitForTimeout(observeMs);
+      const late = await evaluateAll(page, checks, obs, { settleMs: 0, targetWaitMs: 0, late: true });
+      if (late) return done({ ...late, late: true });
+    }
+    return done({ outcome: 'pass', ...(observeMs > 0 ? { observedMs: observeMs } : {}) });
   } catch (err) {
     if (err instanceof TestDefinitionError) return done({ outcome: 'test-invalid', reason: err.message });
     if (NETWORK_DOWN.test(err.message)) return done({ outcome: 'env-error', reason: firstLine(err) });
@@ -69,42 +88,64 @@ export async function runTrial(browser, { baseUrl, steps, expectation, stepTimeo
   }
 }
 
+// First failing check in order (primary first, so the RED signature is always the primary's),
+// or null when all pass.
+async function evaluateAll(page, checks, obs, { settleMs, targetWaitMs, late = false }) {
+  for (let k = 0; k < checks.length; k++) {
+    const v = await evaluate(page, checks[k], obs, { settleMs, ...(targetWaitMs !== undefined ? { targetWaitMs } : {}) });
+    if (v.pass) continue;
+    if (v.invalid) {
+      // Seen once and then gone is a real failure, not an unusable expectation.
+      if (late) return { outcome: 'fail', check: k, observed: v.invalid, signature: { kind: checks[k].kind, target: '', actual: `late:${v.invalid}` } };
+      return { outcome: 'test-invalid', reason: v.invalid };
+    }
+    return { outcome: 'fail', check: k, signature: v.signature, observed: v.observed };
+  }
+  return null;
+}
+
 async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
   if (step.action === 'goto') {
     try {
       await page.goto(new URL(step.url, baseUrl).href, { waitUntil: 'load', timeout: navTimeoutMs });
       return { ok: true };
     } catch (err) {
-      return { ok: false, env: NETWORK_DOWN.test(err.message), reason: firstLine(err) };
+      // A page that does not finish loading says something about the server or the machine,
+      // not about the recording: environment, never TEST_INVALID.
+      const timeout = err?.name === 'TimeoutError' || /Timeout \d+ms exceeded/.test(err?.message ?? '');
+      return { ok: false, env: timeout || NETWORK_DOWN.test(err.message), reason: timeout ? `page load did not finish within ${navTimeoutMs} ms (server or machine too slow): ${firstLine(err)}` : firstLine(err) };
     }
   }
   if (step.action === 'key') {
     await page.keyboard.press(String(step.value));
     return { ok: true };
   }
+  const value = resolveValue(step.value);
+  if (!value.ok) return { ok: false, env: true, reason: value.reason };
   const t = await resolveTarget(page, step.target, { timeoutMs: stepTimeoutMs });
   if (!t.ok) return { ok: false, reason: `target ${t.reason}` };
+  const loose = Boolean(t.used?.loose);
   const opts = { timeout: stepTimeoutMs };
   // A user acting on a disabled control gets no effect; replay does the same but reports it,
   // so "fixed by disabling the trigger" can never pass silently.
   if (['click', 'fill', 'select', 'check', 'press'].includes(step.action) && (await t.locator.isDisabled().catch(() => false))) {
-    return { ok: true, disabled: true };
+    return { ok: true, disabled: true, loose };
   }
   try {
     switch (step.action) {
       case 'click': await t.locator.click(opts); break;
       case 'hover': await t.locator.hover(opts); break;
-      case 'fill': await t.locator.fill(String(step.value ?? ''), opts); break;
-      case 'select': await t.locator.selectOption(String(step.value), opts); break;
-      case 'check': await t.locator.setChecked(Boolean(step.value), opts); break;
-      case 'press': await t.locator.press(String(step.value), opts); break;
+      case 'fill': await t.locator.fill(String(value.value ?? ''), opts); break;
+      case 'select': await t.locator.selectOption(String(value.value), opts); break;
+      case 'check': await t.locator.setChecked(Boolean(value.value), opts); break;
+      case 'press': await t.locator.press(String(value.value), opts); break;
       default: throw new TestDefinitionError(`Unknown action "${step.action}"`);
     }
   } catch (err) {
     if (err instanceof TestDefinitionError) throw err;
     return { ok: false, reason: firstLine(err) };
   }
-  return { ok: true };
+  return { ok: true, loose };
 }
 
 // For "should be visible" expectations: was the target ever visible during this trial? A bug

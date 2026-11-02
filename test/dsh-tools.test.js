@@ -4,15 +4,14 @@ import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { tempRepo } from './helpers.js';
+import { tempRepo, serveSpec } from './helpers.js';
 import { startStaticServer } from '../examples/serve.js';
 import { launchBrowser } from '../src/core/browser.js';
 import { recordSession } from '../bench/sessions.js';
 import { createToolSpecs } from '../src/dsh/tools.js';
-import { canonicalJson } from '../src/core/caselock.js';
-import { createHash } from 'node:crypto';
+import { hashCase } from '../src/core/caselock.js';
 
-let repo; let server; let guard = true; let tools;
+let repo; let server; let guard = true; let tools; let serve; let serveCmd;
 const exec = () => ({ signal: new AbortController().signal });
 const run = (name, args) => tools.find((t) => t.name === name).execute(args, exec());
 const appJs = () => join(repo.root, 'app.js');
@@ -21,6 +20,9 @@ const BUG = /\/\/ SEEDED BUG 1: should call recompute\(\);[^\r\n]*\r?\n\s*render
 before(async () => {
   repo = await tempRepo();
   server = await startStaticServer(repo.root);
+  serve = await serveSpec(repo.root);
+  // As a user would type it: quoted paths (the repo path contains a space).
+  serveCmd = `node "${serve.command[1]}" "${serve.command[2]}" ${serve.command[3]}`;
   tools = createToolSpecs({ resolveCwd: async () => repo.root, guardActive: () => guard });
   // A draft as buggps_record would have saved it (recorded from real DOM events, scripted user).
   const env = await launchBrowser();
@@ -47,22 +49,23 @@ test('lock: dev server down is ENV_BLOCKED and nothing is locked', async () => {
 });
 
 test('lock -> verify(no change) -> verify(wrong fix) -> verify(real fix)', async () => {
-  const locked = await run('buggps_lock', { url: server.url, draft: '.buggps/drafts/coupon.json', case_id: 'coupon' });
+  const locked = await run('buggps_lock', { draft: '.buggps/drafts/coupon.json', case_id: 'coupon', serve: serveCmd, serve_url: serve.url });
   assert.equal(locked.status, 'LOCKED', JSON.stringify(locked));
+  assert.match(locked.binding, /^managed/);
   assert.equal(locked.observed_now, '$17.00');
   assert.equal(locked.minimization.model_calls, 0);
   assert.ok(locked.shortest_steps.length < locked.recorded_steps);
 
-  assert.equal((await run('buggps_verify', { url: server.url, case_id: 'coupon' })).status, 'NO_CODE_CHANGE');
+  assert.equal((await run('buggps_verify', { case_id: 'coupon' })).status, 'NO_CODE_CHANGE');
 
   const src = await readFile(appJs(), 'utf8');
   await writeFile(appJs(), src.replace('let total = subtotal() - state.discount;', 'let total = Math.max(0, subtotal() - state.discount);'));
-  const wrong = await run('buggps_verify', { url: server.url, case_id: 'coupon' });
+  const wrong = await run('buggps_verify', { case_id: 'coupon' });
   assert.equal(wrong.status, 'STILL_FAILING');
   assert.match(wrong.next, /Keep working/);
 
   await writeFile(appJs(), src.replace(BUG, 'recompute();'));
-  const ok = await run('buggps_verify', { url: server.url, case_id: 'coupon' });
+  const ok = await run('buggps_verify', { case_id: 'coupon' });
   assert.equal(ok.status, 'VERIFIED', JSON.stringify(ok));
   assert.match(ok.patch, /app\.js/);
   assert.equal(ok.shortened_case_agrees, true);
@@ -75,11 +78,10 @@ test('rewriting case.json AND lock.json consistently (shell bypass) is still CAS
   const body = JSON.parse(await readFile(join(dir, 'case.json'), 'utf8'));
   const lock = JSON.parse(await readFile(join(dir, 'lock.json'), 'utf8'));
   body.expectation = { kind: 'visible', target: body.expectation.target }; // weakened
-  const { steps, minimizedSteps, expectation, match } = body;
-  lock.caseSha256 = createHash('sha256').update(canonicalJson({ schema: 'buggps.case/v1', steps, minimizedSteps, expectation, match })).digest('hex');
+  lock.caseSha256 = hashCase(body); // a consistent rewrite: file hashes alone cannot tell
   await writeFile(join(dir, 'case.json'), JSON.stringify(body));
   await writeFile(join(dir, 'lock.json'), JSON.stringify(lock));
-  const r = await run('buggps_verify', { url: server.url, case_id: 'coupon' });
+  const r = await run('buggps_verify', { case_id: 'coupon' });
   assert.equal(r.status, 'CASE_TAMPERED');
 });
 
@@ -98,6 +100,8 @@ test('status lists the case with its latest verdict', async () => {
   assert.equal(st.dev_server, 'reachable');
   assert.equal(st.cases[0].case_id, 'coupon');
   assert.ok(st.cases[0].latest.verdict);
+  assert.equal(st.cases[0].binding, 'managed');
+  assert.equal(typeof st.cases[0].latest.applies_to_current_code, 'boolean');
 });
 
 test('record: toolbar flow saves a draft the agent can lock', async () => {

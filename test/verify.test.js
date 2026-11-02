@@ -2,7 +2,7 @@ import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { withEnv, tempRepo } from './helpers.js';
+import { withEnv, tempRepo, serveSpec } from './helpers.js';
 import { recordSession } from '../bench/sessions.js';
 import { lockCase, loadCase, verifyCase, Verdict } from '../src/core/caselock.js';
 import { Status } from '../src/core/reproduce.js';
@@ -19,12 +19,14 @@ const REAL_FIX = (src) => src.replace(BUG, '      recompute();');
 let repo;
 let env;
 let caseId;
+let serve; // BugGPS starts this server itself for every lock/verify run (managed binding)
 const appJs = () => join(repo.root, 'app.js');
 const edit = async (fn) => writeFile(appJs(), fn(await readFile(appJs(), 'utf8')));
 
 before(async () => {
   repo = await tempRepo();
   env = await withEnv(repo.root);
+  serve = await serveSpec(repo.root);
 });
 after(async () => { await env?.close(); await repo?.cleanup(); });
 
@@ -41,7 +43,7 @@ test('snapshot does not touch the index or worktree and sees untracked files', a
 
 test('lock requires a real reproduction on the baseline', async () => {
   const s = await recordSession(env.browser, env.url, 'stale-discount');
-  const locked = await lockCase(env.browser, env, repo.root, s, { baseUrl: env.url });
+  const locked = await lockCase(env.browser, env, repo.root, { ...s, serve }, { baseUrl: env.url });
   assert.equal(locked.status, Status.REPRODUCED);
   caseId = locked.caseId;
   const { lock } = await loadCase(repo.root, caseId);
@@ -82,7 +84,7 @@ test('weakening the locked expectation is CASE_TAMPERED even with a real fix', a
 
 test('"fixed" by disabling the triggering control is NEEDS_REVIEW, never VERIFIED', async () => {
   const s = await recordSession(env.browser, env.url, 'changelog-crash');
-  const locked = await lockCase(env.browser, env, repo.root, s, { baseUrl: env.url, id: 'crash' });
+  const locked = await lockCase(env.browser, env, repo.root, { ...s, serve }, { baseUrl: env.url, id: 'crash' });
   assert.equal(locked.status, Status.REPRODUCED);
   // Disable the button after its first click: the error can no longer happen.
   await edit((src) => src.replace("state.changelog = undefined; // SEEDED BUG 2: second click dereferences undefined.",
@@ -90,6 +92,7 @@ test('"fixed" by disabling the triggering control is NEEDS_REVIEW, never VERIFIE
   const r = await verifyCase(env.browser, env, repo.root, 'crash', { baseUrl: env.url });
   assert.equal(r.verdict, Verdict.NEEDS_REVIEW);
   assert.ok(r.check.disabledSteps.length >= 1);
+  assert.ok(r.reviewReasons.includes('disabled-control'));
   await git(repo.root, ['checkout', '-q', '--', 'app.js']);
 });
 
@@ -98,7 +101,7 @@ test('a shortened case that lost the trigger never decides the verdict', async (
   // The verdict comes from the full recording; the shortened case is re-checked and reported
   // alongside (agreesWithRecording) so a lossy shortening is visible.
   const short =s.steps.filter((st) => st.action === 'goto' || ['Add Apple', 'Add Banana', 'Coupon', 'Apply coupon', 'Remove Apple'].includes(st.target?.[0]?.name));
-  const locked = await lockCase(env.browser, env, repo.root, { ...s, minimizedSteps: short }, { baseUrl: env.url, id: 'with-min' });
+  const locked = await lockCase(env.browser, env, repo.root, { ...s, serve, minimizedSteps: short }, { baseUrl: env.url, id: 'with-min' });
   assert.equal(locked.lock.redMinimized.kept, true);
   await edit(REAL_FIX);
   const r = await verifyCase(env.browser, env, repo.root, 'with-min', { baseUrl: env.url });

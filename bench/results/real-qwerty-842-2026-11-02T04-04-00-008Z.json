@@ -1,0 +1,93 @@
+{
+  "case": "qwerty-842",
+  "kind": "REAL app",
+  "input": "REAL app, scripted session + human-style pins on steps 8",
+  "binding": "managed",
+  "at": "2026-11-02T04:04:00.008Z",
+  "recordedSteps": 9,
+  "expectation": {
+    "kind": "visible",
+    "target": [
+      {
+        "by": "role",
+        "role": "heading",
+        "name": "第 1 章"
+      }
+    ]
+  },
+  "reproduce": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "not visible (was visible earlier)",
+    "reason": null,
+    "stepIndex": null,
+    "ms": 8421
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "steps": "9 -> 3",
+    "kept": [
+      "/gallery",
+      "click CET-4 大学英语四级词库 2607 词",
+      "click 章节选择"
+    ],
+    "stats": {
+      "trials": 17,
+      "probeRuns": 3,
+      "cacheHits": 3,
+      "unresolved": 8,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2000,
+      "durationMs": 49132,
+      "modelCalls": 0
+    }
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "minimizedKept": true,
+    "reason": null,
+    "tally": {
+      "fail": 3
+    }
+  },
+  "verifyBeforeFix": "NO_CODE_CHANGE",
+  "verifyWithRealFix": {
+    "verdict": "NEEDS_REVIEW",
+    "reviewReasons": [
+      "disabled-control"
+    ],
+    "tally": {
+      "pass": 3
+    },
+    "observed": null,
+    "reason": null,
+    "disabledSteps": [
+      {
+        "index": 8,
+        "step": {
+          "action": "click",
+          "target": [
+            {
+              "by": "role",
+              "role": "radio",
+              "name": "章节选择"
+            }
+          ],
+          "pinned": true
+        }
+      }
+    ],
+    "minimizedCheck": {
+      "status": "NOT_REPRODUCED",
+      "tally": {
+        "pass": 3
+      },
+      "observed": null,
+      "agreesWithRecording": true
+    },
+    "patch": "src/pages/Gallery-N/DictDetail/index.tsx | 35 +++++++++++++++++++++++---------\n 1 file changed, 25 insertions(+), 10 deletions(-)"
+  }
+}

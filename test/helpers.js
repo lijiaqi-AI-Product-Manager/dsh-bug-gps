@@ -1,4 +1,5 @@
 import { cp, mkdtemp, rm } from 'node:fs/promises';
+import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,6 +17,23 @@ export async function withEnv(dir = EXAMPLE_DIR) {
     url: server.url,
     async close() { await env.browser.close(); await server.close(); },
   };
+}
+
+export const SERVE_JS = fileURLToPath(new URL('../examples/serve.js', import.meta.url));
+
+/** A port nothing listens on right now. */
+export function freePort() {
+  return new Promise((ok, fail) => {
+    const s = createServer();
+    s.once('error', fail);
+    s.listen(0, '127.0.0.1', () => { const { port } = s.address(); s.close(() => ok(port)); });
+  });
+}
+
+/** Managed serve spec: BugGPS itself starts the static server on `root`. */
+export async function serveSpec(root) {
+  const port = await freePort();
+  return { command: ['node', SERVE_JS, root, String(port)], url: `http://127.0.0.1:${port}/` };
 }
 
 /** Copies the example into a fresh git repo (path contains a space on purpose). */
