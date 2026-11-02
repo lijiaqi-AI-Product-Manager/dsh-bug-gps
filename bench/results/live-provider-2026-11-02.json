@@ -1,0 +1,240 @@
+{
+  "schema": "buggps.provider-check/v1",
+  "at": "2026-11-02T14:35:21.166Z",
+  "provider": "deepseek-account",
+  "model": "deepseek-flash",
+  "input": "scripted-recording",
+  "application": "seeded-example",
+  "checks": [
+    {
+      "scenario": "stale-discount",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 93338,
+      "calls": [
+        {
+          "tool": "skill",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_status",
+          "status": "OK"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "glob",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_lock",
+          "status": "LOCKED"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "NO_CODE_CHANGE"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "edit",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "VERIFIED"
+        }
+      ],
+      "usageByStep": [
+        {
+          "step": 1,
+          "inputTokens": 793,
+          "outputTokens": 51,
+          "cacheReadTokens": 4736,
+          "cacheWriteTokens": 0,
+          "totalTokens": 5580
+        },
+        {
+          "step": 2,
+          "inputTokens": 739,
+          "outputTokens": 31,
+          "cacheReadTokens": 5504,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6274
+        },
+        {
+          "step": 3,
+          "inputTokens": 214,
+          "outputTokens": 108,
+          "cacheReadTokens": 6144,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6466
+        },
+        {
+          "step": 4,
+          "inputTokens": 761,
+          "outputTokens": 131,
+          "cacheReadTokens": 6400,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7292
+        },
+        {
+          "step": 5,
+          "inputTokens": 365,
+          "outputTokens": 53,
+          "cacheReadTokens": 7168,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7586
+        },
+        {
+          "step": 6,
+          "inputTokens": 162,
+          "outputTokens": 68,
+          "cacheReadTokens": 7552,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7782
+        },
+        {
+          "step": 7,
+          "inputTokens": 2042,
+          "outputTokens": 301,
+          "cacheReadTokens": 7680,
+          "cacheWriteTokens": 0,
+          "totalTokens": 10023
+        },
+        {
+          "step": 8,
+          "inputTokens": 210,
+          "outputTokens": 42,
+          "cacheReadTokens": 9856,
+          "cacheWriteTokens": 0,
+          "totalTokens": 10108
+        },
+        {
+          "step": 9,
+          "inputTokens": 1072,
+          "outputTokens": 902,
+          "cacheReadTokens": 9984,
+          "cacheWriteTokens": 0,
+          "totalTokens": 11958
+        }
+      ],
+      "rawSha256": "a296e9566a165aa295141b6823543f7d172c8e655b290cb5221a5e40c7557f08",
+      "recordedSteps": 19,
+      "verdict": "VERIFIED",
+      "tally": {
+        "pass": 3
+      },
+      "reviewReasons": [],
+      "baselineMatches": true,
+      "caseSha256": "9b9fd1a222472951dfe784eef102d951047a25238590c388f6f7721c1233a54e",
+      "lockSha256": "be5a58e91a4ca4e0c19df78a1dc616d0eb662c372fce1b10fc73aa6d6f898f61",
+      "patchSha256": "3e70679840bfea100c4d1e5d3ff4a68adfe164c4256477842a8370beaa30ec54",
+      "finalNamesVerdict": true,
+      "protectedSnapshots": 6,
+      "protectedSnapshotsUnchanged": true
+    },
+    {
+      "scenario": "changelog-crash",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 32458,
+      "calls": [
+        {
+          "tool": "skill",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_status",
+          "status": "OK"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "NEEDS_REVIEW"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        }
+      ],
+      "usageByStep": [
+        {
+          "step": 1,
+          "inputTokens": 746,
+          "outputTokens": 51,
+          "cacheReadTokens": 4736,
+          "cacheWriteTokens": 0,
+          "totalTokens": 5533
+        },
+        {
+          "step": 2,
+          "inputTokens": 692,
+          "outputTokens": 61,
+          "cacheReadTokens": 5504,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6257
+        },
+        {
+          "step": 3,
+          "inputTokens": 242,
+          "outputTokens": 53,
+          "cacheReadTokens": 6144,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6439
+        },
+        {
+          "step": 4,
+          "inputTokens": 417,
+          "outputTokens": 299,
+          "cacheReadTokens": 6400,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7116
+        },
+        {
+          "step": 5,
+          "inputTokens": 1617,
+          "outputTokens": 1362,
+          "cacheReadTokens": 7040,
+          "cacheWriteTokens": 0,
+          "totalTokens": 10019
+        }
+      ],
+      "rawSha256": "65dda3caadd821349cb11536ee2cfcb98f36eb1f60ab6bc8a6490d86de663b4c",
+      "recordedSteps": 13,
+      "verdict": "NEEDS_REVIEW",
+      "tally": {
+        "pass": 3
+      },
+      "reviewReasons": [
+        "disabled-control"
+      ],
+      "baselineMatches": null,
+      "caseSha256": "1f6bddf4a3ad73e52f0fe6ca94f31e5e89b010c8035427ce244db94f27e64079",
+      "lockSha256": "c91b459fef019e9a0bf3dd3452f0a8527169b85dde888feb096173c351c5f700",
+      "patchSha256": "0a628b35f80698492b6d3514e191bf0cc6b35db4576c9801dc06d8c60f0aaf17",
+      "finalNamesVerdict": true,
+      "protectedSnapshots": 6,
+      "protectedSnapshotsUnchanged": true
+    }
+  ],
+  "expectedScenarios": [
+    "stale-discount",
+    "changelog-crash"
+  ],
+  "monetaryCost": null,
+  "dshVersion": "0.2.1-rc.5",
+  "pluginCommit": "28723d123f4383e996b782ca4b87464c5021e325",
+  "outcome": "PASSED"
+}
