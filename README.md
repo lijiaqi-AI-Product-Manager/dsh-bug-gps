@@ -102,7 +102,7 @@ dsh --profile <你的 profile> --dump-config
 
 ## 证据
 
-- `npm test`：单元测试和集成测试。其中 [test/counterexamples.test.js](test/counterexamples.test.js) 覆盖了外部评审找出的“看起来修好了其实没有”的反例：
+- `npm test`：单元测试和集成测试。其中 [test/counterexamples.test.js](test/counterexamples.test.js) 覆盖了“检查通过但问题仍未修复”的回归场景：
   - 换一台服务器
   - 删掉功能来消除报错
   - 把报错推迟 800 ms

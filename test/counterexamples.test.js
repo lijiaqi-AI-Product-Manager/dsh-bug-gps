@@ -1,5 +1,5 @@
-// Ways a "fix" can pass the checks without fixing anything (from an external review of the
-// first prototype). Each must end in a verdict that does not claim the bug is fixed.
+// Regression scenarios where passing checks do not establish that a bug is fixed.
+// Each must end in a verdict that does not claim the bug is fixed.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
