@@ -51,6 +51,7 @@ node bin/buggps.js doctor --repo ../buggps-demo
 
 - `serve` 是 BugGPS 自己运行的命令，在仓库根目录执行，只接受 localhost 地址。端口要与你平时开发用的不同：录制时你的 dev server 照常运行，锁定和验证时 BugGPS 用自己的端口。端口被占用时直接报 `ENV_BLOCKED`，不会把别的服务器的结果当成证据。
 - 锁定时 `serve` 会写进用例并参与哈希计算，之后修改配置文件不会影响已锁定的用例。
+- CLI 与插件工具使用相同的配置校验。`observeMs` 在建立场景时覆盖输入草稿中的观察窗口；插件显式传入的 `observe_ms` 优先。锁定后验证使用保存的条件，不重新套用当前项目配置。
 
 ## 判定
 

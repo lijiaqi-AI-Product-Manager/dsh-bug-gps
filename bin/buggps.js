@@ -14,7 +14,7 @@ import { minimize } from '../src/core/minimize.js';
 import { lockCase, normalizeServe, verifyCase } from '../src/core/caselock.js';
 import { validateCase } from '../src/core/oracle.js';
 import { EnvBlockedError, TestDefinitionError } from '../src/core/errors.js';
-import { CONFIG_FILE } from '../src/dsh/tools.js';
+import { CONFIG_FILE, readProjectConfig, applyProjectConfig } from '../src/core/config.js';
 
 const USAGE = `buggps <command> [options]
 
@@ -44,7 +44,7 @@ const { positionals, values: o } = parseArgs({
 });
 
 const cmd = positionals[0];
-if (!cmd || o.help) { console.log(USAGE); process.exit(cmd ? 0 : 64); }
+if (!cmd || o.help) { console.log(USAGE); process.exit(o.help ? 0 : 64); }
 const need = (k) => { if (!o[k]) { console.error(`missing --${k}\n\n${USAGE}`); process.exit(64); } return o[k]; };
 const print = (human, data) => console.log(o.json ? JSON.stringify(data, null, 2) : human);
 
@@ -68,12 +68,9 @@ async function loadCaseFile() {
   return JSON.parse(await readFile(need('case'), 'utf8'));
 }
 
-async function serveFor(repo) {
+async function serveFor(repo, config) {
   if (o.serve) return normalizeServe({ command: o.serve, url: need('serve-url') });
-  try { return normalizeServe(JSON.parse(await readFile(join(repo, CONFIG_FILE), 'utf8')).serve); } catch (err) {
-    if (err.code === 'ENOENT') return undefined;
-    throw err instanceof TestDefinitionError ? err : new TestDefinitionError(`${CONFIG_FILE}: ${err.message}`);
-  }
+  return (config ?? await readProjectConfig(repo)).serve;
 }
 
 async function run() {
@@ -94,14 +91,14 @@ async function run() {
       return body.expectation ? 0 : 2;
     }
     case 'reproduce': {
-      const c = await loadCaseFile();
+      const c = applyProjectConfig(await loadCaseFile(), await readProjectConfig(resolve(o.repo)));
       validateCase(c);
       const r = await reproduce(env.browser, c, { baseUrl: need('url'), runs: Number(o.runs) });
       print(`${r.status} ${JSON.stringify(r.tally)} observed=${JSON.stringify(r.observed)}${r.reason ? ` reason=${r.reason} (step ${r.stepIndex})` : ''} ${r.durationMs}ms`, r);
       return r.status === 'REPRODUCED' ? 0 : 1;
     }
     case 'minimize': {
-      const c = await loadCaseFile();
+      const c = applyProjectConfig(await loadCaseFile(), await readProjectConfig(resolve(o.repo)));
       validateCase(c);
       const baseUrl = need('url');
       const red = await reproduce(env.browser, c, { baseUrl, runs: Number(o.runs) });
@@ -112,9 +109,10 @@ async function run() {
       return m.confirmed ? 0 : 1;
     }
     case 'lock': {
-      const c = await loadCaseFile();
       const repo = resolve(o.repo);
-      const serve = await serveFor(repo);
+      const config = await readProjectConfig(repo);
+      const c = applyProjectConfig(await loadCaseFile(), config);
+      const serve = await serveFor(repo, config);
       if (!serve) need('url');
       const r = await lockCase(env.browser, env, repo, { ...c, ...(serve ? { serve } : {}) }, { baseUrl: o.url, runs: Number(o.runs), ...(o.id ? { id: o.id } : {}) });
       print(r.caseId ? `LOCKED ${r.caseId} (${r.lock.binding}; RED ${JSON.stringify(r.red.tally)}, observed ${JSON.stringify(r.red.observed)})` : `not locked: ${r.status}${r.reason ? ` (${r.reason})` : ''}`, r);

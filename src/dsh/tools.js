@@ -14,6 +14,7 @@ import { DEFAULT_OBSERVE_MS, hasPositiveCheck, validateCase } from '../core/orac
 import { snapshotTree } from '../core/snapshot.js';
 import { EnvBlockedError, TestDefinitionError } from '../core/errors.js';
 import { expectationLabel, stepLabel } from '../core/describe.js';
+import { CONFIG_FILE, readProjectConfig as readConfig, applyProjectConfig } from '../core/config.js';
 
 const OUTPUT = {
   schema: { type: 'object', additionalProperties: true, properties: { status: { type: 'string', required: true } } },
@@ -33,7 +34,7 @@ function renderText(v) {
 // Tool values must be lossless JSON (no undefined).
 const json = (v) => JSON.parse(JSON.stringify(v));
 
-export const CONFIG_FILE = 'buggps.config.json';
+export { CONFIG_FILE } from '../core/config.js';
 
 const NEXT = {
   [Verdict.VERIFIED]: 'Fix verified: on a server BugGPS started from the current working tree, the user\'s full recording met every recorded check in every run, and the patch is the diff from the locked baseline to exactly that tree. Report it citing run_record and patch_file. Scope: this recorded scenario only.',
@@ -99,13 +100,6 @@ async function withBrowser(signal, { headless = true } = {}, fn) {
 }
 
 const realKey = (dir) => { try { return realpathSync.native(dir).toLowerCase(); } catch { return resolve(dir).toLowerCase(); } };
-
-async function readConfig(cwd) {
-  try { return JSON.parse(await readFile(join(cwd, CONFIG_FILE), 'utf8')); } catch (err) {
-    if (err.code === 'ENOENT') return {};
-    throw new TestDefinitionError(`${CONFIG_FILE} is not valid JSON: ${err.message}`);
-  }
-}
 
 /**
  * @param {object} deps
@@ -196,7 +190,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
       if (!serve && !args.url) return json({ status: 'TEST_INVALID', message: 'need either a serve command (recommended) or the url of a running dev server', next: `Ask the user for the dev command and a free port, then pass serve and serve_url (or add "serve" to ${CONFIG_FILE}).` });
       if (!serve && !(await reachable(args.url))) return json(envBlocked(`dev server not reachable at ${args.url}`, 'Start the dev server and retry.'));
       const observeMs = args.observe_ms !== undefined ? Math.round(args.observe_ms) : config.observeMs;
-      const testCase = { ...draft, ...(observeMs !== undefined ? { observeMs } : {}), ...(serve ? { serve } : {}) };
+      const testCase = { ...applyProjectConfig(draft, config, { observeMs }), ...(serve ? { serve } : {}) };
       const id = args.case_id ?? draftPath.split(/[\\/]/).pop().replace(/\.json$/, '');
       return json(await withBrowser(exec.signal, {}, async (env) => {
         validateCase(testCase);
