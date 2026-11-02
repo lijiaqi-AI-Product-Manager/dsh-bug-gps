@@ -1,7 +1,7 @@
-import { cp, mkdtemp, rm } from 'node:fs/promises';
+import { cp, mkdtemp, realpath, rm } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { launchBrowser } from '../src/core/browser.js';
 import { startStaticServer } from '../examples/serve.js';
@@ -43,5 +43,10 @@ export async function tempRepo() {
   await git(root, ['init', '-q']);
   await git(root, ['add', '-A']);
   await git(root, ['-c', 'user.email=t@example.invalid', '-c', 'user.name=t', 'commit', '-q', '-m', 'seeded']);
-  return { root, cleanup: () => rm(root, { recursive: true, force: true }) };
+  return { root, async cleanup() {
+    const target = await realpath(root).catch((error) => { if (error.code === 'ENOENT') return null; throw error; });
+    if (!target) return;
+    if (dirname(target) !== await realpath(tmpdir()) || !basename(target).startsWith('buggps repo ')) throw new Error('Unexpected fixture cleanup path');
+    await rm(target, { recursive: true, force: true });
+  } };
 }

@@ -154,6 +154,10 @@ async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
     await page.setViewportSize(validateViewport(step));
     return { ok: true };
   }
+  if (step.action === 'exit-fullscreen') {
+    await page.evaluate(async () => { if (document.fullscreenElement) await document.exitFullscreen(); });
+    return { ok: true };
+  }
   const value = resolveValue(step.value);
   if (!value.ok) return { ok: false, env: true, reason: value.reason };
   const t = await resolveTarget(page, step.target, { timeoutMs: stepTimeoutMs });

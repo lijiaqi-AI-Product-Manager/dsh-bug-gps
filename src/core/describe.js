@@ -4,6 +4,7 @@ export function stepLabel(s) {
   if (s.action === 'goto') return `open ${s.url}`;
   if (s.action === 'key') return `press ${s.value}`;
   if (s.action === 'viewport') return `resize viewport to ${s.width} × ${s.height} [key step]`;
+  if (s.action === 'exit-fullscreen') return 'exit browser fullscreen [key step]';
   const t = s.target?.[0] ?? {};
   const what = t.name ?? t.value ?? t.role ?? '?';
   const where = t.within ? ` (in ${t.within.name})` : '';

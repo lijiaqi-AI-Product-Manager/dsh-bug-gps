@@ -28,6 +28,9 @@ const RECORDER_SCRIPT = String.raw`(() => {
       height = innerHeight;
       send({ type: 'viewport', width, height });
     });
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) send({ type: 'fullscreen-exit' });
+    });
   }
 
   function roleOf(el) {
@@ -202,6 +205,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
   const secretLabel = (el) => clean(el.getAttribute('aria-label') || labelText(el) || el.placeholder || el.name || el.id || 'password');
   const fromToolbar = (e) => e.target instanceof Element && e.target.closest('#__buggps_toolbar');
   let lastApplicationFocus = null;
+  let spaceClickTarget = null;
   document.addEventListener('focusin', (e) => {
     if (!fromToolbar(e) && e.target instanceof HTMLElement) lastApplicationFocus = e.target;
   }, true);
@@ -250,6 +254,9 @@ const RECORDER_SCRIPT = String.raw`(() => {
     }
     const el = e.target instanceof Element ? clickTarget(e.target) : null;
     if (!el) return;
+    // Space produces a native click after keyup. Retain the key, not a second action.
+    if (e.detail === 0 && el === spaceClickTarget) { spaceClickTarget = null; return; }
+    spaceClickTarget = null;
     send({ action: 'click', target: candidates(el) });
   }, true);
 
@@ -299,8 +306,20 @@ const RECORDER_SCRIPT = String.raw`(() => {
     if (fromToolbar(e)) return;
     const el = e.target;
     if (e.key === 'Enter' && (el instanceof HTMLInputElement)) send({ action: 'press', target: candidates(el), value: 'Enter' });
+    else if (e.key === ' ' && !e.repeat && el instanceof Element && !el.closest('input,textarea,[contenteditable=true]')) {
+      const control = el.closest('button,[role=button],[role=combobox]');
+      if (control) {
+        spaceClickTarget = control;
+        send({ action: 'press', target: candidates(control), value: 'Space' });
+      }
+    }
     // Escape closes popovers/dialogs wherever focus is; replay presses it page-wide.
     else if (e.key === 'Escape') send({ action: 'key', target: [{ by: 'page' }], value: 'Escape' });
+  }, true);
+  document.addEventListener('keyup', (e) => {
+    if (e.key !== ' ') return;
+    const control = spaceClickTarget;
+    setTimeout(() => { if (spaceClickTarget === control) spaceClickTarget = null; }, 0);
   }, true);
 })();`;
 
@@ -369,13 +388,16 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   let lastFillIdentity = null;
   const secretFields = new Map();
   const secretNames = new Set();
+  let recordingActive = true;
   await context.exposeBinding('__buggpsRecord', (_src, ev) => {
+    if (!recordingActive) return;
     if (ev?.type) lastFillIdentity = null;
     if (ev?.type === 'expect') { addExpectation(result, ev.expectation, ev.current); return; }
     if (ev?.type === 'checkpoint') { steps[steps.length - 1].check = ev.check; return; }
     if (ev?.type === 'stop') { finish('stop'); return; }
     if (ev?.type === 'pin') { if (steps.length > 1) steps[steps.length - 1].pinned = true; return; }
     if (ev?.type === 'viewport') { steps.push({ action: 'viewport', width: ev.width, height: ev.height, pinned: true }); return; }
+    if (ev?.type === 'fullscreen-exit') { steps.push({ action: 'exit-fullscreen', pinned: true }); return; }
     if (!ev?.target?.length) { dropped.push(ev); return; }
     const { identity, ...action } = ev;
     ev = action;
@@ -425,6 +447,7 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
         stopped = true;
         // Let in-flight binding calls land before closing.
         await page.waitForTimeout(100).catch(() => {});
+        recordingActive = false;
         await context.close().catch(() => {});
       }
       return steps.map((s) => ({ ...s }));
