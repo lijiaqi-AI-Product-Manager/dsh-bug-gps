@@ -7,11 +7,11 @@ DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标�
 
 ![BugGPS 演示：录制 bug → 锁定 → 错误修复被驳回 → 真修复通过](https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/main/docs/media/buggps-demo.gif)
 
-<sub>演示由脚本操作仓库自带的植入 bug 示例，并应用预置的错误和正确修改。页面与工具结果来自实际运行；结果卡片为演示排版，光标与字幕叠加。真实 DSH 集成另见测试说明。重新生成：`npm run demo:gif`（需要 ffmpeg）。也有 [MP4 版本](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/docs/media/buggps-demo.mp4)。</sub>
+<sub>演示由脚本操作仓库自带的植入 bug 示例，并应用预置的错误和正确修改。页面与工具结果来自实际运行，采用关键帧剪辑；片长不代表任务耗时。结果卡片为演示排版，光标与字幕叠加。查看 [本次场景与运行摘要](docs/media/demo-run.json)；真实 DSH 集成另见测试说明。重新生成：`npm run demo:gif`（需要 ffmpeg）。也有 [MP4 版本](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/docs/media/buggps-demo.mp4)。</sub>
 
 > 状态：预发布，**还没发布到 npm**。下面的命令已在 DSH 0.2.1-rc.5 / Windows 11 上实测，使用本地 checkout 或 `npm pack` 打出的包。
 
-## 一分钟试用（内置示例）
+## 试用内置示例
 
 ```bash
 node bin/buggps.js demo ../buggps-demo
