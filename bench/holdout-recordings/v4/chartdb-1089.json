@@ -1,0 +1,308 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted",
+  "definitionRevision": 4,
+  "definitionBasis": {
+    "repository": "https://github.com/chartdb/chartdb",
+    "commit": "0b73295922f87b3b59bc8ef98b27a7328b6d66c0",
+    "upstream": "https://github.com/chartdb/chartdb/pull/1089",
+    "previousInputSha256": "f7e466b3ab457ceb3974629037ecdc535f021269795ece9ce43241af701bc712",
+    "inputMethod": "Select All and a scripted ClipboardEvent; not native clipboard capture",
+    "note": "Use a valid PostgreSQL JSONB field for the GIN index; verify the named imported index in its actual properties.",
+    "producer": "bench/capture-editor.mjs",
+    "producerSha256": "ebc92e53c74f0e37efeec4714883b6a27c7044fed5f9e071463418a0841d87ab",
+    "recorderSha256": "a5f12e7029b1d95388b8758c4bc8125f8a6fbeb3ea4484c5d8c369cc88f002f6",
+    "evaluator": "buggps.oracle/v8",
+    "runtimeCommit": "ed4988bf5e2264295f671e5407f1087dcc3191b5"
+  },
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          },
+          "nameWithChild": true
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "DBML"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "paste",
+      "editor": "monaco",
+      "mode": "replace-all",
+      "target": [
+        {
+          "by": "css",
+          "value": "div:has(> div:text-is(\"DBML Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+        }
+      ],
+      "wasEnabled": true,
+      "value": "Table documents {\n id int [pk]\n body jsonb\n indexes {\n body [type: gin, name: 'body_search']\n }\n}",
+      "check": {
+        "kind": "value",
+        "target": [
+          {
+            "by": "css",
+            "value": "div:has(> div:text-is(\"DBML Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+          }
+        ],
+        "equals": "Table documents {\n id int [pk]\n body jsonb\n indexes {\n body [type: gin, name: 'body_search']\n }\n}"
+      }
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Import"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "documents",
+          "within": {
+            "role": "button",
+            "name": "documents"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "documents"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Indexes",
+          "within": {
+            "role": "region",
+            "name": "documents"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "Indexes"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "within": {
+            "role": "region",
+            "name": "Indexes"
+          },
+          "index": 2
+        },
+        {
+          "by": "role",
+          "role": "button"
+        }
+      ],
+      "wasEnabled": true
+    }
+  ],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          },
+          "nameWithChild": true
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "DBML"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "paste",
+      "editor": "monaco",
+      "mode": "replace-all",
+      "target": [
+        {
+          "by": "css",
+          "value": "div:has(> div:text-is(\"DBML Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+        }
+      ],
+      "wasEnabled": true,
+      "value": "Table documents {\n id int [pk]\n body jsonb\n indexes {\n body [type: gin, name: 'body_search']\n }\n}"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Import"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "documents",
+          "within": {
+            "role": "button",
+            "name": "documents"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "documents"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Indexes",
+          "within": {
+            "role": "region",
+            "name": "documents"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "Indexes"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "within": {
+            "role": "region",
+            "name": "Indexes"
+          },
+          "index": 2
+        },
+        {
+          "by": "role",
+          "role": "button"
+        }
+      ],
+      "wasEnabled": true
+    }
+  ],
+  "expectation": {
+    "kind": "text",
+    "target": [
+      {
+        "by": "css",
+        "value": "label[for=\"indexType\"] + button"
+      }
+    ],
+    "equals": "GIN"
+  },
+  "also": [
+    {
+      "kind": "value",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "within": {
+            "role": "dialog"
+          }
+        }
+      ],
+      "equals": "body_search"
+    }
+  ],
+  "observeMs": 1000,
+  "authoredCheckpoints": [
+    {
+      "afterStepIndex": 3,
+      "check": {
+        "kind": "value",
+        "target": [
+          {
+            "by": "css",
+            "value": "div:has(> div:text-is(\"DBML Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+          }
+        ],
+        "equals": "Table documents {\n id int [pk]\n body jsonb\n indexes {\n body [type: gin, name: 'body_search']\n }\n}"
+      }
+    }
+  ],
+  "targetOverrides": [],
+  "dropped": 0
+}
