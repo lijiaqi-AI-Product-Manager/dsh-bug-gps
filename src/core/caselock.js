@@ -91,9 +91,9 @@ export function normalizeServe(serve) {
  * Returns { result, treeBefore, treeAfter }; the caller decides what a changed tree means.
  * `warmup(url)` runs once before fn (see warmupPage).
  */
-export async function withManagedServer(repoDir, serve, fn, { warmup } = {}) {
+export async function withManagedServer(repoDir, serve, fn, { warmup, subprocess, signal } = {}) {
   const treeBefore = await snapshotTree(repoDir);
-  const server = await startDevServer({ cwd: repoDir, argv: serve.command, url: serve.url, readyTimeoutMs: serve.readyTimeoutMs ?? 120_000 });
+  const server = await startDevServer({ cwd: repoDir, argv: serve.command, url: serve.url, readyTimeoutMs: serve.readyTimeoutMs ?? 120_000, subprocess, signal });
   let result;
   try {
     if (warmup) await warmup(serve.url);
@@ -110,9 +110,9 @@ export async function withManagedServer(repoDir, serve, fn, { warmup } = {}) {
  * timeouts that later replays meet easily. So every managed run starts with one full replay of
  * the recording with generous timeouts, whose result is discarded (never counted as evidence).
  */
-export function warmupPage(browser, testCase) {
+export function warmupPage(browser, testCase, { signal } = {}) {
   return async (url) => {
-    await runTrial(browser, { baseUrl: url, steps: testCase.steps, expectation: testCase.expectation, observeMs: 0, stepTimeoutMs: 15_000, navTimeoutMs: 120_000 }).catch(() => {});
+    await runTrial(browser, { baseUrl: url, steps: testCase.steps, expectation: testCase.expectation, observeMs: 0, stepTimeoutMs: 15_000, navTimeoutMs: 120_000, signal }).catch(() => {});
   };
 }
 /**
@@ -128,10 +128,11 @@ export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs 
   const serve = normalizeServe(testCase.serve);
   if (serve && !serverReady) {
     try {
-      const b = await withManagedServer(repoDir, serve, (url) => lockCase(browser, env, repoDir, { ...testCase, serve }, { baseUrl: url, runs, id, signal, serverReady: true }), { warmup: warmupPage(browser, testCase) });
+      const b = await withManagedServer(repoDir, serve, (url) => lockCase(browser, env, repoDir, { ...testCase, serve }, { baseUrl: url, runs, id, signal, serverReady: true }), { warmup: warmupPage(browser, testCase, { signal }), subprocess: env?.subprocess, signal });
       if (b.treeAfter !== b.treeBefore) return { status: Verdict.STALE, reason: 'files changed while locking' };
       return b.result;
     } catch (err) {
+      if (signal?.aborted) return { status: Status.ABORTED, reason: err.message };
       if (err instanceof EnvBlockedError) return { status: Status.ENV_BLOCKED, reason: err.message, hint: err.hint };
       throw err;
     }
@@ -223,9 +224,10 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
   let bound;
   try {
     bound = serve
-      ? await withManagedServer(repoDir, serve, replay, { warmup: warmupPage(browser, body) })
+      ? await withManagedServer(repoDir, serve, replay, { warmup: warmupPage(browser, body, { signal }), subprocess: env?.subprocess, signal })
       : { treeBefore: treeNow, result: await replay(url), treeAfter: await snapshotTree(repoDir) };
   } catch (err) {
+    if (signal?.aborted) return finish(Verdict.ABORTED, { check: { reason: err.message } });
     if (err instanceof EnvBlockedError) return finish(Verdict.ENV_BLOCKED, { check: { reason: err.message, hint: err.hint } });
     throw err;
   }

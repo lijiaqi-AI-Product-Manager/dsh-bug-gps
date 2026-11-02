@@ -76,10 +76,11 @@ function envBlocked(message, hint) {
   return { status: 'ENV_BLOCKED', message, ...(hint ? { hint } : {}), next: NEXT[Verdict.ENV_BLOCKED] };
 }
 
-async function withBrowser(signal, { headless = true } = {}, fn) {
+async function withBrowser(signal, { headless = true, subprocess } = {}, fn) {
   let env;
   try {
     env = await launchBrowser({ headless });
+    env.subprocess = subprocess;
   } catch (err) {
     if (err instanceof EnvBlockedError) return envBlocked(err.message, err.hint);
     throw err;
@@ -87,11 +88,12 @@ async function withBrowser(signal, { headless = true } = {}, fn) {
   const onAbort = () => env.browser.close().catch(() => {});
   signal?.addEventListener('abort', onAbort, { once: true });
   try {
+    signal?.throwIfAborted();
     return await fn(env);
   } catch (err) {
+    if (signal?.aborted) return { status: 'ABORTED', message: 'cancelled', ...(err instanceof EnvBlockedError ? { cleanup_warning: err.message } : {}), next: NEXT[Verdict.ABORTED] };
     if (err instanceof TestDefinitionError) return { status: 'TEST_INVALID', message: err.message, next: LOCK_NEXT[Status.TEST_INVALID] };
     if (err instanceof EnvBlockedError) return envBlocked(err.message, err.hint);
-    if (signal?.aborted) return { status: 'ABORTED', message: 'cancelled', next: NEXT[Verdict.ABORTED] };
     throw err;
   } finally {
     signal?.removeEventListener('abort', onAbort);
@@ -108,7 +110,7 @@ const realKey = (dir) => { try { return realpathSync.native(dir).toLowerCase(); 
  * @param {(dir: string) => void} [deps.onProject]      told every project directory a tool used
  * @param {{headedRecording?: boolean, onRecordingPage?: Function}} [deps.testHooks]
  */
-export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {}, testHooks = {} }) {
+export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {}, testHooks = {}, subprocess }) {
   // (real project dir, caseId) -> case hash, for cases locked in THIS process: detects a
   // lock.json rewritten by a shell command together with the case (the file hash alone cannot).
   // Keyed by project too: the same case id in two repositories are two different cases.
@@ -128,7 +130,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
     async execute(args, exec) {
       const cwd = await projectOf(exec);
       if (!(await reachable(args.url))) return json(envBlocked(`dev server not reachable at ${args.url}`, 'Start the dev server (e.g. npm run dev) and pass its URL.'));
-      return json(await withBrowser(exec.signal, { headless: testHooks.headedRecording === false }, async (env) => {
+      return json(await withBrowser(exec.signal, { headless: testHooks.headedRecording === false, subprocess }, async (env) => {
         const rec = await startRecording(env.browser, { baseUrl: args.url, startPath: args.start_path ?? '/', toolbar: true });
         testHooks.onRecordingPage?.(rec.page);
         const aborted = new Promise((r) => exec.signal?.addEventListener('abort', () => r('aborted'), { once: true }));
@@ -192,7 +194,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
       const observeMs = args.observe_ms !== undefined ? Math.round(args.observe_ms) : config.observeMs;
       const testCase = { ...applyProjectConfig(draft, config, { observeMs }), ...(serve ? { serve } : {}) };
       const id = args.case_id ?? draftPath.split(/[\\/]/).pop().replace(/\.json$/, '');
-      return json(await withBrowser(exec.signal, {}, async (env) => {
+      return json(await withBrowser(exec.signal, { subprocess }, async (env) => {
         validateCase(testCase);
         const work = async (url) => {
           const red = await reproduce(env.browser, testCase, { baseUrl: url, runs: 3, signal: exec.signal });
@@ -209,7 +211,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
         };
         let out;
         if (serve) {
-          const b = await withManagedServer(cwd, serve, work, { warmup: warmupPage(env.browser, testCase) });
+          const b = await withManagedServer(cwd, serve, work, { warmup: warmupPage(env.browser, testCase, { signal: exec.signal }), subprocess, signal: exec.signal });
           if (b.treeAfter !== b.treeBefore) return { status: Verdict.STALE, message: 'files changed while locking', next: LOCK_NEXT[Verdict.STALE] };
           out = b.result;
         } else {
@@ -268,7 +270,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
         if (!args.url) return json({ status: 'TEST_INVALID', message: 'this case was locked without a serve command; pass url (the result can be at most PASSED_UNBOUND)', next: NEXT[Verdict.PASSED_UNBOUND] });
         if (!(await reachable(args.url))) return json(envBlocked(`dev server not reachable at ${args.url}`, 'Start the dev server and retry.'));
       }
-      return json(await withBrowser(exec.signal, {}, async (env) => {
+      return json(await withBrowser(exec.signal, { subprocess }, async (env) => {
         const r = await verifyCase(env.browser, env, cwd, id, { baseUrl: args.url, signal: exec.signal });
         return {
           status: r.verdict,
