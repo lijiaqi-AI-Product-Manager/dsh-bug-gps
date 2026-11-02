@@ -3,6 +3,7 @@
 // "it still fails somehow" is not enough (that is how wrong minimizations slip through).
 import { resolveTarget, targetKey } from './locator.js';
 import { TestDefinitionError } from './errors.js';
+import { validateObserveMs } from './observation.js';
 
 export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'no-page-error', 'no-console-error', 'no-failed-request'];
 // "Nothing went wrong" kinds. On their own they cannot show the feature works again (deleting
@@ -10,7 +11,7 @@ export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'no-page
 export const NEGATIVE_KINDS = new Set(['no-page-error', 'no-console-error', 'no-failed-request']);
 const STATE_KINDS = ['text', 'value', 'visible', 'hidden'];
 // How long a passing result must keep passing after the last step. Recorded in the case.
-export const DEFAULT_OBSERVE_MS = 1000;
+export { DEFAULT_OBSERVE_MS } from './observation.js';
 
 export function validateExpectation(exp, { checkpoint = false } = {}) {
   const kinds = checkpoint ? STATE_KINDS : EXPECTATION_KINDS;
@@ -30,9 +31,7 @@ export function validateCase(testCase) {
   validateExpectation(testCase.expectation);
   for (const e of testCase.also ?? []) validateExpectation(e);
   for (const s of testCase.steps ?? []) if (s.check) validateExpectation(s.check, { checkpoint: true });
-  if (testCase.observeMs !== undefined && !(Number.isInteger(testCase.observeMs) && testCase.observeMs >= 0 && testCase.observeMs <= 30_000)) {
-    throw new TestDefinitionError('observeMs must be an integer between 0 and 30000');
-  }
+  validateObserveMs(testCase.observeMs);
 }
 
 /** True when some final check proves a positive outcome (not just "no error"). */
