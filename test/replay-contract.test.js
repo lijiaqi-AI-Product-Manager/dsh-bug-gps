@@ -113,12 +113,42 @@ test('a legacy lock without resolution provenance needs a new lock before verifi
   assert.equal((await verifyCase(env.browser, env, root, 'case', { runs: 1 })).verdict, Verdict.NEEDS_REVIEW);
 });
 
-test('a temporary candidate switch during observation is retained after the original candidate returns', async (t) => {
+test('an observed fallback is retained after the original candidate returns', async (t) => {
   const html = '<input id="one" aria-label="Amount" value="BAD">';
   const { root, file } = await fixture(t, html);
   await lock(root, { steps: [{ action: 'goto', url: '/' }], expectation: { kind: 'value', target: choices('textbox', 'Amount'), equals: 'GOOD' }, observeMs: 1000 });
-  await writeFile(file, html.replace('BAD', 'GOOD') + '<script>setTimeout(()=>{const other=document.createElement("input");other.id="two";other.setAttribute("aria-label","Amount");document.body.append(other);setTimeout(()=>other.remove(),400)},250)</script>');
-  const result = await verifyCase(env.browser, env, root, 'case', { runs: 1 });
+  await writeFile(file, html.replace('BAD', 'GOOD'));
+  let restored = false;
+  // Drive the real page between complete samples, so insertion never races the
+  // locator count and input read inside one check. Production browser methods still run.
+  const controlled = {
+    async newContext(options) {
+      const context = await env.browser.newContext(options);
+      const openPage = context.newPage.bind(context);
+      context.newPage = async () => {
+        const page = await openPage();
+        const pause = page.waitForTimeout.bind(page);
+        let samples = 0;
+        page.waitForTimeout = async (ms) => {
+          await pause(ms);
+          if (ms !== 50) return;
+          if (++samples === 1) await page.evaluate(() => {
+            const other = document.createElement('input');
+            other.id = 'two'; other.setAttribute('aria-label', 'Amount');
+            document.body.append(other);
+          });
+          else if (samples === 2) {
+            await page.evaluate(() => document.querySelector('#two').remove());
+            restored = true;
+          }
+        };
+        return page;
+      };
+      return context;
+    },
+  };
+  const result = await verifyCase(controlled, env, root, 'case', { runs: 1 });
+  assert.equal(restored, true);
   assert.equal(result.verdict, Verdict.NEEDS_REVIEW);
   assert.equal(result.check.resolutionProfile['final:0'].length, 2);
 });
@@ -127,4 +157,46 @@ test('draft browser options cannot load arbitrary storage files and are classifi
   const result = await reproduce(env.browser, { steps: [], browser: { storageState: 'untrusted-session.json' }, expectation: { kind: 'no-page-error' }, observeMs: 0 }, { runs: 1 });
   assert.equal(result.status, Status.TEST_INVALID);
   assert.match(result.reason, /unsupported browser setting/);
+});
+
+test('a target becoming ambiguous between resolution and reading cannot pass observation', async (t) => {
+  const html = '<input id="one" aria-label="Amount" value="BAD">';
+  const { root, file } = await fixture(t, html);
+  await lock(root, { steps: [{ action: 'goto', url: '/' }], expectation: { kind: 'value', target: choices('textbox', 'Amount'), equals: 'GOOD' }, observeMs: 1000 });
+  await writeFile(file, html.replace('BAD', 'GOOD'));
+  let injected = false;
+  const changing = {
+    async newContext(options) {
+      const context = await env.browser.newContext(options);
+      const openPage = context.newPage.bind(context);
+      context.newPage = async () => {
+        const page = await openPage();
+        const role = page.getByRole.bind(page);
+        let reads = 0;
+        page.getByRole = (...args) => {
+          const locator = role(...args);
+          if (args[0] !== 'textbox' || args[1]?.name !== 'Amount') return locator;
+          const read = locator.inputValue.bind(locator);
+          locator.inputValue = async (...readArgs) => {
+            if (++reads === 2) {
+              await page.evaluate(() => {
+                const duplicate = document.createElement('input');
+                duplicate.setAttribute('aria-label', 'Amount');
+                document.body.append(duplicate);
+              });
+              injected = true;
+            }
+            return read(...readArgs);
+          };
+          return locator;
+        };
+        return page;
+      };
+      return context;
+    },
+  };
+  const result = await verifyCase(changing, env, root, 'case', { runs: 1 });
+  assert.equal(injected, true);
+  assert.equal(result.verdict, Verdict.DIFFERENT_FAILURE);
+  assert.match(result.check.observed, /target has no input value/);
 });
