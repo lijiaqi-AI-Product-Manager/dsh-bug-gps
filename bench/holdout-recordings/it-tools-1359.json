@@ -1,0 +1,76 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/yaml-to-json-converter"
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Your YAML"
+        },
+        {
+          "by": "label",
+          "value": "Your YAML"
+        },
+        {
+          "by": "css",
+          "value": "#id-anbdst6ygs"
+        }
+      ],
+      "value": "base: &base\n  label: GPS\ncopy:\n  <<: *base\n"
+    }
+  ],
+  "expectation": {
+    "kind": "text",
+    "target": [
+      {
+        "by": "css",
+        "value": "code"
+      }
+    ],
+    "equals": "{ \"base\": { \"label\": \"GPS\" }, \"copy\": { \"label\": \"GPS\" } }"
+  },
+  "also": [],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/yaml-to-json-converter"
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Your YAML"
+        },
+        {
+          "by": "label",
+          "value": "Your YAML"
+        },
+        {
+          "by": "css",
+          "value": "#id-anbdst6ygs"
+        }
+      ],
+      "value": "base: &base\n  label: GPS\ncopy:\n  <<: *base\n"
+    }
+  ],
+  "targetOverrides": []
+}

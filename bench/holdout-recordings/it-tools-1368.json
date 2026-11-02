@@ -1,0 +1,79 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted-with-authored-targets",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/hash-text"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "h1 + div button"
+        }
+      ]
+    }
+  ],
+  "expectation": {
+    "kind": "count",
+    "target": [
+      {
+        "by": "css",
+        "value": "a[href=\"/hash-text\"]"
+      }
+    ],
+    "equals": 2
+  },
+  "also": [
+    {
+      "kind": "visible",
+      "target": [
+        {
+          "by": "role",
+          "role": "heading",
+          "name": "Hash text"
+        }
+      ]
+    }
+  ],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/hash-text"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button"
+        }
+      ]
+    }
+  ],
+  "targetOverrides": [
+    {
+      "index": 1,
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "h1 + div button"
+        }
+      ],
+      "reason": "The unnamed favorite button is scoped to the tool header."
+    }
+  ]
+}

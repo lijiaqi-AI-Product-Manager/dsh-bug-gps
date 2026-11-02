@@ -1,0 +1,202 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "添加表",
+          "within": {
+            "role": "tabpanel",
+            "name": "表 (0)"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "添加表"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "视图"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "演示模式"
+        }
+      ]
+    },
+    {
+      "action": "exit-fullscreen",
+      "pinned": true
+    }
+  ],
+  "expectation": {
+    "kind": "visible",
+    "target": [
+      {
+        "by": "css",
+        "value": "nav"
+      }
+    ]
+  },
+  "also": [
+    {
+      "kind": "visible",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "plus 添加表"
+        }
+      ]
+    }
+  ],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "添加表",
+          "within": {
+            "role": "tabpanel",
+            "name": "表 (0)"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "添加表"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "视图"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "演示模式"
+        }
+      ]
+    },
+    {
+      "action": "exit-fullscreen",
+      "pinned": true
+    }
+  ],
+  "targetOverrides": []
+}

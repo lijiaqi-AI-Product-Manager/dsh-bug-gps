@@ -1,0 +1,76 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/base-converter"
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Input number"
+        },
+        {
+          "by": "label",
+          "value": "Input number"
+        },
+        {
+          "by": "css",
+          "value": "#id-tx87er9llk"
+        }
+      ],
+      "value": "9007199254740993"
+    }
+  ],
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "css",
+        "value": "input[placeholder=\"Decimal version will be here...\"]"
+      }
+    ],
+    "equals": "9007199254740993"
+  },
+  "also": [],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/base-converter"
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Input number"
+        },
+        {
+          "by": "label",
+          "value": "Input number"
+        },
+        {
+          "by": "css",
+          "value": "#id-tx87er9llk"
+        }
+      ],
+      "value": "9007199254740993"
+    }
+  ],
+  "targetOverrides": []
+}

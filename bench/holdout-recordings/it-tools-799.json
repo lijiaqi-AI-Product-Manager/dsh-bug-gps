@@ -1,0 +1,84 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/jwt-parser"
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "JWT to decode"
+        },
+        {
+          "by": "label",
+          "value": "JWT to decode"
+        },
+        {
+          "by": "css",
+          "value": "#id-d5wzu45mls"
+        }
+      ],
+      "value": {
+        "secret": "HOLDOUT_JWT_ARRAY"
+      }
+    }
+  ],
+  "expectation": {
+    "kind": "text",
+    "target": [
+      {
+        "by": "css",
+        "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+      }
+    ],
+    "equals": "[ \"reader\", \"writer\" ]"
+  },
+  "also": [],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/jwt-parser"
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "JWT to decode"
+        },
+        {
+          "by": "label",
+          "value": "JWT to decode"
+        },
+        {
+          "by": "css",
+          "value": "#id-d5wzu45mls"
+        }
+      ],
+      "value": {
+        "secret": "HOLDOUT_JWT_ARRAY"
+      }
+    }
+  ],
+  "targetOverrides": [],
+  "fixtureKind": "synthetic",
+  "fixtureSecrets": {
+    "BUGGPS_SECRET_HOLDOUT_JWT_ARRAY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJyZWFkZXIiLCJ3cml0ZXIiXX0.fixture-signature"
+  }
+}
