@@ -1,0 +1,44 @@
+{
+  "name": "dsh-bug-gps",
+  "version": "0.0.0",
+  "private": true,
+  "description": "BugGPS for DeepSeek Harness: record a browser bug once, lock it as a failing check, and let the agent fix it until the check really passes.",
+  "type": "module",
+  "main": "src/dsh/index.js",
+  "bin": {
+    "buggps": "bin/buggps.js"
+  },
+  "files": [
+    "src",
+    "bin",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 \"test/*.test.js\"",
+    "bench": "node bench/run.mjs"
+  },
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.1-0 <0.3.0"
+  },
+  "dependencies": {
+    "playwright-core": "1.64.1"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": ">=0.2.1-0 <0.3.0"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "bug-reproduction",
+    "browser-debugging",
+    "playwright"
+  ],
+  "license": "MIT"
+}

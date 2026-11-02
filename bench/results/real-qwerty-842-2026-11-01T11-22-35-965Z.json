@@ -1,0 +1,75 @@
+{
+  "case": "qwerty-842",
+  "kind": "REAL app, human recording",
+  "at": "2026-11-01T11:22:35.965Z",
+  "recordedSteps": 9,
+  "expectation": {
+    "kind": "visible",
+    "target": [
+      {
+        "by": "role",
+        "role": "heading",
+        "name": "第 1 章"
+      }
+    ]
+  },
+  "reproduce": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "not visible (was visible earlier)",
+    "reason": null,
+    "stepIndex": null,
+    "ms": 6691
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "steps": "9 -> 5",
+    "kept": [
+      "/gallery",
+      "click CET-4 大学英语四级词库 2607 词",
+      "click Close",
+      "click CET-6 大学英语六级词库 2345 词",
+      "click 章节选择"
+    ],
+    "stats": {
+      "trials": 20,
+      "probeRuns": 3,
+      "cacheHits": 0,
+      "unresolved": 6,
+      "differentFailure": 2,
+      "durationMs": 31828,
+      "modelCalls": 0
+    }
+  },
+  "lock": {
+    "status": "REPRODUCED"
+  },
+  "verifyBeforeFix": "NO_CODE_CHANGE",
+  "verifyWithRealFix": {
+    "verdict": "NEEDS_REVIEW",
+    "tally": {
+      "pass": 3
+    },
+    "observed": null,
+    "reason": null,
+    "disabledSteps": [
+      {
+        "index": 4,
+        "step": {
+          "action": "click",
+          "target": [
+            {
+              "by": "role",
+              "role": "radio",
+              "name": "章节选择"
+            }
+          ]
+        }
+      }
+    ],
+    "patch": "src/pages/Gallery-N/DictDetail/index.tsx | 35 +++++++++++++++++++++++---------\n 1 file changed, 25 insertions(+), 10 deletions(-)"
+  }
+}

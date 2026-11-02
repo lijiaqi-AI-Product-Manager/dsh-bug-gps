@@ -1,0 +1,26 @@
+{
+  "case": "drawdb-943",
+  "kind": "REAL app, human recording",
+  "at": "2026-11-01T11:11:05.124Z",
+  "recordedSteps": 12,
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "spinbutton"
+      }
+    ],
+    "equals": "220"
+  },
+  "reproduce": {
+    "status": "TEST_INVALID",
+    "tally": {
+      "step-error": 3
+    },
+    "observed": null,
+    "reason": "target not-found",
+    "stepIndex": 3,
+    "ms": 11381
+  }
+}

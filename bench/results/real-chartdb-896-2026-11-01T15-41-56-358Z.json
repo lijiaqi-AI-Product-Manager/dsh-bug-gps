@@ -1,0 +1,64 @@
+{
+  "case": "chartdb-896",
+  "kind": "REAL app, human recording",
+  "at": "2026-11-01T15:41:56.358Z",
+  "recordedSteps": 16,
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "No default"
+      }
+    ],
+    "equals": ""
+  },
+  "reproduce": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "0",
+    "reason": null,
+    "stepIndex": null,
+    "ms": 19765
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": true,
+    "steps": "16 -> 8",
+    "kept": [
+      "/",
+      "click Empty diagram",
+      "click Skip & Empty",
+      "click Add Table",
+      "click button",
+      "fill No default=0",
+      "key undefined=Escape",
+      "click button"
+    ],
+    "stats": {
+      "trials": 38,
+      "probeRuns": 3,
+      "cacheHits": 1,
+      "unresolved": 20,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2052,
+      "durationMs": 135167,
+      "modelCalls": 0
+    }
+  },
+  "lock": {
+    "status": "REPRODUCED"
+  },
+  "verifyBeforeFix": "NO_CODE_CHANGE",
+  "verifyWithRealFix": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "0",
+    "reason": null
+  }
+}

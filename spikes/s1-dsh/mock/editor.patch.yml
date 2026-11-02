@@ -1,0 +1,4 @@
+# --patch overlay: base does not mount the str_replace_editor tool; add it for the guard test.
+- insert:
+    - id: tool-str-replace-editor
+      name: '@deepseek-ai/dsh-tool-str-replace-editor'

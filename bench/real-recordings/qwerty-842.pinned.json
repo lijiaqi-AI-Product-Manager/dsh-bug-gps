@@ -1,0 +1,119 @@
+{
+  "schema": "buggps.draft/v1",
+  "kind": "REAL app, scripted session + human-style pins on steps 8",
+  "baseUrl": "http://127.0.0.1:5192/",
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/gallery"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "日语"
+        },
+        {
+          "by": "css",
+          "value": "#headlessui-radiogroup-option-\\:r5\\:"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "英语"
+        },
+        {
+          "by": "css",
+          "value": "#headlessui-radiogroup-option-\\:r3\\:"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "考研"
+        },
+        {
+          "by": "css",
+          "value": "#headlessui-radiogroup-option-\\:ra5\\:"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "大学英语"
+        },
+        {
+          "by": "css",
+          "value": "#headlessui-radiogroup-option-\\:ra3\\:"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "CET-4 大学英语四级词库 2607 词"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Close"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "CET-6 大学英语六级词库 2345 词"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "章节选择"
+        }
+      ],
+      "pinned": true
+    }
+  ],
+  "expectation": {
+    "kind": "visible",
+    "target": [
+      {
+        "by": "role",
+        "role": "heading",
+        "name": "第 1 章"
+      }
+    ]
+  },
+  "dropped": 0
+}

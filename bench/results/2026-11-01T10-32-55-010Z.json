@@ -1,0 +1,182 @@
+{
+  "kind": "SEEDED example, scripted sessions",
+  "at": "2026-11-01T10:32:55.010Z",
+  "machine": {
+    "os": "win32 10.0.26300",
+    "cpu": "Intel(R) Core(TM) Ultra 7 255H",
+    "node": "v24.22.0",
+    "browser": "msedge 156.0.4314.42"
+  },
+  "cases": [
+    {
+      "name": "stale-discount",
+      "recordedSteps": 19,
+      "recordMs": 1205,
+      "reproduce": {
+        "status": "REPRODUCED",
+        "tally": {
+          "fail": 3
+        },
+        "observed": "$17.00",
+        "ms": 4059
+      },
+      "minimize_units_strict": {
+        "status": "DONE",
+        "confirmed": true,
+        "steps": "19 -> 6",
+        "kept": [
+          "/",
+          "click Add Apple",
+          "click Add Banana",
+          "fill Coupon = \"SAVE10\"",
+          "click Apply coupon",
+          "click Remove Apple"
+        ],
+        "stats": {
+          "trials": 32,
+          "probeRuns": 3,
+          "cacheHits": 0,
+          "unresolved": 0,
+          "differentFailure": 14,
+          "durationMs": 20677,
+          "modelCalls": 0
+        }
+      },
+      "minimize_ddmin_strict": {
+        "status": "BUDGET_EXHAUSTED",
+        "confirmed": true,
+        "steps": "19 -> 15",
+        "kept": [
+          "/",
+          "click Add Cherry",
+          "fill Search = \"\"",
+          "check Dark mode = true",
+          "click Remove Cherry",
+          "click Shipping info",
+          "click Add Apple",
+          "click Shop",
+          "click Add Banana",
+          "select Sort = \"name\"",
+          "fill Coupon = \"SAVE10\"",
+          "check Dark mode = false",
+          "click Apply coupon",
+          "click Shipping info",
+          "click Remove Apple"
+        ],
+        "stats": {
+          "trials": 80,
+          "probeRuns": 0,
+          "cacheHits": 26,
+          "unresolved": 26,
+          "differentFailure": 43,
+          "durationMs": 41779,
+          "modelCalls": 0
+        }
+      },
+      "minimize_units_loose": {
+        "status": "DONE",
+        "confirmed": true,
+        "steps": "19 -> 1",
+        "kept": [
+          "/"
+        ],
+        "stats": {
+          "trials": 22,
+          "probeRuns": 3,
+          "cacheHits": 0,
+          "unresolved": 0,
+          "differentFailure": 0,
+          "durationMs": 16273,
+          "modelCalls": 0
+        }
+      }
+    },
+    {
+      "name": "changelog-crash",
+      "recordedSteps": 13,
+      "recordMs": 828,
+      "reproduce": {
+        "status": "REPRODUCED",
+        "tally": {
+          "fail": 3
+        },
+        "observed": "TypeError: Cannot read properties of undefined (reading 'join')",
+        "ms": 3348
+      },
+      "minimize_units_strict": {
+        "status": "DONE",
+        "confirmed": true,
+        "steps": "13 -> 4",
+        "kept": [
+          "/",
+          "click About",
+          "click Show changelog",
+          "click Show changelog"
+        ],
+        "stats": {
+          "trials": 20,
+          "probeRuns": 3,
+          "cacheHits": 1,
+          "unresolved": 0,
+          "differentFailure": 0,
+          "durationMs": 13626,
+          "modelCalls": 0
+        }
+      },
+      "minimize_ddmin_strict": {
+        "status": "DONE",
+        "confirmed": true,
+        "steps": "13 -> 4",
+        "kept": [
+          "/",
+          "click About",
+          "click Show changelog",
+          "click Show changelog"
+        ],
+        "stats": {
+          "trials": 32,
+          "probeRuns": 0,
+          "cacheHits": 14,
+          "unresolved": 9,
+          "differentFailure": 0,
+          "durationMs": 17505,
+          "modelCalls": 0
+        }
+      },
+      "minimize_units_loose": {
+        "status": "DONE",
+        "confirmed": true,
+        "steps": "13 -> 4",
+        "kept": [
+          "/",
+          "click About",
+          "click Show changelog",
+          "click Show changelog"
+        ],
+        "stats": {
+          "trials": 20,
+          "probeRuns": 3,
+          "cacheHits": 1,
+          "unresolved": 0,
+          "differentFailure": 0,
+          "durationMs": 13775,
+          "modelCalls": 0
+        }
+      }
+    },
+    {
+      "name": "flaky-total",
+      "recordedSteps": 2,
+      "recordMs": 434,
+      "reproduce": {
+        "status": "FLAKY",
+        "tally": {
+          "pass": 8,
+          "fail": 2
+        },
+        "observed": "$11.00",
+        "ms": 4250
+      }
+    }
+  ]
+}

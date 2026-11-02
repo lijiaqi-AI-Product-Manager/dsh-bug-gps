@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Cart Shop (BugGPS seeded example)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; }
+    body.dark { background: #111; color: #eee; }
+    nav a { margin-right: 12px; }
+    .product { display: flex; gap: 8px; align-items: center; margin: 4px 0; }
+    #cart li { margin: 4px 0; }
+  </style>
+</head>
+<body>
+  <!-- SEEDED EXAMPLE: this app contains deliberately planted bugs for BugGPS demos and tests. -->
+  <nav>
+    <a href="#/shop">Shop</a>
+    <a href="#/about">About</a>
+    <label><input type="checkbox" id="dark"> Dark mode</label>
+  </nav>
+
+  <section id="shop-view">
+    <h1>Shop</h1>
+    <label>Search <input id="search" type="search"></label>
+    <label>Sort
+      <select id="sort">
+        <option value="name">Name</option>
+        <option value="price">Price</option>
+      </select>
+    </label>
+    <div id="products"></div>
+
+    <h2>Cart</h2>
+    <ul id="cart"></ul>
+    <label>Coupon <input id="coupon" type="text"></label>
+    <button id="apply-coupon">Apply coupon</button>
+    <p>Subtotal: <span data-testid="subtotal" id="subtotal">$0.00</span></p>
+    <p>Total: <span data-testid="total" id="total">$0.00</span></p>
+    <details><summary>Shipping info</summary><p>Free shipping over $50.</p></details>
+  </section>
+
+  <section id="about-view" hidden>
+    <h1>About</h1>
+    <button id="changelog-btn">Show changelog</button>
+    <div id="changelog"></div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+{
+  "schema": "buggps.realcases/v1",
+  "note": "Real historical bugs from public repos. buggyCommit = parent of the squash-merged fix; fixFiles from the fix commit are the ground truth for verification and (later) localization.",
+  "cases": [
+    {
+      "id": "drawdb-943",
+      "app": "drawdb",
+      "repo": "https://github.com/drawdb-io/drawdb",
+      "pr": "https://github.com/drawdb-io/drawdb/pull/943",
+      "issue": "https://github.com/drawdb-io/drawdb/issues/858",
+      "buggyCommit": "6f807122927431ee359caa7e751317016e7fc6dc",
+      "fixCommit": "00f5173a45764a512d21259deafaa110ff49321b",
+      "fixFiles": ["src/components/EditorHeader/Modal/Modal.jsx", "src/components/EditorHeader/Modal/SetTableWidth.jsx"],
+      "install": ["npm", "ci", "--ignore-scripts", "--no-audit", "--no-fund"],
+      "port": 5191,
+      "startPath": "/editor",
+      "bug": {
+        "zh": "设置里修改表格宽度后点「取消」，宽度仍然被改掉了。",
+        "en": "Changing the table width in Settings and pressing Cancel still applies the new width."
+      },
+      "recordHint": {
+        "zh": "进入编辑器后可以随意操作（加表、改名、切菜单……）。期间打开「设置 → 表格宽度」，把数值改成别的，点「取消」。再打开一次表格宽度，用工具栏「预期输入值」点那个输入框，填入原来的宽度。最后点结束。",
+        "en": "Use the editor freely. At some point open Settings -> Table width, change the number, press Cancel. Reopen Table width, use toolbar 'value' on the input and type the ORIGINAL width. Stop."
+      }
+    },
+    {
+      "id": "qwerty-842",
+      "app": "qwerty-learner",
+      "repo": "https://github.com/RealKai42/qwerty-learner",
+      "pr": "https://github.com/RealKai42/qwerty-learner/pull/842",
+      "buggyCommit": "0fb69f83dfb00630ed17f835ceabe8f3620862cc",
+      "fixCommit": "359cc3c3ab9264cd6270cc8bd243fabc1171c613",
+      "fixFiles": ["src/pages/Gallery-N/DictDetail/index.tsx"],
+      "install": ["npx", "--yes", "yarn@1.22.22", "install", "--frozen-lockfile", "--ignore-scripts", "--non-interactive"],
+      "port": 5192,
+      "startPath": "/",
+      "bug": {
+        "zh": "词典详情页里再点一次已选中的「章节选择」，章节列表会消失。",
+        "en": "In a dictionary's detail view, clicking the already-selected 'chapters' toggle makes the chapter list disappear."
+      },
+      "recordHint": {
+        "zh": "可以先练几个词、换词典、开关设置等。然后进入词库页面，打开任意一本词典的详情。在章节列表还在的时候，用工具栏「应可见」点一个章节项。接着再点一次已经选中的「章节选择」，看到列表消失后点结束。",
+        "en": "Type a few words, switch dictionaries, etc. Open the dictionary gallery and a dictionary's detail. While chapters are shown, use toolbar 'visible' on one chapter. Then click the already-selected 'chapters' toggle; the list disappears. Stop."
+      }
+    },
+    {
+      "id": "chartdb-896",
+      "app": "chartdb",
+      "repo": "https://github.com/chartdb/chartdb",
+      "pr": "https://github.com/chartdb/chartdb/pull/896",
+      "buggyCommit": "aa290615caf806d7d0374c848d50b4636fde7e96",
+      "fixCommit": "e5e1d5932762422ea63acfd6cf9fe4f03aa822f7",
+      "fixFiles": ["src/pages/editor-page/side-panel/tables-section/table-list/table-list-item/table-list-item-content/table-field/table-field.tsx"],
+      "install": ["npm", "ci", "--ignore-scripts", "--no-audit", "--no-fund"],
+      "port": 5193,
+      "startPath": "/",
+      "bug": {
+        "zh": "修改字段类型后，旧的默认值（和自增设置）仍然保留。",
+        "en": "Changing a field's type keeps its old default value (and increment)."
+      },
+      "recordHint": {
+        "zh": "新建一个图（例如 PostgreSQL），可以多建几张表、改改名。在左侧表格面板里给某个字段设置默认值（字段属性里），然后修改这个字段的类型。再打开字段属性，用工具栏「预期输入值」点默认值输入框，填空（也就是清空后应为空）。最后点结束。",
+        "en": "Create a diagram (e.g. PostgreSQL), add tables, rename things. In the side panel set a field's default value (field attributes), then change that field's type. Reopen the attributes, toolbar 'value' on the default input, expected = empty. Stop."
+      }
+    }
+  ]
+}

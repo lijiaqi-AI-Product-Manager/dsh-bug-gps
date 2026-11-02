@@ -1,0 +1,204 @@
+{
+  "schema": "buggps.draft/v1",
+  "kind": "REAL app, scripted session",
+  "baseUrl": "http://127.0.0.1:5193/",
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Empty diagram"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Skip & Empty"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Add Table"
+        }
+      ]
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Add Table"
+        }
+      ]
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Refs"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Tables"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "within": {
+            "role": "region",
+            "name": "Fields"
+          },
+          "index": 3
+        },
+        {
+          "by": "role",
+          "role": "button"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "No default"
+        }
+      ],
+      "value": "0"
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "bigint",
+          "within": {
+            "role": "region",
+            "name": "Fields"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "bigint"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "option",
+          "name": "text"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "within": {
+            "role": "region",
+            "name": "Fields"
+          },
+          "index": 3
+        },
+        {
+          "by": "role",
+          "role": "button"
+        }
+      ]
+    }
+  ],
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "No default"
+      }
+    ],
+    "equals": ""
+  },
+  "dropped": 0
+}

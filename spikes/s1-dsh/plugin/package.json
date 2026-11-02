@@ -1,0 +1,17 @@
+{
+  "name": "dsh-bug-gps",
+  "version": "0.0.0-spike.1",
+  "description": "S1 spike: minimal BugGPS DSH bundle (tools, jobs, skills, pre-execute guard)",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "files": ["index.js", "cordis.patch.yml"],
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } },
+  "engines": { "dsh": ">=0.2.0 <0.3.0" },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": ">=0.2.0-0 <0.3.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/dsh-tools": "0.2.1-rc.5"
+  }
+}

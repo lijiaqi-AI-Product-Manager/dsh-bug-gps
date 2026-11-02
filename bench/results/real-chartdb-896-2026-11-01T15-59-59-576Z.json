@@ -1,0 +1,75 @@
+{
+  "case": "chartdb-896",
+  "kind": "REAL app, human recording",
+  "at": "2026-11-01T15:59:59.576Z",
+  "recordedSteps": 16,
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "No default"
+      }
+    ],
+    "equals": ""
+  },
+  "reproduce": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "0",
+    "reason": null,
+    "stepIndex": null,
+    "ms": 15994
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "steps": "16 -> 9",
+    "kept": [
+      "/",
+      "click Empty diagram",
+      "click Skip & Empty",
+      "click Add Table",
+      "click button",
+      "fill No default=0",
+      "click bigint",
+      "click text",
+      "click button"
+    ],
+    "stats": {
+      "trials": 42,
+      "probeRuns": 3,
+      "cacheHits": 2,
+      "unresolved": 22,
+      "differentFailure": 0,
+      "stepTimeoutMs": 1686,
+      "durationMs": 127734,
+      "modelCalls": 0
+    }
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "minimizedKept": true
+  },
+  "verifyBeforeFix": "NO_CODE_CHANGE",
+  "verifyWithRealFix": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "observed": null,
+    "reason": null,
+    "minimizedCheck": {
+      "status": "NOT_REPRODUCED",
+      "tally": {
+        "pass": 3
+      },
+      "observed": null,
+      "agreesWithRecording": true
+    },
+    "patch": ".../table-list-item/table-list-item-content/table-field/table-field.tsx | 2 ++\n 1 file changed, 2 insertions(+)"
+  }
+}

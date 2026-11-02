@@ -1,0 +1,137 @@
+{
+  "schema": "buggps.draft/v1",
+  "kind": "REAL app, scripted session",
+  "baseUrl": "http://127.0.0.1:5191/",
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "confirm"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "plus 添加表"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "tab",
+          "name": "关系 (0)"
+        },
+        {
+          "by": "css",
+          "value": "#semiTab2"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "tab",
+          "name": "表 (1)"
+        },
+        {
+          "by": "css",
+          "value": "#semiTab1"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "设置"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "表格宽度"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "spinbutton"
+        }
+      ],
+      "value": "300"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "cancel"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "设置"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "表格宽度"
+        }
+      ]
+    }
+  ],
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "spinbutton"
+      }
+    ],
+    "equals": "220"
+  },
+  "dropped": 0
+}

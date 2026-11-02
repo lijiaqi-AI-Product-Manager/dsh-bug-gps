@@ -1,0 +1,27 @@
+{
+  "case": "chartdb-896",
+  "kind": "REAL app, human recording",
+  "at": "2026-11-01T15:33:33.210Z",
+  "recordedSteps": 16,
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "No default"
+      }
+    ],
+    "equals": ""
+  },
+  "reproduce": {
+    "status": "FLAKY",
+    "tally": {
+      "step-error": 3
+    },
+    "observed": null,
+    "reason": "target not-found",
+    "stepIndex": 1,
+    "ms": 17862
+  }
+}
