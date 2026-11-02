@@ -2,6 +2,7 @@
 // fallback confirms shutdown and reports a blocked environment if descendants remain.
 import { spawn, execFile } from 'node:child_process';
 import { EnvBlockedError } from './errors.js';
+import { hostCommand } from './host-command.js';
 
 export async function startDevServer({ cwd, argv, url, readyTimeoutMs = 60_000, env, logLimit = 64 * 1024, signal, subprocess }) {
   signal?.throwIfAborted();
@@ -11,7 +12,6 @@ export async function startDevServer({ cwd, argv, url, readyTimeoutMs = 60_000, 
     throw new EnvBlockedError(`something is already serving ${url}; BugGPS needs that port free to start its own server from this working tree`, 'Stop the other server or give BugGPS a different port in its serve command (e.g. vite --port 5199 --strictPort).');
   }
   signal?.throwIfAborted();
-  const { cmd, args, opts } = spawnSpec(argv);
   let log = '';
   const append = (b) => { log = (log + b.toString()).slice(-logLimit); }; // bounded tail
   let exited = null;
@@ -22,12 +22,15 @@ export async function startDevServer({ cwd, argv, url, readyTimeoutMs = 60_000, 
   if (subprocess) {
     // The host owns the process range, including detached descendants on Windows.
     // Only explicit application environment is forwarded; the provider scrubs credentials.
-    const handle = subprocess.spawn({ argv: [cmd, ...args], cwd, env: { BROWSER: 'none', ...env }, stdio: { stdin: 'ignore', stdout: { maxBytes: logLimit }, stderr: { maxBytes: logLimit } }, graceMs: 1000, signal });
+    const command = await hostCommand(argv, cwd, subprocess, env, signal);
+    signal?.throwIfAborted();
+    const handle = subprocess.spawn({ argv: command, cwd, env: { BROWSER: 'none', ...env }, stdio: { stdin: 'ignore', stdout: { maxBytes: logLimit }, stderr: { maxBytes: logLimit } }, graceMs: 1000, signal });
     handle.done.then((outcome) => { exited = outcome; }, (err) => { exited = { error: err.message }; });
     terminate = () => handle.terminate();
     waitForExit = () => handle.waitForExit();
     readLog = () => [handle.collected.stdout, handle.collected.stderr].map((reader) => reader?.readFrom(0).text ?? '').join('\n').slice(-logLimit);
   } else {
+    const { cmd, args, opts } = spawnSpec(argv);
     const child = spawn(cmd, args, { cwd, env: { ...process.env, BROWSER: 'none', ...env }, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'], detached: process.platform !== 'win32', ...opts });
     pid = child.pid;
     child.stdout.on('data', append);
