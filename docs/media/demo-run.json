@@ -1,10 +1,11 @@
 {
   "schema": "buggps.demo/v1",
   "kind": "seeded-scripted-demo",
-  "engineCommit": "c624605264b2f88367b5c2904c78a9b4af084b85",
-  "generatorSha256": "5e885e60b25a7a4e42c8c158807f9445102ef40ba55b6bbf02448fc0f30cadd0",
+  "engineCommit": "33890a7bc8e22ce7049d3dbdf49eca198a99116a",
+  "generatorHashFormat": "utf8-lf",
+  "generatorSha256": "590f61b5ae479d41bc3da61b2f94e64a3d93d0471fba6fe60f4fd62abf2ccfac",
   "caseSha256": "aba91ffd80ce5b49d3396114bddc431d2d26c06d30fe9ff2a2c37f3eac82e086",
-  "lockSha256": "011b5d718b71c5a0598ebda1c81d1a884109a7532a1a114ad43fc9969d5047c0",
+  "lockSha256": "e43c9ec00ece3fbc6c92813ee9e8417dcb8999beee9a36c0461728c310537e2a",
   "patchSha256": "985ded3e317fec6cabddf1ba70f8ac9f84705a669cb22e21f201069c1f0f729c",
   "caseDefinition": {
     "schema": "buggps.case/v1",
@@ -270,22 +271,22 @@
         "method": "poll",
         "intervalMs": 50,
         "samples": 17,
-        "elapsedMs": 1005,
+        "elapsedMs": 1012,
         "maxGapMs": 69
       },
       {
         "method": "poll",
         "intervalMs": 50,
         "samples": 17,
-        "elapsedMs": 1007,
-        "maxGapMs": 70
+        "elapsedMs": 1003,
+        "maxGapMs": 65
       },
       {
         "method": "poll",
         "intervalMs": 50,
-        "samples": 17,
-        "elapsedMs": 1007,
-        "maxGapMs": 72
+        "samples": 18,
+        "elapsedMs": 1005,
+        "maxGapMs": 68
       }
     ]
   },
@@ -332,7 +333,7 @@
     },
     "runtimeInputs": [],
     "reason": null,
-    "durationMs": 3311
+    "durationMs": 2905
   },
   "mediaSeconds": 45.6
 }

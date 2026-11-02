@@ -261,7 +261,8 @@ const verifiedRun = JSON.parse(await readFile(join(repo, ok.run_record), 'utf8')
 await writeFile(join(OUT, 'demo-run.json'), JSON.stringify({
   schema: 'buggps.demo/v1', kind: 'seeded-scripted-demo',
   engineCommit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim(),
-  generatorSha256: createHash('sha256').update(await readFile(fileURLToPath(import.meta.url))).digest('hex'),
+  generatorHashFormat: 'utf8-lf',
+  generatorSha256: createHash('sha256').update((await readFile(fileURLToPath(import.meta.url), 'utf8')).replace(/\r\n/g, '\n')).digest('hex'),
   caseSha256: lockManifest.caseSha256, lockSha256: hashLock(lockManifest), patchSha256: verifiedRun.patch.sha256,
   caseDefinition, environment: { browser: env.channel, version: env.version, node: process.version, platform: process.platform },
   recordedSteps: locked.recorded_steps, minimization: locked.minimization,
