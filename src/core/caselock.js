@@ -249,7 +249,7 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
       if (serve && reasons.length === 0) {
         try {
           const control = await withBaseline(repoDir, lock.baselineTree, serve, async (baselineDir, baselineServe) => {
-            const checked = await withManagedServer(baselineDir, baselineServe, (u) => reproduce(browser, body, { baseUrl: u, runs, signal }), { warmup: warmupPage(browser, body) });
+            const checked = await withManagedServer(baselineDir, baselineServe, (u) => reproduce(browser, body, { baseUrl: u, runs, signal }), { warmup: warmupPage(browser, body, { signal }), subprocess: env?.subprocess, signal });
             return checked.treeBefore === checked.treeAfter ? checked.result : { status: Verdict.STALE, reason: 'baseline files changed while running' };
           }, { signal });
           const red = control.result;
