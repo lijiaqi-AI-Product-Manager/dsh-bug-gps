@@ -15,14 +15,16 @@ import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import os from 'node:os';
-import { reproduce, Status } from './reproduce.js';
+import { contractOf, reproduce, Status } from './reproduce.js';
 import { runTrial } from './replay.js';
 import { snapshotTree, diffTrees, diffStat } from './snapshot.js';
-import { DEFAULT_OBSERVE_MS, hasPositiveCheck, validateCase } from './oracle.js';
+import { DEFAULT_OBSERVE_MS, EVALUATOR_VERSION, hasPositiveCheck, validateCase } from './oracle.js';
 import { parseCommand, startDevServer } from './devserver.js';
 import { EnvBlockedError, TestDefinitionError } from './errors.js';
 import { validateCaseId } from './case-id.js';
 import { withBaseline } from './baseline.js';
+import { canonicalJson, resolutionChanges } from './canonical.js';
+export { canonicalJson } from './canonical.js';
 
 export const CASE_SCHEMA = 'buggps.case/v1';
 export const RUN_SCHEMA = 'buggps.run/v1';
@@ -52,23 +54,19 @@ export const ReviewReason = Object.freeze({
   DISABLED_CONTROL: 'disabled-control',
   // Only "no error" checks: deleting the feature would pass too.
   NEGATIVE_ONLY: 'negative-only',
-  // An action or assertion used a loose name fallback that was absent at lock time.
+  // An action or assertion used a locator candidate that was absent at lock time.
   LOCATOR_DRIFT: 'locator-drift',
   // A fresh baseline did not reproduce the locked failure with the current runtime inputs.
   BASELINE_NOT_REPRODUCED: 'baseline-not-reproduced',
 });
 
-export function canonicalJson(v) {
-  if (Array.isArray(v)) return `[${v.map(canonicalJson).join(',')}]`;
-  if (v && typeof v === 'object') {
-    return `{${Object.keys(v).sort().filter((k) => v[k] !== undefined).map((k) => `${JSON.stringify(k)}:${canonicalJson(v[k])}`).join(',')}}`;
-  }
-  return JSON.stringify(v);
+export function hashLock(lock) {
+  return createHash('sha256').update(canonicalJson(lock)).digest('hex');
 }
 
 export function hashCase(testCase) {
-  const { steps, minimizedSteps, expectation, also, observeMs, serve, match } = testCase;
-  return createHash('sha256').update(canonicalJson({ schema: CASE_SCHEMA, steps, minimizedSteps, expectation, also, observeMs, serve, match: match ?? 'strict' })).digest('hex');
+  const { steps, minimizedSteps, expectation, also, observeMs, serve, match, browser } = testCase;
+  return createHash('sha256').update(canonicalJson({ schema: CASE_SCHEMA, steps, minimizedSteps, expectation, also, observeMs, serve, match: match ?? 'strict', browser })).digest('hex');
 }
 
 const casesDir = (repo) => join(repo, '.buggps', 'cases');
@@ -112,7 +110,7 @@ export async function withManagedServer(repoDir, serve, fn, { warmup, subprocess
  */
 export function warmupPage(browser, testCase, { signal } = {}) {
   return async (url) => {
-    await runTrial(browser, { baseUrl: url, steps: testCase.steps, expectation: testCase.expectation, observeMs: 0, stepTimeoutMs: 15_000, navTimeoutMs: 120_000, signal }).catch(() => {});
+    await runTrial(browser, { baseUrl: url, steps: testCase.steps, ...contractOf(testCase), observeMs: 0, stepTimeoutMs: 15_000, navTimeoutMs: 120_000, signal }).catch(() => {});
   };
 }
 /**
@@ -161,6 +159,7 @@ export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs 
     steps: testCase.steps,
     ...(minimizedSteps ? { minimizedSteps } : {}),
     expectation: testCase.expectation,
+    ...(testCase.browser ? { browser: testCase.browser } : {}),
     ...(testCase.also?.length ? { also: testCase.also } : {}),
     observeMs,
     ...(serve ? { serve } : {}),
@@ -172,7 +171,7 @@ export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs 
     caseSha256: hashCase(body),
     baselineTree,
     binding: serve ? 'managed' : 'external',
-    red: { runs: red.runs, tally: red.tally, signature: red.signature, signatureKey: red.signatureKey, observed: red.observed, late: red.late, looseSteps: red.looseSteps, looseChecks: red.looseChecks, observation: red.observation },
+    red: { evaluator: EVALUATOR_VERSION, runs: red.runs, tally: red.tally, signature: red.signature, signatureKey: red.signatureKey, observed: red.observed, late: red.late, looseSteps: red.looseSteps, looseChecks: red.looseChecks, resolutionProfile: red.resolutionProfile, observation: red.observation },
     ...(redMinimized ? { redMinimized: { status: redMinimized.status, tally: redMinimized.tally, kept: Boolean(minimizedSteps) } } : {}),
     env: envFingerprint(env, baseUrl),
     lockedAt: new Date().toISOString(),
@@ -199,7 +198,7 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
   const { body, lock } = await loadCase(repoDir, id);
   const serve = body.serve;
   const url = serve ? serve.url : baseUrl;
-  const record = { schema: RUN_SCHEMA, runId, caseId: id, producer: 'dsh-bug-gps', baselineTree: lock.baselineTree, binding: serve ? { mode: 'managed', command: serve.command, url } : { mode: 'external', url }, observeMs: body.observeMs ?? DEFAULT_OBSERVE_MS, env: envFingerprint(env, url) };
+  const record = { schema: RUN_SCHEMA, runId, caseId: id, producer: 'dsh-bug-gps', evaluator: EVALUATOR_VERSION, lockSha256: hashLock(lock), baselineTree: lock.baselineTree, binding: serve ? { mode: 'managed', command: serve.command, url } : { mode: 'external', url }, observeMs: body.observeMs ?? DEFAULT_OBSERVE_MS, env: envFingerprint(env, url) };
   const finish = async (verdict, extra = {}) => {
     Object.assign(record, { verdict, ...extra, finishedAt: new Date().toISOString() });
     await mkdir(join(repoDir, '.buggps', 'runs'), { recursive: true });
@@ -238,7 +237,7 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
     // trigger (its symptom matched a state reachable without the bug).
     record.minimizedCheck = { status: short.status, tally: short.tally, observed: short.observed, agreesWithRecording: short.status === result.status && short.signatureKey === result.signatureKey };
   }
-  record.check = { status: result.status, tally: result.tally, observed: result.observed, reason: result.reason, durationMs: result.durationMs, observation: result.observation };
+  record.check = { status: result.status, tally: result.tally, observed: result.observed, reason: result.reason, durationMs: result.durationMs, observation: result.observation, resolutionProfile: result.resolutionProfile };
   if (bound.treeAfter !== bound.treeBefore || bound.treeBefore !== treeNow) return finish(Verdict.STALE);
 
   const sameFailure = result.trials.every((t) => t.outcome === 'fail') && result.signatureKey === lock.red.signatureKey;
@@ -248,13 +247,16 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
   if (newLoose.length) record.check.looseSteps = newLoose;
   const newLooseChecks = result.looseChecks.filter((key) => !(lock.red.looseChecks ?? []).includes(key));
   if (newLooseChecks.length) record.check.looseChecks = newLooseChecks;
+  const changedResolutions = resolutionChanges(lock.red.resolutionProfile, result.resolutionProfile);
+  if (lock.red.evaluator !== EVALUATOR_VERSION) changedResolutions.push('evaluator-changed');
+  if (changedResolutions.length) record.check.resolutionChanges = changedResolutions;
   let verdict;
   switch (result.status) {
     case Status.NOT_REPRODUCED: {
       const reasons = [];
       if (disabledSteps.length) reasons.push(ReviewReason.DISABLED_CONTROL);
       if (!hasPositiveCheck(body)) reasons.push(ReviewReason.NEGATIVE_ONLY);
-      if (newLoose.length || newLooseChecks.length) reasons.push(ReviewReason.LOCATOR_DRIFT);
+      if (newLoose.length || newLooseChecks.length || changedResolutions.length) reasons.push(ReviewReason.LOCATOR_DRIFT);
       if (serve && reasons.length === 0) {
         try {
           const control = await withBaseline(repoDir, lock.baselineTree, serve, async (baselineDir, baselineServe) => {
@@ -262,8 +264,9 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
             return checked.treeBefore === checked.treeAfter ? checked.result : { status: Verdict.STALE, reason: 'baseline files changed while running' };
           }, { signal });
           const red = control.result;
-          const matchesLockedFailure = red.status === Status.REPRODUCED && red.signatureKey === lock.red.signatureKey;
-          record.baselineControl = { status: red.status, tally: red.tally, observed: red.observed, signatureKey: red.signatureKey, matchesLockedFailure, runtimeInputs: control.runtimeInputs, reason: red.reason, durationMs: red.durationMs };
+          const changed = resolutionChanges(lock.red.resolutionProfile, red.resolutionProfile);
+          const matchesLockedFailure = red.status === Status.REPRODUCED && red.signatureKey === lock.red.signatureKey && changed.length === 0;
+          record.baselineControl = { status: red.status, tally: red.tally, observed: red.observed, signatureKey: red.signatureKey, matchesLockedFailure, resolutionChanges: changed, resolutionProfile: red.resolutionProfile, runtimeInputs: control.runtimeInputs, reason: red.reason, durationMs: red.durationMs };
           if (signal?.aborted || red.status === Status.ABORTED) return finish(Verdict.ABORTED);
           if (!matchesLockedFailure) reasons.push(ReviewReason.BASELINE_NOT_REPRODUCED);
         } catch (err) {

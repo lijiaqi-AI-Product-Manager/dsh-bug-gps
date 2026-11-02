@@ -101,7 +101,7 @@ export async function minimize(browser, testCase, {
     const depsFor = async (idx) => {
       stats.probeRuns++;
       const keep = build(idx);
-      const local = await probeDependencies(browser, { baseUrl, steps: keep.map((i) => steps[i]), expectation: testCase.expectation, signal });
+      const local = await probeDependencies(browser, { baseUrl, steps: keep.map((i) => steps[i]), expectation: testCase.expectation, browser: testCase.browser, signal });
       const deps = new Map();
       local.forEach(({ all, last }, k) => deps.set(keep[k], { all: new Set([...all].map((j) => keep[j])), last: last === null ? null : keep[last] }));
       if (process.env.BUGGPS_DEBUG) console.error(`[minimize] deps ${[...deps].map(([k, d]) => `${k}<-{${[...d.all]}} last=${d.last}`).join('  ')}`);
@@ -196,7 +196,7 @@ async function unitsPass(current, depsFor, pinned, testMany, isExhausted) {
  * targets are usable (unique and visible); step k depends on step j when its target turned
  * usable right after j. Only an efficiency hint: every deletion is still tested by replay.
  */
-export async function probeDependencies(browser, { baseUrl, steps, expectation, signal }) {
+export async function probeDependencies(browser, { baseUrl, steps, expectation, browser: settings, signal }) {
   const ready = steps.map(() => []);
   const probe = async (page, i) => {
     // Open/close transitions leave elements visible for a few hundred ms; wait them out so a
@@ -208,7 +208,7 @@ export async function probeDependencies(browser, { baseUrl, steps, expectation, 
       ready[k][i] = r.ok && (await r.locator.isVisible().catch(() => false));
     }
   };
-  await runTrial(browser, { baseUrl, steps, expectation, signal, probe });
+  await runTrial(browser, { baseUrl, steps, expectation, browser: settings, signal, probe });
   return steps.map((_, k) => {
     const all = new Set();
     let last = null;

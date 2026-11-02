@@ -8,7 +8,7 @@ Use this when the user has a bug they can reproduce in their running web app (de
 
 1. Ask for the dev server URL if you do not know it. Call **buggps_record** with it. A browser opens for the USER: they reproduce the bug, mark on the BugGPS toolbar what SHOULD be shown, optionally mark checkpoints ("at this point it shows …") and the key step, and press stop. Tell them that before calling.
 2. Ask the user how BugGPS should start the app itself (dev command and a FREE port, e.g. \`npm run dev -- --port 5199 --strictPort\` → \`http://127.0.0.1:5199/\`), unless \`buggps.config.json\` already has \`serve\` (buggps_status shows it). Call **buggps_lock** with the draft (and serve / serve_url). It locks only if the bug shows in every run. If it returns anything other than LOCKED, follow its \`next\` field.
-3. Use \`expectation\`, \`observed_now\` and \`shortest_steps\` to find the cause in the application code. Fix it with your normal tools.
+3. Use \`expectation\`, \`observed_now\` and \`shortened_steps\` to find the cause in the application code. Fix it with your normal tools. A shorter path is not proven minimal or causal.
 4. Call **buggps_verify** with the case_id. Repeat 3–4 until it returns VERIFIED.
 
 Rules:

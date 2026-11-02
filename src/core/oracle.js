@@ -4,6 +4,10 @@
 import { resolveTarget, targetKey } from './locator.js';
 import { TestDefinitionError } from './errors.js';
 import { validateObserveMs } from './observation.js';
+import { browserOptions, validateViewport } from './browser-options.js';
+import { canonicalJson } from './canonical.js';
+
+export const EVALUATOR_VERSION = 'buggps.oracle/v2';
 
 export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'no-page-error', 'no-console-error', 'no-failed-request'];
 // "Nothing went wrong" kinds. On their own they cannot show the feature works again (deleting
@@ -32,6 +36,8 @@ export function validateCase(testCase) {
   for (const e of testCase.also ?? []) validateExpectation(e);
   for (const s of testCase.steps ?? []) if (s.check) validateExpectation(s.check, { checkpoint: true });
   validateObserveMs(testCase.observeMs);
+  browserOptions(testCase.browser);
+  for (const step of testCase.steps ?? []) if (step.action === 'viewport') validateViewport(step);
 }
 
 /** True when some final check proves a positive outcome (not just "no error"). */
@@ -43,11 +49,12 @@ export function hasPositiveCheck(testCase) {
  * Polls the expectation for up to settleMs. Returns { pass: true } or
  * { pass: false, observed, signature } or { invalid: reason } when the target is unusable.
  */
-export async function evaluate(page, exp, observations, { settleMs = 500, targetWaitMs = 3000 } = {}) {
+export async function evaluate(page, exp, observations, { settleMs = 500, targetWaitMs = 3000, onResolution } = {}) {
   const started = Date.now();
   let last;
   for (;;) {
     last = await evaluateOnce(page, exp, observations);
+    if (last.resolvedBy) onResolution?.(last.resolvedBy);
     if (last.pass || last.invalid) return last;
     // A value/text target that is not there yet (popover still animating in) gets longer.
     const missing = String(last.signature?.actual ?? '').startsWith('target:');
@@ -104,7 +111,7 @@ async function evaluateOnce(page, exp, obs) {
 }
 
 function resolved(resolution, result) {
-  return { ...result, ...(resolution.ok ? { resolvedBy: resolution.used } : {}) };
+  return { ...result, ...(resolution.ok ? { resolvedBy: resolution.used, ...(result.signature ? { signature: { ...result.signature, resolution: resolution.used } } : {}) } : {}) };
 }
 
 function fail(exp, observed, actualKey) {
@@ -114,7 +121,7 @@ function fail(exp, observed, actualKey) {
 
 export function signatureKey(sig, match = 'strict') {
   if (!sig) return null;
-  return match === 'loose' ? `${sig.kind}|${sig.target}` : `${sig.kind}|${sig.target}|${sig.actual}`;
+  return canonicalJson({ kind: sig.kind, target: sig.target, resolution: sig.resolution, ...(match === 'loose' ? {} : { actual: sig.actual }) });
 }
 
 function normalizeSpace(s) {

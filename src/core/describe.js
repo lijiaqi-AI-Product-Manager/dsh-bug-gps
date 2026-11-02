@@ -3,6 +3,7 @@
 export function stepLabel(s) {
   if (s.action === 'goto') return `open ${s.url}`;
   if (s.action === 'key') return `press ${s.value}`;
+  if (s.action === 'viewport') return `resize viewport to ${s.width} × ${s.height} [key step]`;
   const t = s.target?.[0] ?? {};
   const what = t.name ?? t.value ?? t.role ?? '?';
   const where = t.within ? ` (in ${t.within.name})` : '';
@@ -22,7 +23,7 @@ export function expectationLabel(e) {
     case 'hidden': return `${what} is not visible`;
     case 'no-page-error': return 'no uncaught page error';
     case 'no-console-error': return 'no console error';
-    case 'no-failed-request': return 'no failed (4xx/5xx) request';
+    case 'no-failed-request': return 'no failed request (network error or HTTP 4xx/5xx)';
     default: return e.kind;
   }
 }

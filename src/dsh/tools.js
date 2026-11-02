@@ -9,7 +9,7 @@ import { launchBrowser } from '../core/browser.js';
 import { startRecording } from '../core/recorder.js';
 import { reproduce, Status } from '../core/reproduce.js';
 import { minimize } from '../core/minimize.js';
-import { hashCase, loadCase, lockCase, normalizeServe, verifyCase, Verdict, warmupPage, withManagedServer } from '../core/caselock.js';
+import { hashCase, hashLock, loadCase, lockCase, normalizeServe, verifyCase, Verdict, warmupPage, withManagedServer } from '../core/caselock.js';
 import { DEFAULT_OBSERVE_MS, hasPositiveCheck, validateCase } from '../core/oracle.js';
 import { snapshotTree } from '../core/snapshot.js';
 import { EnvBlockedError, TestDefinitionError } from '../core/errors.js';
@@ -55,7 +55,7 @@ const NEXT = {
 const REVIEW_TEXT = {
   'disabled-control': 'a recorded action now hits a DISABLED control; the checks may pass only because the trigger was blocked',
   'negative-only': 'the case only checks that no error happens; removing the feature would pass too. Ask the user for a positive check (record again and add one)',
-  'locator-drift': 'some recorded elements were found only by a loose name match, unlike at lock time; the replay may have used a different element',
+  'locator-drift': 'a locator candidate or evaluator changed, or the original resolution provenance is unavailable; review the affected actions and checks before recording a new case',
   'baseline-not-reproduced': 'a fresh baseline did not reproduce the locked failure; inspect the startup root, dependencies and development environment',
 };
 
@@ -101,7 +101,8 @@ async function withBrowser(signal, { headless = true, subprocess } = {}, fn) {
   }
 }
 
-const realKey = (dir) => { try { return realpathSync.native(dir).toLowerCase(); } catch { return resolve(dir).toLowerCase(); } };
+const realKey = (dir) => { let key; try { key = realpathSync.native(dir); } catch { key = resolve(dir); } return process.platform === 'win32' ? key.toLowerCase() : key; };
+const caseKey = (cwd, id) => `${realKey(cwd)}|${realKey(join(cwd, '.buggps', 'cases', id))}`;
 
 /**
  * @param {object} deps
@@ -111,8 +112,8 @@ const realKey = (dir) => { try { return realpathSync.native(dir).toLowerCase(); 
  * @param {{headedRecording?: boolean, onRecordingPage?: Function}} [deps.testHooks]
  */
 export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {}, testHooks = {}, subprocess }) {
-  // (real project dir, caseId) -> case hash, for cases locked in THIS process: detects a
-  // lock.json rewritten by a shell command together with the case (the file hash alone cannot).
+  // (real project dir, real case dir) -> case and complete lock hashes, for cases locked in
+  // THIS process. Detects changes to the baseline and RED evidence as well as the definition.
   // Keyed by project too: the same case id in two repositories are two different cases.
   const lockedHere = new Map();
   const projectOf = async (exec) => { const cwd = await resolveCwd(exec); onProject(cwd); return cwd; };
@@ -140,8 +141,8 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
         const draftId = randomUUID();
         const file = join(cwd, '.buggps', 'drafts', `${draftId}.json`);
         await mkdir(join(cwd, '.buggps', 'drafts'), { recursive: true });
-        const { expectation, also, expectedFrom } = rec.result;
-        await writeFile(file, JSON.stringify({ schema: 'buggps.draft/v1', id: draftId, name: String(args.name ?? '').slice(0, 200), source: 'recorded', baseUrl: args.url, steps, expectation, ...(also.length ? { also } : {}), expectedFrom, recordedAt: new Date().toISOString(), endedBy: how }, null, 2), { flag: 'wx' });
+        const { expectation, also, expectedFrom, browser } = rec.result;
+        await writeFile(file, JSON.stringify({ schema: 'buggps.draft/v1', id: draftId, name: String(args.name ?? '').slice(0, 200), source: 'recorded', baseUrl: args.url, steps, expectation, ...(also.length ? { also } : {}), browser, expectedFrom, recordedAt: new Date().toISOString(), endedBy: how }, null, 2), { flag: 'wx' });
         const draft = relative(cwd, file).replace(/\\/g, '/');
         if (!expectation) {
           return { status: 'NO_EXPECTATION', draft, steps: steps.length, next: 'The user did not set the correct expectation. Ask them to record again and use the toolbar ("预期文本 / 预期输入值 / 应可见 / 不应报错") before pressing stop. Do not invent one.' };
@@ -220,7 +221,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
         if (!out.locked) return out;
         const { red, m, minimizedSteps, locked } = out;
         if (!locked.caseId) return { status: locked.status, message: 'the bug did not reproduce consistently at lock time', reason: locked.reason ?? null, next: LOCK_NEXT[locked.status] ?? NEXT[locked.status] };
-        lockedHere.set(`${realKey(cwd)}|${id}`, locked.lock.caseSha256);
+        lockedHere.set(caseKey(cwd, id), { caseSha256: locked.lock.caseSha256, lockSha256: hashLock(locked.lock) });
         const kept = Boolean(locked.lock.redMinimized?.kept);
         return {
           status: 'LOCKED',
@@ -232,7 +233,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
           observed_now: red.observed,
           ...(red.late ? { note_late: `the failure appeared only during the ${testCase.observeMs ?? DEFAULT_OBSERVE_MS} ms observation window after the last step` } : {}),
           recorded_steps: draft.steps.length,
-          ...(kept ? { shortest_steps: minimizedSteps.map(stepLabel) } : { steps: draft.steps.map(stepLabel) }),
+          ...(kept ? { shortened_steps: minimizedSteps.map(stepLabel) } : { steps: draft.steps.map(stepLabel) }),
           minimization: m ? { from: m.originalSteps, to: kept ? m.minimizedSteps : m.originalSteps, trials: m.stats.trials, probe_runs: m.stats.probeRuns, model_calls: 0, note: 'A verified shorter path that still shows the same failure, for reading the code. Not proven minimal and not a cause; the full recording decides verification.' } : 'skipped',
           ...(hasPositiveCheck(testCase) ? {} : { warning: 'Only "no error" is checked, so verify can return at most NEEDS_REVIEW.' }),
           next: `Find and fix the cause in the application code (never edit .buggps/), then call buggps_verify with case_id="${id}".`,
@@ -258,11 +259,11 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
       const id = args.case_id;
       let lockFile;
       try { lockFile = await loadCase(cwd, id); } catch { return json({ status: 'TEST_INVALID', message: `no locked case "${id}" in ${cwd}/.buggps/cases`, next: 'Use buggps_status to list cases.' }); }
-      const remembered = lockedHere.get(`${realKey(cwd)}|${id}`);
-      if (remembered && remembered !== lockFile.lock.caseSha256) {
+      const remembered = lockedHere.get(caseKey(cwd, id));
+      if (remembered && remembered.lockSha256 !== hashLock(lockFile.lock)) {
         return json({ status: Verdict.CASE_TAMPERED, message: 'lock.json was rewritten after locking in this session', next: NEXT[Verdict.CASE_TAMPERED] });
       }
-      if (remembered && hashCase(lockFile.body) !== remembered) {
+      if (remembered && hashCase(lockFile.body) !== remembered.caseSha256) {
         return json({ status: Verdict.CASE_TAMPERED, message: 'case.json changed after locking', next: NEXT[Verdict.CASE_TAMPERED] });
       }
       const managed = Boolean(lockFile.body.serve);
@@ -289,6 +290,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
           ...(r.check?.disabledSteps ? { disabled_steps: r.check.disabledSteps.map((d) => stepLabel(d.step)) } : {}),
           ...(r.check?.looseSteps ? { loosely_matched_steps: r.check.looseSteps.map((i) => stepLabel(lockFile.body.steps[i])) } : {}),
           ...(r.check?.looseChecks ? { loosely_matched_checks: r.check.looseChecks } : {}),
+          ...(r.check?.resolutionChanges ? { locator_changes: r.check.resolutionChanges } : {}),
           ...(r.minimizedCheck ? { shortened_case_agrees: r.minimizedCheck.agreesWithRecording } : {}),
           ...(r.patch ? { patch: r.patch.stat, patch_file: `.buggps/runs/${r.runId}.patch` } : {}),
           run_record: `.buggps/runs/${r.runId}.json`,
@@ -329,14 +331,14 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
             binding: body.serve ? 'managed' : 'external',
             before_fix: lock.red?.observed ?? null,
             steps: body.steps.length,
-            latest: r ? { verdict: r.verdict, at: r.finishedAt, applies_to_current_code: Boolean(tree && r.treeAfter && r.treeAfter === tree) } : null,
+            latest: r ? { verdict: r.verdict, at: r.finishedAt, applies_to_current_code: Boolean(tree && r.treeAfter === tree && r.caseSha256 === hashCase(body) && r.lockSha256 === hashLock(lock)) } : null,
           });
         } catch { cases.push({ case_id: id, error: 'unreadable' }); }
       }
       let config;
       try { config = await readConfig(cwd); } catch (err) { config = { error: err.message }; }
       const out = { status: 'OK', repo: cwd, write_protection: guardActive() ? 'active' : 'NOT ACTIVE', serve: config.error ? `invalid ${CONFIG_FILE}: ${config.error}` : config.serve ? `${parseServeLabel(config.serve)}` : `none (add "serve" to ${CONFIG_FILE} for VERIFIED verdicts)`, cases };
-      if (cases.some((c) => c.latest && !c.latest.applies_to_current_code)) out.note = 'A latest verdict with applies_to_current_code=false was given for different code; run buggps_verify again before relying on it.';
+      if (cases.some((c) => c.latest && !c.latest.applies_to_current_code)) out.note = 'A latest verdict with applies_to_current_code=false belongs to different code or locked conditions; run buggps_verify again before relying on it.';
       if (args.url) out.dev_server = (await reachable(args.url)) ? 'reachable' : 'NOT reachable';
       if (args.check_browser) {
         try { const env = await launchBrowser(); out.browser = `${env.channel} ${env.version}`; await env.browser.close(); } catch (err) { out.browser = `NOT usable: ${err.message}`; }

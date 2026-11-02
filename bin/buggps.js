@@ -82,8 +82,8 @@ async function run() {
       const how = await rec.finished;
       const steps = await rec.stop();
       const out = resolve(o.out ?? `.buggps/drafts/case-${Date.now()}.json`);
-      const { expectation, also } = rec.result;
-      const body = { schema: 'buggps.draft/v1', source: 'recorded', baseUrl, steps, expectation, ...(also.length ? { also } : {}), expectedFrom: rec.result.expectedFrom, recordedAt: new Date().toISOString(), endedBy: how };
+      const { expectation, also, browser } = rec.result;
+      const body = { schema: 'buggps.draft/v1', source: 'recorded', baseUrl, steps, expectation, ...(also.length ? { also } : {}), browser, expectedFrom: rec.result.expectedFrom, recordedAt: new Date().toISOString(), endedBy: how };
       await mkdir(dirname(out), { recursive: true });
       await writeFile(out, JSON.stringify(body, null, 2));
       const warn = body.expectation ? '' : '\nWARNING: no expectation set; add one before reproduce/lock.';
