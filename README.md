@@ -34,7 +34,7 @@ node bin/buggps.js doctor --repo ../buggps-demo
    - 密码、验证码、卡号等字段**不会写入录制**，只存一个引用；重放时从环境变量 `BUGGPS_SECRET_<名字>` 读取。
 2. **锁定**（`buggps_lock`）：BugGPS 用 `serve` 命令**自己启动应用**，在当前代码上重放 3 次，3 次都以同一种方式失败才锁定。锁定的用例有内容哈希，并且写保护。同时尝试缩短步骤，只靠重放，不调用模型。
 3. **修复**：DSH 的 agent 用常规工具改代码。
-4. **验证**（`buggps_verify`）：BugGPS 再次从工作区启动应用，重放你的**完整录制** 3 次。每次都要在最后一步之后持续满足所有检查（默认观察 1000 ms）。
+4. **验证**（`buggps_verify`）：BugGPS 再次从工作区启动应用，重放你的**完整录制** 3 次。最后一步后先检查所有条件，再在观察窗口内按 50 ms 目标间隔重复检查（默认观察 1000 ms）；任一采样失败就不通过。运行记录保留实际采样次数和最大间隔。该检查不覆盖采样间隙及观察窗口以外的状态变化。
 
 ## `buggps.config.json`
 
@@ -57,7 +57,7 @@ node bin/buggps.js doctor --repo ../buggps-demo
 |---|---|
 | `VERIFIED` | BugGPS 从当前工作区启动应用，你的完整录制 3 次都满足全部检查；补丁正好是锁定基线到这份代码的差异 |
 | `PASSED_UNBOUND` | 检查通过了，但服务器不是 BugGPS 启动的，证明不了它运行的是这份补丁。没有 `serve` 时最多只能得到这个 |
-| `NEEDS_REVIEW` | 检查通过了，但证据弱于“修好了”，需要人判断。原因见 `review_reasons`，有三种：<br>`disabled-control`：录制的操作打到了被禁用的控件<br>`negative-only`：只检查了“不报错”，删掉这个功能也会通过<br>`locator-drift`：元素只能靠模糊名称匹配找到 |
+| `NEEDS_REVIEW` | 检查通过了，但证据弱于“修好了”，需要人判断。原因见 `review_reasons`，有三种：<br>`disabled-control`：录制的操作打到了被禁用的控件<br>`negative-only`：只检查了“不报错”，删掉这个功能也会通过<br>`locator-drift`：动作、检查点或预期的元素出现了新的模糊名称匹配 |
 | `STILL_FAILING` | 还是原来那个失败 |
 | `DIFFERENT_FAILURE` | 症状变了但预期仍未满足，或者录制的检查点不再成立 |
 | `NO_CODE_CHANGE` | 锁定之后代码没有变化 |

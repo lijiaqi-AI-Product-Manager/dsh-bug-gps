@@ -49,7 +49,7 @@ export const ReviewReason = Object.freeze({
   DISABLED_CONTROL: 'disabled-control',
   // Only "no error" checks: deleting the feature would pass too.
   NEGATIVE_ONLY: 'negative-only',
-  // A step's element was found only by the loose name fallback, unlike at lock time.
+  // An action or assertion used a loose name fallback that was absent at lock time.
   LOCATOR_DRIFT: 'locator-drift',
 });
 
@@ -161,7 +161,7 @@ export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs 
     caseSha256: hashCase(body),
     baselineTree,
     binding: serve ? 'managed' : 'external',
-    red: { runs: red.runs, tally: red.tally, signature: red.signature, signatureKey: red.signatureKey, observed: red.observed, late: red.late, looseSteps: red.looseSteps },
+    red: { runs: red.runs, tally: red.tally, signature: red.signature, signatureKey: red.signatureKey, observed: red.observed, late: red.late, looseSteps: red.looseSteps, looseChecks: red.looseChecks, observation: red.observation },
     ...(redMinimized ? { redMinimized: { status: redMinimized.status, tally: redMinimized.tally, kept: Boolean(minimizedSteps) } } : {}),
     env: envFingerprint(env, baseUrl),
     lockedAt: new Date().toISOString(),
@@ -225,7 +225,7 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
     // trigger (its symptom matched a state reachable without the bug).
     record.minimizedCheck = { status: short.status, tally: short.tally, observed: short.observed, agreesWithRecording: short.status === result.status && short.signatureKey === result.signatureKey };
   }
-  record.check = { status: result.status, tally: result.tally, observed: result.observed, reason: result.reason, durationMs: result.durationMs };
+  record.check = { status: result.status, tally: result.tally, observed: result.observed, reason: result.reason, durationMs: result.durationMs, observation: result.observation };
   if (bound.treeAfter !== bound.treeBefore || bound.treeBefore !== treeNow) return finish(Verdict.STALE);
 
   const sameFailure = result.trials.every((t) => t.outcome === 'fail') && result.signatureKey === lock.red.signatureKey;
@@ -233,13 +233,15 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
   if (disabledSteps.length) record.check.disabledSteps = disabledSteps.map((i) => ({ index: i, step: body.steps[i] }));
   const newLoose = result.looseSteps.filter((i) => !(lock.red.looseSteps ?? []).includes(i));
   if (newLoose.length) record.check.looseSteps = newLoose;
+  const newLooseChecks = result.looseChecks.filter((key) => !(lock.red.looseChecks ?? []).includes(key));
+  if (newLooseChecks.length) record.check.looseChecks = newLooseChecks;
   let verdict;
   switch (result.status) {
     case Status.NOT_REPRODUCED: {
       const reasons = [];
       if (disabledSteps.length) reasons.push(ReviewReason.DISABLED_CONTROL);
       if (!hasPositiveCheck(body)) reasons.push(ReviewReason.NEGATIVE_ONLY);
-      if (newLoose.length) reasons.push(ReviewReason.LOCATOR_DRIFT);
+      if (newLoose.length || newLooseChecks.length) reasons.push(ReviewReason.LOCATOR_DRIFT);
       if (reasons.length) record.reviewReasons = reasons;
       verdict = reasons.length ? Verdict.NEEDS_REVIEW : serve ? Verdict.VERIFIED : Verdict.PASSED_UNBOUND;
       break;

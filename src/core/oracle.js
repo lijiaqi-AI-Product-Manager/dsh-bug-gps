@@ -67,14 +67,14 @@ async function evaluateOnce(page, exp, obs) {
       const r = await resolveTarget(page, exp.target, { timeoutMs: 0 });
       if (!r.ok) return fail(exp, `target ${r.reason}`, `target:${r.reason}`);
       const actual = normalizeSpace(await r.locator.textContent());
-      return actual === exp.equals ? { pass: true } : fail(exp, actual, actual);
+      return resolved(r, actual === exp.equals ? { pass: true } : fail(exp, actual, actual));
     }
     case 'value': {
       const r = await resolveTarget(page, exp.target, { timeoutMs: 0 });
       if (!r.ok) return fail(exp, `target ${r.reason}`, `target:${r.reason}`);
       const actual = await r.locator.inputValue().catch(() => null);
-      if (actual === null) return { invalid: 'expectation target has no input value' };
-      return actual === exp.equals ? { pass: true } : fail(exp, actual, actual);
+      if (actual === null) return resolved(r, { invalid: 'expectation target has no input value' });
+      return resolved(r, actual === exp.equals ? { pass: true } : fail(exp, actual, actual));
     }
     case 'visible':
     case 'hidden': {
@@ -82,13 +82,13 @@ async function evaluateOnce(page, exp, obs) {
       if (!r.ok && r.reason === 'ambiguous') return { invalid: 'expectation target is ambiguous' };
       const visible = r.ok ? await r.locator.isVisible() : false;
       const want = exp.kind === 'visible';
-      if (visible === want) return { pass: true };
+      if (visible === want) return resolved(r, { pass: true });
       if (exp.kind === 'visible') {
         // "Disappeared" and "never reached" must not share a signature (see replay.isVisibleNow).
         const seen = obs.seenTarget ? 'was visible earlier' : 'never visible';
-        return fail(exp, `not visible (${seen})`, `false:${seen}`);
+        return resolved(r, fail(exp, `not visible (${seen})`, `false:${seen}`));
       }
-      return fail(exp, 'visible', 'true');
+      return resolved(r, fail(exp, 'visible', 'true'));
     }
     case 'no-page-error':
       return obs.pageErrors.length === 0 ? { pass: true }
@@ -102,6 +102,10 @@ async function evaluateOnce(page, exp, obs) {
     default:
       throw new TestDefinitionError(`Unknown expectation kind ${exp.kind}`);
   }
+}
+
+function resolved(resolution, result) {
+  return { ...result, ...(resolution.ok ? { resolvedBy: resolution.used } : {}) };
 }
 
 function fail(exp, observed, actualKey) {

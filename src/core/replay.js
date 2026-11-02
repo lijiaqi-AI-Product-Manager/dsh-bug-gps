@@ -12,7 +12,7 @@ const NETWORK_DOWN = /ERR_CONNECTION_REFUSED|ERR_NAME_NOT_RESOLVED|ERR_CONNECTIO
  *   - after step i, `steps[i].check` (a checkpoint) must hold, or the trial is
  *     'precondition-fail': the recorded situation was not reached, so the end result says nothing;
  *   - after the last step the primary `expectation` is evaluated, then every check in `also`;
- *   - a passing result must still pass `observeMs` later (late errors, values that flip back).
+ *   - after initial success, checks are sampled throughout `observeMs` with a 50 ms target interval.
  * @returns {Promise<{outcome:'pass'|'fail'|'precondition-fail'|'step-error'|'env-error'|'test-invalid'|'aborted', ...}>}
  */
 export async function runTrial(browser, { baseUrl, steps, expectation, also = [], observeMs = 0, stepTimeoutMs = 5000, navTimeoutMs = 45_000, settleMs = 250, signal, probe }) {
@@ -33,8 +33,11 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
   // Steps whose target only resolved through the loose (substring) fallback: weaker evidence
   // that the same element was used. caselock compares them with the lock-time runs.
   const looseSteps = [];
+  const looseChecks = new Set();
+  let observation;
   const stepMs = [];
-  const done = (r) => ({ ...r, ...(disabledSteps.length ? { disabledSteps } : {}), ...(looseSteps.length ? { looseSteps } : {}), stepMs, durationMs: Date.now() - started, observations: obs });
+  const done = (r) => ({ ...r, ...(disabledSteps.length ? { disabledSteps } : {}), ...(looseSteps.length ? { looseSteps } : {}), ...(looseChecks.size ? { looseChecks: [...looseChecks].sort() } : {}), ...(observation ? { observation } : {}), stepMs, durationMs: Date.now() - started, observations: obs });
+  const checked = (key, result) => { if (result.resolvedBy?.loose) looseChecks.add(key); };
   // Poll (not just between steps): content that renders asynchronously, then vanishes, would
   // otherwise be missed depending on timing.
   let poll;
@@ -63,6 +66,7 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
       await settle(page);
       if (step.check) {
         const c = await evaluate(page, step.check, obs, { settleMs: 1000 });
+        checked(`checkpoint:${i}`, c);
         if (!c.pass) return done({ outcome: 'precondition-fail', stepIndex: i, observed: c.observed ?? null, reason: `checkpoint after step ${i + 1} not met: ${c.invalid ?? c.observed}` });
       }
       // Deterministic check after every step, in addition to the background poll.
@@ -70,15 +74,30 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
       if (probe) await probe(page, i);
     }
     const checks = [expectation, ...also];
-    const first = await evaluateAll(page, checks, obs, { settleMs });
+    const onCheck = (index, result) => checked(`final:${index}`, result);
+    const first = await evaluateAll(page, checks, obs, { settleMs, onCheck });
     if (first) return done(first);
     if (observeMs > 0) {
-      await page.waitForTimeout(observeMs);
-      const late = await evaluateAll(page, checks, obs, { settleMs: 0, targetWaitMs: 0, late: true });
-      if (late) return done({ ...late, late: true });
+      const start = performance.now();
+      const deadline = start + observeMs;
+      let previous = start;
+      observation = { method: 'poll', intervalMs: 50, samples: 1, elapsedMs: 0, maxGapMs: 0 };
+      do {
+        if (signal?.aborted) return done({ outcome: 'aborted' });
+        await page.waitForTimeout(Math.min(50, Math.max(0, deadline - performance.now())));
+        if (signal?.aborted) return done({ outcome: 'aborted' });
+        const now = performance.now();
+        observation.maxGapMs = Math.max(observation.maxGapMs, Math.ceil(now - previous));
+        previous = now;
+        observation.samples++;
+        const late = await evaluateAll(page, checks, obs, { settleMs: 0, targetWaitMs: 0, late: true, onCheck });
+        observation.elapsedMs = Math.ceil(performance.now() - start);
+        if (late) return done({ ...late, late: true });
+      } while (performance.now() < deadline);
     }
     return done({ outcome: 'pass', ...(observeMs > 0 ? { observedMs: observeMs } : {}) });
   } catch (err) {
+    if (signal?.aborted) return done({ outcome: 'aborted' });
     if (err instanceof TestDefinitionError) return done({ outcome: 'test-invalid', reason: err.message });
     if (NETWORK_DOWN.test(err.message)) return done({ outcome: 'env-error', reason: firstLine(err) });
     return done({ outcome: 'step-error', reason: firstLine(err) });
@@ -90,9 +109,10 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
 
 // First failing check in order (primary first, so the RED signature is always the primary's),
 // or null when all pass.
-async function evaluateAll(page, checks, obs, { settleMs, targetWaitMs, late = false }) {
+async function evaluateAll(page, checks, obs, { settleMs, targetWaitMs, late = false, onCheck }) {
   for (let k = 0; k < checks.length; k++) {
     const v = await evaluate(page, checks[k], obs, { settleMs, ...(targetWaitMs !== undefined ? { targetWaitMs } : {}) });
+    onCheck?.(k, v);
     if (v.pass) continue;
     if (v.invalid) {
       // Seen once and then gone is a real failure, not an unusable expectation.
