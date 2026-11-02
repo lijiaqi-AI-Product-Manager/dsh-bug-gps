@@ -1,0 +1,23 @@
+{
+  "schema": "buggps.holdout-batch/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "attempted": 1,
+  "runtime": {
+    "commit": "a46e6053bf2da4c00bd528d5b0fbf115825f4830",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "98123253503c110f0617edda89d76dff41a6ae4606c6d008169f7e08d2b22162",
+    "engineFilesSha256": "f6d6d061f119d3c5b96547af55201a6ab01cf057bab9a54d49269e0255b0c53e",
+    "changedSourceFiles": []
+  },
+  "results": [
+    {
+      "case": "drawdb-1037",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    }
+  ]
+}

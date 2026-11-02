@@ -1,0 +1,365 @@
+{
+  "schema": "buggps.regression-summary/v1",
+  "dataset": "browser-state-12",
+  "evaluation": "expanded-regression, not a blind holdout or estimated field success rate",
+  "denominator": 12,
+  "attempted": 12,
+  "retainedAttemptRecords": 20,
+  "projects": 4,
+  "expectedOutcomes": 7,
+  "byStatus": {
+    "VERIFIED": 6,
+    "NOT_REPRODUCED": 1,
+    "DIFFERENT_FAILURE": 1,
+    "TEST_INVALID": 2,
+    "NEEDS_REVIEW": 2
+  },
+  "selection": "latest chronological attempt per case, including failures",
+  "rows": [
+    {
+      "case": "drawdb-1037",
+      "project": "drawdb",
+      "attempts": [
+        {
+          "file": "holdout-drawdb-1037-2026-11-02T16-05-42-207Z.json",
+          "at": "2026-11-02T16:05:42.207Z",
+          "status": "NEEDS_REVIEW",
+          "definitionRevision": 1
+        },
+        {
+          "file": "holdout-drawdb-1037-2026-11-02T17-41-05-974Z.json",
+          "at": "2026-11-02T17:41:05.974Z",
+          "status": "NEEDS_REVIEW",
+          "definitionRevision": 1
+        },
+        {
+          "file": "holdout-drawdb-1037-2026-11-02T20-01-26-525Z.json",
+          "at": "2026-11-02T20:01:26.525Z",
+          "status": "VERIFIED",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-drawdb-1037-2026-11-02T20-01-26-525Z.json",
+      "status": "VERIFIED",
+      "rawRecording": "REPRODUCED",
+      "lock": "REPRODUCED",
+      "fixed": "VERIFIED",
+      "expectedOutcome": true,
+      "authoredTargets": 0,
+      "shortened": {
+        "original": 7,
+        "result": 6,
+        "fixedComparison": "NOT_REPRODUCED",
+        "agreesWithFullRecording": true
+      },
+      "durationMs": 557357
+    },
+    {
+      "case": "drawdb-1031",
+      "project": "drawdb",
+      "attempts": [
+        {
+          "file": "holdout-drawdb-1031-2026-11-02T16-05-42-207Z.json",
+          "at": "2026-11-02T16:08:00.790Z",
+          "status": "NOT_REPRODUCED",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-drawdb-1031-2026-11-02T16-05-42-207Z.json",
+      "status": "NOT_REPRODUCED",
+      "rawRecording": "NOT_REPRODUCED",
+      "lock": "NOT_REPRODUCED",
+      "fixed": "NOT_RUN",
+      "expectedOutcome": false,
+      "authoredTargets": 0,
+      "shortened": null,
+      "durationMs": 44926
+    },
+    {
+      "case": "drawdb-1066",
+      "project": "drawdb",
+      "attempts": [
+        {
+          "file": "holdout-drawdb-1066-2026-11-02T16-05-42-207Z.json",
+          "at": "2026-11-02T16:08:45.717Z",
+          "status": "DIFFERENT_FAILURE",
+          "definitionRevision": 1
+        },
+        {
+          "file": "holdout-drawdb-1066-2026-11-02T16-35-34-696Z.json",
+          "at": "2026-11-02T16:35:34.697Z",
+          "status": "DIFFERENT_FAILURE",
+          "definitionRevision": 2
+        }
+      ],
+      "latest": "holdout-drawdb-1066-2026-11-02T16-35-34-696Z.json",
+      "status": "DIFFERENT_FAILURE",
+      "rawRecording": "REPRODUCED",
+      "lock": "REPRODUCED",
+      "fixed": "DIFFERENT_FAILURE",
+      "expectedOutcome": false,
+      "authoredTargets": 0,
+      "shortened": {
+        "original": 11,
+        "result": 11,
+        "fixedComparison": "NOT_RECORDED",
+        "agreesWithFullRecording": null
+      },
+      "durationMs": 436972
+    },
+    {
+      "case": "chartdb-1031",
+      "project": "chartdb",
+      "attempts": [
+        {
+          "file": "holdout-chartdb-1031-2026-11-02T16-21-23-442Z.json",
+          "at": "2026-11-02T16:21:23.442Z",
+          "status": "TEST_INVALID",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-chartdb-1031-2026-11-02T16-21-23-442Z.json",
+      "status": "TEST_INVALID",
+      "rawRecording": "TEST_INVALID",
+      "lock": "TEST_INVALID",
+      "fixed": "NOT_RUN",
+      "expectedOutcome": false,
+      "authoredTargets": 0,
+      "shortened": null,
+      "durationMs": 123411
+    },
+    {
+      "case": "chartdb-1061",
+      "project": "chartdb",
+      "attempts": [
+        {
+          "file": "holdout-chartdb-1061-2026-11-02T16-21-23-442Z.json",
+          "at": "2026-11-02T16:23:26.880Z",
+          "status": "NEEDS_REVIEW",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-chartdb-1061-2026-11-02T16-21-23-442Z.json",
+      "status": "NEEDS_REVIEW",
+      "rawRecording": "TEST_INVALID",
+      "lock": "REPRODUCED",
+      "fixed": "NEEDS_REVIEW",
+      "expectedOutcome": true,
+      "authoredTargets": 1,
+      "shortened": {
+        "original": 6,
+        "result": 5,
+        "fixedComparison": "NOT_REPRODUCED",
+        "agreesWithFullRecording": true
+      },
+      "durationMs": 370590
+    },
+    {
+      "case": "chartdb-1089",
+      "project": "chartdb",
+      "attempts": [
+        {
+          "file": "holdout-chartdb-1089-2026-11-02T16-35-33-800Z.json",
+          "at": "2026-11-02T16:35:33.801Z",
+          "status": "TEST_INVALID",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-chartdb-1089-2026-11-02T16-35-33-800Z.json",
+      "status": "TEST_INVALID",
+      "rawRecording": "NOT_RUN",
+      "lock": "NOT_RUN",
+      "fixed": "NOT_RUN",
+      "expectedOutcome": false,
+      "authoredTargets": 0,
+      "shortened": null,
+      "durationMs": 2705
+    },
+    {
+      "case": "chartdb-1045",
+      "project": "chartdb",
+      "attempts": [
+        {
+          "file": "holdout-chartdb-1045-2026-11-02T16-35-33-800Z.json",
+          "at": "2026-11-02T16:35:36.515Z",
+          "status": "VERIFIED",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-chartdb-1045-2026-11-02T16-35-33-800Z.json",
+      "status": "VERIFIED",
+      "rawRecording": "TEST_INVALID",
+      "lock": "REPRODUCED",
+      "fixed": "VERIFIED",
+      "expectedOutcome": true,
+      "authoredTargets": 3,
+      "shortened": {
+        "original": 9,
+        "result": 7,
+        "fixedComparison": "REPRODUCED",
+        "agreesWithFullRecording": false
+      },
+      "durationMs": 655185
+    },
+    {
+      "case": "it-tools-1359",
+      "project": "it-tools",
+      "attempts": [
+        {
+          "file": "holdout-it-tools-1359-2026-11-02T15-46-58-914Z.json",
+          "at": "2026-11-02T15:46:58.915Z",
+          "status": "RUNNER_ERROR",
+          "definitionRevision": 1
+        },
+        {
+          "file": "holdout-it-tools-1359-2026-11-02T15-49-36-510Z.json",
+          "at": "2026-11-02T15:49:36.511Z",
+          "status": "VERIFIED",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-it-tools-1359-2026-11-02T15-49-36-510Z.json",
+      "status": "VERIFIED",
+      "rawRecording": "REPRODUCED",
+      "lock": "REPRODUCED",
+      "fixed": "VERIFIED",
+      "expectedOutcome": true,
+      "authoredTargets": 0,
+      "shortened": {
+        "original": 2,
+        "result": 2,
+        "fixedComparison": "NOT_RECORDED",
+        "agreesWithFullRecording": null
+      },
+      "durationMs": 236677
+    },
+    {
+      "case": "it-tools-872",
+      "project": "it-tools",
+      "attempts": [
+        {
+          "file": "holdout-it-tools-872-2026-11-02T15-46-58-914Z.json",
+          "at": "2026-11-02T15:47:04.396Z",
+          "status": "RUNNER_ERROR",
+          "definitionRevision": 1
+        },
+        {
+          "file": "holdout-it-tools-872-2026-11-02T15-49-36-510Z.json",
+          "at": "2026-11-02T15:53:33.190Z",
+          "status": "VERIFIED",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-it-tools-872-2026-11-02T15-49-36-510Z.json",
+      "status": "VERIFIED",
+      "rawRecording": "REPRODUCED",
+      "lock": "REPRODUCED",
+      "fixed": "VERIFIED",
+      "expectedOutcome": true,
+      "authoredTargets": 0,
+      "shortened": {
+        "original": 2,
+        "result": 2,
+        "fixedComparison": "NOT_RECORDED",
+        "agreesWithFullRecording": null
+      },
+      "durationMs": 216142
+    },
+    {
+      "case": "it-tools-799",
+      "project": "it-tools",
+      "attempts": [
+        {
+          "file": "holdout-it-tools-799-2026-11-02T15-46-58-914Z.json",
+          "at": "2026-11-02T15:47:06.316Z",
+          "status": "RUNNER_ERROR",
+          "definitionRevision": 1
+        },
+        {
+          "file": "holdout-it-tools-799-2026-11-02T15-49-36-510Z.json",
+          "at": "2026-11-02T15:57:09.333Z",
+          "status": "VERIFIED",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-it-tools-799-2026-11-02T15-49-36-510Z.json",
+      "status": "VERIFIED",
+      "rawRecording": "REPRODUCED",
+      "lock": "REPRODUCED",
+      "fixed": "VERIFIED",
+      "expectedOutcome": true,
+      "authoredTargets": 0,
+      "shortened": {
+        "original": 2,
+        "result": 2,
+        "fixedComparison": "NOT_RECORDED",
+        "agreesWithFullRecording": null
+      },
+      "durationMs": 215153
+    },
+    {
+      "case": "it-tools-1368",
+      "project": "it-tools",
+      "attempts": [
+        {
+          "file": "holdout-it-tools-1368-2026-11-02T15-46-58-914Z.json",
+          "at": "2026-11-02T15:47:09.078Z",
+          "status": "RUNNER_ERROR",
+          "definitionRevision": 1
+        },
+        {
+          "file": "holdout-it-tools-1368-2026-11-02T15-49-36-510Z.json",
+          "at": "2026-11-02T16:00:44.487Z",
+          "status": "VERIFIED",
+          "definitionRevision": 1
+        },
+        {
+          "file": "holdout-it-tools-1368-2026-11-02T16-21-23-442Z.json",
+          "at": "2026-11-02T16:29:37.477Z",
+          "status": "NEEDS_REVIEW",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-it-tools-1368-2026-11-02T16-21-23-442Z.json",
+      "status": "NEEDS_REVIEW",
+      "rawRecording": "TEST_INVALID",
+      "lock": "REPRODUCED",
+      "fixed": "NEEDS_REVIEW",
+      "expectedOutcome": false,
+      "authoredTargets": 1,
+      "shortened": {
+        "original": 2,
+        "result": 1,
+        "fixedComparison": "REPRODUCED",
+        "agreesWithFullRecording": false
+      },
+      "durationMs": 597547
+    },
+    {
+      "case": "qwerty-learner-793",
+      "project": "qwerty-learner",
+      "attempts": [
+        {
+          "file": "holdout-qwerty-learner-793-2026-11-02T16-05-42-207Z.json",
+          "at": "2026-11-02T16:11:31.746Z",
+          "status": "VERIFIED",
+          "definitionRevision": 1
+        }
+      ],
+      "latest": "holdout-qwerty-learner-793-2026-11-02T16-05-42-207Z.json",
+      "status": "VERIFIED",
+      "rawRecording": "REPRODUCED",
+      "lock": "REPRODUCED",
+      "fixed": "VERIFIED",
+      "expectedOutcome": true,
+      "authoredTargets": 0,
+      "shortened": {
+        "original": 5,
+        "result": 2,
+        "fixedComparison": "NOT_RECORDED",
+        "agreesWithFullRecording": null
+      },
+      "durationMs": 162533
+    }
+  ]
+}
