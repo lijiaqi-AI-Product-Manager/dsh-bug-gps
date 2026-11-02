@@ -55,6 +55,7 @@ const REVIEW_TEXT = {
   'disabled-control': 'a recorded action now hits a DISABLED control; the checks may pass only because the trigger was blocked',
   'negative-only': 'the case only checks that no error happens; removing the feature would pass too. Ask the user for a positive check (record again and add one)',
   'locator-drift': 'some recorded elements were found only by a loose name match, unlike at lock time; the replay may have used a different element',
+  'baseline-not-reproduced': 'a fresh baseline did not reproduce the locked failure; inspect the startup root, dependencies and development environment',
 };
 
 const LOCK_NEXT = {
@@ -285,10 +286,13 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
           before_fix: lockFile.lock.red?.observed ?? null,
           now: r.check ? (r.check.observed ?? (r.check.status === Status.NOT_REPRODUCED ? 'all checks met' : null)) : null,
           runs: r.check?.tally ?? null,
+          ...(r.check?.observation ? { observation: r.check.observation } : {}),
+          ...(r.baselineControl ? { baseline_control: r.baselineControl } : {}),
           ...(r.check?.reason ? { reason: r.check.reason } : {}),
           ...(r.reviewReasons ? { review_reasons: r.reviewReasons.map((k) => `${k}: ${REVIEW_TEXT[k]}`) } : {}),
           ...(r.check?.disabledSteps ? { disabled_steps: r.check.disabledSteps.map((d) => stepLabel(d.step)) } : {}),
           ...(r.check?.looseSteps ? { loosely_matched_steps: r.check.looseSteps.map((i) => stepLabel(lockFile.body.steps[i])) } : {}),
+          ...(r.check?.looseChecks ? { loosely_matched_checks: r.check.looseChecks } : {}),
           ...(r.minimizedCheck ? { shortened_case_agrees: r.minimizedCheck.agreesWithRecording } : {}),
           ...(r.patch ? { patch: r.patch.stat, patch_file: `.buggps/runs/${r.runId}.patch` } : {}),
           run_record: `.buggps/runs/${r.runId}.json`,

@@ -77,6 +77,8 @@ function summarize(status, trials, started, match = 'strict') {
     reason: blocked?.reason ?? invalid?.reason ?? null,
     stepIndex: invalid?.stepIndex ?? blocked?.stepIndex ?? null,
     looseSteps: [...new Set(trials.flatMap((t) => t.looseSteps ?? []))].sort((a, b) => a - b),
+    looseChecks: [...new Set(trials.flatMap((t) => t.looseChecks ?? []))].sort(),
+    ...(trials.some((t) => t.observation) ? { observation: { method: 'poll', intervalMs: 50, runs: trials.map((t) => t.observation ?? null) } } : {}),
     durationMs: Date.now() - started,
     trials: trials.map(({ observations, ...rest }) => ({ ...rest, pageErrors: observations?.pageErrors?.length ?? 0 })),
   };

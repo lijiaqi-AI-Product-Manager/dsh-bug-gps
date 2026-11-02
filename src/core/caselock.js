@@ -6,8 +6,9 @@
 //
 // Binding. When the case has `serve` (a dev command + loopback URL), BugGPS starts that server
 // itself from the working tree for every lock and verify run, and snapshots the tree before the
-// start and after the stop. The RED result then belongs to the baseline tree, the GREEN result
-// to the candidate tree, and the patch is the diff between exactly those two. Without `serve`
+// start and after the stop. Before VERIFIED, an independent baseline must reproduce the locked
+// failure again with the current runtime inputs. The patch is the diff of the two snapshots;
+// untracked runtime inputs remain separately recorded limitations. Without `serve`
 // BugGPS can only replay against whatever answers at the URL, so a pass is PASSED_UNBOUND,
 // never VERIFIED.
 import { createHash, randomUUID } from 'node:crypto';
@@ -21,6 +22,7 @@ import { DEFAULT_OBSERVE_MS, hasPositiveCheck, validateCase } from './oracle.js'
 import { parseCommand, startDevServer } from './devserver.js';
 import { EnvBlockedError, TestDefinitionError } from './errors.js';
 import { validateCaseId } from './case-id.js';
+import { withBaseline } from './baseline.js';
 
 export const CASE_SCHEMA = 'buggps.case/v1';
 export const RUN_SCHEMA = 'buggps.run/v1';
@@ -50,8 +52,10 @@ export const ReviewReason = Object.freeze({
   DISABLED_CONTROL: 'disabled-control',
   // Only "no error" checks: deleting the feature would pass too.
   NEGATIVE_ONLY: 'negative-only',
-  // A step's element was found only by the loose name fallback, unlike at lock time.
+  // An action or assertion used a loose name fallback that was absent at lock time.
   LOCATOR_DRIFT: 'locator-drift',
+  // A fresh baseline did not reproduce the locked failure with the current runtime inputs.
+  BASELINE_NOT_REPRODUCED: 'baseline-not-reproduced',
 });
 
 export function canonicalJson(v) {
@@ -167,7 +171,7 @@ export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs 
     caseSha256: hashCase(body),
     baselineTree,
     binding: serve ? 'managed' : 'external',
-    red: { runs: red.runs, tally: red.tally, signature: red.signature, signatureKey: red.signatureKey, observed: red.observed, late: red.late, looseSteps: red.looseSteps },
+    red: { runs: red.runs, tally: red.tally, signature: red.signature, signatureKey: red.signatureKey, observed: red.observed, late: red.late, looseSteps: red.looseSteps, looseChecks: red.looseChecks, observation: red.observation },
     ...(redMinimized ? { redMinimized: { status: redMinimized.status, tally: redMinimized.tally, kept: Boolean(minimizedSteps) } } : {}),
     env: envFingerprint(env, baseUrl),
     lockedAt: new Date().toISOString(),
@@ -232,7 +236,7 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
     // trigger (its symptom matched a state reachable without the bug).
     record.minimizedCheck = { status: short.status, tally: short.tally, observed: short.observed, agreesWithRecording: short.status === result.status && short.signatureKey === result.signatureKey };
   }
-  record.check = { status: result.status, tally: result.tally, observed: result.observed, reason: result.reason, durationMs: result.durationMs };
+  record.check = { status: result.status, tally: result.tally, observed: result.observed, reason: result.reason, durationMs: result.durationMs, observation: result.observation };
   if (bound.treeAfter !== bound.treeBefore || bound.treeBefore !== treeNow) return finish(Verdict.STALE);
 
   const sameFailure = result.trials.every((t) => t.outcome === 'fail') && result.signatureKey === lock.red.signatureKey;
@@ -240,13 +244,33 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
   if (disabledSteps.length) record.check.disabledSteps = disabledSteps.map((i) => ({ index: i, step: body.steps[i] }));
   const newLoose = result.looseSteps.filter((i) => !(lock.red.looseSteps ?? []).includes(i));
   if (newLoose.length) record.check.looseSteps = newLoose;
+  const newLooseChecks = result.looseChecks.filter((key) => !(lock.red.looseChecks ?? []).includes(key));
+  if (newLooseChecks.length) record.check.looseChecks = newLooseChecks;
   let verdict;
   switch (result.status) {
     case Status.NOT_REPRODUCED: {
       const reasons = [];
       if (disabledSteps.length) reasons.push(ReviewReason.DISABLED_CONTROL);
       if (!hasPositiveCheck(body)) reasons.push(ReviewReason.NEGATIVE_ONLY);
-      if (newLoose.length) reasons.push(ReviewReason.LOCATOR_DRIFT);
+      if (newLoose.length || newLooseChecks.length) reasons.push(ReviewReason.LOCATOR_DRIFT);
+      if (serve && reasons.length === 0) {
+        try {
+          const control = await withBaseline(repoDir, lock.baselineTree, serve, async (baselineDir, baselineServe) => {
+            const checked = await withManagedServer(baselineDir, baselineServe, (u) => reproduce(browser, body, { baseUrl: u, runs, signal }), { warmup: warmupPage(browser, body, { signal }), subprocess: env?.subprocess, signal });
+            return checked.treeBefore === checked.treeAfter ? checked.result : { status: Verdict.STALE, reason: 'baseline files changed while running' };
+          }, { signal });
+          const red = control.result;
+          const matchesLockedFailure = red.status === Status.REPRODUCED && red.signatureKey === lock.red.signatureKey;
+          record.baselineControl = { status: red.status, tally: red.tally, observed: red.observed, signatureKey: red.signatureKey, matchesLockedFailure, runtimeInputs: control.runtimeInputs, reason: red.reason, durationMs: red.durationMs };
+          if (signal?.aborted || red.status === Status.ABORTED) return finish(Verdict.ABORTED);
+          if (!matchesLockedFailure) reasons.push(ReviewReason.BASELINE_NOT_REPRODUCED);
+        } catch (err) {
+          if (signal?.aborted) return finish(Verdict.ABORTED);
+          record.baselineControl = { status: Status.ENV_BLOCKED, matchesLockedFailure: false, reason: err.message, ...(err.hint ? { hint: err.hint } : {}) };
+          reasons.push(ReviewReason.BASELINE_NOT_REPRODUCED);
+        }
+        if (await snapshotTree(repoDir) !== bound.treeAfter) return finish(Verdict.STALE);
+      }
       if (reasons.length) record.reviewReasons = reasons;
       verdict = reasons.length ? Verdict.NEEDS_REVIEW : serve ? Verdict.VERIFIED : Verdict.PASSED_UNBOUND;
       break;
