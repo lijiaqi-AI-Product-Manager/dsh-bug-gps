@@ -1,0 +1,252 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted-with-authored-targets",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Empty database"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside button:text-is(\"Add Table\") >> nth=0"
+        }
+      ]
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Add Table"
+        }
+      ]
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "[role=application] button:has(svg.lucide-search)"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "[role=application] button:has(svg.lucide-eye) >> nth=1"
+        }
+      ]
+    }
+  ],
+  "expectation": {
+    "kind": "count",
+    "target": [
+      {
+        "by": "css",
+        "value": "[role=application] :text-is(\"1/2\")"
+      }
+    ],
+    "equals": 1
+  },
+  "also": [
+    {
+      "kind": "count",
+      "target": [
+        {
+          "by": "css",
+          "value": ".react-flow__node:has-text(\"table_2\")"
+        }
+      ],
+      "equals": 1
+    }
+  ],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Empty database"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Add Table"
+        }
+      ]
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Add Table"
+        }
+      ]
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button"
+        }
+      ]
+    }
+  ],
+  "targetOverrides": [
+    {
+      "index": 3,
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside button:text-is(\"Add Table\") >> nth=0"
+        }
+      ],
+      "reason": "Use the toolbar Add Table control among the two empty-state buttons."
+    },
+    {
+      "index": 7,
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "[role=application] button:has(svg.lucide-search)"
+        }
+      ],
+      "reason": "The unnamed search icon opens the table filter."
+    },
+    {
+      "index": 8,
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "[role=application] button:has(svg.lucide-eye) >> nth=1"
+        }
+      ],
+      "reason": "Toggle the first table in the schema, after the schema-wide visibility control."
+    }
+  ]
+}

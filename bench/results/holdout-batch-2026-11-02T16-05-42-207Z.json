@@ -1,0 +1,35 @@
+{
+  "schema": "buggps.holdout-batch/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "attempted": 4,
+  "runtime": {
+    "commit": "66bc574905474c96e7040d0a2083b42fa45074f7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "results": [
+    {
+      "case": "drawdb-1037",
+      "status": "NEEDS_REVIEW",
+      "expectedOutcome": false
+    },
+    {
+      "case": "drawdb-1031",
+      "status": "NOT_REPRODUCED",
+      "expectedOutcome": false
+    },
+    {
+      "case": "drawdb-1066",
+      "status": "DIFFERENT_FAILURE",
+      "expectedOutcome": false
+    },
+    {
+      "case": "qwerty-learner-793",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    }
+  ]
+}

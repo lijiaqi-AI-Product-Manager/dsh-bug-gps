@@ -1,0 +1,363 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted",
+  "definitionRevision": 2,
+  "definitionBasis": {
+    "repository": "https://github.com/drawdb-io/drawdb",
+    "commit": "9428511e77af48ea96404cbf7da3eda13b1a7266",
+    "file": "src/components/EditorHeader/ControlPanel.jsx",
+    "observedBeforeSaveAs": "Diagrams/Original",
+    "previousInputSha256": "67f16f8f471bad7d7e933d0d6d3b24d62fb6240cb9cf0b5f73139fdf2eb43a27",
+    "note": "New capture from the buggy revision. The exact breadcrumb uses adjacent spans without spaces; require the pre-Save-As caption to stay identical and retain creation of the Copy link."
+  },
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Diagrams/Untitled Diagram"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "名称"
+        }
+      ],
+      "value": "Original"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "重命名",
+          "within": {
+            "role": "dialog",
+            "name": "重命名图表"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "重命名"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "添加表",
+          "within": {
+            "role": "tabpanel",
+            "name": "表 (0)"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "添加表"
+        }
+      ],
+      "check": {
+        "kind": "text",
+        "target": [
+          {
+            "by": "css",
+            "value": "nav .text-xl"
+          }
+        ],
+        "equals": "Diagrams/Original"
+      }
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "另存为 Ctrl+Shift+S"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "名称"
+        }
+      ],
+      "value": "Copy"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "另存为",
+          "within": {
+            "role": "dialog",
+            "name": "另存为"
+          },
+          "index": 1
+        },
+        {
+          "by": "text",
+          "value": "另存为"
+        }
+      ]
+    }
+  ],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Diagrams/Untitled Diagram"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "名称"
+        }
+      ],
+      "value": "Original"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "重命名",
+          "within": {
+            "role": "dialog",
+            "name": "重命名图表"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "重命名"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "添加表",
+          "within": {
+            "role": "tabpanel",
+            "name": "表 (0)"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "添加表"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "另存为 Ctrl+Shift+S"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "名称"
+        }
+      ],
+      "value": "Copy"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "另存为",
+          "within": {
+            "role": "dialog",
+            "name": "另存为"
+          },
+          "index": 1
+        },
+        {
+          "by": "text",
+          "value": "另存为"
+        }
+      ]
+    }
+  ],
+  "observeMs": 1000,
+  "expectation": {
+    "kind": "text",
+    "target": [
+      {
+        "by": "css",
+        "value": "nav .text-xl"
+      }
+    ],
+    "equals": "Diagrams/Original"
+  },
+  "also": [
+    {
+      "kind": "count",
+      "target": [
+        {
+          "by": "css",
+          "value": "a[href^=\"/editor/diagrams/\"]:text-is(\"Copy\")"
+        }
+      ],
+      "equals": 1
+    }
+  ],
+  "authoredCheckpoints": [
+    {
+      "afterStepIndex": 6,
+      "check": {
+        "kind": "text",
+        "target": [
+          {
+            "by": "css",
+            "value": "nav .text-xl"
+          }
+        ],
+        "equals": "Diagrams/Original"
+      }
+    }
+  ],
+  "dropped": 0
+}

@@ -1,0 +1,224 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "chartdb-1061",
+  "upstream": "https://github.com/chartdb/chartdb/pull/1061",
+  "buggyCommit": "5754538d7ef31d900cf754c68f2a51a0ce7ed54a",
+  "fixCommit": "b21202e6c7ecc1807a1ef09853532f1282c6f88e",
+  "expectedFixedVerdict": "NEEDS_REVIEW",
+  "at": "2026-11-02T16:23:26.880Z",
+  "runtime": {
+    "commit": "f71f2ca6a563861ed65ec080a4d36419c8fa76d7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\chartdb.git worktree add --detach <run-root>\\cases\\chartdb-1061 5754538d7ef31d900cf754c68f2a51a0ce7ed54a\nPreparing worktree (detached HEAD 5754538)\nerror: unable to read sha1 file of CHANGELOG.md (85d2ea8689b38d5e6b9bd80bb030b7f175e93a27)\nerror: unable to read sha1 file of src/lib/domain/db-table.ts (246542cd3a19360eae4fbe618afd1cf23fee4c77)\nerror: unable to read sha1 file of src/lib/utils/area-utils.ts (22f423749bd782a188827007349a8b5fd387338f)\nUpdating files:  78% (598/759)\rUpdating files:  79% (600/759)\rerror: unable to read sha1 file of src/pages/editor-page/canvas/area-node/area-node-context-menu.tsx (c1aeca67f1eb759ae9776e25d5fdc198750ca2c3)\nUpdating files:  80% (608/759)\rUpdating files:  81% (615/759)\rUpdating files:  82% (623/759)\rerror: unable to read sha1 file of src/pages/editor-page/canvas/table-node/table-node-context-menu.tsx (b89efef2b18aab42031ad366dda9ce728af1fb66)\nUpdating files:  83% (630/759)\rUpdating files:  84% (638/759)\rUpdating files:  85% (646/759)\rUpdating files:  86% (653/759)\rUpdating files:  87% (661/759)\rUpdating files:  88% (668/759)\rUpdating files:  89% (676/759)\rUpdating files:  9"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "cac799326dc439d8addd45debb5bc8759c25709bd5715ad109cad9ec26919a25",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted-with-authored-targets",
+    "sha256": "3f253c7f50d09b5b2579eed1849060feb9ee7c151485356523de71c52b975ebe",
+    "steps": 6,
+    "authoredTargets": [
+      {
+        "index": 3,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"Add Table\") >> nth=0"
+          }
+        ],
+        "reason": "Two Add Table buttons share the same name in the empty view; select the toolbar control."
+      }
+    ],
+    "dropped": null,
+    "expectation": {
+      "kind": "hidden",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside button[data-state=\"on\"]:text-is(\"N\")"
+        }
+      ]
+    },
+    "also": [
+      {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          }
+        ]
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-chartdb-serve.mjs",
+    "sha256": "0f058cc653f232b73a998955a25acee14f4d9228d52eea0540a2063c8c61ec91",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "fixture": "github_repo_opened=true suppresses the promotional dialog only"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "TEST_INVALID",
+    "tally": {
+      "step-error": 1
+    },
+    "reason": "target not-found",
+    "stepIndex": 1,
+    "durationMs": 2188
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "visible",
+      "signature": {
+        "kind": "hidden",
+        "target": "css=aside button[data-state=\"on\"]:text-is(\"N\")",
+        "actual": "true",
+        "resolution": {
+          "by": "css",
+          "value": "aside button[data-state=\"on\"]:text-is(\"N\")"
+        }
+      },
+      "durationMs": 14622
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": true,
+    "original": 6,
+    "shortened": 5,
+    "stats": {
+      "trials": 6,
+      "probeRuns": 2,
+      "cacheHits": 1,
+      "unresolved": 1,
+      "differentFailure": 3,
+      "stepTimeoutMs": 8000,
+      "durationMs": 56086,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold"
+          },
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold",
+            "child": {
+              "role": "img",
+              "name": "PostgreSQL"
+            }
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Empty database"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"Add Table\") >> nth=0"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "N"
+          }
+        ]
+      }
+    ],
+    "fixedComparison": {
+      "status": "NOT_REPRODUCED",
+      "tally": {
+        "pass": 3
+      },
+      "durationMs": 19435
+    },
+    "agreesWithFullRecording": true
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "visible",
+    "durationMs": 16123,
+    "caseSha256": "a185c5aac179295f134fcf1a46290c00e49114d97aa2a8c3e34ee9568644c8a4",
+    "lockSha256": "df9f7fa93417d5db68f8123d0ef7574118e384659ccc8116c3dc1b937b498545"
+  },
+  "fixed": {
+    "verdict": "NEEDS_REVIEW",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "reviewReasons": [
+      "disabled-control"
+    ],
+    "durationMs": 19872,
+    "caseSha256": "a185c5aac179295f134fcf1a46290c00e49114d97aa2a8c3e34ee9568644c8a4",
+    "lockSha256": "df9f7fa93417d5db68f8123d0ef7574118e384659ccc8116c3dc1b937b498545"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "ebb5e6c0973154f5331dc2f53b7a5db19308b9d4e2ecaf809246fae950c44408",
+    "lockSha256": "ecfb4d59c0b2b179467cfaa18ece4e4dfddd0c34bee9b463c0b4ff36837ed2e9"
+  },
+  "status": "NEEDS_REVIEW",
+  "expectedOutcome": true,
+  "durationMs": 370590
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Checks the frozen dataset against upstream patches. This runner makes no model calls.
-import { readFile, writeFile, mkdir, realpath } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, realpath, readdir } from 'node:fs/promises';
 import { createHash, randomUUID } from 'node:crypto';
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -26,6 +26,9 @@ const outputDir = resolve(process.env.BUGGPS_HOLDOUT_OUT ?? join(source, 'bench/
 const inputDir = resolve(process.env.BUGGPS_HOLDOUT_INPUTS ?? join(source, 'bench/holdout-recordings'));
 await mkdir(outputDir, { recursive: true });
 const runtime = { commit: (await git(source, ['rev-parse', 'HEAD'])).trim(), node: process.version, platform: process.platform, arch: process.arch, ci: 'true' };
+runtime.runnerSha256 = hash(await readFile(fileURLToPath(import.meta.url)));
+runtime.engineFilesSha256 = hash(JSON.stringify(await Promise.all((await readdir(join(source, 'src/core'))).filter((n) => n.endsWith('.js')).sort().map(async (name) => [name, hash(await readFile(join(source, 'src/core', name)))]))));
+runtime.changedSourceFiles = (await git(source, ['diff', '--name-only', 'HEAD', '--', 'src/core', 'bench/holdout.mjs'])).trim().split('\n').filter(Boolean);
 // Vite 4 otherwise exits when its noninteractive stdin closes. No application source is changed.
 process.env.CI = 'true';
 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -64,7 +67,8 @@ for (const spec of selected) {
     if (changed.length) out.preparation.generatedPatchSha256 = hash(await git(dir, ['diff', 'HEAD', '--', ...changed]));
     const bytes = await readFile(join(inputDir, spec.id + '.json'));
     const draft = JSON.parse(bytes);
-    out.input = { source: draft.source, sha256: hash(bytes), steps: draft.steps.length, authoredTargets: draft.targetOverrides ?? [], dropped: draft.dropped ?? null, expectation: draft.expectation, also: draft.also ?? [] };
+    out.input = { source: draft.source, sha256: hash(bytes), canonicalSha256: hash(JSON.stringify(draft)), definitionRevision: draft.definitionRevision ?? 1, definitionBasis: draft.definitionBasis, authoredCheckpoints: draft.authoredCheckpoints ?? [], steps: draft.steps.length, authoredTargets: draft.targetOverrides ?? [], dropped: draft.dropped ?? null, expectation: draft.expectation, also: draft.also ?? [] };
+    if (draft.captureFailure) { out.status = 'TEST_INVALID'; out.reason = draft.captureFailure.reason; out.captureFailure = draft.captureFailure; continue; }
     for (const [name, value] of Object.entries(draft.fixtureSecrets ?? {})) {
       if (!/^BUGGPS_SECRET_HOLDOUT_[A-Z0-9_]+$/.test(name) || draft.fixtureKind !== 'synthetic') throw new Error('Only namespaced synthetic fixture secrets are accepted');
       oldSecrets.set(name, process.env[name]); process.env[name] = value;

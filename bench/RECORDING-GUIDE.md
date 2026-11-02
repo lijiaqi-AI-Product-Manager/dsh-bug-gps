@@ -36,6 +36,8 @@ ChartDB 夹具显式将 `github_repo_opened` 设为 `true`，仅关闭延时推�
 
 JWT 案例只使用无认证能力的合成夹具，录制仍保留敏感字段引用。运行器临时填入 `BUGGPS_SECRET_HOLDOUT_*`，结束后恢复原环境值。
 
+`drawdb-1066` 的首份定义将相邻标题节点之间的视觉间距误写成字符串空格，旧输入和失败结果继续保留。`holdout-recordings/v2/drawdb-1066.json` 从干净原始版本重新录制，在另存为前固定标题、要求操作后标题完全相同，并继续要求创建 Copy 链接。新定义记录原始提交、前一输入指纹和版本；必须重新建立 RED，不能沿用旧锁。
+
 ## 自选人工体验反馈
 
 可用 `node bench/real.mjs serve drawdb-943` 启动旧开发案例，再用 CLI `record` 或插件工具录制。工具栏可以标注预期、检查点和关键步骤；操作范围及限制以 [README](../README.md#保护机制与已知限制) 为准。

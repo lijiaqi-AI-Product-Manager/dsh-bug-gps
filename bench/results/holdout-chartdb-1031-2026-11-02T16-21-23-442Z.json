@@ -1,0 +1,98 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "chartdb-1031",
+  "upstream": "https://github.com/chartdb/chartdb/pull/1031",
+  "buggyCommit": "fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68",
+  "fixCommit": "674ed2249ee46b0dce14b1cc10be45755460b03d",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T16:21:23.442Z",
+  "runtime": {
+    "commit": "f71f2ca6a563861ed65ec080a4d36419c8fa76d7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\chartdb.git worktree add --detach <run-root>\\cases\\chartdb-1031 fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68\nPreparing worktree (detached HEAD fb19a7a)\nerror: unable to read sha1 file of CHANGELOG.md (85d2ea8689b38d5e6b9bd80bb030b7f175e93a27)\nerror: unable to read sha1 file of src/context/chartdb-context/chartdb-context.tsx (c8450528dfecb5a8932833487f7b9ec53eac69e4)\nerror: unable to read sha1 file of src/context/history-context/history-provider.tsx (8c814daac43546fbb655c57352c208e51292cc90)\nerror: unable to read sha1 file of src/context/history-context/redo-undo-action.ts (ef32f6b04b9a62859319985e2c4567fb1569a19d)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mssql.ts (36a2653a24132a0b5e3b45e290512a386f099faf)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mysql.ts (b52a4b3012748ef173c9c94f6a93fe39e6caf04d)\nerror: unable to read sha1 file of src/lib/data/sql-export/export-sql-script.ts (12c95ed9025f626deab0fe37754595ac3de913f8)\nUpdating files:  66% (491/743)\rUpdating files:  67% (498/743)\rUpdating files:  68% (506/743)\rUpdating files:  6"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "cac799326dc439d8addd45debb5bc8759c25709bd5715ad109cad9ec26919a25",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "1391909ce2c4174c772a6894cf82bfb5758bd81be7e138101bca73df296035f1",
+    "steps": 6,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "count",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside :text-is(\"numeric(15,2)\")"
+        }
+      ],
+      "equals": 1
+    },
+    "also": [
+      {
+        "kind": "value",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          }
+        ],
+        "equals": "amount"
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-chartdb-serve.mjs",
+    "sha256": "0f058cc653f232b73a998955a25acee14f4d9228d52eea0540a2063c8c61ec91",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "fixture": "github_repo_opened=true suppresses the promotional dialog only"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "TEST_INVALID",
+    "tally": {
+      "step-error": 1
+    },
+    "reason": "target ambiguous",
+    "stepIndex": 3,
+    "durationMs": 3471
+  },
+  "lock": {
+    "status": "TEST_INVALID",
+    "reason": "target ambiguous",
+    "red": {
+      "status": "TEST_INVALID",
+      "tally": {
+        "step-error": 3
+      },
+      "reason": "target ambiguous",
+      "stepIndex": 3,
+      "durationMs": 41562
+    }
+  },
+  "status": "TEST_INVALID",
+  "durationMs": 123411
+}

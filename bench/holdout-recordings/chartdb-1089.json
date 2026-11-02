@@ -1,0 +1,111 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted-incomplete",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "DBML"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Editor content"
+        }
+      ],
+      "value": "Table documents {\n     id int [pk]\n      body text\n       indexes {\n        body [type: gin, name: 'body_search']\n         }\n         }\n}"
+    }
+  ],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "DBML"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Editor content"
+        }
+      ],
+      "value": "Table documents {\n     id int [pk]\n      body text\n       indexes {\n        body [type: gin, name: 'body_search']\n         }\n         }\n}"
+    }
+  ],
+  "dropped": 0,
+  "captureFailure": {
+    "phase": "input-authoring",
+    "name": "TimeoutError",
+    "reason": "locator.click: Timeout 30000ms exceeded."
+  }
+}

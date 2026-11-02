@@ -1,0 +1,212 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "case": "qwerty-learner-793",
+  "upstream": "https://github.com/RealKai42/qwerty-learner/pull/793",
+  "buggyCommit": "3426282c52b41133ca1565104b6d8fe4ce853427",
+  "fixCommit": "da9313f119536a28c6dcf6f245ced1b7d23f1962",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T16:11:31.746Z",
+  "runtime": {
+    "commit": "66bc574905474c96e7040d0a2083b42fa45074f7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\qwerty-learner.git worktree add --detach <run-root>\\cases\\qwerty-learner-793 3426282c52b41133ca1565104b6d8fe4ce853427\nPreparing worktree (detached HEAD 3426282)\nerror: unable to read sha1 file of .vscode/settings.json (a87c8622f1fdaeceb9b630b8b08ef468a3759367)\nerror: unable to read sha1 file of Dockerfile (e42b152a542b205ee4e78165f8b1b4afa4435d8d)\nerror: unable to read sha1 file of README.md (476f5c8693b195569545b4e6ffef2221f3f94b7b)\nerror: unable to read sha1 file of docker-compose.yaml (dad01db779ffa2f36fe7b7305d873246ae90635c)\nerror: unable to read sha1 file of package.json (bc14cc1fb74d913373408533175343ec4c3961d4)\nerror: unable to read sha1 file of public/dicts/HeQiong_IELTS.json (3acc8cd36937a569a3b9be4774977904576cceb8)\nerror: unable to read sha1 file of public/dicts/NCE_1.json (07e3a60b0165480de19e421b0189956ffaa6c718)\nerror: unable to read sha1 file of public/dicts/TOEFL_ZhangHongYan.json (5c2b51dfe16c91ec07e0eaf43d1a67465ae47ee6)\nerror: unable to read sha1 file of public/dicts/gre-ciyileiji.json (53639de12b4206387a5c408e9f27e351b4d4d5f4)\nerror: unable to read sha1 file of public/dicts/raz-AA.json (188a7"
+      }
+    ],
+    "manager": "yarn",
+    "managerVersion": "1.22.22",
+    "lockSha256": "2bcdf7b0f38724e67a254c7bcd9f83f3836668edcaadd42f01a0c6e77e342a70",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "4f6f822c50a3ac0324f30b12d9b67ffb3aa05e05356a0dfbdadf24cbd091f8a9",
+    "steps": 5,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "hidden",
+      "target": [
+        {
+          "by": "role",
+          "role": "listbox"
+        }
+      ]
+    },
+    "also": [
+      {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          }
+        ]
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "b6cf9938733779d06162046a15a1dda8152ec1f0dbfc4394a59027de447e4d4a",
+    "cache": "per-checkout",
+    "dependencyMode": "copied-into-worktree"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "visible",
+    "signature": {
+      "kind": "hidden",
+      "target": "role=listbox[name=]",
+      "actual": "true",
+      "resolution": {
+        "by": "role",
+        "role": "listbox"
+      }
+    },
+    "durationMs": 2733
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "visible",
+      "signature": {
+        "kind": "hidden",
+        "target": "role=listbox[name=]",
+        "actual": "true",
+        "resolution": {
+          "by": "role",
+          "role": "listbox"
+        }
+      },
+      "durationMs": 7624
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 5,
+    "shortened": 2,
+    "stats": {
+      "trials": 7,
+      "probeRuns": 3,
+      "cacheHits": 2,
+      "unresolved": 1,
+      "differentFailure": 2,
+      "stepTimeoutMs": 2000,
+      "durationMs": 22224,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "press",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          },
+          {
+            "by": "css",
+            "value": "#headlessui-listbox-button-\\:r1\\:"
+          }
+        ],
+        "value": "Space"
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "visible",
+    "durationMs": 8059,
+    "caseSha256": "4cafc6ee5c798f7c61e62298d5dd27a1bcb21eaae950359638f0d3f5447f9d59",
+    "lockSha256": "c09cfea7f2e44fe8e59b63bc02bbfcbb122ceec8dafa7d4e1fe0574490fa9589"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "visible",
+      "signatureKey": "{\"actual\":\"true\",\"kind\":\"hidden\",\"resolution\":{\"by\":\"role\",\"role\":\"listbox\"},\"target\":\"role=listbox[name=]\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"name\":\"关闭提示\",\"role\":\"button\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"第 1 章\",\"role\":\"button\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"option\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"role\",\"role\":\"listbox\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 7812
+    },
+    "durationMs": 9598,
+    "caseSha256": "4cafc6ee5c798f7c61e62298d5dd27a1bcb21eaae950359638f0d3f5447f9d59",
+    "lockSha256": "c09cfea7f2e44fe8e59b63bc02bbfcbb122ceec8dafa7d4e1fe0574490fa9589"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "8ba2c6432ead06f0e637e15537de1085f91b13b1014de2904c116c79e02f4115",
+    "lockSha256": "28bc9e45cf3e15c724705f44a0969b7f11a3d63bde47dc536653639996952474"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 162533
+}
