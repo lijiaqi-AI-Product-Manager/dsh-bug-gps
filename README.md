@@ -74,7 +74,7 @@ node bin/buggps.js doctor --repo ../buggps-demo
 
 ## 环境要求
 
-- DeepSeek Harness `>=0.2.1-0 <0.3.0`，实测版本：0.2.1-rc.5
+- DeepSeek Harness **0.2.1-rc.5**。当前兼容声明仅覆盖这个已验收版本；扩大范围前会补充兼容记录
 - PATH 上有 **pnpm ≥10**：`dsh plugin` 会调用 pnpm
 - 已安装 **Microsoft Edge 或 Google Chrome**。BugGPS 不会下载浏览器
 - Node ≥20，git；项目是 git 仓库
