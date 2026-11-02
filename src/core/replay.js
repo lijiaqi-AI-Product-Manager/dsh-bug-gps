@@ -48,20 +48,44 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
   const stepMs = [];
   const done = (r) => ({ ...r, resolutionProfile, ...(disabledSteps.length ? { disabledSteps } : {}), ...(looseSteps.length ? { looseSteps } : {}), ...(looseChecks.size ? { looseChecks: [...looseChecks].sort() } : {}), ...(observation ? { observation } : {}), stepMs, durationMs: Date.now() - started, observations: obs });
   const checked = (key, value) => { resolved(key, value); if (value?.loose) looseChecks.add(key); };
-  // Poll (not just between steps): content that renders asynchronously, then vanishes, would
-  // otherwise be missed depending on timing.
+  const checks = [expectation, ...also];
+  const history = checks.map((check) => check?.kind === 'visible' ? { seen: false } : null);
+  let active = true;
+  let currentStep = -1;
+  const sawVisible = (index, candidate, source) => {
+    if (!active || !history[index]) return;
+    Object.assign(history[index], { seen: true, candidate, source, stepIndex: currentStep, elapsedMs: Date.now() - started });
+  };
+  const checkObservations = checks.map((_, index) => ({
+    ...obs,
+    get seenTarget() { return history[index]?.seen ?? false; },
+    get seenTargetResolution() { return history[index]?.candidate; },
+    observeVisible: (candidate) => sawVisible(index, candidate, 'final-check'),
+  }));
+  let pendingSample;
+  // Each visible condition owns its history. Earlier substring matches are not evidence
+  // that the recorded target appeared; only an actual final check may use that fallback.
+  const sampleVisibility = () => {
+    if (!active) return Promise.resolve();
+    return pendingSample ??= (async () => {
+      for (let index = 0; index < checks.length; index++) {
+        if (!active) break;
+        if (!history[index]) continue;
+        const r = await resolveTarget(page, checks[index].target, { timeoutMs: 0 }).catch(() => ({ ok: false }));
+        if (!r.ok || r.used?.loose) continue;
+        if (await r.locator.isVisible().catch(() => false)) sawVisible(index, r.used, 'replay-sample');
+      }
+    })().finally(() => { pendingSample = null; });
+  };
+  const visibilityHistory = () => Object.fromEntries(history.flatMap((value, index) => value ? [[`final:${index}`, { ...value }]] : []));
+  // Poll between actions as well as after them: an asynchronous element may disappear
+  // before the next action completes. Only a missing final target uses the earlier candidate.
   let poll;
-  if (expectation?.kind === 'visible') {
-    let busy = false;
-    poll = setInterval(async () => {
-      if (obs.seenTarget || busy) return;
-      busy = true;
-      obs.seenTarget = await isVisibleNow(page, expectation.target);
-      busy = false;
-    }, 100);
-  }
+  if (history.some(Boolean)) poll = setInterval(() => { void sampleVisibility().catch(() => {}); }, 100);
+  const complete = (r) => done({ ...r, ...(history.some(Boolean) ? { visibilityHistory: visibilityHistory() } : {}) });
   try {
     for (let i = 0; i < steps.length; i++) {
+      currentStep = i;
       if (signal?.aborted) return done({ outcome: 'aborted', stepIndex: i });
       const step = steps[i];
       const t0 = Date.now();
@@ -79,14 +103,12 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
         const c = await evaluate(page, step.check, obs, { settleMs: 1000, onResolution: (value) => checked(`checkpoint:${i}`, value) });
         if (!c.pass) return done({ outcome: 'precondition-fail', stepIndex: i, observed: c.observed ?? null, reason: `checkpoint after step ${i + 1} not met: ${c.invalid ?? c.observed}` });
       }
-      // Deterministic check after every step, in addition to the background poll.
-      if (expectation?.kind === 'visible' && !obs.seenTarget && i < steps.length - 1) obs.seenTarget = await isVisibleNow(page, expectation.target);
+      await sampleVisibility();
       if (probe) await probe(page, i);
     }
-    const checks = [expectation, ...also];
     const onCheck = (index, value) => checked(`final:${index}`, value);
-    const first = await evaluateAll(page, checks, obs, { settleMs, onCheck });
-    if (first) return done(first);
+    const first = await evaluateAll(page, checks, checkObservations, { settleMs, onCheck });
+    if (first) return complete(first);
     if (observeMs > 0) {
       const start = performance.now();
       const deadline = start + observeMs;
@@ -100,29 +122,32 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
         observation.maxGapMs = Math.max(observation.maxGapMs, Math.ceil(now - previous));
         previous = now;
         observation.samples++;
-        const late = await evaluateAll(page, checks, obs, { settleMs: 0, targetWaitMs: 0, late: true, onCheck });
+        const late = await evaluateAll(page, checks, checkObservations, { settleMs: 0, targetWaitMs: 0, late: true, onCheck });
         observation.elapsedMs = Math.ceil(performance.now() - start);
-        if (late) return done({ ...late, late: true });
+        if (late) return complete({ ...late, late: true });
       } while (performance.now() < deadline);
     }
-    return done({ outcome: 'pass', ...(observeMs > 0 ? { observedMs: observeMs } : {}) });
+    return complete({ outcome: 'pass', ...(observeMs > 0 ? { observedMs: observeMs } : {}) });
   } catch (err) {
     if (signal?.aborted) return done({ outcome: 'aborted' });
     if (err instanceof TestDefinitionError) return done({ outcome: 'test-invalid', reason: err.message });
     if (NETWORK_DOWN.test(err.message)) return done({ outcome: 'env-error', reason: firstLine(err) });
     return done({ outcome: 'step-error', reason: firstLine(err) });
   } finally {
+    active = false;
     clearInterval(poll);
+    // Closing the target cancels outstanding DOM reads, including a frozen renderer.
     await context.close().catch(() => {});
+    await pendingSample?.catch(() => {});
   }
 }
 
 // First failing check in order (primary first, so the RED signature is always the primary's),
 // or null when all pass.
-async function evaluateAll(page, checks, obs, { settleMs, targetWaitMs, late = false, onCheck }) {
+async function evaluateAll(page, checks, observations, { settleMs, targetWaitMs, late = false, onCheck }) {
   let failure = null;
   for (let k = 0; k < checks.length; k++) {
-    const v = await evaluate(page, checks[k], obs, { settleMs, ...(targetWaitMs !== undefined ? { targetWaitMs } : {}), onResolution: (value) => onCheck?.(k, value) });
+    const v = await evaluate(page, checks[k], observations[k], { settleMs, ...(targetWaitMs !== undefined ? { targetWaitMs } : {}), onResolution: (value) => onCheck?.(k, value) });
     if (v.pass) continue;
     if (v.invalid) {
       // Seen once and then gone is a real failure, not an unusable expectation.
@@ -189,13 +214,6 @@ async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
 function requestUrl(raw) {
   try { const url = new URL(raw); url.username = ''; url.password = ''; url.search = ''; url.hash = ''; return url.href; }
   catch { return '<unavailable URL>'; }
-}
-
-// For "should be visible" expectations: was the target ever visible during this trial? A bug
-// that removes an element and a replay that never reached it look identical at the end.
-async function isVisibleNow(page, target) {
-  const r = await resolveTarget(page, target, { timeoutMs: 0 }).catch(() => ({ ok: false }));
-  return r.ok ? r.locator.isVisible().catch(() => false) : false;
 }
 
 // Lets event handlers and one animation frame run, then waits (max 1 s) for running

@@ -56,6 +56,8 @@ export const ReviewReason = Object.freeze({
   NEGATIVE_ONLY: 'negative-only',
   // An action or assertion used a locator candidate that was absent at lock time.
   LOCATOR_DRIFT: 'locator-drift',
+  // A previous evaluator cannot supply the current evaluator's RED evidence.
+  EVALUATOR_CHANGED: 'evaluator-changed',
   // A fresh baseline did not reproduce the locked failure with the current runtime inputs.
   BASELINE_NOT_REPRODUCED: 'baseline-not-reproduced',
 });
@@ -171,7 +173,7 @@ export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs 
     caseSha256: hashCase(body),
     baselineTree,
     binding: serve ? 'managed' : 'external',
-    red: { evaluator: EVALUATOR_VERSION, runs: red.runs, tally: red.tally, signature: red.signature, signatureKey: red.signatureKey, observed: red.observed, late: red.late, looseSteps: red.looseSteps, looseChecks: red.looseChecks, resolutionProfile: red.resolutionProfile, observation: red.observation },
+    red: { evaluator: EVALUATOR_VERSION, runs: red.runs, tally: red.tally, signature: red.signature, signatureKey: red.signatureKey, observed: red.observed, late: red.late, looseSteps: red.looseSteps, looseChecks: red.looseChecks, resolutionProfile: red.resolutionProfile, visibilityHistory: red.visibilityHistory, observation: red.observation },
     ...(redMinimized ? { redMinimized: { status: redMinimized.status, tally: redMinimized.tally, kept: Boolean(minimizedSteps) } } : {}),
     env: envFingerprint(env, baseUrl),
     lockedAt: new Date().toISOString(),
@@ -237,7 +239,7 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
     // trigger (its symptom matched a state reachable without the bug).
     record.minimizedCheck = { status: short.status, tally: short.tally, observed: short.observed, agreesWithRecording: short.status === result.status && short.signatureKey === result.signatureKey };
   }
-  record.check = { status: result.status, tally: result.tally, observed: result.observed, reason: result.reason, durationMs: result.durationMs, observation: result.observation, resolutionProfile: result.resolutionProfile };
+  record.check = { status: result.status, tally: result.tally, observed: result.observed, reason: result.reason, durationMs: result.durationMs, observation: result.observation, resolutionProfile: result.resolutionProfile, visibilityHistory: result.visibilityHistory };
   if (bound.treeAfter !== bound.treeBefore || bound.treeBefore !== treeNow) return finish(Verdict.STALE);
 
   const sameFailure = result.trials.every((t) => t.outcome === 'fail') && result.signatureKey === lock.red.signatureKey;
@@ -248,7 +250,8 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
   const newLooseChecks = result.looseChecks.filter((key) => !(lock.red.looseChecks ?? []).includes(key));
   if (newLooseChecks.length) record.check.looseChecks = newLooseChecks;
   const changedResolutions = resolutionChanges(lock.red.resolutionProfile, result.resolutionProfile);
-  if (lock.red.evaluator !== EVALUATOR_VERSION) changedResolutions.push('evaluator-changed');
+  const evaluatorChanged = lock.red.evaluator !== EVALUATOR_VERSION;
+  if (evaluatorChanged) record.check.evaluatorChange = { locked: lock.red.evaluator ?? null, current: EVALUATOR_VERSION };
   if (changedResolutions.length) record.check.resolutionChanges = changedResolutions;
   let verdict;
   switch (result.status) {
@@ -257,6 +260,7 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
       if (disabledSteps.length) reasons.push(ReviewReason.DISABLED_CONTROL);
       if (!hasPositiveCheck(body)) reasons.push(ReviewReason.NEGATIVE_ONLY);
       if (newLoose.length || newLooseChecks.length || changedResolutions.length) reasons.push(ReviewReason.LOCATOR_DRIFT);
+      if (evaluatorChanged) reasons.push(ReviewReason.EVALUATOR_CHANGED);
       if (serve && reasons.length === 0) {
         try {
           const control = await withBaseline(repoDir, lock.baselineTree, serve, async (baselineDir, baselineServe) => {
@@ -266,7 +270,7 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
           const red = control.result;
           const changed = resolutionChanges(lock.red.resolutionProfile, red.resolutionProfile);
           const matchesLockedFailure = red.status === Status.REPRODUCED && red.signatureKey === lock.red.signatureKey && changed.length === 0;
-          record.baselineControl = { status: red.status, tally: red.tally, observed: red.observed, signatureKey: red.signatureKey, matchesLockedFailure, resolutionChanges: changed, resolutionProfile: red.resolutionProfile, runtimeInputs: control.runtimeInputs, reason: red.reason, durationMs: red.durationMs };
+          record.baselineControl = { status: red.status, tally: red.tally, observed: red.observed, signatureKey: red.signatureKey, matchesLockedFailure, resolutionChanges: changed, resolutionProfile: red.resolutionProfile, visibilityHistory: red.visibilityHistory, runtimeInputs: control.runtimeInputs, reason: red.reason, durationMs: red.durationMs };
           if (signal?.aborted || red.status === Status.ABORTED) return finish(Verdict.ABORTED);
           if (!matchesLockedFailure) reasons.push(ReviewReason.BASELINE_NOT_REPRODUCED);
         } catch (err) {

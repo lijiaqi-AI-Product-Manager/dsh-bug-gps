@@ -55,7 +55,8 @@ const NEXT = {
 const REVIEW_TEXT = {
   'disabled-control': 'a recorded action now hits a DISABLED control; the checks may pass only because the trigger was blocked',
   'negative-only': 'the case only checks absence (no errors, a hidden target or zero matches); removing the feature could pass too. A positive outcome check is needed',
-  'locator-drift': 'a locator candidate or evaluator changed, or the original resolution provenance is unavailable; review the affected actions and checks before recording a new case',
+  'locator-drift': 'a locator candidate changed, or the original resolution provenance is unavailable; review the affected actions and checks before recording a new case',
+  'evaluator-changed': 'the locked failure comes from a different evaluator. Re-establish RED on the original code with the current evaluator and save a new case; keep the old definition and records intact',
   'baseline-not-reproduced': 'a fresh baseline did not reproduce the locked failure; inspect the startup root, dependencies and development environment',
 };
 
@@ -291,6 +292,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
           ...(r.check?.looseSteps ? { loosely_matched_steps: r.check.looseSteps.map((i) => stepLabel(lockFile.body.steps[i])) } : {}),
           ...(r.check?.looseChecks ? { loosely_matched_checks: r.check.looseChecks } : {}),
           ...(r.check?.resolutionChanges ? { locator_changes: r.check.resolutionChanges } : {}),
+          ...(r.check?.evaluatorChange ? { evaluator_change: r.check.evaluatorChange } : {}),
           ...(r.minimizedCheck ? { shortened_case_agrees: r.minimizedCheck.agreesWithRecording } : {}),
           ...(r.patch ? { patch: r.patch.stat, patch_file: `.buggps/runs/${r.runId}.patch` } : {}),
           run_record: `.buggps/runs/${r.runId}.json`,

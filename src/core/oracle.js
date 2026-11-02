@@ -7,7 +7,7 @@ import { validateObserveMs } from './observation.js';
 import { browserOptions, validateViewport } from './browser-options.js';
 import { canonicalJson } from './canonical.js';
 
-export const EVALUATOR_VERSION = 'buggps.oracle/v3';
+export const EVALUATOR_VERSION = 'buggps.oracle/v4';
 
 export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'count', 'no-page-error', 'no-console-error', 'no-failed-request'];
 // "Nothing went wrong" kinds. On their own they cannot show the feature works again (deleting
@@ -61,6 +61,7 @@ export async function evaluate(page, exp, observations, { settleMs = 500, target
   for (;;) {
     last = await evaluateOnce(page, exp, observations);
     if (last.resolvedBy) onResolution?.(last.resolvedBy);
+    else if (last.priorResolution) onResolution?.(last.priorResolution);
     if (last.pass || last.invalid) return last;
     // A value/text target that is not there yet (popover still animating in) gets longer.
     const missing = String(last.signature?.actual ?? '').startsWith('target:');
@@ -98,12 +99,20 @@ async function evaluateOnce(page, exp, obs) {
       const r = await resolveTarget(page, exp.target, { timeoutMs: 0 });
       if (!r.ok && r.reason === 'ambiguous') return { invalid: 'expectation target is ambiguous' };
       const visible = r.ok ? await r.locator.isVisible() : false;
+      if (visible && exp.kind === 'visible') obs.observeVisible?.(r.used);
       const want = exp.kind === 'visible';
       if (visible === want) return resolved(r, { pass: true });
       if (exp.kind === 'visible') {
-        // "Disappeared" and "never reached" must not share a signature (see replay.isVisibleNow).
+        // This condition's own history distinguishes disappearance from never reaching it.
         const seen = obs.seenTarget ? 'was visible earlier' : 'never visible';
-        return resolved(r, fail(exp, `not visible (${seen})`, `false:${seen}`));
+        const failure = fail(exp, `not visible (${seen})`, `false:${seen}`);
+        if (!r.ok && obs.seenTargetResolution) {
+          // Historical evidence is explicit; it is not a claim that this candidate
+          // still resolves in the current DOM.
+          failure.priorResolution = obs.seenTargetResolution;
+          failure.signature.priorResolution = obs.seenTargetResolution;
+        }
+        return resolved(r, failure);
       }
       return resolved(r, fail(exp, 'visible', 'true'));
     }
@@ -139,7 +148,7 @@ function fail(exp, observed, actualKey) {
 
 export function signatureKey(sig, match = 'strict') {
   if (!sig) return null;
-  return canonicalJson({ kind: sig.kind, target: sig.target, resolution: sig.resolution, ...(match === 'loose' ? {} : { actual: sig.actual }) });
+  return canonicalJson({ kind: sig.kind, target: sig.target, resolution: sig.resolution, priorResolution: sig.priorResolution, ...(match === 'loose' ? {} : { actual: sig.actual }) });
 }
 
 function normalizeSpace(s) {
