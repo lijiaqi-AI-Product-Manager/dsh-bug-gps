@@ -181,7 +181,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
   // Fields whose value must never leave the page: the step stores a reference instead.
   const SECRET_HINT = /pass(word|wd|code)?|secret|token|otp|one.?time|cvv|cvc|card.?(num|no)|cc.?num|api.?key|pin.?code|密码|口令|验证码|卡号/i;
   function isSecret(el) {
-    if (!(el instanceof HTMLInputElement)) return false;
+    if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) return false;
     if (el.type === 'password') return true;
     if (/password|one-time-code|cc-number|cc-csc|cc-exp/.test(el.autocomplete || '')) return true;
     return SECRET_HINT.test([el.name, el.id, el.getAttribute('aria-label'), el.placeholder, labelText(el)].join(' '));
@@ -350,6 +350,8 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   let finish;
   const finished = new Promise((r) => { finish = r; });
   let lastFillIdentity = null;
+  const secretFields = new Map();
+  const secretNames = new Set();
   await context.exposeBinding('__buggpsRecord', (_src, ev) => {
     if (ev?.type) lastFillIdentity = null;
     if (ev?.type === 'expect') { addExpectation(result, ev.expectation, ev.current); return; }
@@ -359,7 +361,18 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
     if (!ev?.target?.length) { dropped.push(ev); return; }
     const { identity, ...action } = ev;
     ev = action;
-    if (ev.secret !== undefined) { ev = { action: ev.action, target: ev.target, value: { secret: secretName(ev.secret) } }; }
+    if (ev.secret !== undefined) {
+      const field = identity || JSON.stringify(ev.target);
+      if (!secretFields.has(field)) {
+        const base = secretName(ev.secret);
+        let name = base;
+        let suffix = 2;
+        while (secretNames.has(name)) name = base + '_' + suffix++;
+        secretNames.add(name);
+        secretFields.set(field, name);
+      }
+      ev = { action: ev.action, target: ev.target, value: { secret: secretFields.get(field) } };
+    }
     const prev = steps[steps.length - 1];
     if (ev.action === 'fill' && prev?.action === 'fill' && identity && identity === lastFillIdentity && !prev.check && !prev.pinned) {
       prev.value = ev.value; // one human "type into field" action, not one step per keystroke

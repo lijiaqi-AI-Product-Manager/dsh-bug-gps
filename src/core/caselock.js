@@ -20,6 +20,7 @@ import { snapshotTree, diffTrees, diffStat } from './snapshot.js';
 import { DEFAULT_OBSERVE_MS, hasPositiveCheck, validateCase } from './oracle.js';
 import { parseCommand, startDevServer } from './devserver.js';
 import { EnvBlockedError, TestDefinitionError } from './errors.js';
+import { validateCaseId } from './case-id.js';
 
 export const CASE_SCHEMA = 'buggps.case/v1';
 export const RUN_SCHEMA = 'buggps.run/v1';
@@ -118,6 +119,7 @@ export function warmupPage(browser, testCase) {
  * this case's managed server (and owns the binding snapshots). Returns { status, caseId?, lock? }.
  */
 export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs = 3, id = shortId(), signal, serverReady = false } = {}) {
+  validateCaseId(id);
   validateCase(testCase);
   const serve = normalizeServe(testCase.serve);
   if (serve && !serverReady) {
@@ -143,7 +145,11 @@ export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs 
   }
   if ((await snapshotTree(repoDir)) !== baselineTree) return { status: Verdict.STALE, reason: 'files changed while locking' };
   const dir = join(casesDir(repoDir), id);
-  await mkdir(dir, { recursive: true });
+  await mkdir(casesDir(repoDir), { recursive: true });
+  try { await mkdir(dir); } catch (err) {
+    if (err.code === 'EEXIST') throw new TestDefinitionError(`case "${id}" already exists; choose a new id to preserve the saved contract`);
+    throw err;
+  }
   const body = {
     schema: CASE_SCHEMA,
     id,
@@ -172,6 +178,7 @@ export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs 
 }
 
 export async function loadCase(repoDir, id) {
+  validateCaseId(id);
   const dir = join(casesDir(repoDir), id);
   const body = JSON.parse(await readFile(join(dir, 'case.json'), 'utf8'));
   const lock = JSON.parse(await readFile(join(dir, 'lock.json'), 'utf8'));
