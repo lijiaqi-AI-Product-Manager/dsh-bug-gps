@@ -1,0 +1,35 @@
+{
+  "schema": "buggps.holdout-batch/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "attempted": 4,
+  "runtime": {
+    "commit": "66bc574905474c96e7040d0a2083b42fa45074f7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "results": [
+    {
+      "case": "it-tools-1359",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "it-tools-872",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "it-tools-799",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "it-tools-1368",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    }
+  ]
+}

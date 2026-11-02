@@ -1,0 +1,300 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "导出为 SQL 源代码"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "取消",
+          "within": {
+            "role": "dialog",
+            "name": "导出"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "取消"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Diagrams / Untitled Diagram"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "名称"
+        }
+      ],
+      "value": "New"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "重命名",
+          "within": {
+            "role": "dialog",
+            "name": "重命名图表"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "重命名"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "导出为 SQL 源代码"
+        }
+      ]
+    }
+  ],
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "文件名"
+      }
+    ],
+    "comparison": "startsWith",
+    "equals": "New_"
+  },
+  "also": [],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "导出为 SQL 源代码"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "取消",
+          "within": {
+            "role": "dialog",
+            "name": "导出"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "取消"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Diagrams / Untitled Diagram"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "名称"
+        }
+      ],
+      "value": "New"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "重命名",
+          "within": {
+            "role": "dialog",
+            "name": "重命名图表"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "重命名"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "导出为 SQL 源代码"
+        }
+      ]
+    }
+  ],
+  "targetOverrides": []
+}

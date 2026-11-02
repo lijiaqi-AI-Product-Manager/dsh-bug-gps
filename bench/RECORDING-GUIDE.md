@@ -1,54 +1,43 @@
-# 真实案例录制指南（S3 真实应用关）
+# 历史案例与可选录制
 
-三个历史 bug 都来自公开仓库，每个都有作者合并的修复提交。这些修复是**评测真值**：BugGPS 在有 bug 的版本上锁定复现，然后只应用真实修复，必须得到 `VERIFIED`；不修就不能得到。
+技术验收使用脚本操作真实开源应用，并保留可重放的动作、固定检查条件和运行结果。无需人工录制即可运行已有案例。脚本录制、人工录制、植入问题示例分别标注；不能将其中一种结果推断为另一种体验的验收。
 
-| 案例 | 项目 | Bug | 真实修复 |
-|---|---|---|---|
-| `drawdb-943` | [drawdb](https://github.com/drawdb-io/drawdb)（40k★） | 设置里修改表格宽度后点「取消」，宽度仍被改掉 | [PR #943](https://github.com/drawdb-io/drawdb/pull/943)，改了 2 个文件 |
-| `qwerty-842` | [qwerty-learner](https://github.com/RealKai42/qwerty-learner)（23.6k★） | 再点一次已选中的「章节选择」，章节列表消失 | [PR #842](https://github.com/RealKai42/qwerty-learner/pull/842)，改了 1 个文件 |
-| `chartdb-896` | [chartdb](https://github.com/chartdb/chartdb)（23k★） | 修改字段类型后，旧默认值仍然保留 | [PR #896](https://github.com/chartdb/chartdb/pull/896)，改了 1 个文件、2 行 |
+## 冻结案例集
 
-## 为什么要你亲手录
+[`holdout-cases.json`](holdout-cases.json) 固定了 4 个项目的 12 个历史问题、原始提交、修复提交和预期判定。旧的 3 个开发案例不在该集合中。环境受阻、录制失败、未复现、不稳定和验证失败都保留在 12 个案例的分母中。
 
-脚本会话的操作路径太"干净"。缩减到底有没有价值，取决于真人操作时的绕路、试探和多余点击。请按自己的习惯操作：多点点、走点弯路都没关系，**不要刻意走最短路径**。
+部分案例已用于改进执行器，因此这是扩展回归集，不是盲测，也不代表随机项目成功率。文件名中的 `holdout` 保留最初的清单标识，不应据此扩大结果含义。
 
-## 步骤（每个案例约 3–5 分钟）
+```bash
+node bench/setup-holdout.mjs
+node bench/holdout.mjs
+```
 
-1. **准备**：只需一次。这一步会克隆仓库，并安装第三方依赖，安装时不运行 install 脚本。
-   ```
-   node bench/real.mjs setup drawdb-943
-   ```
-2. **启动有 bug 的版本**（保持这个终端开着）：
-   ```
-   node bench/real.mjs serve drawdb-943
-   ```
-3. **另开一个终端录制**，会弹出 Edge 窗口，右下角有 BugGPS 工具栏：
-   ```
-   node bin/buggps.js record --url http://127.0.0.1:5191/ --start /editor --out bench/real-recordings/drawdb-943.json
-   ```
-   - 随意操作，期间按 `real-cases.json` 里的 `recordHint` 让 bug 出现。
-   - 用工具栏设定**正确的预期**：
-     - 「预期文本」或「预期输入值」：点元素，在弹窗里填**正确值**，不是现在显示的错误值。
-     - 「应可见」：在元素消失之前就点选它。
-   - **刚做完触发 bug 的那一步时，点「⚑ 上一步是关键」**（例如 chartdb 里改类型那一步）。缩减时永远保留这一步。脚本实测中，不标记的话 3 个案例里有 2 个会被缩错。
-   - 点「■ 结束」。
-4. **评测**（自动完成）：先复现 3 次，再缩减；锁定后只应用真实修复并验证，最后恢复成有 bug 的代码。
-   ```
-   node bench/real.mjs check drawdb-943 bench/real-recordings/drawdb-943.json
-   ```
-   结果写在 `bench/results/real-<案例>-<时间>.json`。
+准备程序会从官方仓库创建独立临时工作区，按锁文件安装依赖，关闭依赖安装脚本。需有 Git、Node、npm、足够的磁盘空间、网络和系统 Edge/Chrome；首次准备耗时由仓库和网络决定。工作区状态保存在被忽略的 `.buggps/holdout/workspaces.json`。`BUGGPS_HOLDOUT_STATE` 可指向已有状态文件；运行器只接受本程序格式的独立临时工作区。
 
-另外两个案例把 `drawdb-943` 换成 `qwerty-842`（端口 5192，`--start /`）或 `chartdb-896`（端口 5193，`--start /`）即可。
+每个有完整录制定义的案例会检查原始录制、连续 3 次原失败、预算内缩减、无效改动仍失败、上游修复，以及需要时的独立基线对照。运行器不调用模型；它检验浏览器执行和判定内核。真实模型工作流由 `npm run test:live-model` 单独验证，复用已经登录的 DSH 账号，需显式提供 `BUGGPS_DSH_DIR`。
 
-## 判定标准（事先固定，不看结果再调）
+结果写入 `bench/results/holdout-*.json`。可通过位置参数单独运行一个案例，例如 `node bench/holdout.mjs it-tools-1359`；单个案例的成功不能代表 12 个案例全部成功。输入定义尚缺失时明确记录 `TEST_INVALID`，不会跳过。
 
-- 复现：3 次都以同一失败签名失败，才算 `REPRODUCED`。
-- 应用真实修复后：drawdb 和 chartdb 必须是 `VERIFIED`；qwerty 必须是 `NEEDS_REVIEW`，因为上游修法是禁用按钮，这种修法需要人确认。不修时必须是 `NO_CODE_CHANGE`。
-- 判定以你的原始录制为准，缩减版只作参考（`agreesWithRecording`）。
-- 缩减：如实记录 N→M；没缩短也照实写。
-- 录制失败、找不到元素、环境问题都分别记录。这些就是首版要修的兼容性问题，不算失败的案例。
+## 如何读结果
 
-## 已知限制
+- `rawRecording`：原始脚本录制能否直接回放；使用补充定位时，也保留原始结果。
+- `input.authoredTargets`：锁定之前明确补充的定位器及理由，不由修复过程改写。
+- `lock`：原代码是否 3/3 出现同一失败。
+- `minimize`：实际 N→M；相同步数、未解决尝试和预算耗尽均如实保留，不承诺全局最短。
+- `minimize.fixedComparison`：缩短的路径是否也随上游修复恢复正常；不一致时不能将其宣传为保留了原触发情境。旧结果未记录该检查时，不能据此推断它已通过。
+- `negativeControl`：仅修改说明文件后，应仍出现原失败。
+- `fixed`：只应用清单中的上游修复文件；需要审阅的修法保持 `NEEDS_REVIEW`。
+- `protectedInputs`：检查定义和锁文件是否保持相同字节指纹。
 
-- 记录的操作：点击、输入、选择、勾选、回车、Escape，以及"确实打开了菜单"的悬停。**不记录拖拽**（例如 drawdb 画布上的拖拽），也**不记录全局键盘输入**（例如 qwerty-learner 里练习打字）。这些操作对这三个 bug 没有影响。
-- 仓库要放在短路径下（默认 `%LOCALAPPDATA%\Temp\bgr`）。原因是长路径会触发 Windows 的 MAX_PATH 限制：在很深的目录下，`git clone` 会因此失败。
+独立缓存避免不同历史版本污染 Vite 生成产物。部分旧版开发服务器会生成类型声明；已生成的声明及其指纹单独记录并纳入基线。运行期间源码变化仍由内核拒绝。依赖本身是单独记录的运行输入，不能将共享依赖等同于依赖完整性证明。
+
+ChartDB 夹具显式将 `github_repo_opened` 设为 `true`，仅关闭延时推广弹窗；入口、脚本指纹和该项适配写入运行记录。数据库行为与检查条件使用原始代码。这些案例不能代表完全没有夹具适配的首次安装体验。
+
+JWT 案例只使用无认证能力的合成夹具，录制仍保留敏感字段引用。运行器临时填入 `BUGGPS_SECRET_HOLDOUT_*`，结束后恢复原环境值。
+
+## 自选人工体验反馈
+
+可用 `node bench/real.mjs serve drawdb-943` 启动旧开发案例，再用 CLI `record` 或插件工具录制。工具栏可以标注预期、检查点和关键步骤；操作范围及限制以 [README](../README.md#保护机制与已知限制) 为准。
+
+录制结束后先在本地检查内容。凭据、私有代码、业务数据、截图、路径和运行日志需要单独审阅；导出或分享由录制者选择。人工体验反馈应标注来源和环境，不用于替代固定案例验证。

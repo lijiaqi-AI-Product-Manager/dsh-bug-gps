@@ -1,0 +1,175 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted-with-authored-targets",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Empty database"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside button:text-is(\"Add Table\") >> nth=0"
+        }
+      ]
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "N"
+        }
+      ]
+    }
+  ],
+  "expectation": {
+    "kind": "hidden",
+    "target": [
+      {
+        "by": "css",
+        "value": "aside button[data-state=\"on\"]:text-is(\"N\")"
+      }
+    ]
+  },
+  "also": [
+    {
+      "kind": "visible",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Name"
+        }
+      ]
+    }
+  ],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Empty database"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Add Table"
+        }
+      ]
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "N"
+        }
+      ]
+    }
+  ],
+  "targetOverrides": [
+    {
+      "index": 3,
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside button:text-is(\"Add Table\") >> nth=0"
+        }
+      ],
+      "reason": "Two Add Table buttons share the same name in the empty view; select the toolbar control."
+    }
+  ]
+}

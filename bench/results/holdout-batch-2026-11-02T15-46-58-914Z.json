@@ -1,0 +1,35 @@
+{
+  "schema": "buggps.holdout-batch/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "attempted": 4,
+  "runtime": {
+    "commit": "c146a435d3070f7a03a7b10a0dcc7e8a4a45954c",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "results": [
+    {
+      "case": "it-tools-1359",
+      "status": "RUNNER_ERROR",
+      "expectedOutcome": false
+    },
+    {
+      "case": "it-tools-872",
+      "status": "RUNNER_ERROR",
+      "expectedOutcome": false
+    },
+    {
+      "case": "it-tools-799",
+      "status": "RUNNER_ERROR",
+      "expectedOutcome": false
+    },
+    {
+      "case": "it-tools-1368",
+      "status": "RUNNER_ERROR",
+      "expectedOutcome": false
+    }
+  ]
+}

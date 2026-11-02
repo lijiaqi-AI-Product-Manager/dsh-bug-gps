@@ -1,0 +1,200 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "case": "it-tools-872",
+  "upstream": "https://github.com/CorentinTh/it-tools/pull/872",
+  "buggyCommit": "23f82d956a8af21e176f7268c9414244168bd4eb",
+  "fixCommit": "9eac9cb2a9d23619b0d3c044f1bc1385aab427e4",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T15:53:33.190Z",
+  "runtime": {
+    "commit": "66bc574905474c96e7040d0a2083b42fa45074f7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "dependency install exited 1; inspect owned install.log"
+      }
+    ],
+    "manager": "pnpm",
+    "managerVersion": "8.15.9",
+    "lockSha256": "d2932dafa510a0912ecc0573327bc37a30350574f53346d80bb7a53cd3e8859a",
+    "generatedDeclarations": [
+      {
+        "path": "components.d.ts",
+        "sha256": "6d99a5264a76d5e1ca1c2ff3ce767fe7785d1c5d1230acf840c4f54c442673a6"
+      }
+    ],
+    "generatedPatchSha256": "8c8edf742ef9552aaa2a5b8901f100f96d37c3270ac77a06cc7a68af395fc916"
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "f16730de1d45b37cc06b6cc0a49ed0cd1f9ab1bd4b282aec4aea1728fbb2ff6a",
+    "steps": 2,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "value",
+      "target": [
+        {
+          "by": "css",
+          "value": "input[placeholder=\"Decimal version will be here...\"]"
+        }
+      ],
+      "equals": "9007199254740993"
+    },
+    "also": []
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "b6cf9938733779d06162046a15a1dda8152ec1f0dbfc4394a59027de447e4d4a",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "9007199254740992",
+    "signature": {
+      "kind": "value",
+      "target": "css=input[placeholder=\"Decimal version will be here...\"]",
+      "actual": "9007199254740992",
+      "resolution": {
+        "by": "css",
+        "value": "input[placeholder=\"Decimal version will be here...\"]"
+      }
+    },
+    "durationMs": 1458
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "9007199254740992",
+      "signature": {
+        "kind": "value",
+        "target": "css=input[placeholder=\"Decimal version will be here...\"]",
+        "actual": "9007199254740992",
+        "resolution": {
+          "by": "css",
+          "value": "input[placeholder=\"Decimal version will be here...\"]"
+        }
+      },
+      "durationMs": 4446
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 2,
+    "shortened": 2,
+    "stats": {
+      "trials": 1,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 0,
+      "differentFailure": 1,
+      "stepTimeoutMs": 2000,
+      "durationMs": 8366,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/base-converter"
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Input number"
+          },
+          {
+            "by": "label",
+            "value": "Input number"
+          },
+          {
+            "by": "css",
+            "value": "#id-tx87er9llk"
+          }
+        ],
+        "value": "9007199254740993"
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "9007199254740992",
+    "durationMs": 4646,
+    "caseSha256": "502dc1be4fd20dc29479dd0949525864d868d46a8ac375c52a4b16cc015eb2f1",
+    "lockSha256": "1302784fb7c5a95f57877f0edd8062940ff143a2b631e654c3055a881f18b2f6"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "9007199254740992",
+      "signatureKey": "{\"actual\":\"9007199254740992\",\"kind\":\"value\",\"resolution\":{\"by\":\"css\",\"value\":\"input[placeholder=\\\"Decimal version will be here...\\\"]\"},\"target\":\"css=input[placeholder=\\\"Decimal version will be here...\\\"]\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"name\":\"Input number\",\"role\":\"textbox\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"input[placeholder=\\\"Decimal version will be here...\\\"]\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 4838
+    },
+    "durationMs": 6985,
+    "caseSha256": "502dc1be4fd20dc29479dd0949525864d868d46a8ac375c52a4b16cc015eb2f1",
+    "lockSha256": "1302784fb7c5a95f57877f0edd8062940ff143a2b631e654c3055a881f18b2f6"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "556ab7ccd5510f8fd1eddd18fee318cfd33f55f0714b6b88aa45655329730537",
+    "lockSha256": "0e711b5bef9df3a648caedb6b90f53c1d73b9901bf930bd2eb8554f982fd5080"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 216142
+}

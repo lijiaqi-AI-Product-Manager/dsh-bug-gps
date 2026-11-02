@@ -1,0 +1,154 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "关闭提示"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "第 1 章"
+        },
+        {
+          "by": "css",
+          "value": "#headlessui-listbox-button-\\:r1\\:"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "option",
+          "name": "第 2 章"
+        },
+        {
+          "by": "css",
+          "value": "#headlessui-listbox-option-\\:rn\\:"
+        }
+      ]
+    },
+    {
+      "action": "press",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "第 2 章"
+        },
+        {
+          "by": "css",
+          "value": "#headlessui-listbox-button-\\:r1\\:"
+        }
+      ],
+      "value": "Space"
+    }
+  ],
+  "expectation": {
+    "kind": "hidden",
+    "target": [
+      {
+        "by": "role",
+        "role": "listbox"
+      }
+    ]
+  },
+  "also": [
+    {
+      "kind": "visible",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "第 2 章"
+        }
+      ]
+    }
+  ],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "关闭提示"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "第 1 章"
+        },
+        {
+          "by": "css",
+          "value": "#headlessui-listbox-button-\\:r1\\:"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "option",
+          "name": "第 2 章"
+        },
+        {
+          "by": "css",
+          "value": "#headlessui-listbox-option-\\:rn\\:"
+        }
+      ]
+    },
+    {
+      "action": "press",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "第 2 章"
+        },
+        {
+          "by": "css",
+          "value": "#headlessui-listbox-button-\\:r1\\:"
+        }
+      ],
+      "value": "Space"
+    }
+  ],
+  "targetOverrides": []
+}

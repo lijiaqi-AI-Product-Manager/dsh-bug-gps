@@ -1,0 +1,204 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "case": "it-tools-1368",
+  "upstream": "https://github.com/CorentinTh/it-tools/pull/1368",
+  "buggyCommit": "c7b80fbc78e2f8487ea317724b46e2d74ed5129f",
+  "fixCommit": "ae1363937bf365a0cd4ce6031971908c4b31f55f",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T16:00:44.487Z",
+  "runtime": {
+    "commit": "66bc574905474c96e7040d0a2083b42fa45074f7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "dependency install exited 1; inspect owned install.log"
+      }
+    ],
+    "manager": "pnpm",
+    "managerVersion": "8.15.3",
+    "lockSha256": "ace96ac8df9fe7c64880d02538412cb8cb09f1ba119e1a1711d5ebaaa84f9edc",
+    "generatedDeclarations": [
+      {
+        "path": ".eslintrc-auto-import.json",
+        "sha256": "3e4d724135e21f9b661f701b671c92308744a54e25c709f95ab04b7da4a17d06"
+      },
+      {
+        "path": "components.d.ts",
+        "sha256": "128122ff8f5f0cc87e224212ee161ad6e967149942b492bc2a658e3180c6839a"
+      }
+    ],
+    "generatedPatchSha256": "15b636177d3cc08dbad6ed2866c5d7532b057899b4a81c1e35015128f050ddc4"
+  },
+  "input": {
+    "source": "scripted-with-authored-targets",
+    "sha256": "bec5fe6b3ccf70f7c3d09537e3383f4842ce0eb49431336e4bc432cf3df8ff9a",
+    "steps": 2,
+    "authoredTargets": [
+      {
+        "index": 1,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "h1 + div button"
+          }
+        ],
+        "reason": "The unnamed favorite button is scoped to the tool header."
+      }
+    ],
+    "dropped": null,
+    "expectation": {
+      "kind": "count",
+      "target": [
+        {
+          "by": "css",
+          "value": "a[href=\"/hash-text\"]"
+        }
+      ],
+      "equals": 2
+    },
+    "also": [
+      {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          }
+        ]
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "b6cf9938733779d06162046a15a1dda8152ec1f0dbfc4394a59027de447e4d4a",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "TEST_INVALID",
+    "tally": {
+      "step-error": 1
+    },
+    "reason": "target ambiguous",
+    "stepIndex": 1,
+    "durationMs": 2195
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "1 matching elements",
+      "signature": {
+        "kind": "count",
+        "target": "css=a[href=\"/hash-text\"]",
+        "actual": "1",
+        "resolution": {
+          "by": "css",
+          "value": "a[href=\"/hash-text\"]",
+          "collection": true
+        }
+      },
+      "durationMs": 5716
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 2,
+    "shortened": 1,
+    "stats": {
+      "trials": 1,
+      "probeRuns": 2,
+      "cacheHits": 1,
+      "unresolved": 0,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2000,
+      "durationMs": 8679,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/hash-text"
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "1 matching elements",
+    "durationMs": 5100,
+    "caseSha256": "c71276c1c768e74d253c788cf5c9e04fe9e26cc09e5358440aeb17c8eec938be",
+    "lockSha256": "b836ff10a79b398705b982f0a774658b92546fc2cdd51688a2b6212cfdd4a721"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "1 matching elements",
+      "signatureKey": "{\"actual\":\"1\",\"kind\":\"count\",\"resolution\":{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"},\"target\":\"css=a[href=\\\"/hash-text\\\"]\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"css\",\"value\":\"h1 + div button\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"Hash text\",\"role\":\"heading\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 5584
+    },
+    "durationMs": 7443,
+    "caseSha256": "c71276c1c768e74d253c788cf5c9e04fe9e26cc09e5358440aeb17c8eec938be",
+    "lockSha256": "b836ff10a79b398705b982f0a774658b92546fc2cdd51688a2b6212cfdd4a721"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "45e3f1dbc926c645e6b93ba83d505cc4dac5cf164b18369ed0ebec2937a0aad7",
+    "lockSha256": "42634c6940b24b2dcaef06784d8a0dc9e20eedfe457549a27aafdadf83ae00d1"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 168434
+}

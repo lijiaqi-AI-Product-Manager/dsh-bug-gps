@@ -1,0 +1,282 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "case": "drawdb-1066",
+  "upstream": "https://github.com/drawdb-io/drawdb/pull/1066",
+  "buggyCommit": "9428511e77af48ea96404cbf7da3eda13b1a7266",
+  "fixCommit": "a4cd06735ec61aaa8119698eb22391c1e028c8b7",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T16:08:45.717Z",
+  "runtime": {
+    "commit": "66bc574905474c96e7040d0a2083b42fa45074f7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\drawdb.git worktree add --detach <run-root>\\cases\\drawdb-1066 9428511e77af48ea96404cbf7da3eda13b1a7266\nPreparing worktree (detached HEAD 9428511)\nerror: unable to read sha1 file of Dockerfile (1f87fd3917422cee87bddd499ce3a3076122ebfd)\nerror: unable to read sha1 file of README.md (61ce89ecb0c9b134cec87980e78babacc8b75ce1)\nerror: unable to read sha1 file of index.html (dd19a675f6cdfa1ec25c2f0fd3d9c521d750ea16)\nerror: unable to read sha1 file of package-lock.json (fa13f737c02381d76a1d09b6e2dcffec854e2e04)\nerror: unable to read sha1 file of package.json (7857c010dc4449dd4012b4393014f5193777cb17)\nerror: unable to read sha1 file of src/App.jsx (ababeb3ce4e1bf96c7077d8972c553d36840deff)\nerror: unable to read sha1 file of src/api/gists.js (7f05bcf4bd6bcf6709f7899c58758880475ef78c)\nerror: unable to read sha1 file of src/components/EditorCanvas/Area.jsx (3c6df9e9e88a53789cb1d42969b5cf7ee5c49790)\nerror: unable to read sha1 file of src/components/EditorCanvas/Canvas.jsx (976dcd33c58afe0bc6dd42d613daa042e530358d)\nerror: unable to read sha1 file of src/components/EditorCanvas/Note.jsx (4ee79a155945dd28d2342ee318eec479d28de229)"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "c2679d446c8436bcb53ec06a2b9a5347c651b9b3040fc8f4e74f52c74312ef43",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "67f16f8f471bad7d7e933d0d6d3b24d62fb6240cb9cf0b5f73139fdf2eb43a27",
+    "steps": 11,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "text",
+      "target": [
+        {
+          "by": "css",
+          "value": "nav .text-xl"
+        }
+      ],
+      "equals": "Diagrams / Original"
+    },
+    "also": [
+      {
+        "kind": "count",
+        "target": [
+          {
+            "by": "css",
+            "value": "a[href^=\"/editor/diagrams/\"]:text-is(\"Copy\")"
+          }
+        ],
+        "equals": 1
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "b6cf9938733779d06162046a15a1dda8152ec1f0dbfc4394a59027de447e4d4a",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "Diagrams/Copy",
+    "signature": {
+      "kind": "text",
+      "target": "css=nav .text-xl",
+      "actual": "Diagrams/Copy",
+      "resolution": {
+        "by": "css",
+        "value": "nav .text-xl"
+      }
+    },
+    "durationMs": 4284
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "Diagrams/Copy",
+      "signature": {
+        "kind": "text",
+        "target": "css=nav .text-xl",
+        "actual": "Diagrams/Copy",
+        "resolution": {
+          "by": "css",
+          "value": "nav .text-xl"
+        }
+      },
+      "durationMs": 12932
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": true,
+    "original": 11,
+    "shortened": 10,
+    "stats": {
+      "trials": 10,
+      "probeRuns": 1,
+      "cacheHits": 1,
+      "unresolved": 3,
+      "differentFailure": 4,
+      "stepTimeoutMs": 2000,
+      "durationMs": 46849,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/editor"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "MySQL",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "MySQL"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "确认",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "确认"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "Diagrams/Untitled Diagram"
+          }
+        ]
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "名称"
+          }
+        ],
+        "value": "Original"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "重命名",
+            "within": {
+              "role": "dialog",
+              "name": "重命名图表"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "重命名"
+          }
+        ]
+      },
+      {
+        "action": "hover",
+        "target": [
+          {
+            "by": "text",
+            "value": "文件"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "menuitem",
+            "name": "另存为 Ctrl+Shift+S"
+          }
+        ]
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "名称"
+          }
+        ],
+        "value": "Copy"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "另存为",
+            "within": {
+              "role": "dialog",
+              "name": "另存为"
+            },
+            "index": 1
+          },
+          {
+            "by": "text",
+            "value": "另存为"
+          }
+        ]
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "Diagrams/Copy",
+    "durationMs": 13549,
+    "caseSha256": "636ad3cf51b051fa910f8edf6fafbe06a5a7c89a830a876a678470bd5b57b83d",
+    "lockSha256": "9d4d918be2fd019f3a5112767a59f438d68b86f97e65ce50a3da50df1c8353f9"
+  },
+  "fixed": {
+    "verdict": "DIFFERENT_FAILURE",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "Diagrams/Original",
+    "durationMs": 13375,
+    "caseSha256": "636ad3cf51b051fa910f8edf6fafbe06a5a7c89a830a876a678470bd5b57b83d",
+    "lockSha256": "9d4d918be2fd019f3a5112767a59f438d68b86f97e65ce50a3da50df1c8353f9"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "8e72e0244e9ba28ddcd6674bd9fc29060f65cf5e37d08f9a296a5bf503582a5a",
+    "lockSha256": "a786322d831733bf8f3937b97b2f4ce10bcbaf804c5fc5a019c2854e9890f104"
+  },
+  "status": "DIFFERENT_FAILURE",
+  "expectedOutcome": false,
+  "durationMs": 166027
+}

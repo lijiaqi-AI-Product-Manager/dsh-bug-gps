@@ -1,0 +1,82 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "case": "drawdb-1031",
+  "upstream": "https://github.com/drawdb-io/drawdb/pull/1031",
+  "buggyCommit": "913427b38f61b29f93b07b713123e908c44300c6",
+  "fixCommit": "86099382b8b7d312710b62c2dd711bcf2ef0068b",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T16:08:00.790Z",
+  "runtime": {
+    "commit": "66bc574905474c96e7040d0a2083b42fa45074f7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\drawdb.git worktree add --detach <run-root>\\cases\\drawdb-1031 913427b38f61b29f93b07b713123e908c44300c6\nPreparing worktree (detached HEAD 913427b)\nerror: unable to read sha1 file of README.md (61ce89ecb0c9b134cec87980e78babacc8b75ce1)\nerror: unable to read sha1 file of index.html (dd19a675f6cdfa1ec25c2f0fd3d9c521d750ea16)\nerror: unable to read sha1 file of package-lock.json (087da14ad3f579dd34dbbec50a2efa96d0dfc7a2)\nerror: unable to read sha1 file of package.json (cdcf32c8514fb469d4653791aefe33212650f667)\nerror: unable to read sha1 file of src/App.jsx (ababeb3ce4e1bf96c7077d8972c553d36840deff)\nerror: unable to read sha1 file of src/components/EditorCanvas/Area.jsx (3c6df9e9e88a53789cb1d42969b5cf7ee5c49790)\nerror: unable to read sha1 file of src/components/EditorCanvas/Canvas.jsx (f556daed082c8dd1ade91c30ef1e80cff7f8f5d0)\nerror: unable to read sha1 file of src/components/EditorCanvas/Note.jsx (4ee79a155945dd28d2342ee318eec479d28de229)\nerror: unable to read sha1 file of src/components/EditorCanvas/Relationship.jsx (a19fd1e245eec2bfb8933af3849c69326cddcf0e)\nerror: unable to read sha1 file of src/components/EditorCanv"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "c6f294042b707155f90fa47ba7b6f8df9916471248a3ff2f725ac47af1d7c0ce",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "6114b3d34e787df3991d5fc75903df019f8d55ce25fd2d3b8233a9ceddd24885",
+    "steps": 11,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "value",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "文件名"
+        }
+      ],
+      "comparison": "startsWith",
+      "equals": "New_"
+    },
+    "also": []
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "b6cf9938733779d06162046a15a1dda8152ec1f0dbfc4394a59027de447e4d4a",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "NOT_REPRODUCED",
+    "tally": {
+      "pass": 1
+    },
+    "durationMs": 5113
+  },
+  "lock": {
+    "status": "NOT_REPRODUCED",
+    "reason": null,
+    "red": {
+      "status": "NOT_REPRODUCED",
+      "tally": {
+        "pass": 3
+      },
+      "durationMs": 14035
+    }
+  },
+  "status": "NOT_REPRODUCED",
+  "durationMs": 44926
+}

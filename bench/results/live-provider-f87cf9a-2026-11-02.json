@@ -1,0 +1,232 @@
+{
+  "schema": "buggps.provider-check/v1",
+  "at": "2026-11-02T15:56:23.644Z",
+  "provider": "deepseek-account",
+  "model": "deepseek-flash",
+  "input": "scripted-recording",
+  "application": "seeded-example",
+  "checks": [
+    {
+      "scenario": "stale-discount",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 99422,
+      "calls": [
+        {
+          "tool": "skill",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_status",
+          "status": "OK"
+        },
+        {
+          "tool": "glob",
+          "status": "completed"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_lock",
+          "status": "LOCKED"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "NO_CODE_CHANGE"
+        },
+        {
+          "tool": "edit",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "VERIFIED"
+        }
+      ],
+      "usageByStep": [
+        {
+          "step": 1,
+          "inputTokens": 665,
+          "outputTokens": 68,
+          "cacheReadTokens": 4864,
+          "cacheWriteTokens": 0,
+          "totalTokens": 5597
+        },
+        {
+          "step": 2,
+          "inputTokens": 836,
+          "outputTokens": 94,
+          "cacheReadTokens": 5504,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6434
+        },
+        {
+          "step": 3,
+          "inputTokens": 729,
+          "outputTokens": 124,
+          "cacheReadTokens": 6400,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7253
+        },
+        {
+          "step": 4,
+          "inputTokens": 2132,
+          "outputTokens": 242,
+          "cacheReadTokens": 7168,
+          "cacheWriteTokens": 0,
+          "totalTokens": 9542
+        },
+        {
+          "step": 5,
+          "inputTokens": 311,
+          "outputTokens": 51,
+          "cacheReadTokens": 9472,
+          "cacheWriteTokens": 0,
+          "totalTokens": 9834
+        },
+        {
+          "step": 6,
+          "inputTokens": 234,
+          "outputTokens": 373,
+          "cacheReadTokens": 9728,
+          "cacheWriteTokens": 0,
+          "totalTokens": 10335
+        },
+        {
+          "step": 7,
+          "inputTokens": 138,
+          "outputTokens": 131,
+          "cacheReadTokens": 10240,
+          "cacheWriteTokens": 0,
+          "totalTokens": 10509
+        },
+        {
+          "step": 8,
+          "inputTokens": 964,
+          "outputTokens": 687,
+          "cacheReadTokens": 10496,
+          "cacheWriteTokens": 0,
+          "totalTokens": 12147
+        }
+      ],
+      "rawSha256": "0f1b79cba1faefe35e243b4bd71052abcb6d576bf4f57714e5365257b32c5c3e",
+      "recordedSteps": 19,
+      "verdict": "VERIFIED",
+      "tally": {
+        "pass": 3
+      },
+      "reviewReasons": [],
+      "baselineMatches": true,
+      "caseSha256": "c58b917fc194ef9769ea27baff24e4c8102ae5c780b3c7b53b2508cb893e83a8",
+      "lockSha256": "8d909af4d7575230f6883347109a3cb7266a57413a04fe70c4ad105e3fdb7667",
+      "patchSha256": "6043c4bfa9885558c1ddf33201c92a162073dbf2bc620c130697fe23c8e89888",
+      "finalNamesVerdict": true,
+      "protectedSnapshots": 4,
+      "protectedSnapshotsUnchanged": true
+    },
+    {
+      "scenario": "changelog-crash",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 30424,
+      "calls": [
+        {
+          "tool": "skill",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_status",
+          "status": "OK"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "NEEDS_REVIEW"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        }
+      ],
+      "usageByStep": [
+        {
+          "step": 1,
+          "inputTokens": 616,
+          "outputTokens": 54,
+          "cacheReadTokens": 4864,
+          "cacheWriteTokens": 0,
+          "totalTokens": 5534
+        },
+        {
+          "step": 2,
+          "inputTokens": 693,
+          "outputTokens": 45,
+          "cacheReadTokens": 5504,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6242
+        },
+        {
+          "step": 3,
+          "inputTokens": 226,
+          "outputTokens": 59,
+          "cacheReadTokens": 6144,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6429
+        },
+        {
+          "step": 4,
+          "inputTokens": 405,
+          "outputTokens": 162,
+          "cacheReadTokens": 6400,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6967
+        },
+        {
+          "step": 5,
+          "inputTokens": 333,
+          "outputTokens": 980,
+          "cacheReadTokens": 6912,
+          "cacheWriteTokens": 0,
+          "totalTokens": 8225
+        }
+      ],
+      "rawSha256": "477e61a9579699f53d0361badaf85c65a36560404c6e296017840a25d5e95be6",
+      "recordedSteps": 13,
+      "verdict": "NEEDS_REVIEW",
+      "tally": {
+        "pass": 3
+      },
+      "reviewReasons": [
+        "disabled-control"
+      ],
+      "baselineMatches": null,
+      "caseSha256": "81d2538d0877c916a0be1cff9522ddf86bbd4b70a0d0d5404d445de57fe007e5",
+      "lockSha256": "a429e61d65e0c2652512f3891853978cc78d623b4784624586907bc5a6f0d410",
+      "patchSha256": "0a628b35f80698492b6d3514e191bf0cc6b35db4576c9801dc06d8c60f0aaf17",
+      "finalNamesVerdict": true,
+      "protectedSnapshots": 5,
+      "protectedSnapshotsUnchanged": true
+    }
+  ],
+  "expectedScenarios": [
+    "stale-discount",
+    "changelog-crash"
+  ],
+  "monetaryCost": null,
+  "dshVersion": "0.2.1-rc.5",
+  "pluginCommit": "66bc574905474c96e7040d0a2083b42fa45074f7",
+  "outcome": "PASSED"
+}

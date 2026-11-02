@@ -1,0 +1,213 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "case": "drawdb-1037",
+  "upstream": "https://github.com/drawdb-io/drawdb/pull/1037",
+  "buggyCommit": "2065254f267d1ecb71faa8e58307124e7821d650",
+  "fixCommit": "81e625e886f5b893582d7cce83fb8f2e52b075e6",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T16:05:42.207Z",
+  "runtime": {
+    "commit": "66bc574905474c96e7040d0a2083b42fa45074f7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\drawdb.git worktree add --detach <run-root>\\cases\\drawdb-1037 2065254f267d1ecb71faa8e58307124e7821d650\nPreparing worktree (detached HEAD 2065254)\nerror: unable to read sha1 file of Dockerfile (1f87fd3917422cee87bddd499ce3a3076122ebfd)\nerror: unable to read sha1 file of README.md (61ce89ecb0c9b134cec87980e78babacc8b75ce1)\nerror: unable to read sha1 file of index.html (dd19a675f6cdfa1ec25c2f0fd3d9c521d750ea16)\nerror: unable to read sha1 file of package-lock.json (5473d4e1b4af02755b2d87178744939cfdfa7474)\nerror: unable to read sha1 file of package.json (ec6cd4951839a2079e597c23bfc2bd11b3a54aa5)\nerror: unable to read sha1 file of src/App.jsx (ababeb3ce4e1bf96c7077d8972c553d36840deff)\nerror: unable to read sha1 file of src/components/EditorCanvas/Area.jsx (3c6df9e9e88a53789cb1d42969b5cf7ee5c49790)\nerror: unable to read sha1 file of src/components/EditorCanvas/Canvas.jsx (f556daed082c8dd1ade91c30ef1e80cff7f8f5d0)\nerror: unable to read sha1 file of src/components/EditorCanvas/Note.jsx (4ee79a155945dd28d2342ee318eec479d28de229)\nerror: unable to read sha1 file of src/components/EditorCanvas/Relationship.jsx (a19fd1e245eec"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "e35c933ad1c20b9624fc54754e6229330288327fba9c855bc44a5332ae43173b",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "c70c5fa26fdaa139327cb6159429d3d9996b6dc0f1bb582f57482ea512e07dce",
+    "steps": 7,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "visible",
+      "target": [
+        {
+          "by": "css",
+          "value": "nav"
+        }
+      ]
+    },
+    "also": [
+      {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          }
+        ]
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "b6cf9938733779d06162046a15a1dda8152ec1f0dbfc4394a59027de447e4d4a",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "not visible (was visible earlier)",
+    "signature": {
+      "kind": "visible",
+      "target": "css=nav",
+      "actual": "false:was visible earlier"
+    },
+    "durationMs": 3034
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "not visible (was visible earlier)",
+      "signature": {
+        "kind": "visible",
+        "target": "css=nav",
+        "actual": "false:was visible earlier"
+      },
+      "durationMs": 9624
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 7,
+    "shortened": 6,
+    "stats": {
+      "trials": 9,
+      "probeRuns": 2,
+      "cacheHits": 1,
+      "unresolved": 6,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2000,
+      "durationMs": 36367,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/editor"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "MySQL",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "MySQL"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "确认",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "确认"
+          }
+        ]
+      },
+      {
+        "action": "hover",
+        "target": [
+          {
+            "by": "text",
+            "value": "视图"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "menuitem",
+            "name": "演示模式"
+          }
+        ]
+      },
+      {
+        "action": "exit-fullscreen",
+        "pinned": true
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "not visible (was visible earlier)",
+    "durationMs": 8622,
+    "caseSha256": "a01289bfecc88bcfad9d220f6a00d84baaaed98ca2787b7dddc1ef4380aba148",
+    "lockSha256": "4630a34e6699532d89ff6f41b5dfd9bb4fabe395a5a5ebd4f2ff05ef10cc529f"
+  },
+  "fixed": {
+    "verdict": "NEEDS_REVIEW",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "reviewReasons": [
+      "locator-drift"
+    ],
+    "durationMs": 11313,
+    "caseSha256": "a01289bfecc88bcfad9d220f6a00d84baaaed98ca2787b7dddc1ef4380aba148",
+    "lockSha256": "4630a34e6699532d89ff6f41b5dfd9bb4fabe395a5a5ebd4f2ff05ef10cc529f"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "656ccba81e83baa6c0216f3e1b17acff030283f2d59bf0937ff422d428f85c7e",
+    "lockSha256": "707cd762fa4a5174cdd6c313e2e4505f3890567ca44b0de6fb869e2c4504c322"
+  },
+  "status": "NEEDS_REVIEW",
+  "expectedOutcome": false,
+  "durationMs": 138581
+}

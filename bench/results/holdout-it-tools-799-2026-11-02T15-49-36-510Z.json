@@ -1,0 +1,206 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "case": "it-tools-799",
+  "upstream": "https://github.com/CorentinTh/it-tools/pull/799",
+  "buggyCommit": "80e46c92922c1a886be08f4747b6c9f791a625e8",
+  "fixCommit": "5ed36935c7fb56d8c0ce89cdd06c6a0afb60fd28",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T15:57:09.333Z",
+  "runtime": {
+    "commit": "66bc574905474c96e7040d0a2083b42fa45074f7",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Existing dependency junction already matched the verified cache."
+      }
+    ],
+    "manager": "pnpm",
+    "managerVersion": "8.15.9",
+    "lockSha256": "dde4af5af1dd23e15bfe6561cd12311b06a13df16642b63e40577f8525c4b1d4",
+    "generatedDeclarations": [
+      {
+        "path": ".eslintrc-auto-import.json",
+        "sha256": "3e4d724135e21f9b661f701b671c92308744a54e25c709f95ab04b7da4a17d06"
+      },
+      {
+        "path": "components.d.ts",
+        "sha256": "e34f34c51413f4e495d14033b17eb98f7ef970253db98064c91cfeea0091f29d"
+      }
+    ],
+    "generatedPatchSha256": "73537e3e5b35d337b65e149054d3762a4ba64e3f2173f719980ba1ac04e1dadb"
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "bc216b3238af1b1c9cde978ce2452716e60f75fe39b81f32dfbc4b3c99057bbe",
+    "steps": 2,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "text",
+      "target": [
+        {
+          "by": "css",
+          "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+        }
+      ],
+      "equals": "[ \"reader\", \"writer\" ]"
+    },
+    "also": []
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "b6cf9938733779d06162046a15a1dda8152ec1f0dbfc4394a59027de447e4d4a",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "reader,writer",
+    "signature": {
+      "kind": "text",
+      "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+      "actual": "reader,writer",
+      "resolution": {
+        "by": "css",
+        "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+      }
+    },
+    "durationMs": 1758
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "reader,writer",
+      "signature": {
+        "kind": "text",
+        "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+        "actual": "reader,writer",
+        "resolution": {
+          "by": "css",
+          "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+        }
+      },
+      "durationMs": 4886
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 2,
+    "shortened": 2,
+    "stats": {
+      "trials": 1,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 1,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2000,
+      "durationMs": 11841,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/jwt-parser"
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "JWT to decode"
+          },
+          {
+            "by": "label",
+            "value": "JWT to decode"
+          },
+          {
+            "by": "css",
+            "value": "#id-d5wzu45mls"
+          }
+        ],
+        "value": {
+          "secret": "HOLDOUT_JWT_ARRAY"
+        }
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "reader,writer",
+    "durationMs": 4834,
+    "caseSha256": "39b47090048e439ecb890cb704c210149eddac6242ccba1a7f9880c4199039f1",
+    "lockSha256": "cd109a520ea06ea1a0762627cbbf79b67f706a50d5248e3d986cd699d07309f7"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "reader,writer",
+      "signatureKey": "{\"actual\":\"reader,writer\",\"kind\":\"text\",\"resolution\":{\"by\":\"css\",\"value\":\"tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"},\"target\":\"css=tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"name\":\"JWT to decode\",\"role\":\"textbox\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 5138
+    },
+    "durationMs": 6812,
+    "caseSha256": "39b47090048e439ecb890cb704c210149eddac6242ccba1a7f9880c4199039f1",
+    "lockSha256": "cd109a520ea06ea1a0762627cbbf79b67f706a50d5248e3d986cd699d07309f7"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "2d14c5fa715eb2f7fcf19da563416faa1b23beacc62f6c5f84843d5b8570b440",
+    "lockSha256": "b67b697cd1c29e5b45b55a7dd22f7ec52fd297b364d59de58f143793e42dd22e"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 215153
+}

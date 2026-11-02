@@ -118,7 +118,9 @@ dsh --profile <你的 profile> --dump-config
   - 改名导致模糊匹配
   - 两个仓库用同一个 case id
 - `node test/e2e/dsh-e2e.mjs`：在真实 DSH 上做端到端测试。模型是脚本化的，DSH 本身是真的。加 `BUGGPS_E2E_TARBALL=1` 则安装 `npm pack` 打出的包。
-- [bench/spike-s2-s3.md](bench/spike-s2-s3.md)：植入 bug 的示例，以及 3 个开源项目（drawdb、qwerty-learner、chartdb）的历史 bug，用上游的真实修复做验证。录制来源都如实标注：目前都是脚本录制，还没有真人录制。
+- `npm run test:live-model`：真实 DSH 0.2.1-rc.5 与现有账号的模型工作流，包含独立读取、修改源码后验证，以及遇到 `NEEDS_REVIEW` 时保留原判定。输入为植入问题示例的脚本录制，参见 [运行记录](bench/results/live-provider-2026-11-02.json)。运行需要显式提供宿主安装目录，不随普通回归自动消耗模型调用。
+- [bench/RECORDING-GUIDE.md](bench/RECORDING-GUIDE.md)：冻结的 12 个历史案例及复核入口。应用版本、脚本输入、环境失败与上游修复结果分别记录；这类运行不调用模型。
+- [bench/spike-s2-s3.md](bench/spike-s2-s3.md)：植入问题示例与 3 个早期开发案例的历史记录，不属于独立案例集。
 - [spikes/s1-dsh/REPORT.md](spikes/s1-dsh/REPORT.md)：DSH 插件 API 实测。
 
 ## 开发

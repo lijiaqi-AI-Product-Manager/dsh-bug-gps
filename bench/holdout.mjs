@@ -41,7 +41,7 @@ const inRoot = (path) => { const rel = relative(root, path); return rel && rel !
 
 for (const spec of selected) {
   const start = Date.now();
-  const out = { schema: 'buggps.holdout-result/v1', dataset: manifest.dataset, denominator: manifest.denominator, case: spec.id, upstream: spec.pr, buggyCommit: spec.buggyCommit, fixCommit: spec.fixCommit, expectedFixedVerdict: spec.expectedFixedVerdict, at: new Date().toISOString(), runtime, modelCalls: 0 };
+  const out = { schema: 'buggps.holdout-result/v1', dataset: manifest.dataset, evaluation: 'expanded-regression; cases informed implementation improvements, not a blind holdout', denominator: manifest.denominator, case: spec.id, upstream: spec.pr, buggyCommit: spec.buggyCommit, fixCommit: spec.fixCommit, expectedFixedVerdict: spec.expectedFixedVerdict, at: new Date().toISOString(), runtime, modelCalls: 0 };
   let env;
   let readme;
   let applied = false;
@@ -70,8 +70,9 @@ for (const spec of selected) {
       oldSecrets.set(name, process.env[name]); process.env[name] = value;
     }
     const port = await freePort();
-    const serve = { command: [process.execPath, join(source, 'bench/vite-serve.mjs'), String(port)], url: `http://127.0.0.1:${port}/`, readyTimeoutMs: 120_000 };
-    out.fixtureRuntime = { entry: 'bench/vite-serve.mjs', sha256: hash(await readFile(join(source, 'bench/vite-serve.mjs'))), cache: 'per-checkout', dependencyMode: entry.dependencyMode ?? 'linked-cache' };
+    const serverEntry = spec.project === 'chartdb' ? 'bench/vite-chartdb-serve.mjs' : 'bench/vite-serve.mjs';
+    const serve = { command: [process.execPath, join(source, serverEntry), String(port)], url: `http://127.0.0.1:${port}/`, readyTimeoutMs: 120_000 };
+    out.fixtureRuntime = { entry: serverEntry, sha256: hash(await readFile(join(source, serverEntry))), cache: 'per-checkout', dependencyMode: entry.dependencyMode ?? 'linked-cache', ...(spec.project === 'chartdb' ? { fixture: 'github_repo_opened=true suppresses the promotional dialog only' } : {}) };
     const testCase = { steps: draft.steps, expectation: draft.expectation, also: draft.also ?? [], observeMs: draft.observeMs ?? 1000, browser: draft.browser, serve };
     env = await launchBrowser(); out.browser = { channel: env.channel, version: env.browser.version() };
     const raw = { ...testCase, steps: draft.rawSteps ?? draft.steps };
@@ -96,6 +97,11 @@ for (const spec of selected) {
     applied = true;
     await git(dir, ['--literal-pathspecs', 'restore', '--source', spec.fixCommit, '--worktree', '--', ...spec.fixFiles]);
     out.fixed = summary(await verifyCase(env.browser, env, dir, id, { runs: 3 }));
+    if (m.confirmed && m.minimizedSteps < m.originalSteps) {
+      const short = await withManagedServer(dir, serve, (url) => reproduce(env.browser, m.testCase, { baseUrl: url, runs: 3 }), { warmup: warmupPage(env.browser, m.testCase) });
+      out.minimize.fixedComparison = summary(short.result);
+      out.minimize.agreesWithFullRecording = short.result.status === 'NOT_REPRODUCED' && ['VERIFIED', 'NEEDS_REVIEW'].includes(out.fixed.verdict);
+    }
     const after = [hash(await readFile(casePath)), hash(await readFile(lockPath))];
     out.protectedInputs = { unchanged: before.every((h, i) => h === after[i]), caseSha256: before[0], lockSha256: before[1] };
     out.status = out.fixed.verdict;

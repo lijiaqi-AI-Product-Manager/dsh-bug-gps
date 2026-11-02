@@ -1,0 +1,34 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "case": "it-tools-1359",
+  "upstream": "https://github.com/CorentinTh/it-tools/pull/1359",
+  "buggyCommit": "aa8cba96de8477fcc63d91d3800568267c55e1cd",
+  "fixCommit": "f8366664177674c6e6ceaf4c88d9840b2517073a",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T15:46:58.915Z",
+  "runtime": {
+    "commit": "c146a435d3070f7a03a7b10a0dcc7e8a4a45954c",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true"
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "dependency install exited 1; inspect owned install.log"
+      }
+    ],
+    "manager": "pnpm",
+    "managerVersion": "8.15.3",
+    "lockSha256": "ace96ac8df9fe7c64880d02538412cb8cb09f1ba119e1a1711d5ebaaa84f9edc"
+  },
+  "status": "RUNNER_ERROR",
+  "reason": "Fixture contains tracked changes",
+  "durationMs": 5479
+}
