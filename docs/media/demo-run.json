@@ -1,0 +1,338 @@
+{
+  "schema": "buggps.demo/v1",
+  "kind": "seeded-scripted-demo",
+  "engineCommit": "c624605264b2f88367b5c2904c78a9b4af084b85",
+  "generatorSha256": "5e885e60b25a7a4e42c8c158807f9445102ef40ba55b6bbf02448fc0f30cadd0",
+  "caseSha256": "aba91ffd80ce5b49d3396114bddc431d2d26c06d30fe9ff2a2c37f3eac82e086",
+  "lockSha256": "011b5d718b71c5a0598ebda1c81d1a884109a7532a1a114ad43fc9969d5047c0",
+  "patchSha256": "985ded3e317fec6cabddf1ba70f8ac9f84705a669cb22e21f201069c1f0f729c",
+  "caseDefinition": {
+    "schema": "buggps.case/v1",
+    "id": "coupon",
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "viewport",
+        "width": 960,
+        "height": 600,
+        "pinned": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Add Apple"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Add Cherry"
+          }
+        ]
+      },
+      {
+        "action": "select",
+        "target": [
+          {
+            "by": "role",
+            "role": "combobox",
+            "name": "Sort"
+          },
+          {
+            "by": "label",
+            "value": "Sort"
+          },
+          {
+            "by": "css",
+            "value": "#sort"
+          }
+        ],
+        "value": "price"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Remove Cherry"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Add Banana"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "Shipping info"
+          }
+        ]
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Coupon"
+          },
+          {
+            "by": "label",
+            "value": "Coupon"
+          },
+          {
+            "by": "css",
+            "value": "#coupon"
+          }
+        ],
+        "value": "SAVE10"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Apply coupon"
+          },
+          {
+            "by": "css",
+            "value": "#apply-coupon"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Remove Apple"
+          }
+        ]
+      }
+    ],
+    "minimizedSteps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "viewport",
+        "width": 960,
+        "height": 600,
+        "pinned": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Add Apple"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Add Banana"
+          }
+        ]
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Coupon"
+          },
+          {
+            "by": "label",
+            "value": "Coupon"
+          },
+          {
+            "by": "css",
+            "value": "#coupon"
+          }
+        ],
+        "value": "SAVE10"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Apply coupon"
+          },
+          {
+            "by": "css",
+            "value": "#apply-coupon"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Remove Apple"
+          }
+        ]
+      }
+    ],
+    "expectation": {
+      "kind": "text",
+      "target": [
+        {
+          "by": "testId",
+          "value": "total"
+        },
+        {
+          "by": "css",
+          "value": "#total"
+        }
+      ],
+      "equals": "$18.00"
+    },
+    "browser": {
+      "viewport": {
+        "width": 746,
+        "height": 483
+      },
+      "locale": "zh-CN",
+      "timezoneId": "Asia/Shanghai",
+      "deviceScaleFactor": 1
+    },
+    "observeMs": 1000,
+    "serve": {
+      "command": [
+        "node",
+        "serve.js",
+        ".",
+        "5180"
+      ],
+      "url": "http://127.0.0.1:5180/"
+    },
+    "match": "strict"
+  },
+  "environment": {
+    "browser": "msedge",
+    "version": "156.0.4314.58",
+    "node": "v24.22.0",
+    "platform": "win32"
+  },
+  "recordedSteps": 11,
+  "minimization": {
+    "from": 11,
+    "to": 7,
+    "trials": 15,
+    "probe_runs": 2,
+    "model_calls": 0,
+    "note": "A verified shorter path that still shows the same failure, for reading the code. Not proven minimal and not a cause; the full recording decides verification."
+  },
+  "wrongVerdict": "STILL_FAILING",
+  "correctedVerdict": "VERIFIED",
+  "runs": {
+    "pass": 3
+  },
+  "observation": {
+    "method": "poll",
+    "intervalMs": 50,
+    "runs": [
+      {
+        "method": "poll",
+        "intervalMs": 50,
+        "samples": 17,
+        "elapsedMs": 1005,
+        "maxGapMs": 69
+      },
+      {
+        "method": "poll",
+        "intervalMs": 50,
+        "samples": 17,
+        "elapsedMs": 1007,
+        "maxGapMs": 70
+      },
+      {
+        "method": "poll",
+        "intervalMs": 50,
+        "samples": 17,
+        "elapsedMs": 1007,
+        "maxGapMs": 72
+      }
+    ]
+  },
+  "baselineControl": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "$17.00",
+    "signatureKey": "{\"actual\":\"$17.00\",\"kind\":\"text\",\"resolution\":{\"by\":\"testId\",\"value\":\"total\"},\"target\":\"testId=total\"}",
+    "matchesLockedFailure": true,
+    "resolutionChanges": [],
+    "resolutionProfile": {
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"Add Apple\",\"role\":\"button\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"role\",\"name\":\"Add Cherry\",\"role\":\"button\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Sort\",\"role\":\"combobox\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"role\",\"name\":\"Remove Cherry\",\"role\":\"button\"}"
+      ],
+      "step:6": [
+        "{\"by\":\"role\",\"name\":\"Add Banana\",\"role\":\"button\"}"
+      ],
+      "step:7": [
+        "{\"by\":\"text\",\"value\":\"Shipping info\"}"
+      ],
+      "step:8": [
+        "{\"by\":\"role\",\"name\":\"Coupon\",\"role\":\"textbox\"}"
+      ],
+      "step:9": [
+        "{\"by\":\"role\",\"name\":\"Apply coupon\",\"role\":\"button\"}"
+      ],
+      "step:10": [
+        "{\"by\":\"role\",\"name\":\"Remove Apple\",\"role\":\"button\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"testId\",\"value\":\"total\"}"
+      ]
+    },
+    "runtimeInputs": [],
+    "reason": null,
+    "durationMs": 3311
+  },
+  "mediaSeconds": 45.6
+}
