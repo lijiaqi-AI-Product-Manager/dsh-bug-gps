@@ -11,6 +11,7 @@
   "files": [
     "src",
     "bin",
+    "examples",
     "cordis.patch.yml"
   ],
   "dsh": {
@@ -40,5 +41,8 @@
     "browser-debugging",
     "playwright"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@deepseek-ai/dsh-tools": "0.2.1-rc.5"
+  }
 }

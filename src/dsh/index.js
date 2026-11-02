@@ -13,19 +13,28 @@ export const inject = ['tools', 'skills'];
 let guardActive = false;
 
 export function apply(ctx) {
+  const wd = () => ctx.get?.('workingDirectory');
   // Session working directory when the service exists (dsh web/desktop), else the process cwd.
   const resolveCwd = async (exec) => {
-    const wd = ctx.get?.('workingDirectory');
-    if (wd && exec?.agent) {
-      try { return await wd.ensure(exec.agent, exec.signal); } catch { /* fall back */ }
+    if (wd() && exec?.agent) {
+      try { return await wd().ensure(exec.agent, exec.signal); } catch { /* fall back */ }
     }
     return process.cwd();
   };
+  // Relative paths in file tools resolve against the SESSION directory (dsh-tool-fs does the
+  // same), which can differ from this process's cwd. The guard is synchronous, so it reads the
+  // committed directory with get(); every project a BugGPS tool used is checked as well.
+  const projects = new Set();
+  const bases = (exec) => {
+    const out = [];
+    try { const d = exec?.agent?.session && wd()?.get(exec.agent.session); if (d) out.push(d); } catch { /* no session */ }
+    return [...out, process.cwd(), ...projects];
+  };
 
-  ctx.tools.guard((exec) => protectedReason(exec, process.cwd()));
+  ctx.tools.guard((exec) => protectedReason(exec, bases(exec)));
   guardActive = true;
 
-  for (const spec of createToolSpecs({ resolveCwd, guardActive: () => guardActive })) {
+  for (const spec of createToolSpecs({ resolveCwd, guardActive: () => guardActive, onProject: (d) => projects.add(d) })) {
     ctx.tools.register(defineTool(spec));
   }
   ctx.skills.register({ ...SKILL, source: 'runtime' });

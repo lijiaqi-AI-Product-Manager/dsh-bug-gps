@@ -1,0 +1,84 @@
+{
+  "case": "chartdb-896",
+  "kind": "REAL app",
+  "input": "REAL app, scripted session + human-style pins on steps 13,14",
+  "binding": "managed",
+  "at": "2026-11-02T04:06:47.542Z",
+  "recordedSteps": 16,
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "No default"
+      }
+    ],
+    "equals": ""
+  },
+  "reproduce": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "0",
+    "reason": null,
+    "stepIndex": null,
+    "ms": 23584
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "steps": "16 -> 9",
+    "kept": [
+      "/",
+      "click Empty diagram",
+      "click Skip & Empty",
+      "click Add Table",
+      "click button",
+      "fill No default=\"0\"",
+      "click bigint",
+      "click text",
+      "click button"
+    ],
+    "stats": {
+      "trials": 41,
+      "probeRuns": 3,
+      "cacheHits": 2,
+      "unresolved": 22,
+      "differentFailure": 0,
+      "stepTimeoutMs": 8000,
+      "durationMs": 261438,
+      "modelCalls": 0
+    }
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "minimizedKept": true,
+    "reason": null,
+    "tally": {
+      "fail": 3
+    }
+  },
+  "verifyBeforeFix": "NO_CODE_CHANGE",
+  "verifyWithRealFix": {
+    "verdict": "NEEDS_REVIEW",
+    "reviewReasons": [
+      "locator-drift"
+    ],
+    "tally": {
+      "pass": 3
+    },
+    "observed": null,
+    "reason": null,
+    "minimizedCheck": {
+      "status": "NOT_REPRODUCED",
+      "tally": {
+        "pass": 3
+      },
+      "observed": null,
+      "agreesWithRecording": true
+    },
+    "patch": ".../table-list-item/table-list-item-content/table-field/table-field.tsx | 2 ++\n 1 file changed, 2 insertions(+)"
+  }
+}

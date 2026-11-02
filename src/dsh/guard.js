@@ -28,17 +28,22 @@ function realish(abs) {
   return abs;
 }
 
-/** Returns a deny reason for this tool call, or undefined. */
-export function protectedReason(exec, cwd = process.cwd()) {
+/**
+ * Returns a deny reason for this tool call, or undefined. `bases` are the directories a
+ * relative path may resolve against (session directory first); a path is denied if it lands
+ * in .buggps/ from any of them, after following junctions and symlinks.
+ */
+export function protectedReason(exec, bases = [process.cwd()]) {
   const args = exec?.arguments;
   if (!args || typeof args !== 'object') return undefined;
   const keys = FILE_TOOLS[exec.name];
   if (keys) {
+    const dirs = [...new Set(Array.isArray(bases) ? bases : [bases])];
     for (const k of keys) {
       const p = args[k];
       if (typeof p !== 'string') continue;
-      const abs = isAbsolute(p) ? p : resolve(cwd, p);
-      if (hasProtectedSegment(p) || hasProtectedSegment(abs) || hasProtectedSegment(realish(abs))) {
+      const abs = isAbsolute(p) ? [p] : dirs.map((d) => resolve(d, p));
+      if (hasProtectedSegment(p) || abs.some((a) => hasProtectedSegment(a) || hasProtectedSegment(realish(a)))) {
         return `BugGPS: ${p} is inside .buggps/, which holds the locked acceptance case and its evidence. It is write-protected. Fix the application code instead; only buggps_verify decides whether the bug is fixed.`;
       }
     }

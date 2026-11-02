@@ -1,0 +1,62 @@
+{
+  "case": "qwerty-842",
+  "kind": "REAL app",
+  "input": "REAL app, scripted session + human-style pins on steps 8",
+  "binding": "managed",
+  "at": "2026-11-02T03:11:06.936Z",
+  "recordedSteps": 9,
+  "expectation": {
+    "kind": "visible",
+    "target": [
+      {
+        "by": "role",
+        "role": "heading",
+        "name": "第 1 章"
+      }
+    ]
+  },
+  "reproduce": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "not visible (was visible earlier)",
+    "reason": null,
+    "stepIndex": null,
+    "ms": 12443
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": false,
+    "steps": "9 -> 9",
+    "kept": [
+      "/gallery",
+      "click 日语",
+      "click 英语",
+      "click 考研",
+      "click 大学英语",
+      "click CET-4 大学英语四级词库 2607 词",
+      "click Close",
+      "click CET-6 大学英语六级词库 2345 词",
+      "click 章节选择"
+    ],
+    "stats": {
+      "trials": 7,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 7,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2000,
+      "durationMs": 95671,
+      "modelCalls": 0
+    }
+  },
+  "lock": {
+    "status": "TEST_INVALID",
+    "minimizedKept": null,
+    "reason": "page.goto: Timeout 15000ms exceeded.",
+    "tally": {
+      "step-error": 3
+    }
+  }
+}

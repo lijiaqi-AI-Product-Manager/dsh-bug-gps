@@ -29,9 +29,15 @@ export function candidatesOf(target) {
 }
 
 /** Resolves a target to a unique locator, or reports why it could not. */
+// The loose fallback only kicks in after exact candidates kept failing this long: while a menu
+// or dialog animates in, the exact name can be briefly absent, and a loose match taken in that
+// moment would be reported as locator drift although nothing about the element changed.
+const LOOSE_AFTER_MS = 1500;
+
 export async function resolveTarget(page, target, { timeoutMs = 2000 } = {}) {
   const candidates = candidatesOf(target);
-  const deadline = Date.now() + timeoutMs;
+  const started = Date.now();
+  const deadline = started + timeoutMs;
   let lastCounts = [];
   do {
     lastCounts = [];
@@ -43,7 +49,9 @@ export async function resolveTarget(page, target, { timeoutMs = 2000 } = {}) {
     }
     // Weaker fallback: a recorded role name that is a substring of the real accessible name
     // (e.g. icon labels prepended). Still must be unique.
-    for (const c of candidates) {
+    const now = Date.now();
+    const looseAllowed = timeoutMs <= 0 || now - started >= LOOSE_AFTER_MS || now + 50 >= deadline;
+    for (const c of looseAllowed ? candidates : []) {
       if (c.by !== 'role' || !c.name) continue;
       const loc = candidateLocator(page, c, { loose: true });
       if ((await loc.count()) === 1) return { ok: true, locator: loc, used: { ...c, loose: true } };

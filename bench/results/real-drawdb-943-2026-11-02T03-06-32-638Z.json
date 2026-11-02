@@ -1,0 +1,80 @@
+{
+  "case": "drawdb-943",
+  "kind": "REAL app",
+  "input": "REAL app, scripted session",
+  "binding": "managed",
+  "at": "2026-11-02T03:06:32.638Z",
+  "recordedSteps": 12,
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "spinbutton"
+      }
+    ],
+    "equals": "220"
+  },
+  "reproduce": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "observed": "300",
+    "reason": null,
+    "stepIndex": null,
+    "ms": 19158
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "steps": "12 -> 9",
+    "kept": [
+      "/editor",
+      "click MySQL",
+      "click confirm",
+      "hover 设置",
+      "click 表格宽度",
+      "fill spinbutton=\"300\"",
+      "click cancel",
+      "hover 设置",
+      "click 表格宽度"
+    ],
+    "stats": {
+      "trials": 20,
+      "probeRuns": 2,
+      "cacheHits": 0,
+      "unresolved": 12,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2000,
+      "durationMs": 91695,
+      "modelCalls": 0
+    }
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "minimizedKept": true,
+    "reason": null,
+    "tally": {
+      "fail": 3
+    }
+  },
+  "verifyBeforeFix": "NO_CODE_CHANGE",
+  "verifyWithRealFix": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "observed": null,
+    "reason": null,
+    "minimizedCheck": {
+      "status": "NOT_REPRODUCED",
+      "tally": {
+        "pass": 3
+      },
+      "observed": null,
+      "agreesWithRecording": true
+    },
+    "patch": "src/components/EditorHeader/Modal/Modal.jsx         | 15 ++++++++++++++-\n src/components/EditorHeader/Modal/SetTableWidth.jsx |  9 ++++-----\n 2 files changed, 18 insertions(+), 6 deletions(-)"
+  }
+}

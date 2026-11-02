@@ -5,7 +5,12 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-const EXCLUDE = ':(exclude).buggps';
+const EXCLUDE = [
+  ':(exclude).buggps',
+  // Vite 4 writes its bundled config next to vite.config.* while the server runs and deletes it
+  // on exit; a killed server can leave it behind. Never part of a fix.
+  ':(exclude,glob)**/vite.config.*.timestamp-*.mjs',
+];
 
 export function git(cwd, args, { env, maxBuffer = 64 * 1024 * 1024 } = {}) {
   return new Promise((ok, fail) => {
@@ -21,7 +26,7 @@ export async function snapshotTree(repoDir) {
   try {
     const hasHead = await git(repoDir, ['rev-parse', '--verify', '-q', 'HEAD']).then(() => true, () => false);
     if (hasHead) await git(repoDir, ['read-tree', 'HEAD'], { env });
-    await git(repoDir, ['add', '-A', '--', '.', EXCLUDE], { env });
+    await git(repoDir, ['add', '-A', '--', '.', ...EXCLUDE], { env });
     return (await git(repoDir, ['write-tree'], { env })).trim();
   } finally {
     await rm(dir, { recursive: true, force: true });

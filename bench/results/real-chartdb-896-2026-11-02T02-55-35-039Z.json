@@ -1,0 +1,30 @@
+{
+  "case": "chartdb-896",
+  "kind": "REAL app",
+  "input": "REAL app, scripted session + human-style pins on steps 13,14",
+  "binding": "managed",
+  "at": "2026-11-02T02:55:35.039Z",
+  "recordedSteps": 16,
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "No default"
+      }
+    ],
+    "equals": ""
+  },
+  "reproduce": {
+    "status": "FLAKY",
+    "tally": {
+      "step-error": 2,
+      "fail": 1
+    },
+    "observed": "0",
+    "reason": "target not-found",
+    "stepIndex": 4,
+    "ms": 40233
+  }
+}

@@ -11,7 +11,7 @@
 // The result is the shortest case verified within budget, not a proven global minimum.
 import { runTrial } from './replay.js';
 import { signatureKey } from './oracle.js';
-import { reproduce, Status } from './reproduce.js';
+import { contractOf, reproduce, Status } from './reproduce.js';
 import { resolveTarget } from './locator.js';
 
 const FAIL = 'FAIL';
@@ -28,22 +28,30 @@ export async function minimize(browser, testCase, {
   confirmRuns = 3,
   concurrency = 4,
   // A deleted precondition usually shows up as a missing target, so fail fast on it — but no
-  // faster than the app needs: by default 2x the slowest non-navigation step of the original.
+  // faster than the app needs: by default 3x the slowest non-navigation step of the original,
+  // at least 2 s (a loaded machine makes single timings noisy; too short only wastes candidates).
   stepTimeoutMs,
+  // Whether the original failure showed only during the observation window (reproduce's
+  // `late`). If not, candidate trials skip the window: a candidate that would fail only later is
+  // judged PASS, which keeps steps (never a wrong reduction), and a PASS stops costing the
+  // window. The final k/k confirmation always uses the case's own window.
+  late = false,
   signal,
 } = {}) {
   const started = Date.now();
+  const contract = { ...contractOf(testCase), ...(late ? {} : { observeMs: 0 }) };
   if (stepTimeoutMs === undefined) {
-    const timing = await runTrial(browser, { baseUrl, steps: testCase.steps, expectation: testCase.expectation, signal });
+    const timing = await runTrial(browser, { baseUrl, steps: testCase.steps, ...contract, signal });
     const slowest = Math.max(0, ...timing.stepMs.filter((_, i) => testCase.steps[i]?.action !== 'goto'));
-    stepTimeoutMs = Math.min(5000, Math.max(750, 2 * slowest + 250));
+    stepTimeoutMs = Math.min(8000, Math.max(2000, 3 * slowest + 500));
   }
   const steps = testCase.steps;
   const want = signatureKey(signature, match);
   if (!want) throw new Error('minimize() needs the signature of a REPRODUCED case');
 
-  // First goto is the precondition; steps flagged pinned are kept as well.
-  const pinned = new Set(steps.map((s, i) => (i === 0 || s.pinned ? i : -1)).filter((i) => i >= 0));
+  // First goto is the precondition; steps the user pinned or attached a checkpoint to are kept
+  // as well (a candidate must also still pass every checkpoint, see replay.runTrial).
+  const pinned = new Set(steps.map((s, i) => (i === 0 || s.pinned || s.check ? i : -1)).filter((i) => i >= 0));
   const cache = new Map();
   const stats = { trials: 0, probeRuns: 0, cacheHits: 0, unresolved: 0, differentFailure: 0 };
   let exhausted = false;
@@ -52,7 +60,7 @@ export async function minimize(browser, testCase, {
 
   async function trial(keep) {
     stats.trials++;
-    const t = await runTrial(browser, { baseUrl, steps: keep.map((i) => steps[i]), expectation: testCase.expectation, stepTimeoutMs, signal });
+    const t = await runTrial(browser, { baseUrl, steps: keep.map((i) => steps[i]), ...contract, stepTimeoutMs, signal });
     if (process.env.BUGGPS_DEBUG) console.error(`[minimize] keep=${keep.join(',')} -> ${t.outcome} ${t.observed ?? t.reason ?? ''} (${t.durationMs}ms)`);
     if (t.outcome === 'pass') return PASS;
     if (t.outcome === 'fail' && signatureKey(t.signature, match) === want) return FAIL;

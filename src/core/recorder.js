@@ -2,6 +2,9 @@
 // the capture phase and reports each action with locator candidates (testid > role+name >
 // label > #id), computed at event time. Coordinates are never recorded.
 
+import { NEGATIVE_KINDS } from './oracle.js';
+import { secretName } from './secrets.js';
+
 const RECORDER_SCRIPT = String.raw`(() => {
   if (window.__buggpsRecorderInstalled) return;
   window.__buggpsRecorderInstalled = true;
@@ -169,6 +172,15 @@ const RECORDER_SCRIPT = String.raw`(() => {
   for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, cancelHover, true);
 
   const CLICKABLE = 'button,a[href],[role=button],[role=link],[role=tab],[role=menuitem],[role=radio],[role=option],summary,input[type=button],input[type=submit]';
+  // Fields whose value must never leave the page: the step stores a reference instead.
+  const SECRET_HINT = /pass(word|wd|code)?|secret|token|otp|one.?time|cvv|cvc|card.?(num|no)|cc.?num|api.?key|pin.?code|密码|口令|验证码|卡号/i;
+  function isSecret(el) {
+    if (!(el instanceof HTMLInputElement)) return false;
+    if (el.type === 'password') return true;
+    if (/password|one-time-code|cc-number|cc-csc|cc-exp/.test(el.autocomplete || '')) return true;
+    return SECRET_HINT.test([el.name, el.id, el.getAttribute('aria-label'), el.placeholder, labelText(el)].join(' '));
+  }
+  const secretLabel = (el) => clean(el.getAttribute('aria-label') || labelText(el) || el.placeholder || el.name || el.id || 'password');
   const fromToolbar = (e) => e.target instanceof Element && e.target.closest('#__buggps_toolbar');
 
   // Expectation picking: while window.__buggpsPickKind is set, the next click selects an
@@ -190,6 +202,19 @@ const RECORDER_SCRIPT = String.raw`(() => {
       if (!el) return;
       const target = candidates(el);
       if (!target.length) target.push({ by: 'text', value: clean(el.textContent).slice(0, 80) });
+      if (isSecret(el)) { window.__buggpsToast && window.__buggpsToast('✗ 敏感字段不能作为预期 / not on a secret field'); return; }
+      if (kind === 'checkpoint') {
+        // "At this point the page shows X": holds before AND after the fix, so a fix cannot
+        // skip the situation the user recorded (and shortening cannot drop the step leading here).
+        const field = el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement;
+        const now = field ? String(el.value ?? '') : clean(el.textContent);
+        const ck = field ? 'value' : (now ? 'text' : 'visible');
+        const equals = ck === 'visible' ? undefined : window.prompt('BugGPS 检查点 / checkpoint: 此刻应为 / at this point it is:', now);
+        if (equals === null) return;
+        send({ type: 'checkpoint', check: { kind: ck, target, ...(equals !== undefined ? { equals } : {}) } });
+        window.__buggpsToast && window.__buggpsToast('✓ 检查点已记录 / checkpoint set');
+        return;
+      }
       const current = kind === 'value' ? (el.value ?? '') : clean(el.textContent);
       let equals;
       if (kind === 'text' || kind === 'value') {
@@ -226,6 +251,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
     const el = e.target;
     if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) return;
     if (['checkbox', 'radio'].includes(el.type)) return;
+    if (isSecret(el)) { send({ action: 'fill', target: candidates(el), secret: secretLabel(el) }); return; }
     send({ action: 'fill', target: candidates(el), value: el.value });
   }, true);
 
@@ -257,6 +283,7 @@ const TOOLBAR_SCRIPT = String.raw`(() => {
       + '<button data-k="text">预期文本 text</button><button data-k="value">预期输入值 value</button>'
       + '<button data-k="visible">应可见 visible</button><button data-k="hidden">应消失 hidden</button>'
       + '<button data-k="no-page-error">不应报错 no error</button>'
+      + '<button data-k="checkpoint" title="点选元素：记录此刻它的内容，修复后这一步也必须一样 / the page must look like this at this point, before and after the fix">✓ 此刻应为 checkpoint</button>'
       + '<button class="pin" title="缩减时永远保留上一步 / never delete the last step when shortening">⚑ 上一步是关键 key step</button>'
       + '<button class="stop">■ 结束 stop</button></div>';
     const msg = root.getElementById('msg');
@@ -265,7 +292,7 @@ const TOOLBAR_SCRIPT = String.raw`(() => {
       const k = b.dataset.k;
       if (k === 'no-page-error') {
         window.__buggpsRecord({ type: 'expect', expectation: { kind: k } });
-        msg.textContent = '✓ 预期: 不应出现未捕获异常 / no uncaught error';
+        msg.textContent = '✓ 不应报错。再用「应可见 / 预期文本」标出正确结果 / now also mark what SHOULD show';
         return;
       }
       window.__buggpsPickKind = k;
@@ -294,14 +321,19 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   const context = await browser.newContext({ viewport: toolbar ? null : undefined });
   const steps = [{ action: 'goto', url: startPath }];
   const dropped = [];
-  const result = { expectation: null, expectedFrom: null };
+  // expectation: the primary check (its failure is the bug's signature). also: further checks
+  // that must pass after the fix. "No error" plus a positive check keeps both; a second
+  // positive check of the same kind replaces the first (the user corrected themselves).
+  const result = { expectation: null, also: [], expectedFrom: null };
   let finish;
   const finished = new Promise((r) => { finish = r; });
   await context.exposeBinding('__buggpsRecord', (_src, ev) => {
-    if (ev?.type === 'expect') { result.expectation = ev.expectation; result.expectedFrom = ev.current ?? null; return; }
+    if (ev?.type === 'expect') { addExpectation(result, ev.expectation, ev.current); return; }
+    if (ev?.type === 'checkpoint') { steps[steps.length - 1].check = ev.check; return; }
     if (ev?.type === 'stop') { finish('stop'); return; }
     if (ev?.type === 'pin') { if (steps.length > 1) steps[steps.length - 1].pinned = true; return; }
     if (!ev?.target?.length) { dropped.push(ev); return; }
+    if (ev.secret !== undefined) { ev = { action: ev.action, target: ev.target, value: { secret: secretName(ev.secret) } }; }
     const prev = steps[steps.length - 1];
     if (ev.action === 'fill' && prev?.action === 'fill' && sameTarget(prev.target, ev.target)) {
       prev.value = ev.value; // one human "type into field" action, not one step per keystroke
@@ -331,6 +363,20 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
       return steps.map((s) => ({ ...s }));
     },
   };
+}
+
+function addExpectation(result, exp, current) {
+  const negative = (e) => NEGATIVE_KINDS.has(e.kind);
+  const p = result.expectation;
+  if (!p || negative(p) === negative(exp)) {
+    result.expectation = exp;
+    result.expectedFrom = current ?? null;
+    return;
+  }
+  // One positive and one negative: the earlier one stays primary (it is what the user saw go
+  // wrong first), the other must hold after the fix too.
+  const key = JSON.stringify([exp.kind, exp.target ?? null]);
+  result.also = [...result.also.filter((e) => JSON.stringify([e.kind, e.target ?? null]) !== key), exp];
 }
 
 function sameTarget(a, b) {

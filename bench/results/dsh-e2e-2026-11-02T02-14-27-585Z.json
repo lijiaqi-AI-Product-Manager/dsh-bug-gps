@@ -1,0 +1,121 @@
+{
+  "at": "2026-11-02T02:14:27.585Z",
+  "kind": "REAL DSH, scripted model, SEEDED example app",
+  "checks": [
+    {
+      "name": "dsh plugin --profile headless add (linked checkout)",
+      "ok": true,
+      "detail": "0.2.1-rc.5"
+    },
+    {
+      "name": "--dump-config shows the dsh-bug-gps layer",
+      "ok": true
+    },
+    {
+      "name": "dsh exited 0 with no plugin load warnings",
+      "ok": true,
+      "detail": "exit=0"
+    },
+    {
+      "name": "tools offered to the model include the 4 BugGPS tools",
+      "ok": true
+    },
+    {
+      "name": "skill catalog lists buggps; body loads on demand",
+      "ok": true
+    },
+    {
+      "name": "status: write protection active, serve configured, browser usable",
+      "ok": true
+    },
+    {
+      "name": "lock: LOCKED, managed binding, model_calls 0",
+      "ok": true,
+      "detail": "LOCKED"
+    },
+    {
+      "name": "verify before any change: NO_CODE_CHANGE",
+      "ok": true
+    },
+    {
+      "name": "agent write into .buggps/ denied by the guard",
+      "ok": true,
+      "detail": "Error: BugGPS: .buggps/cases/coupon/case.json is inside .buggps/, which holds the locked acceptance case and its evidenc"
+    },
+    {
+      "name": "edits by the agent applied",
+      "ok": true
+    },
+    {
+      "name": "wrong fix: STILL_FAILING",
+      "ok": true
+    },
+    {
+      "name": "real fix: VERIFIED",
+      "ok": true,
+      "detail": "patch: app.js | 4 ++--"
+    },
+    {
+      "name": "locked case unchanged at every point of the turn",
+      "ok": true,
+      "detail": "c0702be9 c0702be9 c0702be9 c0702be9"
+    }
+  ],
+  "dshVersion": "0.2.1-rc.5",
+  "install": "linked checkout",
+  "turnSeconds": 232,
+  "calls": [
+    {
+      "tool": "skill",
+      "status": "ok",
+      "result": "<skill_content name=\"buggps\">\n<skill_resources>\nResources for this skill are managed by provider \"runtime\".\nLoad referenced resources only as needed.\n</skill_resources>\n\n<skill_instructions>\n# BugGPS workflow\n\nUse this when the user has a bug they can reproduce in their running web app (dev server)."
+    },
+    {
+      "tool": "buggps_status",
+      "status": "OK",
+      "result": "BugGPS OK\nrepo: %TEMP%\\buggps repo zFNcSg\nwrite_protection: active\nserve: node serve.js . 8797 -> http://127.0.0.1:8797/\ncases: []\ndev_server: reachable\nbrowser: msedge 156.0.4314.58"
+    },
+    {
+      "tool": "buggps_lock",
+      "status": "LOCKED",
+      "result": "BugGPS LOCKED\ncase_id: coupon\nbinding: managed: BugGPS runs `node serve.js . 8797` at http://127.0.0.1:8797/\nexpectation: \"total\" shows \"$18.00\"\nobserve_ms: 1000\nobserved_now: $17.00\nrecorded_steps: 19\nshortest_steps: [\"open /\",\"click \\\"Add Apple\\\"\",\"click \\\"Add Banana\\\"\",\"fill \\\"Coupon\\\" = \\\"SAVE10"
+    },
+    {
+      "tool": "buggps_verify",
+      "status": "NO_CODE_CHANGE",
+      "result": "BugGPS NO_CODE_CHANGE\ncase_id: coupon\nbinding: managed (http://127.0.0.1:8797/)\nexpectation: \"total\" shows \"$18.00\"\nobserved_for_ms: 1000\nbefore_fix: $17.00\nnow: null\nruns: null\nrun_record: .buggps/runs/2026-11-02T02-17-47-516Z-51c99667.json\nnext: No code has changed since the case was locked. Make "
+    },
+    {
+      "tool": "write",
+      "status": "ERROR",
+      "result": "Error: BugGPS: .buggps/cases/coupon/case.json is inside .buggps/, which holds the locked acceptance case and its evidence. It is write-protected. Fix the application code instead; only buggps_verify decides whether the bug is fixed."
+    },
+    {
+      "tool": "read",
+      "status": "ok",
+      "result": "<path>%TEMP%\\buggps repo zFNcSg\\app.js</path>\n<type>file</type>\n<content>\n1: // SEEDED EXAMPLE. Planted bugs, each marked \"SEEDED BUG\":\n2: //   1. Removing an item after a coupon is applied keeps the stale discount.\n3: //   2. Clicking \"Show changelog\" twice throws an unca"
+    },
+    {
+      "tool": "edit",
+      "status": "ok",
+      "result": "The file %TEMP%\\buggps repo zFNcSg\\app.js has been updated successfully."
+    },
+    {
+      "tool": "buggps_verify",
+      "status": "STILL_FAILING",
+      "result": "BugGPS STILL_FAILING\ncase_id: coupon\nbinding: managed (http://127.0.0.1:8797/)\nexpectation: \"total\" shows \"$18.00\"\nobserved_for_ms: 1000\nbefore_fix: $17.00\nnow: $17.00\nruns: {\"fail\":3}\nshortened_case_agrees: true\nrun_record: .buggps/runs/2026-11-02T02-17-52-615Z-a6a83d75.json\nnext: Same failure as b"
+    },
+    {
+      "tool": "edit",
+      "status": "ok",
+      "result": "The file %TEMP%\\buggps repo zFNcSg\\app.js has been updated successfully."
+    },
+    {
+      "tool": "buggps_verify",
+      "status": "VERIFIED",
+      "result": "BugGPS VERIFIED\ncase_id: coupon\nbinding: managed (http://127.0.0.1:8797/)\nexpectation: \"total\" shows \"$18.00\"\nobserved_for_ms: 1000\nbefore_fix: $17.00\nnow: all checks met\nruns: {\"pass\":3}\nshortened_case_agrees: true\npatch: app.js | 4 ++--\n 1 file changed, 2 insertions(+), 2 deletions(-)\npatch_file: "
+    }
+  ],
+  "passed": true,
+  "stderrTail": ""
+}

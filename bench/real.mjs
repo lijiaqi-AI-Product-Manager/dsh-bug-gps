@@ -14,7 +14,7 @@ import { launchBrowser } from '../src/core/browser.js';
 import { startDevServer } from '../src/core/devserver.js';
 import { reproduce, Status } from '../src/core/reproduce.js';
 import { minimize } from '../src/core/minimize.js';
-import { lockCase, verifyCase } from '../src/core/caselock.js';
+import { lockCase, verifyCase, warmupPage, withManagedServer } from '../src/core/caselock.js';
 import { git } from '../src/core/snapshot.js';
 
 const ROOT = process.env.BUGGPS_REAL_ROOT ?? join(process.env.LOCALAPPDATA ?? os.tmpdir(), 'Temp', 'bgr');
@@ -32,10 +32,16 @@ function run(argv, cwd) {
   if (r.status !== 0) throw new Error(`${argv[0]} exited ${r.status}`);
 }
 
-async function serve() {
+// The app's own dev server, started by BugGPS from the checkout (managed binding).
+function serveSpec() {
   const vite = join(appDir, 'node_modules', 'vite', 'bin', 'vite.js');
   if (!existsSync(vite)) throw new Error(`vite not installed in ${appDir}; run: node bench/real.mjs setup ${id}`);
-  return startDevServer({ cwd: appDir, argv: [process.execPath, vite, '--port', String(spec.port), '--strictPort', '--host', '127.0.0.1'], url: baseUrl, readyTimeoutMs: 120_000 });
+  return { command: [process.execPath, vite, '--port', String(spec.port), '--strictPort', '--host', '127.0.0.1'], url: baseUrl, readyTimeoutMs: 120_000 };
+}
+
+function serve() {
+  const s = serveSpec();
+  return startDevServer({ cwd: appDir, argv: s.command, url: s.url, readyTimeoutMs: s.readyTimeoutMs });
 }
 
 switch (cmd) {
@@ -90,32 +96,32 @@ switch (cmd) {
     const dirty = (await git(appDir, ['status', '--porcelain', '--', ...spec.fixFiles])).trim();
     if (dirty) throw new Error(`fix files already modified in ${appDir}:\n${dirty}`);
 
-    const out = { case: spec.id, kind: 'REAL app, human recording', at: new Date().toISOString(), recordedSteps: recorded.steps.length, expectation: recorded.expectation };
-    const server = await serve();
+    // Provenance comes from the recording itself: scripted sessions must never be reported as
+    // human recordings.
+    const out = { case: spec.id, kind: 'REAL app', input: recorded.kind ?? recorded.source ?? 'unknown', binding: 'managed', at: new Date().toISOString(), recordedSteps: recorded.steps.length, expectation: recorded.expectation };
+    const serve = serveSpec();
     const env = await launchBrowser();
     try {
-      // Warm-up load so Vite's first-time dependency optimization does not count against trials.
-      const ctx = await env.browser.newContext();
-      await (await ctx.newPage()).goto(new URL(spec.startPath, baseUrl).href, { timeout: 120_000 });
-      await ctx.close();
-
-      const red = await reproduce(env.browser, recorded, { baseUrl, runs: 3 });
-      out.reproduce = { status: red.status, tally: red.tally, observed: red.observed, reason: red.reason, stepIndex: red.stepIndex, ms: red.durationMs };
-      console.log('reproduce', out.reproduce);
-      if (red.status === Status.REPRODUCED) {
-        const m = await minimize(env.browser, recorded, { baseUrl, signature: red.signature, maxMs: 300_000 });
-        const label = (s) => s.url ?? `${s.action} ${s.target?.[0]?.name ?? s.target?.[0]?.value ?? s.target?.[0]?.role}${s.value !== undefined ? `=${s.value}` : ''}`;
+      const pre = await withManagedServer(appDir, serve, async (url) => {
+        const red = await reproduce(env.browser, recorded, { baseUrl: url, runs: 3 });
+        out.reproduce = { status: red.status, tally: red.tally, observed: red.observed, reason: red.reason, stepIndex: red.stepIndex, ms: red.durationMs };
+        console.log('reproduce', out.reproduce);
+        if (red.status !== Status.REPRODUCED) return null;
+        const m = await minimize(env.browser, recorded, { baseUrl: url, signature: red.signature, maxMs: 300_000, late: red.late });
+        const label = (s) => s.url ?? `${s.action} ${s.target?.[0]?.name ?? s.target?.[0]?.value ?? s.target?.[0]?.role}${s.value !== undefined ? `=${JSON.stringify(s.value)}` : ''}`;
         out.minimize = { status: m.status, confirmed: m.confirmed, steps: `${m.originalSteps} -> ${m.minimizedSteps}`, kept: m.testCase.steps.map(label), stats: m.stats };
         console.log('minimize', out.minimize);
-        const minimizedSteps = m.confirmed && m.minimizedSteps < m.originalSteps ? m.testCase.steps : undefined;
-        const locked = await lockCase(env.browser, env, appDir, { ...recorded, minimizedSteps }, { baseUrl, id: spec.id });
-        out.lock = { status: locked.status, minimizedKept: locked.lock?.redMinimized?.kept ?? null };
+        return m.confirmed && m.minimizedSteps < m.originalSteps ? m.testCase.steps : undefined;
+      }, { warmup: warmupPage(env.browser, recorded) });
+      if (out.reproduce.status === Status.REPRODUCED) {
+        const locked = await lockCase(env.browser, env, appDir, { ...recorded, serve, minimizedSteps: pre.result ?? undefined }, { id: spec.id });
+        out.lock = { status: locked.status, minimizedKept: locked.lock?.redMinimized?.kept ?? null, reason: locked.reason ?? null, tally: (locked.red ?? locked.lock?.red)?.tally ?? null };
         if (locked.caseId) {
-          out.verifyBeforeFix = (await verifyCase(env.browser, env, appDir, spec.id, { baseUrl })).verdict;
+          out.verifyBeforeFix = (await verifyCase(env.browser, env, appDir, spec.id, {})).verdict;
           await git(appDir, ['checkout', spec.fixCommit, '--', ...spec.fixFiles]);
           try {
-            const v = await verifyCase(env.browser, env, appDir, spec.id, { baseUrl });
-            out.verifyWithRealFix = { verdict: v.verdict, tally: v.check?.tally, observed: v.check?.observed, reason: v.check?.reason, disabledSteps: v.check?.disabledSteps, minimizedCheck: v.minimizedCheck, patch: v.patch?.stat };
+            const v = await verifyCase(env.browser, env, appDir, spec.id, {});
+            out.verifyWithRealFix = { verdict: v.verdict, reviewReasons: v.reviewReasons, tally: v.check?.tally, observed: v.check?.observed, reason: v.check?.reason, disabledSteps: v.check?.disabledSteps, minimizedCheck: v.minimizedCheck, patch: v.patch?.stat };
             console.log('verify with real fix', out.verifyWithRealFix);
           } finally {
             await git(appDir, ['checkout', 'HEAD', '--', ...spec.fixFiles]); // restore buggy code
@@ -124,7 +130,6 @@ switch (cmd) {
       }
     } finally {
       await env.browser.close().catch(() => {});
-      await server.stop();
     }
     await mkdir(new URL('./results/', import.meta.url), { recursive: true });
     const file = resolve(`bench/results/real-${spec.id}-${out.at.replace(/[:.]/g, '-')}.json`);
