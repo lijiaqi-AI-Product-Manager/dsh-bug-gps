@@ -137,7 +137,7 @@ async function evaluateAll(page, checks, obs, { settleMs, targetWaitMs, late = f
 async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
   if (step.action === 'goto') {
     try {
-      await page.goto(new URL(step.url, baseUrl).href, { waitUntil: 'load', timeout: navTimeoutMs });
+      await page.goto(new URL(step.url, baseUrl).href, { waitUntil: 'domcontentloaded', timeout: navTimeoutMs });
       return { ok: true };
     } catch (err) {
       // A page that does not finish loading says something about the server or the machine,

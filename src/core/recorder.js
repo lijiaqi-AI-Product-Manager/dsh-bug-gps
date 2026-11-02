@@ -3,6 +3,7 @@
 // label > #id), computed at event time. Coordinates are never recorded.
 
 import { secretName } from './secrets.js';
+import { EnvBlockedError, TestDefinitionError } from './errors.js';
 
 const RECORDER_SCRIPT = String.raw`(() => {
   if (window.__buggpsRecorderInstalled) return;
@@ -352,7 +353,11 @@ const TOOLBAR_SCRIPT = String.raw`(() => {
  * With `toolbar: true` a floating toolbar lets the user pick the expectation and stop;
  * `finished` resolves when they press stop or close the page.
  */
-export async function startRecording(browser, { baseUrl, startPath = '/', toolbar = false }) {
+export async function startRecording(browser, { baseUrl, startPath = '/', toolbar = false, navTimeoutMs = 120_000 }) {
+  if (!Number.isInteger(navTimeoutMs) || navTimeoutMs < 1 || navTimeoutMs > 120_000) throw new TestDefinitionError('recording navigation timeout must be between 1 and 120000 ms');
+  let startUrl;
+  try { startUrl = new URL(startPath, baseUrl); }
+  catch { throw new TestDefinitionError('recording needs a valid base URL and start path'); }
   const context = await browser.newContext({ viewport: toolbar ? null : undefined });
   const steps = [{ action: 'goto', url: startPath }];
   const dropped = [];
@@ -398,7 +403,15 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   if (toolbar) await context.addInitScript(TOOLBAR_SCRIPT);
   const page = await context.newPage();
   page.on('close', () => finish('closed'));
-  await page.goto(new URL(startPath, baseUrl).href);
+  try {
+    // Recording must not wait for every image, font or analytics request to finish.
+    await page.goto(startUrl.href, { waitUntil: 'domcontentloaded', timeout: navTimeoutMs });
+  } catch (error) {
+    await context.close().catch(() => {});
+    startUrl.username = ''; startUrl.password = ''; startUrl.search = ''; startUrl.hash = '';
+    const reason = error.name === 'TimeoutError' ? `recording page did not become ready within ${navTimeoutMs} ms` : `recording navigation failed${String(error.message).match(/net::[A-Z0-9_]+/)?.[0] ? ': ' + String(error.message).match(/net::[A-Z0-9_]+/)[0] : ''}`;
+    throw new EnvBlockedError(`${reason} at ${startUrl.href}`, 'Check that the development server is running and inspect its compilation or network errors, then retry recording.');
+  }
   result.browser = await page.evaluate(() => ({ viewport: { width: innerWidth, height: innerHeight }, locale: navigator.language, timezoneId: Intl.DateTimeFormat().resolvedOptions().timeZone, deviceScaleFactor: devicePixelRatio }));
   let stopped = false;
   return {
