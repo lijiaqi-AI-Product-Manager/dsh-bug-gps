@@ -1,0 +1,198 @@
+{
+  "schema": "buggps.holdout/v1",
+  "dataset": "browser-state-12",
+  "createdAt": "2026-11-02",
+  "denominator": 12,
+  "projects": 4,
+  "selection": {
+    "kind": "public-merged-fixes",
+    "frameworks": [
+      "React",
+      "Vue"
+    ],
+    "excludedDevelopmentCases": [
+      "drawdb-943",
+      "qwerty-842",
+      "chartdb-896"
+    ],
+    "policy": "The case list and upstream revisions are frozen before executing any case. Environment, recording, reproduction and verification failures remain in the denominator. Machine-check definitions are established from the upstream behavior before applying the fix."
+  },
+  "cases": [
+    {
+      "id": "drawdb-1037",
+      "project": "drawdb",
+      "repo": "https://github.com/drawdb-io/drawdb",
+      "pr": "https://github.com/drawdb-io/drawdb/pull/1037",
+      "buggyCommit": "2065254f267d1ecb71faa8e58307124e7821d650",
+      "fixCommit": "81e625e886f5b893582d7cce83fb8f2e52b075e6",
+      "fixFiles": [
+        "src/components/EditorHeader/ControlPanel.jsx"
+      ],
+      "scenario": "Exiting presentation mode with Escape restores the editor panels.",
+      "expectedFixedVerdict": "VERIFIED"
+    },
+    {
+      "id": "drawdb-1031",
+      "project": "drawdb",
+      "repo": "https://github.com/drawdb-io/drawdb",
+      "pr": "https://github.com/drawdb-io/drawdb/pull/1031",
+      "buggyCommit": "913427b38f61b29f93b07b713123e908c44300c6",
+      "fixCommit": "86099382b8b7d312710b62c2dd711bcf2ef0068b",
+      "fixFiles": [
+        "src/components/EditorHeader/ControlPanel.jsx"
+      ],
+      "scenario": "The export filename uses the current diagram title after a rename.",
+      "expectedFixedVerdict": "VERIFIED"
+    },
+    {
+      "id": "drawdb-1066",
+      "project": "drawdb",
+      "repo": "https://github.com/drawdb-io/drawdb",
+      "pr": "https://github.com/drawdb-io/drawdb/pull/1066",
+      "buggyCommit": "9428511e77af48ea96404cbf7da3eda13b1a7266",
+      "fixCommit": "a4cd06735ec61aaa8119698eb22391c1e028c8b7",
+      "fixFiles": [
+        "src/components/EditorHeader/ControlPanel.jsx",
+        "src/components/EditorHeader/Modal/Modal.jsx",
+        "src/i18n/locales/en.js"
+      ],
+      "scenario": "Save As creates a copy without renaming the open original diagram.",
+      "expectedFixedVerdict": "VERIFIED"
+    },
+    {
+      "id": "chartdb-1031",
+      "project": "chartdb",
+      "repo": "https://github.com/chartdb/chartdb",
+      "pr": "https://github.com/chartdb/chartdb/pull/1031",
+      "buggyCommit": "fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68",
+      "fixCommit": "674ed2249ee46b0dce14b1cc10be45755460b03d",
+      "fixFiles": [
+        "src/lib/data/sql-import/__tests__/sql-import.test.ts",
+        "src/lib/data/sql-import/dialect-importers/postgresql/postgresql-common.ts",
+        "src/lib/data/sql-import/dialect-importers/postgresql/postgresql.ts"
+      ],
+      "scenario": "Importing a decimal column preserves its precision and scale.",
+      "expectedFixedVerdict": "VERIFIED"
+    },
+    {
+      "id": "chartdb-1061",
+      "project": "chartdb",
+      "repo": "https://github.com/chartdb/chartdb",
+      "pr": "https://github.com/chartdb/chartdb/pull/1061",
+      "buggyCommit": "5754538d7ef31d900cf754c68f2a51a0ce7ed54a",
+      "fixCommit": "b21202e6c7ecc1807a1ef09853532f1282c6f88e",
+      "fixFiles": [
+        "src/hooks/use-update-table-field.ts",
+        "src/lib/clone.ts",
+        "src/lib/data/sql-export/cross-dialect/postgresql/to-mssql.ts",
+        "src/lib/data/sql-export/cross-dialect/postgresql/to-mysql.ts",
+        "src/lib/data/sql-export/export-per-type/mssql.ts",
+        "src/lib/data/sql-export/export-per-type/mysql.ts",
+        "src/lib/data/sql-export/export-per-type/postgresql.ts",
+        "src/lib/data/sql-export/export-sql-script.ts",
+        "src/lib/dbml/dbml-import/__tests__/composite-pk-name.test.ts",
+        "src/pages/editor-page/canvas/table-node/table-edit-mode/table-edit-mode-field.tsx",
+        "src/pages/editor-page/side-panel/tables-section/table-list/table-list-item/table-list-item-content/table-field/table-field.tsx"
+      ],
+      "scenario": "A primary-key column cannot be made nullable; disabled recorded controls require review.",
+      "expectedFixedVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "id": "chartdb-1089",
+      "project": "chartdb",
+      "repo": "https://github.com/chartdb/chartdb",
+      "pr": "https://github.com/chartdb/chartdb/pull/1089",
+      "buggyCommit": "0b73295922f87b3b59bc8ef98b27a7328b6d66c0",
+      "fixCommit": "0e7fa6c75efb3fb3ac0406fdca2796941a7de87d",
+      "fixFiles": [
+        "package-lock.json",
+        "src/lib/dbml/dbml-import/dbml-import.ts"
+      ],
+      "scenario": "Importing a DBML GIN index preserves the index type.",
+      "expectedFixedVerdict": "VERIFIED"
+    },
+    {
+      "id": "chartdb-1045",
+      "project": "chartdb",
+      "repo": "https://github.com/chartdb/chartdb",
+      "pr": "https://github.com/chartdb/chartdb/pull/1045",
+      "buggyCommit": "ded5b14a62eaf352b372cb5f2f6e225de9d53a44",
+      "fixCommit": "84e55f5df654be47c27f17fac55359d6a454d87d",
+      "fixFiles": [
+        "src/components/tree-view/tree-view.tsx",
+        "src/components/tree-view/tree.ts",
+        "src/pages/editor-page/canvas/canvas-filter/utils.ts"
+      ],
+      "scenario": "Schema and area table counts reflect the visible and total tables after filtering.",
+      "expectedFixedVerdict": "VERIFIED"
+    },
+    {
+      "id": "it-tools-1359",
+      "project": "it-tools",
+      "repo": "https://github.com/CorentinTh/it-tools",
+      "pr": "https://github.com/CorentinTh/it-tools/pull/1359",
+      "buggyCommit": "aa8cba96de8477fcc63d91d3800568267c55e1cd",
+      "fixCommit": "f8366664177674c6e6ceaf4c88d9840b2517073a",
+      "fixFiles": [
+        "src/tools/yaml-to-json-converter/yaml-to-json.e2e.spec.ts",
+        "src/tools/yaml-to-json-converter/yaml-to-json.vue"
+      ],
+      "scenario": "YAML merge keys produce the inherited fields in the JSON output.",
+      "expectedFixedVerdict": "VERIFIED"
+    },
+    {
+      "id": "it-tools-872",
+      "project": "it-tools",
+      "repo": "https://github.com/CorentinTh/it-tools",
+      "pr": "https://github.com/CorentinTh/it-tools/pull/872",
+      "buggyCommit": "23f82d956a8af21e176f7268c9414244168bd4eb",
+      "fixCommit": "9eac9cb2a9d23619b0d3c044f1bc1385aab427e4",
+      "fixFiles": [
+        "src/tools/integer-base-converter/integer-base-converter.model.test.ts",
+        "src/tools/integer-base-converter/integer-base-converter.model.ts"
+      ],
+      "scenario": "Integer-base conversion preserves values larger than the safe integer range.",
+      "expectedFixedVerdict": "VERIFIED"
+    },
+    {
+      "id": "it-tools-799",
+      "project": "it-tools",
+      "repo": "https://github.com/CorentinTh/it-tools",
+      "pr": "https://github.com/CorentinTh/it-tools/pull/799",
+      "buggyCommit": "80e46c92922c1a886be08f4747b6c9f791a625e8",
+      "fixCommit": "5ed36935c7fb56d8c0ce89cdd06c6a0afb60fd28",
+      "fixFiles": [
+        "src/tools/jwt-parser/jwt-parser.service.ts"
+      ],
+      "scenario": "JWT array claims retain their structured JSON representation.",
+      "expectedFixedVerdict": "VERIFIED"
+    },
+    {
+      "id": "it-tools-1368",
+      "project": "it-tools",
+      "repo": "https://github.com/CorentinTh/it-tools",
+      "pr": "https://github.com/CorentinTh/it-tools/pull/1368",
+      "buggyCommit": "c7b80fbc78e2f8487ea317724b46e2d74ed5129f",
+      "fixCommit": "ae1363937bf365a0cd4ce6031971908c4b31f55f",
+      "fixFiles": [
+        "src/layouts/tool.layout.vue",
+        "src/tools/tools.store.ts"
+      ],
+      "scenario": "Favoriting a tool from its page adds that tool to favorites.",
+      "expectedFixedVerdict": "VERIFIED"
+    },
+    {
+      "id": "qwerty-learner-793",
+      "project": "qwerty-learner",
+      "repo": "https://github.com/RealKai42/qwerty-learner",
+      "pr": "https://github.com/RealKai42/qwerty-learner/pull/793",
+      "buggyCommit": "3426282c52b41133ca1565104b6d8fe4ce853427",
+      "fixCommit": "da9313f119536a28c6dcf6f245ced1b7d23f1962",
+      "fixFiles": [
+        "src/pages/Typing/components/DictChapterButton/index.tsx"
+      ],
+      "scenario": "Pressing Space after chapter selection does not reopen the chapter list.",
+      "expectedFixedVerdict": "VERIFIED"
+    }
+  ]
+}
