@@ -9,6 +9,7 @@ import { launchBrowser } from '../src/core/browser.js';
 import { lockCase, verifyCase, withManagedServer, warmupPage } from '../src/core/caselock.js';
 import { reproduce } from '../src/core/reproduce.js';
 import { minimize } from '../src/core/minimize.js';
+import { EVALUATOR_VERSION } from '../src/core/oracle.js';
 import { git } from '../src/core/snapshot.js';
 import { freePort } from '../test/helpers.js';
 
@@ -39,12 +40,12 @@ const safe = (value) => {
   if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).filter(([, v]) => v !== undefined).map(([k, v]) => [k, safe(v)]));
   return value;
 };
-const summary = (r) => r && ({ status: r.status, verdict: r.verdict, tally: r.tally ?? r.check?.tally, reason: r.reason ?? r.check?.reason, observed: r.observed ?? r.check?.observed, stepIndex: r.stepIndex ?? r.check?.stepIndex, reviewReasons: r.reviewReasons, signature: r.signature ?? r.check?.signature, baselineControl: r.baselineControl, durationMs: r.durationMs ?? r.check?.durationMs, caseSha256: r.caseSha256, lockSha256: r.lockSha256 });
+const summary = (r) => r && ({ status: r.status, verdict: r.verdict, tally: r.tally ?? r.check?.tally, reason: r.reason ?? r.check?.reason, observed: r.observed ?? r.check?.observed, stepIndex: r.stepIndex ?? r.check?.stepIndex, reviewReasons: r.reviewReasons, signature: r.signature ?? r.check?.signature, resolutionChanges: r.check?.resolutionChanges, resolutionProfile: r.resolutionProfile ?? r.check?.resolutionProfile, visibilityHistory: r.visibilityHistory ?? r.check?.visibilityHistory, baselineControl: r.baselineControl, durationMs: r.durationMs ?? r.check?.durationMs, caseSha256: r.caseSha256, lockSha256: r.lockSha256 });
 const inRoot = (path) => { const rel = relative(root, path); return rel && rel !== '..' && !rel.startsWith('..' + sep) && !isAbsolute(rel); };
 
 for (const spec of selected) {
   const start = Date.now();
-  const out = { schema: 'buggps.holdout-result/v1', dataset: manifest.dataset, evaluation: 'expanded-regression; cases informed implementation improvements, not a blind holdout', denominator: manifest.denominator, case: spec.id, upstream: spec.pr, buggyCommit: spec.buggyCommit, fixCommit: spec.fixCommit, expectedFixedVerdict: spec.expectedFixedVerdict, at: new Date().toISOString(), runtime, modelCalls: 0 };
+  const out = { schema: 'buggps.holdout-result/v1', dataset: manifest.dataset, evaluator: EVALUATOR_VERSION, evaluation: 'expanded-regression; cases informed implementation improvements, not a blind holdout', denominator: manifest.denominator, case: spec.id, upstream: spec.pr, buggyCommit: spec.buggyCommit, fixCommit: spec.fixCommit, expectedFixedVerdict: spec.expectedFixedVerdict, at: new Date().toISOString(), runtime, modelCalls: 0 };
   let env;
   let readme;
   let applied = false;

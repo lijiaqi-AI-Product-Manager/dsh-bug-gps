@@ -1,6 +1,6 @@
 // Deterministic replay of one trial: fresh BrowserContext (no cookies/storage carry-over),
 // steps executed in order, then the expectation is evaluated. No model calls happen here.
-import { resolveTarget } from './locator.js';
+import { resolveTarget, targetFailureReason } from './locator.js';
 import { evaluate } from './oracle.js';
 import { resolveValue } from './secrets.js';
 import { TestDefinitionError } from './errors.js';
@@ -89,9 +89,10 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
       if (signal?.aborted) return done({ outcome: 'aborted', stepIndex: i });
       const step = steps[i];
       const t0 = Date.now();
-      const r = await runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs });
+      const r = await runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs, signal });
       resolved(`step:${i}`, r.resolvedBy);
       stepMs.push(Date.now() - t0);
+      if (signal?.aborted) return done({ outcome: 'aborted', stepIndex: i });
       if (!r.ok) {
         if (r.env) return done({ outcome: 'env-error', stepIndex: i, reason: r.reason });
         return done({ outcome: 'step-error', stepIndex: i, reason: r.reason });
@@ -167,7 +168,7 @@ async function evaluateAll(page, checks, observations, { settleMs, targetWaitMs,
   return failure ? { ...failure, signature: { ...failure.signature, check: failure.check, checks: results } } : null;
 }
 
-async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
+async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs, signal }) {
   if (step.action === 'goto') {
     try {
       await page.goto(new URL(step.url, baseUrl).href, { waitUntil: 'domcontentloaded', timeout: navTimeoutMs });
@@ -193,8 +194,9 @@ async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
   }
   const value = resolveValue(step.value);
   if (!value.ok) return { ok: false, env: true, reason: value.reason };
-  const t = await resolveTarget(page, step.target, { timeoutMs: stepTimeoutMs });
-  if (!t.ok) return { ok: false, reason: `target ${t.reason}` };
+  const t = await resolveTarget(page, step.target, { timeoutMs: stepTimeoutMs, signal });
+  if (signal?.aborted) return { ok: false, reason: 'aborted' };
+  if (!t.ok) return { ok: false, reason: `target ${targetFailureReason(t)}` };
   const loose = Boolean(t.used?.loose);
   const opts = { timeout: stepTimeoutMs };
   // A user acting on a disabled control gets no effect; replay does the same but reports it,

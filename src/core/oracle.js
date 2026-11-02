@@ -1,13 +1,13 @@
 // Evaluates the confirmed expectation after replay and turns an observed failure into a
 // signature. A candidate reproduction only counts if its signature matches the original's:
 // "it still fails somehow" is not enough (that is how wrong minimizations slip through).
-import { candidateLocator, candidatesOf, resolveTarget, targetKey } from './locator.js';
+import { candidateLocator, candidatesOf, resolveTarget, targetKey, targetScope, targetFailureReason } from './locator.js';
 import { TestDefinitionError } from './errors.js';
 import { validateObserveMs } from './observation.js';
 import { browserOptions, validateViewport } from './browser-options.js';
 import { canonicalJson } from './canonical.js';
 
-export const EVALUATOR_VERSION = 'buggps.oracle/v5';
+export const EVALUATOR_VERSION = 'buggps.oracle/v6';
 
 export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'count', 'no-page-error', 'no-console-error', 'no-failed-request'];
 // "Nothing went wrong" kinds. On their own they cannot show the feature works again (deleting
@@ -78,26 +78,28 @@ async function evaluateOnce(page, exp, obs) {
   switch (exp.kind) {
     case 'text': {
       const r = await resolveTarget(page, exp.target, { timeoutMs: 0 });
-      if (!r.ok) return fail(exp, `target ${r.reason}`, `target:${r.reason}`);
+      if (!r.ok) return fail(exp, `target ${targetFailureReason(r)}`, `target:${r.reason}`);
       const actual = normalizeSpace(await r.locator.textContent());
       return resolved(r, compareString(exp, actual));
     }
     case 'value': {
       const r = await resolveTarget(page, exp.target, { timeoutMs: 0 });
-      if (!r.ok) return fail(exp, `target ${r.reason}`, `target:${r.reason}`);
+      if (!r.ok) return fail(exp, `target ${targetFailureReason(r)}`, `target:${r.reason}`);
       const actual = await r.locator.inputValue().catch(() => null);
       if (actual === null) return resolved(r, { invalid: 'expectation target has no input value' });
       return resolved(r, compareString(exp, actual));
     }
     case 'count': {
       const candidate = candidatesOf(exp.target)[0];
+      const scope = targetScope(page, candidate);
+      if (scope && (await scope.count()) > 1) return { invalid: 'expectation scope is ambiguous' };
       const count = await candidateLocator(page, candidate).count();
       return resolved({ ok: true, used: { ...candidate, collection: true } }, count === exp.equals ? { pass: true } : fail(exp, `${count} matching elements`, String(count)));
     }
     case 'visible':
     case 'hidden': {
       const r = await resolveTarget(page, exp.target, { timeoutMs: 0 });
-      if (!r.ok && r.reason === 'ambiguous') return { invalid: 'expectation target is ambiguous' };
+      if (!r.ok && r.reason === 'ambiguous') return { invalid: r.scopeCounts?.some((n) => n > 1) ? 'expectation scope is ambiguous' : 'expectation target is ambiguous' };
       const visible = r.ok ? await r.locator.isVisible() : false;
       if (visible && exp.kind === 'visible') obs.observeVisible?.(r.used);
       const want = exp.kind === 'visible';
