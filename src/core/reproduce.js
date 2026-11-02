@@ -19,6 +19,8 @@ export const Status = Object.freeze({
   ABORTED: 'ABORTED',
 });
 
+export const DEFAULT_STEP_TIMEOUT_MS = 10_000;
+
 /** Trial options that come from the case contract itself (see replay.runTrial). */
 export function contractOf(testCase) {
   return { expectation: testCase.expectation, also: testCase.also ?? [], observeMs: testCase.observeMs ?? DEFAULT_OBSERVE_MS, browser: testCase.browser };
@@ -26,7 +28,7 @@ export function contractOf(testCase) {
 
 // stepTimeoutMs only costs time when a target is really missing; heavy apps on a loaded machine
 // can need several seconds for a lazily loaded view, which must not read as a broken replay.
-export async function reproduce(browser, testCase, { baseUrl, runs = 3, match = testCase.match ?? 'strict', maxMs = 180_000, stepTimeoutMs = 10_000, signal } = {}) {
+export async function reproduce(browser, testCase, { baseUrl, runs = 3, match = testCase.match ?? 'strict', maxMs = 180_000, stepTimeoutMs = DEFAULT_STEP_TIMEOUT_MS, signal } = {}) {
   const started = performance.now();
   integerOption(runs, 'runs');
   const budget = executionBudget(maxMs, signal);

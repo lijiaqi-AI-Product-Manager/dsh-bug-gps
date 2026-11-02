@@ -29,6 +29,14 @@ before(async () => {
       if(query.has('secret')) editor.setAttribute('aria-label','API token');
       if(query.has('disabled')) editor.disabled=true;
       if(query.has('readonly')) editor.readOnly=true;
+      if(query.has('delayed')) {
+        const panel=editor.closest('.monaco-editor').parentElement;
+        panel.remove();
+        const preview=document.createElement('div');preview.className='monaco-editor';
+        preview.innerHTML='<textarea aria-label="Editor content" readonly>read-only example</textarea>';
+        document.body.prepend(preview);
+        setTimeout(()=>document.body.prepend(panel),700);
+      }
       editor.addEventListener('keydown',event=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='a'){console.log('paste-selected');if(query.has('lock-on-select'))editor.readOnly=true;}});
       editor.addEventListener('paste',event=>{
         if(query.has('unhandled')) return;
@@ -322,4 +330,14 @@ test('unsupported hidden editor textareas are not treated as normal form inputs'
   assert.doesNotMatch(JSON.stringify({ steps, result: rec.result }), /OPAQUE_EDITOR_FIXTURE/);
   const input = definition({ action: 'fill', target: [{ by: 'css', value: '#legacy' }], value: 'OPAQUE_EDITOR_FIXTURE' });
   assert.equal((await reproduce(env.browser, input, { baseUrl: server.url, runs: 1 })).status, Status.TEST_INVALID);
+});
+
+test('a pending captioned editor cannot fall back to a different read-only example', async (t) => {
+  const rec = await recording(t, '/?delayed');
+  const field = rec.page.locator('#editor');
+  await field.press('ControlOrMeta+A');
+  await sendPaste(rec.page, field, text);
+  const steps = await rec.stop();
+  const result = await reproduce(env.browser, { ...definition(paste()), steps }, { baseUrl: server.url, runs: 1, maxMs: 8000 });
+  assert.equal(result.status, Status.NOT_REPRODUCED, JSON.stringify(result));
 });

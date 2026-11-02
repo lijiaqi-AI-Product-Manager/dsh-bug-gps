@@ -48,6 +48,7 @@ export function validateCase(testCase) {
   browserOptions(testCase.browser);
   for (const step of testCase.steps ?? []) if (step.action === 'viewport') validateViewport(step);
   for (const step of testCase.steps ?? []) if (step.action === 'paste') validatePasteStep(step);
+  for (const step of testCase.steps ?? []) if (step.wasEnabled !== undefined && typeof step.wasEnabled !== 'boolean') throw new TestDefinitionError('wasEnabled must be a boolean');
 }
 
 /** True when some final check proves a positive outcome (not just "no error"). */

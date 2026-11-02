@@ -230,6 +230,7 @@ async function evaluateAll(page, checks, observations, { settleMs, targetWaitMs,
 }
 
 async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs, signal }) {
+  if (step.wasEnabled !== undefined && typeof step.wasEnabled !== 'boolean') throw new TestDefinitionError('wasEnabled must be a boolean');
   if (step.action === 'paste') validatePasteStep(step);
   if (step.action === 'goto') {
     try {
@@ -262,15 +263,20 @@ async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs, signa
   const loose = Boolean(t.used?.loose);
   const opts = { timeout: stepTimeoutMs };
   if (step.action === 'fill' && await t.locator.evaluate((element, selector) => Boolean(element.isContentEditable || element.closest(selector)), CODE_EDITOR_SELECTOR)) throw new TestDefinitionError('Rich/code editor fill cannot preserve its model; supported Monaco inputs need Select All followed by Paste, and other editors need an adapter');
+  if (['click', 'fill', 'select', 'check', 'press', 'paste'].includes(step.action)) {
+    let disabled = await t.locator.isDisabled({ timeout: Math.max(1, stepTimeoutMs) });
+    if (disabled && step.wasEnabled === true) {
+      disabled = !await waitUntilEnabled(page, t.locator, stepTimeoutMs, signal);
+    }
+    if (signal?.aborted) return { ok: false, reason: 'aborted' };
+    if (disabled) return { ok: true, disabled: true, loose, resolvedBy: t.used };
+  }
   if (step.action === 'paste') {
     const state = await replaceEditorByPaste(t.locator, String(value.value), { ...opts, signal, clipboard: step.clipboard });
     return { ok: true, ...state, loose, resolvedBy: t.used };
   }
-  // A user acting on a disabled control gets no effect; replay does the same but reports it,
-  // so "fixed by disabling the trigger" can never pass silently.
-  if (['click', 'fill', 'select', 'check', 'press'].includes(step.action) && (await t.locator.isDisabled().catch(() => false))) {
-    return { ok: true, disabled: true, loose, resolvedBy: t.used };
-  }
+  // Permanently disabled controls remain reported; waiting for recorded readiness
+  // cannot turn "fixed by disabling the trigger" into a passing action.
   try {
     switch (step.action) {
       case 'click': await t.locator.click(opts); break;
@@ -286,6 +292,32 @@ async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs, signa
     return { ok: false, reason: firstLine(err) };
   }
   return { ok: true, loose, resolvedBy: t.used };
+}
+
+// Do not give the last DOM read a one-millisecond timeout: a ready renderer can
+// miss that scheduling window. The shared deadline wins the race with all reads.
+async function waitUntilEnabled(page, locator, timeoutMs, signal) {
+  const budget = executionBudget(timeoutMs, signal);
+  let interrupt;
+  const interrupted = new Promise((resolve) => {
+    interrupt = () => resolve(false);
+    if (budget.signal.aborted) interrupt();
+    else budget.signal.addEventListener('abort', interrupt, { once: true });
+  });
+  const poll = async () => {
+    try {
+      while (!budget.stopped()) {
+        if (!await locator.isDisabled({ timeout: Math.max(1, timeoutMs) })) return true;
+        await page.waitForTimeout(Math.min(50, budget.remainingMs()));
+      }
+      return false;
+    } catch (error) {
+      if (budget.stopped() || error.name === 'TimeoutError') return false;
+      throw error;
+    }
+  };
+  try { return await Promise.race([poll(), interrupted]); }
+  finally { budget.signal.removeEventListener('abort', interrupt); budget.dispose(); }
 }
 
 function requestUrl(raw) {

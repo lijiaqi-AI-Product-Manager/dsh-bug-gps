@@ -1,0 +1,160 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v7",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "chartdb-1031",
+  "upstream": "https://github.com/chartdb/chartdb/pull/1031",
+  "buggyCommit": "fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68",
+  "fixCommit": "674ed2249ee46b0dce14b1cc10be45755460b03d",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T22:28:46.366Z",
+  "runtime": {
+    "commit": "5d56835add053e6b40f39006caa2df517dbbeef0",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "fe9d074e82e61842cce58593aea93c54a3785773b1cfc73b18bfe2615d8526a8",
+    "engineFilesSha256": "854cd96b915118ce2938653aa0edb86b942232e95486964138def86db04af96a",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\chartdb.git worktree add --detach <run-root>\\cases\\chartdb-1031 fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68\nPreparing worktree (detached HEAD fb19a7a)\nerror: unable to read sha1 file of CHANGELOG.md (85d2ea8689b38d5e6b9bd80bb030b7f175e93a27)\nerror: unable to read sha1 file of src/context/chartdb-context/chartdb-context.tsx (c8450528dfecb5a8932833487f7b9ec53eac69e4)\nerror: unable to read sha1 file of src/context/history-context/history-provider.tsx (8c814daac43546fbb655c57352c208e51292cc90)\nerror: unable to read sha1 file of src/context/history-context/redo-undo-action.ts (ef32f6b04b9a62859319985e2c4567fb1569a19d)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mssql.ts (36a2653a24132a0b5e3b45e290512a386f099faf)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mysql.ts (b52a4b3012748ef173c9c94f6a93fe39e6caf04d)\nerror: unable to read sha1 file of src/lib/data/sql-export/export-sql-script.ts (12c95ed9025f626deab0fe37754595ac3de913f8)\nUpdating files:  66% (491/743)\rUpdating files:  67% (498/743)\rUpdating files:  68% (506/743)\rUpdating files:  6"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "cac799326dc439d8addd45debb5bc8759c25709bd5715ad109cad9ec26919a25",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "3b10364a477d071702aff34cc84df404e80b5460fad7b12c2509fb38266c9936",
+    "canonicalSha256": "96e6c2c9558e7292201cb048c26b3041bf619d4ed11b7523353f3283905735e7",
+    "definitionRevision": 2,
+    "definitionBasis": {
+      "repository": "https://github.com/chartdb/chartdb",
+      "commit": "fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68",
+      "upstream": "https://github.com/chartdb/chartdb/pull/1031",
+      "previousInputSha256": "1391909ce2c4174c772a6894cf82bfb5758bd81be7e138101bca73df296035f1",
+      "inputMethod": "Select All and a scripted ClipboardEvent; not native clipboard capture",
+      "note": "Preserve the original precision/scale expectation. Replace an ambiguous hidden textarea fill with captured editor paste.",
+      "producer": "bench/capture-editor-v2.mjs",
+      "producerSha256": "cd3539f27bb5b34d1b57a7ffb362e0e95875e4c3de6d869b5d4243fd049abbf7",
+      "recorderSha256": "224fdd0e9a5edea7246be0e5d0010c246f3da5712620a8d56025a45b0b5c5dd5",
+      "evaluator": "buggps.oracle/v7",
+      "runtimeCommit": "ab2f91bafb63c9cb13ac7458f2c4cd96c922b755"
+    },
+    "authoredCheckpoints": [
+      {
+        "afterStepIndex": 3,
+        "check": {
+          "kind": "value",
+          "target": [
+            {
+              "by": "css",
+              "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+            },
+            {
+              "by": "role",
+              "role": "textbox",
+              "name": "Editor content"
+            }
+          ],
+          "equals": "CREATE TABLE invoice (amount decimal(15,2));"
+        }
+      }
+    ],
+    "steps": 6,
+    "authoredTargets": [],
+    "dropped": 0,
+    "expectation": {
+      "kind": "count",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside :text-is(\"numeric(15,2)\")"
+        }
+      ],
+      "equals": 1
+    },
+    "also": [
+      {
+        "kind": "value",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          }
+        ],
+        "equals": "amount"
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-chartdb-serve.mjs",
+    "sha256": "0f058cc653f232b73a998955a25acee14f4d9228d52eea0540a2063c8c61ec91",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "fixture": "github_repo_opened=true suppresses the promotional dialog only"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "TEST_INVALID",
+    "tally": {
+      "step-error": 1
+    },
+    "reason": "target not-found",
+    "stepIndex": 1,
+    "resolutionProfile": {},
+    "durationMs": 6540
+  },
+  "lock": {
+    "status": "TEST_INVALID",
+    "reason": "expectation target not-found",
+    "red": {
+      "status": "TEST_INVALID",
+      "tally": {
+        "test-invalid": 3
+      },
+      "reason": "expectation target not-found",
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"SQL Script\",\"role\":\"radio\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "checkpoint:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"value\":\"invoice\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"aside :text-is(\\\"numeric(15,2)\\\")\"}"
+        ]
+      },
+      "durationMs": 34140
+    }
+  },
+  "status": "TEST_INVALID",
+  "durationMs": 143757
+}

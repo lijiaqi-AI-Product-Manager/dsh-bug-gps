@@ -1,0 +1,47 @@
+{
+  "schema": "buggps.replay-diagnostic/v1",
+  "sourceCommit": "5d56835add053e6b40f39006caa2df517dbbeef0",
+  "method": "One core runTrial after the same managed-server warmup used by verification",
+  "input": "bench/holdout-recordings/v2/chartdb-1089.json",
+  "inputSha256": "1d704bd03aa93761fff0412365fea6bad17a037c6d4899b10991e8afbb2fa940",
+  "modelCalls": 0,
+  "result": {
+    "id": "chartdb-1089",
+    "outcome": "step-error",
+    "reason": "target not-found",
+    "stepIndex": 6,
+    "disabledSteps": [
+      4
+    ],
+    "stepMs": [
+      1304,
+      2330,
+      449,
+      200,
+      30,
+      78,
+      10022
+    ],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"DBML\",\"role\":\"radio\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "checkpoint:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"value\":\"documents\"}"
+      ]
+    }
+  },
+  "scope": "The original code did not reach the recorded index-properties state. Step 4 was observed disabled and skipped; this is neither a reproduced business failure nor a fix verdict."
+}

@@ -16,6 +16,8 @@ import { freePort } from '../test/helpers.js';
 const source = fileURLToPath(new URL('..', import.meta.url));
 const id = process.argv[2];
 assert.ok(['chartdb-1031', 'chartdb-1089'].includes(id), 'Select chartdb-1031 or chartdb-1089');
+const revision = Number(process.env.BUGGPS_EDITOR_REVISION ?? 2);
+assert.ok(Number.isSafeInteger(revision) && revision >= 2, 'BUGGPS_EDITOR_REVISION must be an integer >= 2');
 const manifest = JSON.parse(await readFile(new URL('./holdout-cases.json', import.meta.url), 'utf8'));
 const state = JSON.parse(await readFile(process.env.BUGGPS_HOLDOUT_STATE ?? join(source, '.buggps/holdout/workspaces.json'), 'utf8'));
 const hash = (value) => createHash('sha256').update(value).digest('hex');
@@ -30,8 +32,8 @@ const dir = await realpath(entry.dir);
 assert.equal(dirname(dir), join(root, 'cases'));
 assert.equal((await git(dir, ['rev-parse', 'HEAD'])).trim(), spec.buggyCommit);
 assert.equal((await git(dir, ['diff', '--name-only', 'HEAD'])).trim(), '', 'Historical source must be unchanged');
-const output = resolve(process.argv[3] ?? join(source, 'bench/holdout-recordings/v2', id + '.json'));
-const previous = await readFile(join(source, 'bench/holdout-recordings', id + '.json'));
+const output = resolve(process.argv[3] ?? join(source, 'bench/holdout-recordings', 'v' + revision, id + '.json'));
+const previous = await readFile(join(source, 'bench/holdout-recordings', ...(revision > 2 ? ['v' + (revision - 1)] : []), id + '.json'));
 const label = id === 'chartdb-1031' ? 'SQL Script' : 'DBML Script';
 const table = id === 'chartdb-1031' ? 'invoice' : 'documents';
 const content = id === 'chartdb-1031' ? 'CREATE TABLE invoice (amount decimal(15,2));' : "Table documents {\n id int [pk]\n body jsonb\n indexes {\n body [type: gin, name: 'body_search']\n }\n}";
@@ -91,11 +93,15 @@ try {
   const pasteIndex = steps.findIndex((step) => step.action === 'paste');
   assert.ok(pasteIndex >= 0);
   assert.equal(steps[pasteIndex].value, content);
+  if (revision >= 3) {
+    assert.equal(steps[pasteIndex].wasEnabled, true);
+    assert.ok(steps.some((step) => step.action === 'click' && step.wasEnabled === true && step.target.some((target) => target.by === 'role' && target.role === 'button' && target.name === table || target.by === 'text' && target.value === table && target.within?.role === 'button' && target.within.name === table)), 'The table action must retain its unique button scope');
+  }
   steps[pasteIndex].check = { kind: 'value', target: structuredClone(steps[pasteIndex].target), equals: content };
-  const input = { schema: 'buggps.draft/v1', source: 'scripted', definitionRevision: 2, definitionBasis: { repository: spec.repo, commit: spec.buggyCommit, upstream: spec.pr, previousInputSha256: hash(previous), inputMethod: 'Select All and a scripted ClipboardEvent; not native clipboard capture', note: id === 'chartdb-1031' ? 'Preserve the original precision/scale expectation. Replace an ambiguous hidden textarea fill with captured editor paste.' : 'Use a valid PostgreSQL JSONB field for the GIN index; verify the named imported index in its actual properties.', producer: 'bench/capture-editor-v2.mjs', producerSha256: hash(await readFile(fileURLToPath(import.meta.url))), recorderSha256: hash(await readFile(join(source, 'src/core/recorder.js'))), evaluator: EVALUATOR_VERSION, runtimeCommit: (await git(source, ['rev-parse', 'HEAD'])).trim() }, browser: rec.result.browser, steps, rawSteps, expectation, also, observeMs: 1000, authoredCheckpoints: [{ afterStepIndex: pasteIndex, check: steps[pasteIndex].check }], targetOverrides: [], dropped: 0 };
+  const input = { schema: 'buggps.draft/v1', source: 'scripted', definitionRevision: revision, definitionBasis: { repository: spec.repo, commit: spec.buggyCommit, upstream: spec.pr, previousInputSha256: hash(previous), inputMethod: 'Select All and a scripted ClipboardEvent; not native clipboard capture', note: id === 'chartdb-1031' ? 'Preserve the original precision/scale expectation. Replace an ambiguous hidden textarea fill with captured editor paste.' : 'Use a valid PostgreSQL JSONB field for the GIN index; verify the named imported index in its actual properties.', producer: 'bench/capture-editor.mjs', producerSha256: hash(await readFile(fileURLToPath(import.meta.url))), recorderSha256: hash(await readFile(join(source, 'src/core/recorder.js'))), evaluator: EVALUATOR_VERSION, runtimeCommit: (await git(source, ['rev-parse', 'HEAD'])).trim() }, browser: rec.result.browser, steps, rawSteps, expectation, also, observeMs: 1000, authoredCheckpoints: [{ afterStepIndex: pasteIndex, check: steps[pasteIndex].check }], targetOverrides: [], dropped: 0 };
   await mkdir(dirname(output), { recursive: true });
   await writeFile(output, JSON.stringify(input, null, 2) + '\n', { flag: 'wx' });
-  console.log(JSON.stringify({ case: id, revision: 2, steps: steps.length, pasteIndex, captureIssues: 0, output: relative(source, output).replaceAll('\\', '/') }));
+  console.log(JSON.stringify({ case: id, revision, steps: steps.length, pasteIndex, captureIssues: 0, output: relative(source, output).replaceAll('\\', '/') }));
 } finally {
   clearTimeout(timer);
   process.removeListener('SIGINT', cancel);

@@ -53,7 +53,7 @@ const NEXT = {
 };
 
 const REVIEW_TEXT = {
-  'disabled-control': 'a recorded action now hits a DISABLED control; the checks may pass only because the trigger was blocked',
+  'disabled-control': 'a recorded action was blocked or did not become enabled within its replay wait; the checks may pass only because the trigger was blocked',
   'negative-only': 'the case only checks absence (no errors, a hidden target or zero matches); removing the feature could pass too. A positive outcome check is needed',
   'locator-drift': 'a locator candidate changed, or the original resolution provenance is unavailable; review the affected actions and checks before recording a new case',
   'evaluator-changed': 'the locked failure comes from a different evaluator. Re-establish RED on the original code with the current evaluator and save a new case; keep the old definition and records intact',

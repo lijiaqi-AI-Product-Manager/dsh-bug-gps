@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { launchBrowser } from '../src/core/browser.js';
 import { lockCase, verifyCase, withManagedServer, warmupPage } from '../src/core/caselock.js';
-import { reproduce } from '../src/core/reproduce.js';
+import { DEFAULT_STEP_TIMEOUT_MS, reproduce } from '../src/core/reproduce.js';
 import { minimize } from '../src/core/minimize.js';
 import { EVALUATOR_VERSION } from '../src/core/oracle.js';
 import { git } from '../src/core/snapshot.js';
@@ -40,7 +40,7 @@ const safe = (value) => {
   if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).filter(([, v]) => v !== undefined).map(([k, v]) => [k, safe(v)]));
   return value;
 };
-const summary = (r) => r && ({ status: r.status, verdict: r.verdict, tally: r.tally ?? r.check?.tally, reason: r.reason ?? r.check?.reason, observed: r.observed ?? r.check?.observed, stepIndex: r.stepIndex ?? r.check?.stepIndex, reviewReasons: r.reviewReasons, signature: r.signature ?? r.check?.signature, resolutionChanges: r.check?.resolutionChanges, resolutionProfile: r.resolutionProfile ?? r.check?.resolutionProfile, visibilityHistory: r.visibilityHistory ?? r.check?.visibilityHistory, baselineControl: r.baselineControl, durationMs: r.durationMs ?? r.check?.durationMs, caseSha256: r.caseSha256, lockSha256: r.lockSha256 });
+const summary = (r) => r && ({ status: r.status, verdict: r.verdict, tally: r.tally ?? r.check?.tally, reason: r.reason ?? r.check?.reason, observed: r.observed ?? r.check?.observed, stepIndex: r.stepIndex ?? r.check?.stepIndex, reviewReasons: r.reviewReasons, signature: r.signature ?? r.check?.signature, disabledSteps: r.trials ? [...new Set(r.trials.flatMap((trial) => trial.disabledSteps ?? []))] : r.check?.disabledSteps?.map((step) => step.index), resolutionChanges: r.check?.resolutionChanges, resolutionProfile: r.resolutionProfile ?? r.check?.resolutionProfile, visibilityHistory: r.visibilityHistory ?? r.check?.visibilityHistory, baselineControl: r.baselineControl, durationMs: r.durationMs ?? r.check?.durationMs, caseSha256: r.caseSha256, lockSha256: r.lockSha256 });
 const inRoot = (path) => { const rel = relative(root, path); return rel && rel !== '..' && !rel.startsWith('..' + sep) && !isAbsolute(rel); };
 
 for (const spec of selected) {
@@ -82,7 +82,8 @@ for (const spec of selected) {
     const testCase = { steps: draft.steps, expectation: draft.expectation, also: draft.also ?? [], observeMs: draft.observeMs ?? 1000, browser: draft.browser, serve };
     env = await launchBrowser(); out.browser = { channel: env.channel, version: env.browser.version() };
     const raw = { ...testCase, steps: draft.rawSteps ?? draft.steps };
-    const rawRun = await withManagedServer(dir, serve, (url) => reproduce(env.browser, raw, { baseUrl: url, runs: 1, stepTimeoutMs: 1500 }), { warmup: warmupPage(env.browser, raw) });
+    out.execution = { rawStepTimeoutMs: DEFAULT_STEP_TIMEOUT_MS, replayStepTimeoutMs: DEFAULT_STEP_TIMEOUT_MS, reductionMaxMs: 30_000 };
+    const rawRun = await withManagedServer(dir, serve, (url) => reproduce(env.browser, raw, { baseUrl: url, runs: 1, stepTimeoutMs: DEFAULT_STEP_TIMEOUT_MS }), { warmup: warmupPage(env.browser, raw) });
     out.rawRecording = summary(rawRun.result);
     const id = 'holdout-' + spec.id + '-' + randomUUID().slice(0, 8);
     const locked = await lockCase(env.browser, env, dir, testCase, { id, runs: 3 });

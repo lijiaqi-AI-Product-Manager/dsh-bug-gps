@@ -119,10 +119,11 @@ const RECORDER_SCRIPT = String.raw`(() => {
   function scoped(el, role, text) {
     for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
       const ar = roleOf(a);
-      if (!ar || !ANCHOR_ROLES.includes(ar)) continue;
+      if (!ar) continue;
       const an = nameOf(a, ar);
       if (!an) continue;
-      const sel = '[role=' + ar + ']' + ({ dialog: ',dialog', complementary: ',aside', navigation: ',nav', listitem: ',li', row: ',tr', region: ',section', form: ',form' }[ar] || '');
+      if (!ANCHOR_ROLES.includes(ar) && !(ar === 'button' && !role && an === text)) continue;
+      const sel = '[role=' + ar + ']' + ({ button: ',button,input[type=button],input[type=submit],input[type=reset]', dialog: ',dialog', complementary: ',aside', navigation: ',nav', listitem: ',li', row: ',tr', region: ',section', form: ',form' }[ar] || '');
       const same = [...document.querySelectorAll(sel)].filter((n) => roleOf(n) === ar && nameOf(n, ar) === an && visible(n));
       if (same.length !== 1) continue;
       if (!role) {
@@ -146,7 +147,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
     const role = roleOf(el);
     const name = role ? nameOf(el, role) : '';
     const caption = editorCaption(el);
-    if (caption) out.push(caption);
+    if (caption) { out.push(caption); return out; }
     if (role && name) out.push({ by: 'role', role, name });
     // Generic names ("Toggle bold" on every option) are told apart by a named image inside.
     const img = role ? el.querySelector('img[alt],[role=img][aria-label]') : null;
@@ -227,6 +228,10 @@ const RECORDER_SCRIPT = String.raw`(() => {
     return SECRET_HINT.test([el.name, el.id, el.getAttribute('aria-label'), el.placeholder, labelText(el)].join(' '));
   }
   const secretLabel = (el) => clean(el.getAttribute('aria-label') || labelText(el) || el.placeholder || el.name || el.id || 'password');
+  const controlEnabled = (el) => {
+    const control = el.closest('button,input,textarea,select,[role=button],[role=checkbox],[role=radio],[role=combobox],[role=menuitem],[role=option],[role=tab]') || el;
+    return !control.matches(':disabled') && !control.closest('[aria-disabled="true"]');
+  };
   const fromToolbar = (e) => e.target instanceof Element && e.target.closest('#__buggps_toolbar');
   let replacementTarget = null;
   let pastedTarget = null;
@@ -264,7 +269,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
     }
     if (size > clipboardLimit) { captureIssue('Code editor clipboard exceeds the 1 MiB capture limit; the payload was not stored.'); return; }
     pastedTarget = el;
-    const payload = { action: 'paste', editor: 'monaco', mode: 'replace-all', target: candidates(el), identity: identityOf(el), ...(types.length > 1 ? { clipboard } : {}) };
+    const payload = { action: 'paste', editor: 'monaco', mode: 'replace-all', target: candidates(el), identity: identityOf(el), wasEnabled: controlEnabled(el), ...(types.length > 1 ? { clipboard } : {}) };
     if (isSecret(el)) send({ ...payload, secret: secretLabel(el) });
     else send({ ...payload, value: text });
     setTimeout(() => { if (!e.defaultPrevented) captureIssue('The code editor did not handle the paste event; this recording is not replayable.'); }, 0);
@@ -323,7 +328,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
     // Space produces a native click after keyup. Retain the key, not a second action.
     if (e.detail === 0 && el === spaceClickTarget) { spaceClickTarget = null; return; }
     spaceClickTarget = null;
-    send({ action: 'click', target: candidates(el) });
+    send({ action: 'click', target: candidates(el), wasEnabled: controlEnabled(el) });
   }, true);
 
   // The NEAREST clickable ancestor wins: a standard role, or an onclick property (React sets a
@@ -354,14 +359,14 @@ const RECORDER_SCRIPT = String.raw`(() => {
     if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) return;
     if (['checkbox', 'radio'].includes(el.type)) return;
     const identity = identityOf(el);
-    if (isSecret(el)) { send({ action: 'fill', target: candidates(el), secret: secretLabel(el), identity }); return; }
-    send({ action: 'fill', target: candidates(el), value: el.value, identity });
+    if (isSecret(el)) { send({ action: 'fill', target: candidates(el), secret: secretLabel(el), identity, wasEnabled: controlEnabled(el) }); return; }
+    send({ action: 'fill', target: candidates(el), value: el.value, identity, wasEnabled: controlEnabled(el) });
   }, true);
 
   document.addEventListener('change', (e) => {
     const el = e.target;
-    if (el instanceof HTMLSelectElement) send({ action: 'select', target: candidates(el), value: el.value });
-    else if (el instanceof HTMLInputElement && ['checkbox', 'radio'].includes(el.type)) send({ action: 'check', target: candidates(el), value: el.checked });
+    if (el instanceof HTMLSelectElement) send({ action: 'select', target: candidates(el), value: el.value, wasEnabled: controlEnabled(el) });
+    else if (el instanceof HTMLInputElement && ['checkbox', 'radio'].includes(el.type)) send({ action: 'check', target: candidates(el), value: el.checked, wasEnabled: controlEnabled(el) });
   }, true);
 
   document.addEventListener('keydown', (e) => {
@@ -382,12 +387,12 @@ const RECORDER_SCRIPT = String.raw`(() => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') { replacementTarget = el; return; }
       if (!['Control', 'Meta', 'Shift', 'Alt'].includes(e.key) && !((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v')) replacementTarget = null;
     }
-    if (e.key === 'Enter' && (el instanceof HTMLInputElement)) send({ action: 'press', target: candidates(el), value: 'Enter' });
+    if (e.key === 'Enter' && (el instanceof HTMLInputElement)) send({ action: 'press', target: candidates(el), value: 'Enter', wasEnabled: controlEnabled(el) });
     else if (e.key === ' ' && !e.repeat && el instanceof Element && !el.closest('input,textarea,[contenteditable=true]')) {
       const control = el.closest('button,[role=button],[role=combobox]');
       if (control) {
         spaceClickTarget = control;
-        send({ action: 'press', target: candidates(control), value: 'Space' });
+        send({ action: 'press', target: candidates(control), value: 'Space', wasEnabled: controlEnabled(control) });
       }
     }
     // Escape closes popovers/dialogs wherever focus is; replay presses it page-wide.
@@ -493,7 +498,7 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
         secretNames.add(name);
         secretFields.set(field, name);
       }
-      ev = { action: ev.action, target: ev.target, ...(ev.action === 'paste' ? { editor: ev.editor, mode: ev.mode } : {}), value: { secret: secretFields.get(field) } };
+      ev = { action: ev.action, target: ev.target, ...(ev.action === 'paste' ? { editor: ev.editor, mode: ev.mode } : {}), ...(ev.wasEnabled !== undefined ? { wasEnabled: ev.wasEnabled } : {}), value: { secret: secretFields.get(field) } };
     }
     const prev = steps[steps.length - 1];
     if (ev.action === 'fill' && prev?.action === 'fill' && identity && identity === lastFillIdentity && !prev.check && !prev.pinned) {
