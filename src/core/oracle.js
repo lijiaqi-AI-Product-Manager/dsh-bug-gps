@@ -7,7 +7,7 @@ import { validateObserveMs } from './observation.js';
 import { browserOptions, validateViewport } from './browser-options.js';
 import { canonicalJson } from './canonical.js';
 
-export const EVALUATOR_VERSION = 'buggps.oracle/v4';
+export const EVALUATOR_VERSION = 'buggps.oracle/v5';
 
 export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'count', 'no-page-error', 'no-console-error', 'no-failed-request'];
 // "Nothing went wrong" kinds. On their own they cannot show the feature works again (deleting
@@ -148,7 +148,13 @@ function fail(exp, observed, actualKey) {
 
 export function signatureKey(sig, match = 'strict') {
   if (!sig) return null;
-  return canonicalJson({ kind: sig.kind, target: sig.target, resolution: sig.resolution, priorResolution: sig.priorResolution, ...(match === 'loose' ? {} : { actual: sig.actual }) });
+  const shape = (value) => ({
+    kind: value.kind, target: value.target, resolution: value.resolution, priorResolution: value.priorResolution,
+    check: value.check,
+    ...(value.checks ? { checks: value.checks.map((entry) => ({ check: entry.check, outcome: entry.outcome, resolution: entry.resolution, ...(entry.signature ? { signature: shape(entry.signature) } : {}) })) } : {}),
+    ...(match === 'loose' ? {} : { actual: value.actual }),
+  });
+  return canonicalJson(shape(sig));
 }
 
 function normalizeSpace(s) {

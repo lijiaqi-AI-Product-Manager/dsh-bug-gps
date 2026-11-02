@@ -142,21 +142,29 @@ export async function runTrial(browser, { baseUrl, steps, expectation, also = []
   }
 }
 
-// First failing check in order (primary first, so the RED signature is always the primary's),
-// or null when all pass.
+// Keep the first business failure for the summary, but bind its fingerprint to every
+// check's outcome. An unusable definition cannot be hidden behind an earlier failure.
 async function evaluateAll(page, checks, observations, { settleMs, targetWaitMs, late = false, onCheck }) {
   let failure = null;
+  const results = [];
   for (let k = 0; k < checks.length; k++) {
     const v = await evaluate(page, checks[k], observations[k], { settleMs, ...(targetWaitMs !== undefined ? { targetWaitMs } : {}), onResolution: (value) => onCheck?.(k, value) });
-    if (v.pass) continue;
-    if (v.invalid) {
-      // Seen once and then gone is a real failure, not an unusable expectation.
-      failure ??= late ? { outcome: 'fail', check: k, observed: v.invalid, signature: { kind: checks[k].kind, target: '', actual: `late:${v.invalid}` } } : { outcome: 'test-invalid', reason: v.invalid };
+    if (v.pass) {
+      results.push({ check: k, outcome: 'pass', ...(v.resolvedBy ? { resolution: v.resolvedBy } : {}) });
       continue;
     }
+    if (v.invalid) {
+      if (!late) return { outcome: 'test-invalid', check: k, reason: v.invalid, checkResults: [...results, { check: k, outcome: 'invalid', reason: v.invalid }] };
+      // Seen once and then gone is a real failure, not an unusable expectation.
+      const signature = { kind: checks[k].kind, target: '', actual: `late:${v.invalid}` };
+      results.push({ check: k, outcome: 'invalid', signature });
+      failure ??= { outcome: 'fail', check: k, observed: v.invalid, signature };
+      continue;
+    }
+    results.push({ check: k, outcome: 'fail', signature: v.signature });
     failure ??= { outcome: 'fail', check: k, signature: v.signature, observed: v.observed };
   }
-  return failure;
+  return failure ? { ...failure, signature: { ...failure.signature, check: failure.check, checks: results } } : null;
 }
 
 async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs }) {
