@@ -5,9 +5,9 @@
 
 DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标出“正确应该是什么”；BugGPS 把它锁成一个会失败的检查，修复后由 BugGPS 自己启动应用、按原条件重放，只有全部检查都通过才给出 `VERIFIED`。
 
-![BugGPS 演示：录制 bug → 锁定 → 错误修复被驳回 → 真修复通过](docs/media/buggps-demo.gif)
+![BugGPS 演示：录制 bug → 锁定 → 错误修复被驳回 → 真修复通过](https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/main/docs/media/buggps-demo.gif)
 
-<sub>演示用的是仓库自带的示例应用，里面有故意植入的 bug。浏览器画面和工具输出都来自真实运行，光标和字幕是后期叠加的。重新生成：`npm run demo:gif`（需要 ffmpeg）。也有 [MP4 版本](docs/media/buggps-demo.mp4)。</sub>
+<sub>演示用的是仓库自带的示例应用，里面有故意植入的 bug。浏览器画面和工具输出都来自真实运行，光标和字幕是后期叠加的。重新生成：`npm run demo:gif`（需要 ffmpeg）。也有 [MP4 版本](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/docs/media/buggps-demo.mp4)。</sub>
 
 > 状态：预发布，**还没发布到 npm**。下面的命令已在 DSH 0.2.1-rc.5 / Windows 11 上实测，使用本地 checkout 或 `npm pack` 打出的包。
 
@@ -126,7 +126,7 @@ npm ci
 npm test
 ```
 
-`npm audit --omit=dev` 为 0。开发依赖 `@deepseek-ai/dsh-tools` 的依赖树里有已知告警，它不会进入安装包。
+`@deepseek-ai/dsh-tools` 是可选的宿主 peer，开发测试使用固定版本。独立 CLI 安装不会自动安装宿主工具依赖树；插件运行时由 DSH 提供该模块。依赖审计应同时检查开发仓库和全新消费项目安装的压缩包，不能从其中一个结果推断另一个。
 
 ## License
 

@@ -2,6 +2,14 @@
   "name": "dsh-bug-gps",
   "version": "0.0.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues"
+  },
+  "homepage": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps#readme",
   "description": "BugGPS for DeepSeek Harness: record a browser bug once, lock it as a failing check, and let the agent fix it until the check really passes.",
   "type": "module",
   "main": "src/dsh/index.js",
@@ -33,6 +41,11 @@
   },
   "peerDependencies": {
     "@deepseek-ai/dsh-tools": ">=0.2.1-0 <0.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    }
   },
   "keywords": [
     "dsh",
