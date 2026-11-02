@@ -1,0 +1,85 @@
+# BugGPS · dsh-bug-gps
+
+[简体中文](../../README.md) · [English](README.en.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [Español](README.es.md) · [Português (Brasil)](README.pt-BR.md)
+
+**Registra el problema. Verifica la corrección con la expectativa original.**
+
+BugGPS es un plugin para DeepSeek Harness (DSH), orientado a problemas del navegador ya identificados. Registra acciones y resultados esperados, establece un fallo reproducible y comprueba el código modificado con las mismas condiciones y una versión base independiente.
+
+> Versión preliminar. El paquete npm aún no se ha publicado. La instalación usa una copia local del código. La compatibilidad actual se limita a DSH **0.2.1-rc.5**.
+
+![BugGPS](https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/main/docs/media/buggps-demo.gif)
+
+La demostración controla mediante un script el ejemplo incluido con un fallo intencional y aplica cambios preparados. Las páginas y las salidas son reales, pero los fotogramas se han editado: la duración del vídeo no es el tiempo de ejecución. Las tarjetas de resultado, el cursor y los subtítulos son elementos de presentación.
+
+## Probar el ejemplo incluido
+
+Requiere Node.js ≥20, Git y Microsoft Edge o Google Chrome instalado. Las comprobaciones documentadas de Windows usan Node 24.22.0 y Edge 156; no acreditan todos los navegadores ni sistemas.
+
+```bash
+git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+cd dsh-bug-gps
+npm ci
+node bin/buggps.js demo ../buggps-demo
+node bin/buggps.js doctor --repo ../buggps-demo
+```
+
+`demo` crea un repositorio Git independiente e indica los siguientes pasos. Inicia el servidor de desarrollo, abre el proyecto en DSH y registra el problema y su resultado esperado. `doctor` comprueba el entorno, el navegador, los comandos, la configuración y el puerto. Los borradores existentes pueden bloquearse sin otra grabación interactiva.
+
+## Cargar el plugin en DSH
+
+Para cargar con `dsh plugin`, también necesitas **pnpm ≥10** en PATH.
+
+```bash
+dsh plugin --profile PROFILE add "/absolute/path/to/dsh-bug-gps"
+dsh --profile PROFILE --dump-config
+```
+
+Sustituye `PROFILE` por el perfil que realmente utiliza tu instancia y la ruta por la ubicación absoluta del código. Reinicia esa instancia y llama a `buggps_status` en el proyecto. Una entrada de configuración no demuestra que las herramientas se hayan cargado.
+
+La aplicación de escritorio y la CLI pueden usar perfiles distintos. Instalar en `web` no confirma la instalación en el escritorio. Comprueba la versión DSH incluida y el perfil real antes de usar su gestor de plugins. El flujo de la CLI oficial rc.5 se ha ejecutado; la ruta de instalación de escritorio aún no ha completado su aceptación independiente.
+
+## Flujo de trabajo
+
+1. **Registrar:** guardar las acciones, la configuración del navegador y las expectativas explícitas. Los puntos de control conservan estados intermedios; los pasos clave se mantienen al acortar.
+2. **Bloquear:** iniciar la aplicación con el comando `serve` guardado y reproducir el mismo fallo tres veces por defecto.
+3. **Corregir:** DSH modifica el código de la aplicación con tu configuración existente.
+4. **Verificar:** repetir tres veces por defecto la grabación completa con las condiciones originales. Una versión base independiente también debe reproducir el fallo bloqueado para obtener `VERIFIED`.
+
+## Interpretar el resultado
+
+| Resultado | Significado |
+|---|---|
+| `VERIFIED` | Las comprobaciones pasan y una nueva ejecución de la versión base reproduce el fallo original. |
+| `PASSED_UNBOUND` | Las comprobaciones pasan en un servidor externo cuyo código no puede vincularse al parche. |
+| `NEEDS_REVIEW` | Requiere revisión: desencadenante desactivado, solo comprobaciones de ausencia, cambio de localizador o evaluador, o fallo del control base. |
+| `STILL_FAILING / DIFFERENT_FAILURE` | Persiste el fallo original o falla otro síntoma o punto de control. |
+| `TEST_INVALID / ENV_BLOCKED` | Definición de prueba inutilizable o entorno bloqueado; no es una reproducción válida. |
+| `FLAKY / STALE / CASE_TAMPERED` | Resultados inconsistentes, código cambiado durante la verificación o evidencias fijadas modificadas. |
+| `NO_CODE_CHANGE` | No hay cambios de código desde el bloqueo; no existe una corrección que verificar. |
+| `BUDGET_EXHAUSTED / ABORTED` | Presupuesto agotado o tarea cancelada; la evidencia está incompleta. |
+
+## Alcance y límites
+
+- El resultado cubre el escenario registrado; no demuestra que la aplicación esté libre de otros fallos.
+- El estado del frontend debe poder reiniciarse. Una repetición de calentamiento precede a los intentos contados; las operaciones que modifican datos del servidor quedan fuera del alcance aceptado.
+- Las condiciones finales se muestrean durante 1.000 ms por defecto, con un intervalo objetivo de 50 ms. No se cubren los huecos ni los cambios posteriores.
+- El acortamiento devuelve una ruta más corta confirmada dentro de un presupuesto. La grabación completa sigue siendo la referencia; no se garantiza un mínimo global ni causalidad.
+- Las instantáneas siguen Git y excluyen dependencias y configuración ignoradas. Las dependencias compartidas y entradas del entorno del control base se registran aparte. Un worktree no es un entorno aislado de seguridad.
+- Los datos reconocidos como sensibles se guardan como referencias al entorno. La detección es imperfecta; revisa los artefactos antes de compartirlos.
+- Se comprueba la coherencia de definiciones y registros. La protección del shell es limitada; los hashes no son una prueba imposible de falsificar.
+
+[Configuración, todos los resultados y límites detallados](../../README.md)
+
+## Evidencias y comentarios
+
+Las pruebas, la instalación del paquete y los doce casos históricos fijos tienen registros separados. Los casos contribuyeron a mejorar la implementación: son una regresión ampliada, no una evaluación a ciegas. Los fallos permanecen en el denominador.
+
+[Guía de casos](../../bench/RECORDING-GUIDE.md) · [Registros de ejecución](../../bench/results) · [Regresiones del navegador](../../test/counterexamples.test.js) · [Informar de un problema](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/new)
+
+Incluye la versión DSH, el sistema operativo, el comportamiento esperado, el veredicto exacto y una reproducción segura. Elimina credenciales y datos privados.
+
+Si BugGPS te ayudó a verificar una corrección, una Star ayuda a que otros lo descubran.
+
+MIT · [LICENSE](../../LICENSE)
+

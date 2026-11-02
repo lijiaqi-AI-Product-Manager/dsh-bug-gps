@@ -1,5 +1,7 @@
 # BugGPS · dsh-bug-gps
 
+**简体中文** · [English](docs/i18n/README.en.md) · [日本語](docs/i18n/README.ja.md) · [한국어](docs/i18n/README.ko.md) · [Deutsch](docs/i18n/README.de.md) · [Français](docs/i18n/README.fr.md) · [Español](docs/i18n/README.es.md) · [Português (Brasil)](docs/i18n/README.pt-BR.md)
+
 **录下问题，按原预期复核修复。**
 **Record the bug. Verify the fix against the original expectation.**
 
@@ -12,6 +14,14 @@ DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标�
 > 状态：预发布，**还没发布到 npm**。下面的命令已在 DSH 0.2.1-rc.5 / Windows 11 上实测，使用本地 checkout 或 `npm pack` 打出的包。
 
 ## 试用内置示例
+
+首次从源码试用，先准备依赖：
+
+```bash
+git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+cd dsh-bug-gps
+npm ci
+```
 
 ```bash
 node bin/buggps.js demo ../buggps-demo
@@ -34,9 +44,9 @@ node bin/buggps.js doctor --repo ../buggps-demo
    - 识别为密码、验证码、卡号或 token 的输入字段和文本域只保存引用；重放时从环境变量 `BUGGPS_SECRET_<名字>` 读取。同名字段使用独立引用，再次填写同一字段时复用原引用。
    - 每份草稿使用独立标识保存，中文名称作为显示信息保留。重新锁定场景时使用新的 case id，已有用例不会被覆盖。
    - 保存初始窗口尺寸、语言、时区和像素比例。录制期间的窗口尺寸变化作为关键步骤保留，用于重放响应式布局问题。
-2. **锁定**（`buggps_lock`）：BugGPS 用 `serve` 命令**自己启动应用**，在当前代码上重放 3 次，3 次都以同一种方式失败才锁定。锁定的用例有内容哈希，并且写保护。同时尝试缩短步骤，只靠重放，不调用模型。
+2. **锁定**（`buggps_lock`）：BugGPS 用 `serve` 命令**自己启动应用**，在当前代码上默认重放 3 次，全部以同一种方式失败才锁定。锁定的用例有内容哈希，并且写保护。同时尝试缩短步骤，只靠重放，不调用模型。
 3. **修复**：DSH 的 agent 用常规工具改代码。
-4. **验证**（`buggps_verify`）：BugGPS 再次从工作区启动应用，重放你的**完整录制** 3 次。最后一步后先检查所有条件，再在观察窗口内按 50 ms 目标间隔重复检查（默认观察 1000 ms）；任一采样失败就不通过。运行记录保留实际采样次数和最大间隔。该检查不覆盖采样间隙及观察窗口以外的状态变化。
+4. **验证**（`buggps_verify`）：BugGPS 再次从工作区启动应用，默认重放你的**完整录制** 3 次。最后一步后先检查所有条件，再在观察窗口内按 50 ms 目标间隔重复检查（默认观察 1000 ms）；任一采样失败就不通过。运行记录保留实际采样次数和最大间隔。该检查不覆盖采样间隙及观察窗口以外的状态变化。
 
 ## `buggps.config.json`
 
@@ -60,7 +70,7 @@ node bin/buggps.js doctor --repo ../buggps-demo
 
 | 判定 | 含义 |
 |---|---|
-| `VERIFIED` | 候选版本的完整录制 3 次满足全部检查，独立基线对照也重新出现锁定的原失败；补丁是锁定基线到候选代码的差异 |
+| `VERIFIED` | 候选版本的完整录制在全部配置次数中满足所有检查（默认 3 次），独立基线对照也重新出现锁定的原失败；补丁是锁定基线到候选代码的差异 |
 | `PASSED_UNBOUND` | 检查通过了，但服务器不是 BugGPS 启动的，证明不了它运行的是这份补丁。没有 `serve` 时最多只能得到这个 |
 | `NEEDS_REVIEW` | 检查通过了，但证据弱于“修好了”，需要人判断。原因见 `review_reasons`：<br>`disabled-control`：录制的操作打到了被禁用的控件<br>`negative-only`：仅检查不报错、目标消失或零匹配，仍缺少正向结果<br>`locator-drift`：动作、检查点或预期改用了其他定位候选，或旧记录缺少定位依据；需要重新确认场景<br>`evaluator-changed`：检查器版本与原失败记录不同，需在原代码上重新建立失败依据，另存新用例，保留旧记录<br>`baseline-not-reproduced`：独立基线对照未能重新出现锁定的原失败 |
 | `STILL_FAILING` | 还是原来那个失败 |
@@ -71,6 +81,8 @@ node bin/buggps.js doctor --repo ../buggps-demo
 | `TEST_INVALID` | 录制无法重放 |
 | `ENV_BLOCKED` | 环境问题，不是代码问题：浏览器、端口、dev server 或未提供的 secret |
 | `FLAKY` | 多次重放结果不一致 |
+| `BUDGET_EXHAUSTED` | 预算已耗尽，证据尚未齐备 |
+| `ABORTED` | 任务已取消，不给出修复成功结论 |
 
 **`VERIFIED` 只覆盖录制的那个场景。** 它不证明其它 bug 不存在。
 
@@ -92,6 +104,10 @@ dsh --profile <你的 profile> --dump-config
 ```
 
 输出里应该有一行 `# == dsh-bug-gps`。`--profile` 是必填参数。在 Windows 上，`DSH_HOME` 路径太深时会报 `ENAMETOOLONG`。
+
+重启对应的 DSH 实例，在目标项目中调用 `buggps_status`，确认工具实际可用。`--dump-config` 中出现配置行只表示配置已经写入，不等于工具成功注册。
+
+**桌面版与命令行的 profile 可能不同。** `--profile web` 只用于实际使用该 profile 的实例，不能据此确认桌面版已经安装。桌面版应先确认其内置 DSH 版本和实际 profile，再使用应用自己的插件管理入口。当前已完成的是官方 rc.5 CLI 的加载与执行验收；桌面安装路径仍待独立验收。
 
 ## 保护机制与已知限制
 
