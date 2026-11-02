@@ -1,0 +1,217 @@
+{
+  "schema": "buggps.visibility-evidence/v1",
+  "case": "drawdb-1037",
+  "sourceRecord": "holdout-drawdb-1037-2026-11-02T17-41-05-974Z.json",
+  "runtime": {
+    "commit": "d8b8602b34c407053dafe9a28f357200e273f3ac",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "3bf6dade15c9a621d62dcadd831a006f3edc2e6ad7b62163ed767132ff54dbf1",
+    "engineFilesSha256": "cd9c41773c141813fa75faf9f94857be623a361947c38f34e7aa18479a279522",
+    "changedSourceFiles": []
+  },
+  "evaluator": "buggps.oracle/v4",
+  "red": {
+    "tally": {
+      "fail": 3
+    },
+    "signature": {
+      "kind": "visible",
+      "target": "css=nav",
+      "actual": "false:was visible earlier",
+      "priorResolution": {
+        "by": "css",
+        "value": "nav"
+      }
+    },
+    "resolutionProfile": {
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"nav\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"plus 添加表\",\"role\":\"button\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 8603
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 8625
+        }
+      },
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 8220
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "replay-sample",
+          "stepIndex": 4,
+          "elapsedMs": 8071
+        }
+      },
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 9114
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 9144
+        }
+      }
+    ]
+  },
+  "candidate": {
+    "verdict": "NEEDS_REVIEW",
+    "tally": {
+      "pass": 3
+    },
+    "reviewReasons": [
+      "locator-drift"
+    ],
+    "resolutionChanges": [
+      "step:1"
+    ],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}",
+        "{\"by\":\"text\",\"value\":\"MySQL\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+      ],
+      "step:4": [
+        "{\"by\":\"text\",\"value\":\"视图\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"role\",\"name\":\"演示模式\",\"role\":\"menuitem\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"nav\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"plus 添加表\",\"role\":\"button\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 6755
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 6770
+        }
+      },
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 6584
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 6596
+        }
+      },
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 6205
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 6211
+        }
+      }
+    ]
+  },
+  "interpretation": "Both final targets retain earlier exact candidates. The remaining review concerns step:1 selecting an additional unscoped text candidate; it is not a verified repair verdict."
+}

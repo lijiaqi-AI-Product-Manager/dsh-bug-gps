@@ -1,0 +1,246 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "drawdb-1037",
+  "upstream": "https://github.com/drawdb-io/drawdb/pull/1037",
+  "buggyCommit": "2065254f267d1ecb71faa8e58307124e7821d650",
+  "fixCommit": "81e625e886f5b893582d7cce83fb8f2e52b075e6",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-02T17:41:05.974Z",
+  "runtime": {
+    "commit": "d8b8602b34c407053dafe9a28f357200e273f3ac",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "3bf6dade15c9a621d62dcadd831a006f3edc2e6ad7b62163ed767132ff54dbf1",
+    "engineFilesSha256": "cd9c41773c141813fa75faf9f94857be623a361947c38f34e7aa18479a279522",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\drawdb.git worktree add --detach <run-root>\\cases\\drawdb-1037 2065254f267d1ecb71faa8e58307124e7821d650\nPreparing worktree (detached HEAD 2065254)\nerror: unable to read sha1 file of Dockerfile (1f87fd3917422cee87bddd499ce3a3076122ebfd)\nerror: unable to read sha1 file of README.md (61ce89ecb0c9b134cec87980e78babacc8b75ce1)\nerror: unable to read sha1 file of index.html (dd19a675f6cdfa1ec25c2f0fd3d9c521d750ea16)\nerror: unable to read sha1 file of package-lock.json (5473d4e1b4af02755b2d87178744939cfdfa7474)\nerror: unable to read sha1 file of package.json (ec6cd4951839a2079e597c23bfc2bd11b3a54aa5)\nerror: unable to read sha1 file of src/App.jsx (ababeb3ce4e1bf96c7077d8972c553d36840deff)\nerror: unable to read sha1 file of src/components/EditorCanvas/Area.jsx (3c6df9e9e88a53789cb1d42969b5cf7ee5c49790)\nerror: unable to read sha1 file of src/components/EditorCanvas/Canvas.jsx (f556daed082c8dd1ade91c30ef1e80cff7f8f5d0)\nerror: unable to read sha1 file of src/components/EditorCanvas/Note.jsx (4ee79a155945dd28d2342ee318eec479d28de229)\nerror: unable to read sha1 file of src/components/EditorCanvas/Relationship.jsx (a19fd1e245eec"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "e35c933ad1c20b9624fc54754e6229330288327fba9c855bc44a5332ae43173b",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "c70c5fa26fdaa139327cb6159429d3d9996b6dc0f1bb582f57482ea512e07dce",
+    "canonicalSha256": "4ee45d71f5f0f675c7b8c10378903e58591626fd3729c797bd07a0002840880f",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 7,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "visible",
+      "target": [
+        {
+          "by": "css",
+          "value": "nav"
+        }
+      ]
+    },
+    "also": [
+      {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          }
+        ]
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "b6cf9938733779d06162046a15a1dda8152ec1f0dbfc4394a59027de447e4d4a",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "not visible (was visible earlier)",
+    "signature": {
+      "kind": "visible",
+      "target": "css=nav",
+      "actual": "false:was visible earlier",
+      "priorResolution": {
+        "by": "css",
+        "value": "nav"
+      }
+    },
+    "durationMs": 9062
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "not visible (was visible earlier)",
+      "signature": {
+        "kind": "visible",
+        "target": "css=nav",
+        "actual": "false:was visible earlier",
+        "priorResolution": {
+          "by": "css",
+          "value": "nav"
+        }
+      },
+      "durationMs": 28525
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": true,
+    "original": 7,
+    "shortened": 7,
+    "stats": {
+      "trials": 2,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 1,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2000,
+      "durationMs": 58668,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/editor"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "MySQL",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "MySQL"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "确认",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "确认"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "添加表",
+            "within": {
+              "role": "tabpanel",
+              "name": "表 (0)"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "添加表"
+          }
+        ]
+      },
+      {
+        "action": "hover",
+        "target": [
+          {
+            "by": "text",
+            "value": "视图"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "menuitem",
+            "name": "演示模式"
+          }
+        ]
+      },
+      {
+        "action": "exit-fullscreen",
+        "pinned": true
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "not visible (was visible earlier)",
+    "durationMs": 21671,
+    "caseSha256": "cdf1f755df5cda11885f5cef9673b0f51a14a8cad4736aeea01f2a2f31565ec5",
+    "lockSha256": "e0ccb01b3f8bf5d3ed727fad8f650090b848787d2214faa29f2425942d74889c"
+  },
+  "fixed": {
+    "verdict": "NEEDS_REVIEW",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "reviewReasons": [
+      "locator-drift"
+    ],
+    "durationMs": 19679,
+    "caseSha256": "cdf1f755df5cda11885f5cef9673b0f51a14a8cad4736aeea01f2a2f31565ec5",
+    "lockSha256": "e0ccb01b3f8bf5d3ed727fad8f650090b848787d2214faa29f2425942d74889c"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "667c9057381fe5da3e7d85ee59df21e2ec02e063b7c256d6c2d0cfc62976b7ac",
+    "lockSha256": "030f7b81e910ac78f572569349d1471e88a0d381d84bb862cc4aa21a4035f555"
+  },
+  "status": "NEEDS_REVIEW",
+  "expectedOutcome": false,
+  "durationMs": 364116
+}
