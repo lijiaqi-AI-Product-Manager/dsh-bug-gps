@@ -5,6 +5,10 @@
 
 DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标出“正确应该是什么”；BugGPS 把它锁成一个会失败的检查，修复后由 BugGPS 自己启动应用、按原条件重放，只有全部检查都通过才给出 `VERIFIED`。
 
+![BugGPS 演示：录制 bug → 锁定 → 错误修复被驳回 → 真修复通过](docs/media/buggps-demo.gif)
+
+<sub>演示用的是仓库自带的示例应用，里面有故意植入的 bug。浏览器画面和工具输出都来自真实运行，光标和字幕是后期叠加的。重新生成：`npm run demo:gif`（需要 ffmpeg）。也有 [MP4 版本](docs/media/buggps-demo.mp4)。</sub>
+
 > 状态：预发布，**还没发布到 npm**。下面的命令已在 DSH 0.2.1-rc.5 / Windows 11 上实测，使用本地 checkout 或 `npm pack` 打出的包。
 
 ## 一分钟试用（内置示例）
