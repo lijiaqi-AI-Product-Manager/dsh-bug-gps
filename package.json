@@ -21,7 +21,8 @@
   },
   "scripts": {
     "test": "node --test --test-concurrency=1 \"test/*.test.js\"",
-    "bench": "node bench/run.mjs"
+    "bench": "node bench/run.mjs",
+    "demo:gif": "node docs/demo/make-demo.mjs"
   },
   "engines": {
     "node": ">=20",
