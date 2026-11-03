@@ -19,7 +19,7 @@ BugGPS は DeepSeek Harness（DSH）のプラグインです。すでに見つ�
 Node.js ≥20、Git、インストール済みの Microsoft Edge または Google Chrome が必要です。記録済みの Windows 検証は Node 24.22.0 と Edge 156 を使用しています。他のすべての環境での動作を示すものではありません。
 
 ```bash
-git clone --branch release/v1.0.0-preparation --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch fix/tool-output-preview --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 node bin/buggps.js demo ../buggps-demo
@@ -62,6 +62,8 @@ dsh --profile PROFILE --dump-config
 | `BUDGET_EXHAUSTED / ABORTED` | 予算上限またはキャンセルにより、証拠が揃っていません。 |
 
 `buggps_status` は完了時刻に基づいて最新の有効な実行を表示します。過去の結果は、コード、ケース、固定情報、検査器が一致する場合にのみ現在も有効とされます。不一致の理由は `not_current_reasons` に示されます。`NO_CODE_CHANGE` はコードに変更がないという判定であり、修正成功を意味しません。
+
+ツールのテキスト表示は最大 12,000 文字で、判定、証拠の参照先、次の操作を優先します。`output_preview: abbreviated` が表示されたら、参照先の草稿、ケース、実行記録、パッチを確認してください。完全な構造化結果と検査条件は変わりません。省略表示から検査を再構成したり、パッチを適用したりしないでください。
 
 ## 対象範囲と制限
 

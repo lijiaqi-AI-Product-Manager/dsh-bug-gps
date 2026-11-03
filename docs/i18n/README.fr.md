@@ -19,7 +19,7 @@ La démonstration pilote par script l'exemple fourni, qui contient un défaut vo
 Nécessite Node.js ≥20, Git et Microsoft Edge ou Google Chrome installé. Les contrôles Windows documentés utilisent Node 24.22.0 et Edge 156 ; ils ne couvrent pas tous les navigateurs et systèmes.
 
 ```bash
-git clone --branch release/v1.0.0-preparation --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch fix/tool-output-preview --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 node bin/buggps.js demo ../buggps-demo
@@ -62,6 +62,8 @@ L'application de bureau et la CLI peuvent utiliser des profils différents. Une 
 | `BUDGET_EXHAUSTED / ABORTED` | Budget épuisé ou tâche annulée ; les preuves sont incomplètes. |
 
 `buggps_status` affiche la dernière exécution valide selon son heure de fin. Un résultat historique ne reste applicable que si le code, le cas, les données verrouillées et l’évaluateur correspondent encore ; `not_current_reasons` explique les écarts. `NO_CODE_CHANGE` conserve le sens de code inchangé et ne confirme pas une correction.
+
+Les aperçus textuels sont limités à 12 000 caractères, avec le verdict, les références et la prochaine action en premier. Si `output_preview: abbreviated` apparaît, consultez le brouillon, le cas, le compte rendu ou le patch référencé. Les résultats structurés complets et les contrôles restent inchangés. Ne reconstruisez pas de test et n’appliquez pas de patch à partir du texte abrégé.
 
 ## Périmètre et limites
 

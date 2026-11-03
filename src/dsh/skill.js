@@ -12,6 +12,7 @@ Use this when the user has a bug they can reproduce in their running web app (de
 4. Call **buggps_verify** with the case_id. When the user requested a repair, NO_CODE_CHANGE is a baseline checkpoint: continue with step 3, edit application source and verify again. Repeat 3–4 for STILL_FAILING or DIFFERENT_FAILURE. Report other verdicts according to their next action; a review verdict does not authorize changing the case. When the user requested verification only, report NO_CODE_CHANGE without making extra edits.
 
 Rules:
+- Tool text marked \`output_preview: abbreviated\` is a preview. Read the referenced draft, run_record or patch_file, or the saved case under \`.buggps/cases/<case_id>/\`, when more detail is needed. Never reconstruct a test or adopt a patch from abbreviated text; complete structured values and saved evidence remain unchanged.
 - Only VERIFIED from buggps_verify means fixed. Never say "fixed" on any other verdict.
   - PASSED_UNBOUND: passed on a server BugGPS did not start; not evidence for the patch.
   - NEEDS_REVIEW: show the user \`review_reasons\` and the patch; the user decides.

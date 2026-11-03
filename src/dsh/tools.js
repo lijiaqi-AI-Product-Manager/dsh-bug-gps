@@ -16,21 +16,12 @@ import { EnvBlockedError, TestDefinitionError } from '../core/errors.js';
 import { expectationLabel, stepLabel } from '../core/describe.js';
 import { CONFIG_FILE, readProjectConfig as readConfig, applyProjectConfig } from '../core/config.js';
 import { parseCaseText } from '../core/case-input.js';
+import { renderToolText } from './output.js';
 
 const OUTPUT = {
   schema: { type: 'object', additionalProperties: true, properties: { status: { type: 'string', required: true } } },
-  render: (_args, v) => [{ type: 'text', text: renderText(v) }],
+  render: (_args, v) => [{ type: 'text', text: renderToolText(v) }],
 };
-
-function renderText(v) {
-  const lines = [`BugGPS ${v.status}${v.message ? `: ${v.message}` : ''}`];
-  for (const [k, val] of Object.entries(v)) {
-    if (k === 'status' || k === 'message' || k === 'next') continue;
-    lines.push(`${k}: ${typeof val === 'string' ? val : JSON.stringify(val)}`);
-  }
-  if (v.next) lines.push(`next: ${v.next}`);
-  return lines.join('\n');
-}
 
 // Tool values must be lossless JSON (no undefined).
 const json = (v) => JSON.parse(JSON.stringify(v));

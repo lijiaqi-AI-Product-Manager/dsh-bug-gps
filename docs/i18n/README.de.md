@@ -19,7 +19,7 @@ Die Demo steuert das mitgelieferte Beispiel mit eingebautem Fehler per Skript un
 Benötigt Node.js ≥20, Git sowie Microsoft Edge oder Google Chrome. Die dokumentierten Windows-Prüfungen verwenden Node 24.22.0 und Edge 156. Andere Browser und Betriebssysteme sind damit nicht abgedeckt.
 
 ```bash
-git clone --branch release/v1.0.0-preparation --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch fix/tool-output-preview --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 node bin/buggps.js demo ../buggps-demo
@@ -62,6 +62,8 @@ Desktop und CLI können unterschiedliche Profile verwenden. Eine Installation in
 | `BUDGET_EXHAUSTED / ABORTED` | Budget erschöpft oder Aufgabe abgebrochen; die Belege sind unvollständig. |
 
 `buggps_status` zeigt den zuletzt abgeschlossenen gültigen Lauf an. Ein früheres Ergebnis gilt nur weiter, wenn Code, Testfall, festgeschriebene Angaben und Prüfer übereinstimmen. `not_current_reasons` nennt die Abweichungen. `NO_CODE_CHANGE` bedeutet weiterhin unveränderten Code und bestätigt keine Korrektur.
+
+Textvorschauen sind auf 12.000 Zeichen begrenzt; Urteil, Belegverweise und nächste Schritte stehen zuerst. Bei `output_preview: abbreviated` den referenzierten Entwurf, Testfall, Laufbericht oder Patch lesen. Vollständige strukturierte Ergebnisse und Prüfungen bleiben unverändert. Tests oder Patches nicht aus gekürztem Text rekonstruieren.
 
 ## Umfang und Grenzen
 

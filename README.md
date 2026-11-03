@@ -20,7 +20,7 @@ DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标�
 首次从源码试用，使用已整合的预发布候选分支，再准备依赖。候选仍在验收中，阻断项见 [发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)：
 
 ```bash
-git clone --branch release/v1.0.0-preparation --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch fix/tool-output-preview --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 ```
@@ -99,6 +99,8 @@ ChartDB 的 DBML 导入曾将 GIN 索引显示为默认 B-tree。DSH 0.2.1-rc.5 
 **`VERIFIED` 只覆盖录制的那个场景。** 它不证明其它 bug 不存在。
 
 `buggps_status` 按完成时间显示最近的有效运行。历史结果只有在代码、用例、锁定清单与检查器仍匹配时才标记为当前适用；`not_current_reasons` 说明不匹配的原因。`NO_CODE_CHANGE` 保留“代码未变”的判定，不表示修复成功。
+
+工具文本预览最多 12,000 字符，优先显示判定、证据引用和下一步。看到 `output_preview: abbreviated` 时，按引用读取完整草稿、用例、运行记录或补丁。完整结构化结果和验收数据保持原样，不从省略的预览重建测试或采用补丁。
 
 ## 环境要求
 
