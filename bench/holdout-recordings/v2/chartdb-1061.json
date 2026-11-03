@@ -1,0 +1,225 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted-with-scoped-target-and-checkpoints",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Empty database"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside button:text-is(\"Add Table\") >> nth=0"
+        }
+      ],
+      "check": {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"N\")"
+          }
+        ]
+      }
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape",
+      "check": {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"N\")"
+          }
+        ]
+      }
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside button:text-is(\"N\")"
+        }
+      ]
+    }
+  ],
+  "expectation": {
+    "kind": "hidden",
+    "target": [
+      {
+        "by": "css",
+        "value": "aside button[data-state=\"on\"]:text-is(\"N\")"
+      }
+    ]
+  },
+  "also": [
+    {
+      "kind": "visible",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "Name"
+        }
+      ]
+    }
+  ],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold"
+        },
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          }
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Empty database"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Add Table"
+        }
+      ]
+    },
+    {
+      "action": "key",
+      "target": [
+        {
+          "by": "page"
+        }
+      ],
+      "value": "Escape"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "N"
+        }
+      ]
+    }
+  ],
+  "targetOverrides": [
+    {
+      "index": 3,
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside button:text-is(\"Add Table\") >> nth=0"
+        }
+      ],
+      "reason": "Two Add Table buttons share the same name in the empty view; select the toolbar control."
+    },
+    {
+      "index": 5,
+      "action": "click",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside button:text-is(\"N\")"
+        }
+      ],
+      "reason": "Target the same side-panel N control that the unchanged original expectation inspects."
+    }
+  ],
+  "definitionRevision": 2,
+  "definitionBasis": {
+    "repository": "https://github.com/chartdb/chartdb",
+    "commit": "5754538d7ef31d900cf754c68f2a51a0ce7ed54a",
+    "files": [
+      "src/pages/editor-page/side-panel/tables-section/table-list/table-list-item/table-list-item-content/table-field/table-field.tsx"
+    ],
+    "previousInput": "bench/holdout-recordings/chartdb-1061.json",
+    "previousInputSha256": "403d7907797e0e4c08d6b819caeddb20c5a806a53edb44068f7b5f2aa111e33c",
+    "previousInputCanonicalSha256": "43b5c6f3e08db6ba423f82f30257f1f70197af2ac375118ac91dc0aa407e87ac",
+    "note": "Retain all six actions, the hidden active-N expectation, and the visible Name check. Restrict the N click to the same side-panel control used by the original expectation. Confirm that control is visible after Add Table and Escape; do not require it enabled, because the upstream disabled-control change must remain reviewable. This does not establish the unique cause of the earlier click timeout."
+  },
+  "authoredCheckpoints": [
+    {
+      "step": 3,
+      "reason": "The recorded side-panel nullable control must exist after Add Table."
+    },
+    {
+      "step": 4,
+      "reason": "The same control must remain visible after Escape before clicking it; disabled controls remain eligible for review."
+    }
+  ]
+}

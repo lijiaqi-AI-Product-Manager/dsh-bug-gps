@@ -31,9 +31,9 @@
     },
     {
       "id": "chartdb-1061",
-      "file": "bench/holdout-recordings/chartdb-1061.json",
-      "definitionRevision": 1,
-      "canonicalSha256": "43b5c6f3e08db6ba423f82f30257f1f70197af2ac375118ac91dc0aa407e87ac"
+      "file": "bench/holdout-recordings/v2/chartdb-1061.json",
+      "definitionRevision": 2,
+      "canonicalSha256": "5561b894cdffcb4e510c495425c6936864c1533c165cb45ef193030fdeea3d14"
     },
     {
       "id": "chartdb-1089",
