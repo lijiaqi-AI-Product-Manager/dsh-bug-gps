@@ -61,6 +61,8 @@ L'application de bureau et la CLI peuvent utiliser des profils différents. Une 
 | `NO_CODE_CHANGE` | Code inchangé depuis le verrouillage. Poursuivre une correction demandée ; pour une simple vérification, signaler l'absence de changement. |
 | `BUDGET_EXHAUSTED / ABORTED` | Budget épuisé ou tâche annulée ; les preuves sont incomplètes. |
 
+`buggps_status` affiche la dernière exécution valide selon son heure de fin. Un résultat historique ne reste applicable que si le code, le cas, les données verrouillées et l’évaluateur correspondent encore ; `not_current_reasons` explique les écarts. `NO_CODE_CHANGE` conserve le sens de code inchangé et ne confirme pas une correction.
+
 ## Périmètre et limites
 
 - Le résultat couvre le scénario enregistré et ne prouve pas l'absence d'autres défauts.

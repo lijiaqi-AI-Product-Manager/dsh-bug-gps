@@ -98,6 +98,8 @@ ChartDB 的 DBML 导入曾将 GIN 索引显示为默认 B-tree。DSH 0.2.1-rc.5 
 
 **`VERIFIED` 只覆盖录制的那个场景。** 它不证明其它 bug 不存在。
 
+`buggps_status` 按完成时间显示最近的有效运行。历史结果只有在代码、用例、锁定清单与检查器仍匹配时才标记为当前适用；`not_current_reasons` 说明不匹配的原因。`NO_CODE_CHANGE` 保留“代码未变”的判定，不表示修复成功。
+
 ## 环境要求
 
 - DeepSeek Harness **0.2.1-rc.5**。当前兼容声明仅覆盖这个已验收版本；扩大范围前会补充兼容记录

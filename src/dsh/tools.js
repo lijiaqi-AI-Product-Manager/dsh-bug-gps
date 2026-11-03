@@ -9,8 +9,8 @@ import { launchBrowser } from '../core/browser.js';
 import { startRecording } from '../core/recorder.js';
 import { reproduce, Status } from '../core/reproduce.js';
 import { minimize } from '../core/minimize.js';
-import { hashCase, hashLock, loadCase, lockCase, normalizeServe, verifyCase, Verdict, warmupPage, withManagedServer } from '../core/caselock.js';
-import { DEFAULT_OBSERVE_MS, hasPositiveCheck, validateCase } from '../core/oracle.js';
+import { hashCase, hashLock, loadCase, lockCase, normalizeServe, RUN_SCHEMA, verifyCase, Verdict, warmupPage, withManagedServer } from '../core/caselock.js';
+import { DEFAULT_OBSERVE_MS, EVALUATOR_VERSION, hasPositiveCheck, validateCase } from '../core/oracle.js';
 import { snapshotTree } from '../core/snapshot.js';
 import { EnvBlockedError, TestDefinitionError } from '../core/errors.js';
 import { expectationLabel, stepLabel } from '../core/describe.js';
@@ -34,6 +34,27 @@ function renderText(v) {
 
 // Tool values must be lossless JSON (no undefined).
 const json = (v) => JSON.parse(JSON.stringify(v));
+
+const runVerdicts = new Set(Object.values(Verdict));
+function completedRunTime(record) {
+  if (!record || Array.isArray(record) || record.schema !== RUN_SCHEMA
+    || typeof record.caseId !== 'string' || !runVerdicts.has(record.verdict)
+    || typeof record.finishedAt !== 'string') return null;
+  const time = Date.parse(record.finishedAt);
+  return Number.isFinite(time) ? time : null;
+}
+
+function notCurrentReasons(record, body, lock, tree) {
+  const reasons = [];
+  const boundTree = record.treeAfter ?? (record.verdict === Verdict.NO_CODE_CHANGE ? record.treeBefore : null);
+  if (!tree) reasons.push('current-code-unavailable');
+  else if (!boundTree) reasons.push('code-unbound');
+  else if (boundTree !== tree) reasons.push('code-changed');
+  if (record.caseSha256 !== hashCase(body)) reasons.push('case-changed');
+  if (record.lockSha256 !== hashLock(lock)) reasons.push('lock-changed');
+  if (record.evaluator !== EVALUATOR_VERSION || lock.red?.evaluator !== EVALUATOR_VERSION) reasons.push('evaluator-changed');
+  return reasons;
+}
 
 export { CONFIG_FILE } from '../core/config.js';
 
@@ -325,30 +346,41 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
       const runsDir = join(cwd, '.buggps', 'runs');
       const ids = await readdir(casesDir).catch(() => []);
       const runs = (await readdir(runsDir).catch(() => [])).filter((f) => f.endsWith('.json')).sort();
-      const latest = {};
+      const latest = new Map();
       for (const f of runs) {
-        try { const r = JSON.parse(await readFile(join(runsDir, f), 'utf8')); latest[r.caseId] = r; } catch { /* skip */ }
+        try {
+          const record = JSON.parse(await readFile(join(runsDir, f), 'utf8'));
+          const completedAt = completedRunTime(record);
+          if (completedAt === null) continue;
+          const previous = latest.get(record.caseId);
+          // Runs are named when they start; overlapping tasks can finish in the reverse order.
+          // Sorted filenames make equal completion timestamps deterministic.
+          if (!previous || completedAt >= previous.completedAt) latest.set(record.caseId, { record, completedAt });
+        } catch { /* skip incomplete or unreadable run files */ }
       }
       const tree = ids.length ? await snapshotTree(cwd).catch(() => null) : null;
       const cases = [];
       for (const id of ids) {
         try {
           const { body, lock } = await loadCase(cwd, id);
-          const r = latest[id];
+          const r = latest.get(id)?.record;
+          const reasons = r ? notCurrentReasons(r, body, lock, tree) : [];
           cases.push({
             case_id: id,
             expectation: expectationLabel(body.expectation),
             binding: body.serve ? 'managed' : 'external',
             before_fix: lock.red?.observed ?? null,
             steps: body.steps.length,
-            latest: r ? { verdict: r.verdict, at: r.finishedAt, applies_to_current_code: Boolean(tree && r.treeAfter === tree && r.caseSha256 === hashCase(body) && r.lockSha256 === hashLock(lock)) } : null,
+            latest: r ? { verdict: r.verdict, at: r.finishedAt, evaluator: r.evaluator ?? null,
+              applies_to_current_code: reasons.length === 0,
+              ...(reasons.length ? { not_current_reasons: reasons } : {}) } : null,
           });
         } catch { cases.push({ case_id: id, error: 'unreadable' }); }
       }
       let config;
       try { config = await readConfig(cwd); } catch (err) { config = { error: err.message }; }
-      const out = { status: 'OK', repo: cwd, write_protection: guardActive() ? 'active' : 'NOT ACTIVE', serve: config.error ? `invalid ${CONFIG_FILE}: ${config.error}` : config.serve ? `${parseServeLabel(config.serve)}` : `none (add "serve" to ${CONFIG_FILE} for VERIFIED verdicts)`, cases };
-      if (cases.some((c) => c.latest && !c.latest.applies_to_current_code)) out.note = 'A latest verdict with applies_to_current_code=false belongs to different code or locked conditions; run buggps_verify again before relying on it.';
+      const out = { status: 'OK', repo: cwd, evaluator: EVALUATOR_VERSION, write_protection: guardActive() ? 'active' : 'NOT ACTIVE', serve: config.error ? `invalid ${CONFIG_FILE}: ${config.error}` : config.serve ? `${parseServeLabel(config.serve)}` : `none (add "serve" to ${CONFIG_FILE} for VERIFIED verdicts)`, cases };
+      if (cases.some((c) => c.latest && !c.latest.applies_to_current_code)) out.note = 'A latest verdict with applies_to_current_code=false has different or unavailable code, locked conditions or evaluator evidence; inspect not_current_reasons and verify again before relying on it.';
       if (args.url) out.dev_server = (await reachable(args.url)) ? 'reachable' : 'NOT reachable';
       if (args.check_browser) {
         try { const env = await launchBrowser(); out.browser = `${env.channel} ${env.version}`; await env.browser.close(); } catch (err) { out.browser = `NOT usable: ${err.message}`; }

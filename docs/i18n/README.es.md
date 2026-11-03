@@ -61,6 +61,8 @@ La aplicación de escritorio y la CLI pueden usar perfiles distintos. Instalar e
 | `NO_CODE_CHANGE` | Código sin cambios desde el bloqueo. Continuar la corrección solicitada; si solo se pidió verificar, informar que no hubo cambios. |
 | `BUDGET_EXHAUSTED / ABORTED` | Presupuesto agotado o tarea cancelada; la evidencia está incompleta. |
 
+`buggps_status` muestra la ejecución válida que terminó más recientemente. Un resultado histórico solo sigue siendo aplicable si coinciden el código, el caso, los datos bloqueados y el evaluador; `not_current_reasons` explica las diferencias. `NO_CODE_CHANGE` conserva el significado de código sin cambios y no confirma una corrección.
+
 ## Alcance y límites
 
 - El resultado cubre el escenario registrado; no demuestra que la aplicación esté libre de otros fallos.

@@ -62,6 +62,8 @@ Desktop and command-line instances may use different profiles. Installing into `
 | `NO_CODE_CHANGE` | Baseline unchanged. Continue a requested repair; verification-only requests report the unchanged code. |
 | `BUDGET_EXHAUSTED / ABORTED` | Budget exhausted or task cancelled; the evidence is incomplete. |
 
+`buggps_status` lists the latest completed valid run. A historical result applies only when the code, case, lock and evaluator still match; `not_current_reasons` explains mismatches. `NO_CODE_CHANGE` retains that verdict and does not confirm a fix.
+
 ## Scope and limits
 
 - A verified result covers the recorded scenario. It does not prove the application has no other bugs.

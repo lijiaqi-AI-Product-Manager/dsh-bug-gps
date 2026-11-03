@@ -61,6 +61,8 @@ O aplicativo desktop e a CLI podem usar perfis diferentes. Instalar em `web` nã
 | `NO_CODE_CHANGE` | Código sem alterações desde a fixação. Continuar a correção solicitada; se o pedido for apenas verificar, informar que não houve mudanças. |
 | `BUDGET_EXHAUSTED / ABORTED` | Orçamento esgotado ou tarefa cancelada; as evidências estão incompletas. |
 
+`buggps_status` mostra a execução válida concluída mais recentemente. Um resultado histórico só continua aplicável quando o código, o caso, os dados fixados e o avaliador ainda correspondem; `not_current_reasons` explica as diferenças. `NO_CODE_CHANGE` mantém o significado de código sem alterações e não confirma uma correção.
+
 ## Escopo e limitações
 
 - O resultado cobre o cenário registrado; não comprova a ausência de outros defeitos.

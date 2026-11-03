@@ -61,6 +61,8 @@ Desktop und CLI können unterschiedliche Profile verwenden. Eine Installation in
 | `NO_CODE_CHANGE` | Unveränderter Ausgangscode. Einen beauftragten Fix fortsetzen; bei reiner Prüfung den unveränderten Stand melden. |
 | `BUDGET_EXHAUSTED / ABORTED` | Budget erschöpft oder Aufgabe abgebrochen; die Belege sind unvollständig. |
 
+`buggps_status` zeigt den zuletzt abgeschlossenen gültigen Lauf an. Ein früheres Ergebnis gilt nur weiter, wenn Code, Testfall, festgeschriebene Angaben und Prüfer übereinstimmen. `not_current_reasons` nennt die Abweichungen. `NO_CODE_CHANGE` bedeutet weiterhin unveränderten Code und bestätigt keine Korrektur.
+
 ## Umfang und Grenzen
 
 - Das Ergebnis gilt für das aufgezeichnete Szenario, nicht für die Fehlerfreiheit der gesamten App.
