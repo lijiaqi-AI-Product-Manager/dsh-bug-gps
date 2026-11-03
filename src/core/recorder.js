@@ -178,7 +178,12 @@ const RECORDER_SCRIPT = String.raw`(() => {
     if (!out.length && text && text.length <= 40) {
       // Text alone is often ambiguous (same label in several rows); prefer it scoped.
       const s = scoped(el, null, text);
-      if (s) out.push(s);
+      if (s) {
+        out.push(s);
+        // Wait for this named button; matching editor or canvas text is not the
+        // recorded control, even when it is the only text currently mounted.
+        if (s.within?.role === 'button' && s.within.name === text) return out;
+      }
       out.push({ by: 'text', value: text });
     }
     return out;

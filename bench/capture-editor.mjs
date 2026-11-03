@@ -119,10 +119,15 @@ try {
     const database = steps.find((step) => step.action === 'click' && step.target.some((target) => target.child?.name === 'PostgreSQL'));
     assert.ok(database?.target.some((target) => target.nameWithChild === true && target.name && target.child?.name === 'PostgreSQL'), 'Retain both the database option label and its exact named image');
   }
+  if (revision >= 5) {
+    const action = steps.find((step) => step.action === 'click' && step.target.some((target) => target.by === 'text' && target.value === table && target.within?.role === 'button' && target.within.name === table));
+    assert.equal(action?.target.length, 1, 'A named table button must not fall back to unrelated full-page text');
+  }
   steps[pasteIndex].check = { kind: 'value', target: structuredClone(steps[pasteIndex].target), equals: content };
-  const note = id === 'chartdb-1031'
+  let note = id === 'chartdb-1031'
     ? revision >= 4 ? 'Verify precision 15 and scale 2 in the amount field properties, as required by the upstream regression test. The previous sidebar count used numeric(15,2), while the fixed UI displays numeric(15, 2); retain that failed definition and establish a new original-code basis.' : 'Preserve the original precision/scale expectation. Replace an ambiguous hidden textarea fill with captured editor paste.'
     : 'Use a valid PostgreSQL JSONB field for the GIN index; verify the named imported index in its actual properties.';
+  if (revision >= 5) note += ' Keep the exact named table-button scope while it mounts; do not adopt a same-text editor token or canvas label.';
   const input = { schema: 'buggps.draft/v1', source: 'scripted', definitionRevision: revision, definitionBasis: { repository: spec.repo, commit: spec.buggyCommit, upstream: spec.pr, previousInputSha256: hash(previous), inputMethod: 'Select All and a scripted ClipboardEvent; not native clipboard capture', note, producer: 'bench/capture-editor.mjs', producerSha256: hash(await readFile(fileURLToPath(import.meta.url))), recorderSha256: hash(await readFile(join(source, 'src/core/recorder.js'))), evaluator: EVALUATOR_VERSION, runtimeCommit: (await git(source, ['rev-parse', 'HEAD'])).trim() }, browser: rec.result.browser, steps, rawSteps, expectation, also, observeMs: 1000, authoredCheckpoints: [{ afterStepIndex: pasteIndex, check: steps[pasteIndex].check }], targetOverrides: [], dropped: 0 };
   await mkdir(dirname(output), { recursive: true });
   await writeFile(output, JSON.stringify(input, null, 2) + '\n', { flag: 'wx' });
