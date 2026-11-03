@@ -13,6 +13,7 @@ import { reproduce } from '../src/core/reproduce.js';
 import { minimize } from '../src/core/minimize.js';
 import { lockCase, normalizeServe, verifyCase } from '../src/core/caselock.js';
 import { validateCase } from '../src/core/oracle.js';
+import { parseCaseText } from '../src/core/case-input.js';
 import { EnvBlockedError, TestDefinitionError } from '../src/core/errors.js';
 import { CONFIG_FILE, readProjectConfig, applyProjectConfig } from '../src/core/config.js';
 
@@ -49,10 +50,18 @@ const need = (k) => { if (!o[k]) { console.error(`missing --${k}\n\n${USAGE}`); 
 const print = (human, data) => console.log(o.json ? JSON.stringify(data, null, 2) : human);
 
 let env;
+let preparedCase;
+let preparedConfig;
 try {
   if (cmd === 'demo') process.exitCode = await demo(positionals[1] ?? 'buggps-demo');
   else if (cmd === 'doctor') process.exitCode = await doctor();
   else {
+    if (['lock', 'reproduce', 'minimize'].includes(cmd)) {
+      const input = await loadCaseFile();
+      preparedConfig = await readProjectConfig(resolve(o.repo));
+      preparedCase = applyProjectConfig(input, preparedConfig);
+      validateCase(preparedCase);
+    }
     env = await launchBrowser({ executablePath: o['browser-path'], headless: !(cmd === 'record' || o.headed) });
     process.exitCode = await run();
   }
@@ -65,7 +74,11 @@ try {
 }
 
 async function loadCaseFile() {
-  return JSON.parse(await readFile(need('case'), 'utf8'));
+  const file = need('case');
+  let text;
+  try { text = await readFile(file, 'utf8'); }
+  catch { throw new TestDefinitionError('Cannot read case file; check the path and permissions.'); }
+  return parseCaseText(text);
 }
 
 async function serveFor(repo, config) {
@@ -95,15 +108,13 @@ async function run() {
       return body.expectation ? 0 : 2;
     }
     case 'reproduce': {
-      const c = applyProjectConfig(await loadCaseFile(), await readProjectConfig(resolve(o.repo)));
-      validateCase(c);
+      const c = preparedCase;
       const r = await reproduce(env.browser, c, { baseUrl: need('url'), runs: Number(o.runs) });
       print(`${r.status} ${JSON.stringify(r.tally)} observed=${JSON.stringify(r.observed)}${r.reason ? ` reason=${r.reason} (step ${r.stepIndex})` : ''} ${r.durationMs}ms`, r);
       return r.status === 'REPRODUCED' ? 0 : 1;
     }
     case 'minimize': {
-      const c = applyProjectConfig(await loadCaseFile(), await readProjectConfig(resolve(o.repo)));
-      validateCase(c);
+      const c = preparedCase;
       const baseUrl = need('url');
       const red = await reproduce(env.browser, c, { baseUrl, runs: Number(o.runs) });
       if (red.status !== 'REPRODUCED') { print(`cannot minimize: ${red.status}`, red); return 1; }
@@ -114,8 +125,8 @@ async function run() {
     }
     case 'lock': {
       const repo = resolve(o.repo);
-      const config = await readProjectConfig(repo);
-      const c = applyProjectConfig(await loadCaseFile(), config);
+      const config = preparedConfig;
+      const c = preparedCase;
       const serve = await serveFor(repo, config);
       if (!serve) need('url');
       const r = await lockCase(env.browser, env, repo, { ...c, ...(serve ? { serve } : {}) }, { baseUrl: o.url, runs: Number(o.runs), ...(o.id ? { id: o.id } : {}) });

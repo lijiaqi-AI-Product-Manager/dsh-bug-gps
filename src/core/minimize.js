@@ -10,7 +10,7 @@
 //   'ddmin'           - classic delta debugging (Zeller & Hildebrandt 2002), kept for comparison.
 // The result is the shortest case verified within budget, not a proven global minimum.
 import { runTrial } from './replay.js';
-import { signatureKey } from './oracle.js';
+import { signatureKey, validateCase } from './oracle.js';
 import { contractOf, reproduce, Status } from './reproduce.js';
 import { resolveTarget } from './locator.js';
 import { executionBudget, integerOption } from './execution-budget.js';
@@ -22,7 +22,7 @@ const UNRESOLVED = 'UNRESOLVED';
 export async function minimize(browser, testCase, {
   baseUrl,
   signature,
-  match = testCase.match ?? 'strict',
+  match = testCase?.match ?? 'strict',
   strategy = 'units',
   maxTrials = 80,
   maxMs = 120_000,
@@ -40,6 +40,7 @@ export async function minimize(browser, testCase, {
   signal: parentSignal,
 } = {}) {
   const started = performance.now();
+  validateCase(testCase);
   integerOption(maxTrials, 'maxTrials', 0);
   integerOption(confirmRuns, 'confirmRuns');
   integerOption(concurrency, 'concurrency');

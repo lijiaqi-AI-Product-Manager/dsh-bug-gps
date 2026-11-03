@@ -12,6 +12,25 @@ function validateImageName(candidate) {
 }
 const escapePattern = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+function validateCandidate(candidate) {
+  if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) throw new TestDefinitionError('Locator candidate must be an object');
+  validateImageName(candidate);
+  if (!['testId', 'role', 'label', 'text', 'css'].includes(candidate.by)) throw new TestDefinitionError('Unsupported locator kind');
+  if (candidate.by === 'role') {
+    if (typeof candidate.role !== 'string' || !candidate.role || (candidate.name !== undefined && typeof candidate.name !== 'string')) throw new TestDefinitionError('Role locator needs a role and an optional string name');
+  } else if (typeof candidate.value !== 'string') throw new TestDefinitionError('Locator value must be a string');
+  if (candidate.within !== undefined) {
+    const within = candidate.within;
+    if (!['role', 'text'].includes(candidate.by)) throw new TestDefinitionError('within is supported only on role/text locators');
+    if (!within || typeof within !== 'object' || Array.isArray(within) || typeof within.role !== 'string' || !within.role || (within.name !== undefined && typeof within.name !== 'string')) throw new TestDefinitionError('A locator container needs a role and an optional string name');
+  }
+  if (candidate.index !== undefined && (!candidate.within || !Number.isInteger(candidate.index))) throw new TestDefinitionError('A locator index needs an integer and an explicit container');
+  if (candidate.child !== undefined) {
+    const child = candidate.child;
+    if (candidate.by !== 'role' || !child || typeof child !== 'object' || Array.isArray(child) || typeof child.role !== 'string' || !child.role || (child.name !== undefined && typeof child.name !== 'string')) throw new TestDefinitionError('A locator child needs a role and an optional string name');
+  }
+}
+
 export function targetScope(page, c) {
   if (c.index !== undefined && (!c.within || !Number.isInteger(c.index))) throw new TestDefinitionError('A locator index needs an integer and an explicit container');
   if (!c.within) return null;
@@ -21,7 +40,7 @@ export function targetScope(page, c) {
 }
 
 export function candidateLocator(page, c, { loose = false } = {}) {
-  validateImageName(c);
+  validateCandidate(c);
   const scope = targetScope(page, c) ?? page;
   switch (c.by) {
     case 'testId': return page.getByTestId(c.value);
@@ -48,7 +67,7 @@ export function candidatesOf(target) {
   if (!target) throw new TestDefinitionError('Step has no target');
   const list = Array.isArray(target) ? target : [target];
   if (list.length === 0) throw new TestDefinitionError('Step target has no candidates');
-  for (const candidate of list) validateImageName(candidate);
+  for (const candidate of list) validateCandidate(candidate);
   return list;
 }
 

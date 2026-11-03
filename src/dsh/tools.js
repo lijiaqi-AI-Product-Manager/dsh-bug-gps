@@ -15,6 +15,7 @@ import { snapshotTree } from '../core/snapshot.js';
 import { EnvBlockedError, TestDefinitionError } from '../core/errors.js';
 import { expectationLabel, stepLabel } from '../core/describe.js';
 import { CONFIG_FILE, readProjectConfig as readConfig, applyProjectConfig } from '../core/config.js';
+import { parseCaseText } from '../core/case-input.js';
 
 const OUTPUT = {
   schema: { type: 'object', additionalProperties: true, properties: { status: { type: 'string', required: true } } },
@@ -185,7 +186,8 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
       const cwd = await projectOf(exec);
       const draftPath = isAbsolute(args.draft) ? args.draft : resolve(cwd, args.draft);
       let draft;
-      try { draft = JSON.parse(await readFile(draftPath, 'utf8')); } catch (err) { return json({ status: 'TEST_INVALID', message: `cannot read draft ${args.draft}: ${err.message}` }); }
+      try { draft = parseCaseText(await readFile(draftPath, 'utf8')); }
+      catch (err) { return json({ status: 'TEST_INVALID', message: err instanceof TestDefinitionError ? err.message : 'Cannot read draft; check the path and permissions.', next: LOCK_NEXT[Status.TEST_INVALID] }); }
       if (draft.captureIssues?.length) return json({ status: 'TEST_INVALID', message: 'recording is incomplete', capture_issues: draft.captureIssues, next: 'Record the input again using a supported input method; incomplete drafts cannot be locked.' });
       let serve;
       let config;
@@ -194,12 +196,16 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
         serve = normalizeServe(args.serve ? { command: args.serve, url: args.serve_url } : config.serve);
       } catch (err) { return json({ status: 'TEST_INVALID', message: err.message, next: 'Fix the serve command / URL with the user.' }); }
       if (!serve && !args.url) return json({ status: 'TEST_INVALID', message: 'need either a serve command (recommended) or the url of a running dev server', next: `Ask the user for the dev command and a free port, then pass serve and serve_url (or add "serve" to ${CONFIG_FILE}).` });
-      if (!serve && !(await reachable(args.url))) return json(envBlocked(`dev server not reachable at ${args.url}`, 'Start the dev server and retry.'));
       const observeMs = args.observe_ms !== undefined ? Math.round(args.observe_ms) : config.observeMs;
       const testCase = { ...applyProjectConfig(draft, config, { observeMs }), ...(serve ? { serve } : {}) };
+      try { validateCase(testCase); }
+      catch (err) {
+        if (!(err instanceof TestDefinitionError)) throw err;
+        return json({ status: 'TEST_INVALID', message: err.message, next: LOCK_NEXT[Status.TEST_INVALID] });
+      }
+      if (!serve && !(await reachable(args.url))) return json(envBlocked(`dev server not reachable at ${args.url}`, 'Start the dev server and retry.'));
       const id = args.case_id ?? draftPath.split(/[\\/]/).pop().replace(/\.json$/, '');
       return json(await withBrowser(exec.signal, { subprocess }, async (env) => {
-        validateCase(testCase);
         const work = async (url) => {
           const red = await reproduce(env.browser, testCase, { baseUrl: url, runs: 3, signal: exec.signal });
           if (red.status !== Status.REPRODUCED) {

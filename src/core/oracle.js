@@ -26,6 +26,7 @@ export function validateExpectation(exp, { checkpoint = false } = {}) {
   if (STATE_KINDS.includes(exp.kind) && !exp.target) {
     throw new TestDefinitionError(`Expectation "${exp.kind}" needs a target`);
   }
+  if (STATE_KINDS.includes(exp.kind)) candidatesOf(exp.target);
   if (['text', 'value'].includes(exp.kind) && typeof exp.equals !== 'string') {
     throw new TestDefinitionError(`Expectation "${exp.kind}" needs a string "equals"`);
   }
@@ -39,16 +40,28 @@ export function validateExpectation(exp, { checkpoint = false } = {}) {
 
 /** Validates the whole contract of a case: primary expectation, extra checks, checkpoints. */
 export function validateCase(testCase) {
+  if (!testCase || typeof testCase !== 'object' || Array.isArray(testCase)) throw new TestDefinitionError('Case definition must be an object');
+  if (!Array.isArray(testCase.steps)) throw new TestDefinitionError('steps must be an array');
+  if (testCase.also !== undefined && !Array.isArray(testCase.also)) throw new TestDefinitionError('also must be an array');
+  if (testCase.minimizedSteps !== undefined && !Array.isArray(testCase.minimizedSteps)) throw new TestDefinitionError('minimizedSteps must be an array');
+  for (const [field, steps] of [['steps', testCase.steps], ['minimizedSteps', testCase.minimizedSteps ?? []]]) {
+    for (const [index, step] of steps.entries()) {
+      if (!step || typeof step !== 'object' || Array.isArray(step)) throw new TestDefinitionError(`${field}[${index}] must be an object`);
+      if (!['goto', 'key', 'viewport', 'exit-fullscreen', 'click', 'hover', 'fill', 'select', 'check', 'press', 'paste'].includes(step.action)) throw new TestDefinitionError(`${field}[${index}] has an unsupported action`);
+      if (!['goto', 'key', 'viewport', 'exit-fullscreen'].includes(step.action)) candidatesOf(step.target);
+      if (step.check !== undefined) validateExpectation(step.check, { checkpoint: true });
+      if (step.pinned !== undefined && typeof step.pinned !== 'boolean') throw new TestDefinitionError(`${field}[${index}].pinned must be a boolean`);
+      if (step.action === 'viewport') validateViewport(step);
+      if (step.action === 'paste') validatePasteStep(step);
+      if (step.wasEnabled !== undefined && typeof step.wasEnabled !== 'boolean') throw new TestDefinitionError('wasEnabled must be a boolean');
+    }
+  }
   if (testCase.captureIssues !== undefined && !Array.isArray(testCase.captureIssues)) throw new TestDefinitionError('captureIssues must be an array');
   if (testCase.captureIssues?.length) throw new TestDefinitionError('Recording is incomplete: ' + testCase.captureIssues.slice(0, 3).map((issue) => typeof issue?.message === 'string' ? issue.message.slice(0, 500) : 'unsupported input').join('; '));
   validateExpectation(testCase.expectation);
   for (const e of testCase.also ?? []) validateExpectation(e);
-  for (const s of testCase.steps ?? []) if (s.check) validateExpectation(s.check, { checkpoint: true });
   validateObserveMs(testCase.observeMs);
   browserOptions(testCase.browser);
-  for (const step of testCase.steps ?? []) if (step.action === 'viewport') validateViewport(step);
-  for (const step of testCase.steps ?? []) if (step.action === 'paste') validatePasteStep(step);
-  for (const step of testCase.steps ?? []) if (step.wasEnabled !== undefined && typeof step.wasEnabled !== 'boolean') throw new TestDefinitionError('wasEnabled must be a boolean');
 }
 
 /** True when some final check proves a positive outcome (not just "no error"). */
