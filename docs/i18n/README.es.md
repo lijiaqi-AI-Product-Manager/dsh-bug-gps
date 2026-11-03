@@ -81,6 +81,8 @@ Incluye la versión DSH, el sistema operativo, el comportamiento esperado, el ve
 
 Si BugGPS te ayudó a verificar una corrección, una Star ayuda a que otros lo descubran.
 
+[Compatibilidad del entorno y comprobación del paquete](../host-compatibility.md)
+
 MIT · [LICENSE](../../LICENSE)
 
 

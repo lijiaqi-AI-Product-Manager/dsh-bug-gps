@@ -5,12 +5,12 @@
 // DSH's loader, tool pipeline, timeout policy, guard and skill system are real.
 //
 //   node test/e2e/dsh-e2e.mjs        (needs DSH from spikes/s1-dsh/dsh or BUGGPS_DSH_DIR)
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn, spawnSync, execFileSync } from 'node:child_process';
 import { copyFileSync, existsSync, readFileSync, realpathSync, rmSync, writeFileSync, mkdirSync, mkdtempSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { tempRepo, freePort } from '../helpers.js';
 import { startStaticServer } from '../../examples/serve.js';
 import { launchBrowser } from '../../src/core/browser.js';
@@ -35,7 +35,7 @@ const env = {
   DEEPSEEK_API_KEY: 'mock-key',
 };
 const dsh = (args, opts = {}) => spawnSync(process.execPath, [DSH_BIN, ...args], { env, encoding: 'utf8', ...opts });
-const out = { at: new Date().toISOString(), kind: 'REAL DSH, scripted model, SEEDED example app', checks: [] };
+const out = { schema: 'buggps.host-check/v1', at: new Date().toISOString(), kind: 'REAL DSH, scripted model, SEEDED example app', producer: { commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: REPO, encoding: 'utf8', windowsHide: true }).trim(), runnerSha256: createHash('sha256').update(readFileSync(fileURLToPath(import.meta.url))).digest('hex'), changedSourceFiles: execFileSync('git', ['diff', '--name-only', 'HEAD', '--', 'src', 'test/e2e/dsh-e2e.mjs', 'package.json', 'package-lock.json'], { cwd: REPO, encoding: 'utf8', windowsHide: true }).trim().split(/\r?\n/).filter(Boolean) }, checks: [] };
 const check = (name, ok, detail) => { out.checks.push({ name, ok: Boolean(ok), detail }); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${detail ? `  — ${detail}` : ''}`); };
 let project; let server; let mock;
 
@@ -104,19 +104,30 @@ if (!ready) throw new Error('scripted server did not establish its run identity'
 
 const caseHashNow = () => { try { return createHash('sha256').update(readFileSync(caseFile)).digest('hex'); } catch { return null; } };
 const t0 = Date.now();
+const startupImport = process.env.BUGGPS_E2E_STARTUP_IMPORT ? resolve(process.env.BUGGPS_E2E_STARTUP_IMPORT) : null;
+if (startupImport) out.startupControl = { file: basename(startupImport), sha256: createHash('sha256').update(readFileSync(startupImport)).digest('hex') };
 const turn = await new Promise((done) => {
-  const p = spawn(process.execPath, [DSH_BIN, '--profile', 'headless', '--json', 'Fix the coupon total bug using BugGPS.'], { cwd: project.root, env });
+  const p = spawn(process.execPath, [...(startupImport ? ['--import', startupImport] : []), DSH_BIN, '--profile', 'headless', '--json', 'Fix the coupon total bug using BugGPS.'], { cwd: project.root, env });
   let stdout = ''; let stderr = '';
   p.stdout.on('data', (d) => { stdout += d; });
   p.stderr.on('data', (d) => { stderr += d; });
   const kill = setTimeout(() => p.kill(), 15 * 60 * 1000);
-  p.on('exit', (code) => { clearTimeout(kill); done({ code, stdout, stderr }); });
+  p.on('exit', (code, signal) => { clearTimeout(kill); done({ code, signal, stdout, stderr }); });
 });
 out.turnSeconds = Math.round((Date.now() - t0) / 1000);
+out.hostExit = { code: turn.code, signal: turn.signal, errors: turn.stderr.split(/\r?\n/).filter((line) => /\b[A-Za-z]*Error\b|\bERR_[A-Z_]+/.test(line)).slice(0, 12).map((line) => line.slice(0, 600)) };
 
 // 4. Read back what DSH actually returned for each tool call.
-const reqs = readFileSync(logFile, 'utf8').trim().split('\n').map((l) => JSON.parse(l)).filter((r) => r.tools?.length);
-const last = reqs[reqs.length - 1];
+const logExists = existsSync(logFile);
+const reqs = [];
+let malformed = 0;
+for (const line of (logExists ? readFileSync(logFile, 'utf8') : '').split('\n').filter((line) => line.trim())) {
+  try { const request = JSON.parse(line); if (Array.isArray(request.tools) && request.tools.length) reqs.push(request); }
+  catch { malformed++; }
+}
+out.requestLog = { status: !logExists ? 'MISSING' : malformed ? 'INVALID' : reqs.length ? 'RECEIVED' : 'EMPTY', requests: reqs.length, malformed };
+const first = reqs[0] ?? { tools: [], messages: [] };
+const last = reqs[reqs.length - 1] ?? { messages: [] };
 const calls = [];
 const byId = new Map();
 for (const m of last.messages ?? []) {
@@ -132,8 +143,9 @@ const statusOf = (e) => (e?.result?.match(/^BugGPS (\S+)/) ?? [])[1] ?? (e?.isEr
 out.calls = calls.map((c) => ({ tool: c.name, status: c.name.startsWith('buggps_') ? statusOf(c) : (c.isError ? 'ERROR' : 'ok'), result: String(c.result ?? '').slice(0, 300) }));
 
 check('dsh exited 0 with no plugin load warnings', turn.code === 0 && !/skipping profile bundle|did not activate/i.test(turn.stderr), `exit=${turn.code}`);
-check('tools offered to the model include the 4 BugGPS tools', ['buggps_record', 'buggps_lock', 'buggps_verify', 'buggps_status'].every((t) => reqs[0].tools.includes(t)));
-check('skill catalog lists buggps; body loads on demand', /buggps/.test(JSON.stringify(reqs[0].messages)) && /BugGPS workflow/.test(calls[0]?.result ?? ''));
+check('scripted provider received complete request records', reqs.length > 0 && malformed === 0, out.requestLog.status);
+check('tools offered to the model include the 4 BugGPS tools', ['buggps_record', 'buggps_lock', 'buggps_verify', 'buggps_status'].every((t) => first.tools.includes(t)));
+check('skill catalog lists buggps; body loads on demand', /buggps/.test(JSON.stringify(first.messages)) && /BugGPS workflow/.test(calls[0]?.result ?? ''));
 check('status: write protection active, serve configured, browser usable', /write_protection: active/.test(calls[1]?.result ?? '') && (calls[1]?.result ?? '').includes(`-> http://127.0.0.1:${APP_PORT}/`) && /browser: (msedge|chrome)/.test(calls[1]?.result ?? ''));
 check('lock: LOCKED, managed binding, model_calls 0', statusOf(calls[2]) === 'LOCKED' && /binding: managed/.test(calls[2]?.result ?? '') && /"model_calls":0/.test(calls[2]?.result ?? ''), statusOf(calls[2]));
 check('verify before any change: NO_CODE_CHANGE', statusOf(calls[3]) === 'NO_CODE_CHANGE');
@@ -151,9 +163,9 @@ const file = process.env.BUGGPS_E2E_OUT ? resolve(process.env.BUGGPS_E2E_OUT) : 
 mkdirSync(dirname(file), { recursive: true });
 // Results are committed: replace local directories (they contain the user name) with placeholders.
 const esc = (p) => JSON.stringify(p).slice(1, -1);
-let serialized = JSON.stringify({ ...out, stderrTail: turn.stderr.slice(-1500) }, null, 2);
-for (const [path, replacement] of [[REPO, '<repo>'], [DSH_DIR, '<dsh>'], [RUN_ROOT, '<run>'], [tmpdir() + sep, '%TEMP%\\\\']]) {
-  serialized = serialized.split(esc(path)).join(replacement).split(esc(path.replaceAll('\\', '/'))).join(replacement);
+let serialized = JSON.stringify({ ...out, stderrHead: turn.stderr.slice(0, 1500), stderrTail: turn.stderr.slice(-1500) }, null, 2);
+for (const [path, replacement] of [[REPO, '<repo>'], [DSH_DIR, '<dsh>'], [RUN_ROOT, '<run>'], [tmpdir() + sep, '%TEMP%\\\\']].sort((a, b) => b[0].length - a[0].length)) {
+  for (const form of [path, path.replaceAll('\\', '/'), pathToFileURL(path).href]) serialized = serialized.split(esc(form)).join(replacement);
 }
 writeFileSync(file, serialized);
 console.log(`\n${out.passed ? 'ALL PASS' : 'FAILURES'} — dsh ${out.dshVersion}, turn ${out.turnSeconds}s — ${file}`);

@@ -82,6 +82,8 @@ Include the DSH version, operating system, expected behavior, exact verdict and 
 
 If BugGPS helped you verify a repair, a Star helps others discover it.
 
+[Host dependency compatibility and package checks](../host-compatibility.md)
+
 MIT · [LICENSE](../../LICENSE)
 
 

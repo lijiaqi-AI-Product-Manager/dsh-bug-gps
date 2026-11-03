@@ -81,6 +81,8 @@ DSH 버전, 운영체제, 기대 동작, 정확한 판정과 안전하게 공유
 
 수정을 확인하는 데 도움이 되었다면 Star로 알려 주세요.
 
+[호스트 의존성과 패키지 호환성 검사](../host-compatibility.md)
+
 MIT · [LICENSE](../../LICENSE)
 
 

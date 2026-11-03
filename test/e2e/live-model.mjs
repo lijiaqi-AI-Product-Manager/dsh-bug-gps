@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import { createWriteStream, existsSync, readFileSync } from 'node:fs';
 import { copyFile, lstat, mkdir, mkdtemp, readFile, readdir, realpath, rm, unlink, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
-import { basename, dirname, join } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { createInterface } from 'node:readline';
 import { finished } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
@@ -33,6 +33,13 @@ const env = { ...process.env, PATH: `${join(host, 'node_modules/.bin')}${process
 const command = (args) => execFileSync(process.execPath, [cli, ...args], { cwd: root, env, encoding: 'utf8', windowsHide: true, timeout: 180_000, maxBuffer: 2 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
 const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const record = { schema: 'buggps.provider-check/v1', at: new Date().toISOString(), provider: 'deepseek-account', model: 'deepseek-flash', input: 'scripted-recording', application: 'seeded-example', checks: [] };
+const pluginSource = process.env.BUGGPS_LIVE_PACKAGE ? resolve(process.env.BUGGPS_LIVE_PACKAGE) : source;
+if (pluginSource !== source) {
+  assert.ok(pluginSource.endsWith('.tgz') && existsSync(pluginSource), 'BUGGPS_LIVE_PACKAGE must point to a local package tarball');
+  const bytes = readFileSync(pluginSource);
+  record.install = { kind: 'package-tarball', file: basename(pluginSource), sha256: sha(bytes), bytes: bytes.length };
+} else record.install = { kind: 'linked-checkout' };
+record.runnerSha256 = sha(readFileSync(fileURLToPath(import.meta.url)));
 const destination = process.env.BUGGPS_E2E_OUT ?? join(source, 'bench/results', `live-provider-${record.at.replace(/[:.]/g, '-')}.json`);
 record.expectedScenarios = ['stale-discount', 'changelog-crash'];
 record.monetaryCost = null; // Token usage is reported; currency cost is not returned by this runner.
@@ -134,7 +141,7 @@ try {
   record.dshVersion = command(['--version']).trim();
   record.pluginCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: source, encoding: 'utf8' }).trim();
   command(['--profile', profile, '--from-default-profile', 'headless', '--help']);
-  command(['plugin', '--profile', profile, 'add', source]);
+  command(['plugin', '--profile', profile, 'add', pluginSource]);
   profileHash = sha(await readFile(join(profileDir, 'package.json')));
   await writeFile(join(root, 'provider.yml'), `- id: credentials
   disabled: false

@@ -81,6 +81,8 @@ DSH-Version, Betriebssystem, Sollverhalten, exaktes Ergebnis und eine sicher tei
 
 Hat BugGPS bei einer Korrektur geholfen, unterstützt ein Star die Auffindbarkeit.
 
+[Host-Abhängigkeiten und Paketkompatibilität](../host-compatibility.md)
+
 MIT · [LICENSE](../../LICENSE)
 
 

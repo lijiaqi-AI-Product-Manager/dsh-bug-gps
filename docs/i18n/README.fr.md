@@ -81,6 +81,8 @@ Indiquez la version DSH, le système, le comportement attendu, le verdict exact 
 
 Si BugGPS vous a aidé à vérifier une correction, une Star facilite sa découverte.
 
+[Dépendances de l'environnement et vérification du paquet](../host-compatibility.md)
+
 MIT · [LICENSE](../../LICENSE)
 
 
