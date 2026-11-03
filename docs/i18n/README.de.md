@@ -56,7 +56,7 @@ Desktop und CLI können unterschiedliche Profile verwenden. Eine Installation in
 | `STILL_FAILING / DIFFERENT_FAILURE` | Der ursprüngliche Fehler bleibt oder ein anderes Symptom bzw. ein Prüfpunkt schlägt fehl. |
 | `TEST_INVALID / ENV_BLOCKED` | Die Testdefinition ist unbrauchbar oder die Umgebung blockiert. Beides ist keine erfolgreiche Reproduktion. |
 | `FLAKY / STALE / CASE_TAMPERED` | Unterschiedliche Ergebnisse, Änderungen während der Prüfung oder veränderte festgeschriebene Belege. |
-| `NO_CODE_CHANGE` | Seit dem Festschreiben gibt es keine Codeänderung und damit keine Korrektur zu prüfen. |
+| `NO_CODE_CHANGE` | Unveränderter Ausgangscode. Einen beauftragten Fix fortsetzen; bei reiner Prüfung den unveränderten Stand melden. |
 | `BUDGET_EXHAUSTED / ABORTED` | Budget erschöpft oder Aufgabe abgebrochen; die Belege sind unvollständig. |
 
 ## Umfang und Grenzen

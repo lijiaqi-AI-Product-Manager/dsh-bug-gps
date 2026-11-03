@@ -57,7 +57,7 @@ Desktop and command-line instances may use different profiles. Installing into `
 | `DIFFERENT_FAILURE` | The scenario still fails, with a different symptom or unmet checkpoint. |
 | `TEST_INVALID / ENV_BLOCKED` | Unusable test definition or blocked environment; neither is a reproduced bug. |
 | `FLAKY / STALE / CASE_TAMPERED` | Inconsistent runs, code changed during verification, or modified locked evidence. |
-| `NO_CODE_CHANGE` | No code change since locking; there is no repair to verify. |
+| `NO_CODE_CHANGE` | Baseline unchanged. Continue a requested repair; verification-only requests report the unchanged code. |
 | `BUDGET_EXHAUSTED / ABORTED` | Budget exhausted or task cancelled; the evidence is incomplete. |
 
 ## Scope and limits

@@ -56,7 +56,7 @@ L'application de bureau et la CLI peuvent utiliser des profils différents. Une 
 | `STILL_FAILING / DIFFERENT_FAILURE` | L'échec initial persiste, ou un autre symptôme ou point de contrôle échoue. |
 | `TEST_INVALID / ENV_BLOCKED` | Définition inexploitable ou environnement bloqué ; ce n'est pas une reproduction réussie. |
 | `FLAKY / STALE / CASE_TAMPERED` | Résultats incohérents, code modifié pendant la vérification ou preuves verrouillées modifiées. |
-| `NO_CODE_CHANGE` | Aucune modification de code depuis le verrouillage : aucune correction à vérifier. |
+| `NO_CODE_CHANGE` | Code inchangé depuis le verrouillage. Poursuivre une correction demandée ; pour une simple vérification, signaler l'absence de changement. |
 | `BUDGET_EXHAUSTED / ABORTED` | Budget épuisé ou tâche annulée ; les preuves sont incomplètes. |
 
 ## Périmètre et limites

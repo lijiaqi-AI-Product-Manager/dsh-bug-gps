@@ -56,7 +56,7 @@ La aplicación de escritorio y la CLI pueden usar perfiles distintos. Instalar e
 | `STILL_FAILING / DIFFERENT_FAILURE` | Persiste el fallo original o falla otro síntoma o punto de control. |
 | `TEST_INVALID / ENV_BLOCKED` | Definición de prueba inutilizable o entorno bloqueado; no es una reproducción válida. |
 | `FLAKY / STALE / CASE_TAMPERED` | Resultados inconsistentes, código cambiado durante la verificación o evidencias fijadas modificadas. |
-| `NO_CODE_CHANGE` | No hay cambios de código desde el bloqueo; no existe una corrección que verificar. |
+| `NO_CODE_CHANGE` | Código sin cambios desde el bloqueo. Continuar la corrección solicitada; si solo se pidió verificar, informar que no hubo cambios. |
 | `BUDGET_EXHAUSTED / ABORTED` | Presupuesto agotado o tarea cancelada; la evidencia está incompleta. |
 
 ## Alcance y límites

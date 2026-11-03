@@ -56,7 +56,7 @@ dsh --profile PROFILE --dump-config
 | `STILL_FAILING / DIFFERENT_FAILURE` | 원래 실패가 남아 있거나 다른 증상·체크포인트에서 실패했습니다. |
 | `TEST_INVALID / ENV_BLOCKED` | 실행할 수 없는 검사 정의 또는 막힌 환경입니다. 문제 재현 성공이 아닙니다. |
 | `FLAKY / STALE / CASE_TAMPERED` | 실행 결과 불일치, 검증 중 코드 변경 또는 고정된 증거 변경을 발견했습니다. |
-| `NO_CODE_CHANGE` | 고정 이후 코드 변경이 없어 검증할 수정이 없습니다. |
+| `NO_CODE_CHANGE` | 고정 이후 코드가 바뀌지 않았습니다. 수정 요청이면 수정과 재검증을 계속하고, 검증만 요청한 경우 변경 없음을 보고합니다. |
 | `BUDGET_EXHAUSTED / ABORTED` | 예산 소진 또는 작업 취소로 증거가 완성되지 않았습니다. |
 
 ## 범위와 제한

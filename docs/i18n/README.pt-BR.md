@@ -56,7 +56,7 @@ O aplicativo desktop e a CLI podem usar perfis diferentes. Instalar em `web` nã
 | `STILL_FAILING / DIFFERENT_FAILURE` | A falha original persiste ou outro sintoma ou ponto de controle falha. |
 | `TEST_INVALID / ENV_BLOCKED` | Definição de teste inválida ou ambiente bloqueado; não é uma reprodução bem-sucedida. |
 | `FLAKY / STALE / CASE_TAMPERED` | Resultados inconsistentes, código alterado durante a verificação ou evidências fixadas modificadas. |
-| `NO_CODE_CHANGE` | Não há alteração de código desde a fixação; não existe correção para verificar. |
+| `NO_CODE_CHANGE` | Código sem alterações desde a fixação. Continuar a correção solicitada; se o pedido for apenas verificar, informar que não houve mudanças. |
 | `BUDGET_EXHAUSTED / ABORTED` | Orçamento esgotado ou tarefa cancelada; as evidências estão incompletas. |
 
 ## Escopo e limitações

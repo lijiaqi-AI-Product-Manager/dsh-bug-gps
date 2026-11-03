@@ -43,7 +43,7 @@ const NEXT = {
   [Verdict.NEEDS_REVIEW]: 'The checks pass, but the evidence is weaker than "fixed" (see review_reasons). Show the user the reasons and the patch and ask them to decide. Do not claim the bug is fixed.',
   [Verdict.STILL_FAILING]: 'Same failure as before. Keep working on the application code. Do not touch .buggps/.',
   [Verdict.DIFFERENT_FAILURE]: 'Not fixed: the symptom changed, or a step the user recorded no longer behaves as recorded (see reason). Keep working on the application code.',
-  [Verdict.NO_CODE_CHANGE]: 'No code has changed since the case was locked. Make a fix first.',
+  [Verdict.NO_CODE_CHANGE]: 'No code has changed since the case was locked. For a requested repair, continue editing application source and verify again; for verification only, report the unchanged baseline.',
   [Verdict.CASE_TAMPERED]: 'The locked case or its lock was modified, so no verdict is given. Restore .buggps/ from git, or ask the user to record again. Never edit it.',
   [Verdict.STALE]: 'Files changed while verifying. Run buggps_verify again once edits are finished.',
   [Verdict.FLAKY]: 'Results differ between runs. Report this to the user; do not claim a fix.',

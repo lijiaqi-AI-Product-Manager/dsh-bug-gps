@@ -85,7 +85,7 @@ ChartDB 的 DBML 导入曾将 GIN 索引显示为默认 B-tree。DSH 0.2.1-rc.5 
 | `NEEDS_REVIEW` | 检查通过了，但证据弱于“修好了”，需要人判断。原因见 `review_reasons`：<br>`disabled-control`：录制的操作打到了被禁用的控件<br>`negative-only`：仅检查不报错、目标消失或零匹配，仍缺少正向结果<br>`locator-drift`：动作、检查点或预期改用了其他定位候选，或旧记录缺少定位依据；需要重新确认场景<br>`evaluator-changed`：检查器版本与原失败记录不同，需在原代码上重新建立失败依据，另存新用例，保留旧记录<br>`baseline-not-reproduced`：独立基线对照未能重新出现锁定的原失败 |
 | `STILL_FAILING` | 还是原来那个失败 |
 | `DIFFERENT_FAILURE` | 症状变了但预期仍未满足，或者录制的检查点不再成立 |
-| `NO_CODE_CHANGE` | 锁定之后代码没有变化 |
+| `NO_CODE_CHANGE` | 锁定后代码未变；修复任务继续修改和复验，仅验证的任务报告未变 |
 | `CASE_TAMPERED` | 锁定的用例被改动过，不给判定 |
 | `STALE` | 验证过程中文件发生了变化 |
 | `TEST_INVALID` | 案例定义、定位器或录制无法执行；不作为应用故障 |

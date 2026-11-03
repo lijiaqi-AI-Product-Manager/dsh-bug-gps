@@ -56,7 +56,7 @@ dsh --profile PROFILE --dump-config
 | `STILL_FAILING / DIFFERENT_FAILURE` | 元の失敗が続いている、または別の症状・途中条件で失敗しています。 |
 | `TEST_INVALID / ENV_BLOCKED` | 検査定義が実行できない、または環境が利用できません。不具合の再現成功ではありません。 |
 | `FLAKY / STALE / CASE_TAMPERED` | 結果の不一致、検証中のコード変更、固定した証拠の変更を検出しました。 |
-| `NO_CODE_CHANGE` | 固定後にコードの変更がなく、検証する修正がありません。 |
+| `NO_CODE_CHANGE` | 固定後のコードに変更はありません。修正依頼では修正と再検証を続け、検証のみの依頼では変更なしと報告します。 |
 | `BUDGET_EXHAUSTED / ABORTED` | 予算上限またはキャンセルにより、証拠が揃っていません。 |
 
 ## 対象範囲と制限

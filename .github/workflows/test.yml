@@ -53,9 +53,9 @@ jobs:
             $auditFile = Join-Path $env:RUNNER_TEMP "$scope-audit.json"
             $errorFile = Join-Path $env:RUNNER_TEMP "$scope-audit.stderr.log"
             if ($scope -eq 'host') {
-              npm audit --prefix test/fixtures/host-rc5 --omit=dev --json --fetch-retries=1 --fetch-timeout=30000 1> $auditFile 2> $errorFile
+              npm audit --prefix test/fixtures/host-rc5 --omit=dev --json --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.npmjs.org 1> $auditFile 2> $errorFile
             } else {
-              npm audit --json --fetch-retries=1 --fetch-timeout=30000 1> $auditFile 2> $errorFile
+              npm audit --json --fetch-retries=1 --fetch-timeout=30000 --registry=https://registry.npmjs.org 1> $auditFile 2> $errorFile
             }
             $auditExit = $LASTEXITCODE
             $audit = Get-Content -LiteralPath $auditFile -Raw | ConvertFrom-Json
