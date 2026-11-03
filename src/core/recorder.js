@@ -515,8 +515,40 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
     steps.push(ev);
     lastFillIdentity = ev.action === 'fill' ? identity : null;
   };
-  await context.exposeBinding('__buggpsRecord', (_src, ev) => { recordEvent(ev); return view(); });
-  if (toolbar) await context.exposeBinding('__buggpsGetState', () => view());
+  const toolbarDocuments = new WeakMap();
+  const validDocument = (id) => typeof id === 'string' && id.length > 0 && id.length <= 128;
+  const registerToolbar = (frame, id) => {
+    if (!frame || !validDocument(id)) return;
+    let entry = toolbarDocuments.get(frame);
+    if (!entry) { entry = { current: null, documents: new Map() }; toolbarDocuments.set(frame, entry); }
+    if (entry.documents.has(id)) return;
+    entry.current = id;
+    entry.documents.set(id, new Map());
+    if (entry.documents.size > 64) entry.documents.delete(entry.documents.keys().next().value);
+  };
+  const orderedPreference = (source, ev) => {
+    // Existing callers without a toolbar envelope retain their original behavior.
+    if (!('documentId' in ev) && !('sequence' in ev)) return ev;
+    const entry = toolbarDocuments.get(source.frame);
+    if (!validDocument(ev.documentId) || !Number.isSafeInteger(ev.sequence) || ev.sequence < 1 ||
+        !entry || entry.current !== ev.documentId) return null;
+    const latest = entry.documents.get(ev.documentId);
+    const fresh = { type: 'toolbar' };
+    for (const key of ['language', 'collapsed', 'corner']) {
+      if (!(key in ev) || ev.sequence <= (latest.get(key) ?? 0)) continue;
+      latest.set(key, ev.sequence);
+      fresh[key] = ev[key];
+    }
+    return fresh;
+  };
+  await context.exposeBinding('__buggpsRecord', (source, ev) => {
+    recordEvent(ev?.type === 'toolbar' ? orderedPreference(source, ev) : ev);
+    return view();
+  });
+  if (toolbar) await context.exposeBinding('__buggpsGetState', (source, meta) => {
+    registerToolbar(source.frame, meta?.documentId);
+    return view();
+  });
   await context.addInitScript(RECORDER_SCRIPT);
   if (toolbar) await context.addInitScript(TOOLBAR_SCRIPT);
   const page = await context.newPage();

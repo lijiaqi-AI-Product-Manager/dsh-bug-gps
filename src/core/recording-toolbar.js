@@ -142,7 +142,8 @@ function installToolbar(i18n) {
     let finishing = false;
     let pickerCollapsed = false;
     let preferenceRequest = 0;
-    let preferenceTail = Promise.resolve();
+    const newDocumentId = () => globalThis.crypto?.randomUUID?.() ?? Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+    let documentId = newDocumentId();
     let submissionFailed = false;
     const pendingSubmissions = new Set();
     const pendingPreferences = new Map();
@@ -211,6 +212,7 @@ function installToolbar(i18n) {
     const submit = (event) => {
       const preference = event.type === 'toolbar';
       const request = preference ? ++preferenceRequest : null;
+      if (preference) event = { ...event, documentId, sequence: request };
       const keys = preference ? ['language', 'collapsed', 'corner'].filter((key) => key in event) : [];
       for (const key of keys) pendingPreferences.set(key, { request, value: event[key] });
       const clearPreferences = () => {
@@ -224,10 +226,8 @@ function installToolbar(i18n) {
           clearPreferences(); submissionFailed = true; notice = 'disconnected'; render(); return false;
         }
       };
-      // Preserve preference intent when requests or replies arrive at different times.
-      // Stop and incomplete-draft markers remain available if a preference is stalled.
-      const completed = preference ? preferenceTail.then(send) : send();
-      if (preference) preferenceTail = completed;
+      // Each preference is acknowledged independently; a delayed reply cannot block the next choice.
+      const completed = send();
       pendingSubmissions.add(completed);
       void completed.then(() => pendingSubmissions.delete(completed));
       return completed;
@@ -283,7 +283,15 @@ function installToolbar(i18n) {
     el('incomplete').addEventListener('click', () => void finish(true));
     el('continue').addEventListener('click', () => { warning = false; render(); });
     el('collapse').addEventListener('click', () => { pickerCollapsed = false; state.collapsed = !state.collapsed; render(); void submit({ type: 'toolbar', collapsed: state.collapsed }); });
-    el('language').addEventListener('change', () => { state.language = el('language').value; render(); void submit({ type: 'toolbar', language: state.language }); });
+    const changeLanguage = () => {
+      const language = el('language').value;
+      if (!i18n[language] || language === state.language && !submissionFailed) return;
+      state.language = language;
+      void submit({ type: 'toolbar', language });
+      render();
+    };
+    el('language').addEventListener('input', changeLanguage);
+    el('language').addEventListener('change', changeLanguage);
     el('move').addEventListener('click', () => { const corners = ['br', 'bl', 'tl', 'tr']; state.corner = corners[(corners.indexOf(state.corner) + 1) % corners.length]; render(); void submit({ type: 'toolbar', corner: state.corner }); });
     el('pin').addEventListener('click', () => { void submit({ type: 'pin' }); notice = 'key-set'; render(); closeChoices(); });
     for (const button of root.querySelectorAll('button[data-k]')) button.addEventListener('click', () => {
@@ -301,7 +309,14 @@ function installToolbar(i18n) {
     });
     render();
     update(window.__buggpsToolbarState);
-    Promise.resolve(window.__buggpsGetState()).then(update).catch(() => { notice = 'disconnected'; render(); });
+    const registerDocument = () => Promise.resolve(window.__buggpsGetState({ documentId })).then(update).catch(() => { notice = 'disconnected'; render(); });
+    void registerDocument();
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      documentId = newDocumentId();
+      pendingPreferences.clear();
+      void registerDocument();
+    });
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true }); else mount();
 }

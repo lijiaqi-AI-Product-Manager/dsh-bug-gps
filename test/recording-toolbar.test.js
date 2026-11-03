@@ -234,3 +234,108 @@ test('picking uncovers a page result and restores the acceptance summary afterwa
   assert.equal(rec.result.expectation.kind, 'visible');
   assert.equal((await rec.stop()).filter((step) => !['goto', 'viewport'].includes(step.action)).length, 0);
 });
+
+test('a language input keeps its intent when older state arrives before change', async (t) => {
+  const { rec, page, ui } = await begin(t);
+  const observed = await page.evaluate(async () => {
+    const root = document.getElementById('__buggps_toolbar').shadowRoot;
+    const language = root.getElementById('language');
+    const record = window.__buggpsRecord;
+    let release;
+    const gate = new Promise((resolve) => { release = resolve; });
+    window.__buggpsRecord = async (event) => {
+      if (event.type === 'toolbar' && event.language === 'en') await gate;
+      return record(event);
+    };
+    language.value = 'en';
+    language.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+    const previous = await window.__buggpsGetState();
+    window.__buggpsUpdateToolbar(previous);
+    const selected = language.value;
+    language.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    release();
+    return { selected, previousLanguage: previous.language };
+  });
+  assert.equal(observed.previousLanguage, 'zh-CN');
+  assert.equal(observed.selected, 'en');
+  await ui.getByRole('button', { name: 'Expected text', exact: true }).waitFor();
+  assert.deepEqual((await rec.stop()).map((step) => step.action), ['goto']);
+});
+
+test('the next page keeps the latest language while an older reply is pending', { timeout: 10000 }, async (t) => {
+  let releaseEnglish;
+  let japaneseApplied;
+  let englishSettled;
+  const englishGate = new Promise((resolve) => { releaseEnglish = resolve; });
+  const japanese = new Promise((resolve) => { japaneseApplied = resolve; });
+  const english = new Promise((resolve) => { englishSettled = resolve; });
+  const originalNewContext = env.browser.newContext;
+  env.browser.newContext = async (...args) => {
+    const context = await originalNewContext.apply(env.browser, args);
+    const expose = context.exposeBinding.bind(context);
+    context.exposeBinding = (name, callback, options) => expose(name, name === '__buggpsRecord' ? async (source, event) => {
+      if (event.type === 'toolbar' && event.language === 'en') await englishGate;
+      const view = await callback(source, event);
+      if (event.type === 'toolbar' && event.language === 'ja') japaneseApplied();
+      if (event.type === 'toolbar' && event.language === 'en') englishSettled();
+      return view;
+    } : callback, options);
+    return context;
+  };
+  let timer;
+  try {
+    const { rec, page, ui } = await begin(t);
+    env.browser.newContext = originalNewContext;
+    await ui.locator('select').selectOption('en');
+    await ui.locator('select').selectOption('ja');
+    await Promise.race([japanese, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Latest language was not delivered while an older reply was pending')), 1800); })]);
+    clearTimeout(timer);
+    await page.getByRole('link', { name: 'About', exact: true }).click();
+    await ui.getByRole('button', { name: '期待するテキスト', exact: true }).waitFor();
+    releaseEnglish();
+    await english;
+    const state = await page.evaluate(() => window.__buggpsGetState());
+    assert.equal(state.language, 'ja');
+    await ui.getByRole('button', { name: '期待するテキスト', exact: true }).waitFor();
+    assert.deepEqual((await rec.stop()).map((step) => step.action), ['goto', 'click']);
+  } finally {
+    clearTimeout(timer);
+    releaseEnglish();
+    env.browser.newContext = originalNewContext;
+  }
+});
+
+test('a delayed language change keeps independent collapse and corner preferences', { timeout: 10000 }, async (t) => {
+  const { rec, page, ui } = await begin(t);
+  await page.evaluate(() => {
+    const record = window.__buggpsRecord;
+    let release;
+    const gate = new Promise((resolve) => { release = resolve; });
+    window.__releaseToolbarPreference = release;
+    window.__buggpsRecord = async (event) => {
+      if (event.type === 'toolbar' && event.language === 'en') await gate;
+      return record(event);
+    };
+  });
+  try {
+    await ui.locator('select').selectOption('en');
+    await ui.locator('summary').click();
+    await ui.getByRole('button', { name: 'Move to another corner', exact: true }).click();
+    await ui.getByRole('button', { name: 'Collapse toolbar', exact: true }).click();
+    await page.waitForFunction(async () => {
+      const view = await window.__buggpsGetState();
+      return view.collapsed && view.corner === 'bl';
+    }, undefined, { timeout: 3000 });
+    await page.evaluate(() => window.__releaseToolbarPreference());
+    await page.waitForFunction(async () => (await window.__buggpsGetState()).language === 'en', undefined, { timeout: 3000 });
+    const state = await page.evaluate(() => window.__buggpsGetState());
+    assert.equal(state.collapsed, true);
+    assert.equal(state.corner, 'bl');
+    await page.getByRole('link', { name: 'About', exact: true }).click();
+    await ui.getByRole('button', { name: 'Expand toolbar', exact: true }).waitFor();
+    assert.equal(await ui.evaluate((node) => node.style.left), '12px');
+    assert.deepEqual((await rec.stop()).map((step) => step.action), ['goto', 'click']);
+  } finally {
+    await page.evaluate(() => window.__releaseToolbarPreference?.()).catch(() => {});
+  }
+});
