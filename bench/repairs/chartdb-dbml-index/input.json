@@ -1,0 +1,159 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "scripted",
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "Toggle bold",
+          "child": {
+            "role": "img",
+            "name": "PostgreSQL"
+          },
+          "nameWithChild": true
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "radio",
+          "name": "DBML"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "paste",
+      "editor": "monaco",
+      "mode": "replace-all",
+      "target": [
+        {
+          "by": "css",
+          "value": "div:has(> div:text-is(\"DBML Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+        }
+      ],
+      "wasEnabled": true,
+      "value": "Table documents {\n id int [pk]\n body jsonb\n indexes {\n body [type: gin, name: 'body_search']\n }\n}",
+      "check": {
+        "kind": "value",
+        "target": [
+          {
+            "by": "css",
+            "value": "div:has(> div:text-is(\"DBML Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+          }
+        ],
+        "equals": "Table documents {\n id int [pk]\n body jsonb\n indexes {\n body [type: gin, name: 'body_search']\n }\n}"
+      }
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "name": "Import"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "documents",
+          "within": {
+            "role": "button",
+            "name": "documents"
+          },
+          "index": 0
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Indexes",
+          "within": {
+            "role": "region",
+            "name": "documents"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "Indexes"
+        }
+      ],
+      "wasEnabled": true
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "button",
+          "within": {
+            "role": "region",
+            "name": "Indexes"
+          },
+          "index": 2
+        },
+        {
+          "by": "role",
+          "role": "button"
+        }
+      ],
+      "wasEnabled": true
+    }
+  ],
+  "expectation": {
+    "kind": "text",
+    "target": [
+      {
+        "by": "css",
+        "value": "label[for=\"indexType\"] + button"
+      }
+    ],
+    "equals": "GIN"
+  },
+  "also": [
+    {
+      "kind": "value",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "within": {
+            "role": "dialog"
+          }
+        }
+      ],
+      "equals": "body_search"
+    }
+  ],
+  "observeMs": 1000,
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  }
+}

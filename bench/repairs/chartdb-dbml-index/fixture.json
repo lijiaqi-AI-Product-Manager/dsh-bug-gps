@@ -1,0 +1,34 @@
+{
+  "schema": "buggps.repair-fixture/v1",
+  "application": {
+    "repository": "https://github.com/chartdb/chartdb",
+    "originalCommit": "0b73295922f87b3b59bc8ef98b27a7328b6d66c0",
+    "sourceTree": "e62a8c5b2e616d874590c99710ef54ae2798022d",
+    "sourceTreeMatchesOriginal": true,
+    "copiedTrackedFiles": 759,
+    "referenceHistorySupplied": false,
+    "referencePatchSupplied": false
+  },
+  "case": "chartdb-dbml-index",
+  "input": {
+    "file": "input.json",
+    "sha256": "930e65273165458fb0571b9a0952ca177b03d7f552f863d39011c032ec4f886d",
+    "canonicalSha256": "137a68e3ea00c933755d0248ea4f79bd6c594c93777a9be2317ca211a8b75789"
+  },
+  "patch": {
+    "file": "repair.patch",
+    "sha256": "8af32da040ce5fa35efcdb7764d2c81bed47a5c6492e7bf4580a839eda017d07"
+  },
+  "license": {
+    "file": "LICENSE",
+    "name": "GNU Affero General Public License version 3",
+    "source": "https://github.com/chartdb/chartdb/blob/0b73295922f87b3b59bc8ef98b27a7328b6d66c0/LICENSE"
+  },
+  "startup": {
+    "producer": "bench/vite-chartdb-serve.mjs",
+    "sha256": "0f058cc653f232b73a998955a25acee14f4d9228d52eea0540a2063c8c61ec91",
+    "promotionDialog": "suppressed only",
+    "rawCapturedSha256": "0f058cc653f232b73a998955a25acee14f4d9228d52eea0540a2063c8c61ec91",
+    "hashKind": "sha256 of UTF-8 source with LF line endings"
+  }
+}

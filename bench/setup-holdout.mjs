@@ -9,6 +9,9 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 const source = fileURLToPath(new URL('..', import.meta.url));
 const manifest = JSON.parse(await readFile(new URL('./holdout-cases.json', import.meta.url), 'utf8'));
+const requested = new Set(process.argv.slice(2));
+if ([...requested].some((id) => !manifest.cases.some((spec) => spec.id === id))) throw new Error('Unknown dataset case');
+const selected = manifest.cases.filter((spec) => !requested.size || requested.has(spec.id));
 const sha = (text) => createHash('sha256').update(text).digest('hex');
 const stateFile = resolve(process.env.BUGGPS_HOLDOUT_STATE ?? join(source, '.buggps/holdout/workspaces.json'));
 await mkdir(dirname(stateFile), { recursive: true });
@@ -20,7 +23,7 @@ const npmCli = [process.env.npm_execpath, join(dirname(process.execPath), 'node_
 if (!npmCli) throw new Error('npm CLI not found');
 for (const d of ['repos', 'cases', 'deps']) await mkdir(join(root, d), { recursive: true });
 const git = (args, cwd = root) => execFileSync('git', ['-c', 'core.longpaths=true', ...args], { cwd, encoding: 'utf8', windowsHide: true, timeout: 180_000, maxBuffer: 4 * 1024 * 1024 });
-for (const spec of manifest.cases) {
+for (const spec of selected) {
   let entry = state.cases.find((c) => c.id === spec.id);
   if (entry?.status === 'READY') continue;
   if (!entry) { entry = { id: spec.id, attempts: [] }; state.cases.push(entry); }
@@ -63,4 +66,6 @@ for (const spec of manifest.cases) {
   } catch (error) { entry.status = 'ENV_BLOCKED'; entry.reason = String(error.message).replaceAll(root, '<fixture-root>').slice(0, 1200); }
   await save(); console.log(JSON.stringify({ case: spec.id, status: entry.status }));
 }
-console.log(JSON.stringify({ cases: manifest.denominator, ready: state.cases.filter((c) => c.status === 'READY').length, stateFile }));
+const ready = selected.filter((spec) => state.cases.some((entry) => entry.id === spec.id && entry.status === 'READY')).length;
+console.log(JSON.stringify({ cases: manifest.denominator, selected: selected.length, ready, stateFile }));
+if (ready !== selected.length) process.exitCode = 1;

@@ -1,0 +1,507 @@
+{
+  "schema": "buggps.account-project-check/v1",
+  "at": "2026-11-03T01:29:26.244Z",
+  "scope": "One historical ChartDB DBML-import scenario; scripted input, existing account workflow, fixed checks. Expanded regression evidence, not a blind evaluation or field success rate.",
+  "producer": {
+    "name": "BugGPS",
+    "commit": "be10a707523e6ac38a0682b20cebddbdc9d19932",
+    "evaluator": "buggps.oracle/v8"
+  },
+  "host": {
+    "name": "DeepSeek Harness",
+    "version": "0.2.1-rc.5",
+    "interface": "CLI",
+    "platform": "win32"
+  },
+  "application": {
+    "repository": "https://github.com/chartdb/chartdb",
+    "originalCommit": "0b73295922f87b3b59bc8ef98b27a7328b6d66c0",
+    "sourceTree": "e62a8c5b2e616d874590c99710ef54ae2798022d",
+    "sourceTreeMatchesOriginal": true,
+    "copiedTrackedFiles": 759,
+    "referenceHistorySupplied": false,
+    "referencePatchSupplied": false
+  },
+  "input": {
+    "fixture": "bench/repairs/chartdb-dbml-index/input.json",
+    "source": "bench/holdout-recordings/v5/chartdb-1089.json",
+    "sourceSha256": "45e7db227b2f57737e6aa190b79344dda5facc920e62c0f42edc424d1e85c9b3",
+    "executionSha256": "930e65273165458fb0571b9a0952ca177b03d7f552f863d39011c032ec4f886d",
+    "canonicalExecutionSha256": "137a68e3ea00c933755d0248ea4f79bd6c594c93777a9be2317ca211a8b75789",
+    "transformation": "provenance metadata removed; executable steps, checks, expectations, observation and browser settings remain identical",
+    "steps": 8
+  },
+  "account": {
+    "provider": "deepseek-account",
+    "model": "deepseek-flash",
+    "durationMs": 206500,
+    "durationScope": "DSH session including lock, source inspection, editing and verification; preparation and application regressions are separate",
+    "toolCalls": [
+      {
+        "tool": "skill",
+        "status": "completed"
+      },
+      {
+        "tool": "buggps_status",
+        "status": "OK"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "buggps_lock",
+        "status": "LOCKED"
+      },
+      {
+        "tool": "buggps_verify",
+        "status": "NO_CODE_CHANGE"
+      },
+      {
+        "tool": "working_directory",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "status": "completed"
+      },
+      {
+        "tool": "glob",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "generic",
+        "status": "error"
+      },
+      {
+        "tool": "grep",
+        "status": "completed"
+      },
+      {
+        "tool": "edit",
+        "status": "completed"
+      },
+      {
+        "tool": "edit",
+        "status": "completed"
+      },
+      {
+        "tool": "edit",
+        "status": "completed"
+      },
+      {
+        "tool": "edit",
+        "status": "completed"
+      },
+      {
+        "tool": "edit",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "read",
+        "status": "completed"
+      },
+      {
+        "tool": "buggps_verify",
+        "status": "VERIFIED"
+      }
+    ],
+    "toolCallCount": 39,
+    "failedSearchCalls": 1,
+    "usageEvents": [
+      {
+        "step": 1,
+        "inputTokens": 3075,
+        "outputTokens": 68,
+        "cacheReadTokens": 2688,
+        "cacheWriteTokens": 0,
+        "totalTokens": 5831
+      },
+      {
+        "step": 2,
+        "inputTokens": 837,
+        "outputTokens": 159,
+        "cacheReadTokens": 5760,
+        "cacheWriteTokens": 0,
+        "totalTokens": 6756
+      },
+      {
+        "step": 3,
+        "inputTokens": 1400,
+        "outputTokens": 121,
+        "cacheReadTokens": 6656,
+        "cacheWriteTokens": 0,
+        "totalTokens": 8177
+      },
+      {
+        "step": 4,
+        "inputTokens": 395,
+        "outputTokens": 140,
+        "cacheReadTokens": 8064,
+        "cacheWriteTokens": 0,
+        "totalTokens": 8599
+      },
+      {
+        "step": 5,
+        "inputTokens": 172,
+        "outputTokens": 86,
+        "cacheReadTokens": 8576,
+        "cacheWriteTokens": 0,
+        "totalTokens": 8834
+      },
+      {
+        "step": 6,
+        "inputTokens": 1102,
+        "outputTokens": 134,
+        "cacheReadTokens": 8832,
+        "cacheWriteTokens": 0,
+        "totalTokens": 10068
+      },
+      {
+        "step": 7,
+        "inputTokens": 5629,
+        "outputTokens": 105,
+        "cacheReadTokens": 9984,
+        "cacheWriteTokens": 0,
+        "totalTokens": 15718
+      },
+      {
+        "step": 8,
+        "inputTokens": 1440,
+        "outputTokens": 167,
+        "cacheReadTokens": 15616,
+        "cacheWriteTokens": 0,
+        "totalTokens": 17223
+      },
+      {
+        "step": 9,
+        "inputTokens": 2036,
+        "outputTokens": 119,
+        "cacheReadTokens": 17152,
+        "cacheWriteTokens": 0,
+        "totalTokens": 19307
+      },
+      {
+        "step": 10,
+        "inputTokens": 1244,
+        "outputTokens": 138,
+        "cacheReadTokens": 19200,
+        "cacheWriteTokens": 0,
+        "totalTokens": 20582
+      },
+      {
+        "step": 11,
+        "inputTokens": 763,
+        "outputTokens": 86,
+        "cacheReadTokens": 20480,
+        "cacheWriteTokens": 0,
+        "totalTokens": 21329
+      },
+      {
+        "step": 12,
+        "inputTokens": 1917,
+        "outputTokens": 377,
+        "cacheReadTokens": 21248,
+        "cacheWriteTokens": 0,
+        "totalTokens": 23542
+      },
+      {
+        "step": 13,
+        "inputTokens": 3253,
+        "outputTokens": 82,
+        "cacheReadTokens": 23424,
+        "cacheWriteTokens": 0,
+        "totalTokens": 26759
+      },
+      {
+        "step": 14,
+        "inputTokens": 150,
+        "outputTokens": 46,
+        "cacheReadTokens": 26624,
+        "cacheWriteTokens": 0,
+        "totalTokens": 26820
+      },
+      {
+        "step": 15,
+        "inputTokens": 211,
+        "outputTokens": 88,
+        "cacheReadTokens": 26624,
+        "cacheWriteTokens": 0,
+        "totalTokens": 26923
+      },
+      {
+        "step": 16,
+        "inputTokens": 452,
+        "outputTokens": 227,
+        "cacheReadTokens": 26880,
+        "cacheWriteTokens": 0,
+        "totalTokens": 27559
+      },
+      {
+        "step": 17,
+        "inputTokens": 1420,
+        "outputTokens": 145,
+        "cacheReadTokens": 27520,
+        "cacheWriteTokens": 0,
+        "totalTokens": 29085
+      },
+      {
+        "step": 18,
+        "inputTokens": 2798,
+        "outputTokens": 624,
+        "cacheReadTokens": 29056,
+        "cacheWriteTokens": 0,
+        "totalTokens": 32478
+      },
+      {
+        "step": 19,
+        "inputTokens": 2837,
+        "outputTokens": 129,
+        "cacheReadTokens": 32384,
+        "cacheWriteTokens": 0,
+        "totalTokens": 35350
+      },
+      {
+        "step": 20,
+        "inputTokens": 1134,
+        "outputTokens": 155,
+        "cacheReadTokens": 35328,
+        "cacheWriteTokens": 0,
+        "totalTokens": 36617
+      },
+      {
+        "step": 21,
+        "inputTokens": 790,
+        "outputTokens": 216,
+        "cacheReadTokens": 36608,
+        "cacheWriteTokens": 0,
+        "totalTokens": 37614
+      },
+      {
+        "step": 22,
+        "inputTokens": 3859,
+        "outputTokens": 1242,
+        "cacheReadTokens": 37504,
+        "cacheWriteTokens": 0,
+        "totalTokens": 42605
+      },
+      {
+        "step": 23,
+        "inputTokens": 161,
+        "outputTokens": 529,
+        "cacheReadTokens": 42496,
+        "cacheWriteTokens": 0,
+        "totalTokens": 43186
+      },
+      {
+        "step": 24,
+        "inputTokens": 162,
+        "outputTokens": 742,
+        "cacheReadTokens": 43136,
+        "cacheWriteTokens": 0,
+        "totalTokens": 44040
+      },
+      {
+        "step": 25,
+        "inputTokens": 174,
+        "outputTokens": 429,
+        "cacheReadTokens": 44032,
+        "cacheWriteTokens": 0,
+        "totalTokens": 44635
+      },
+      {
+        "step": 26,
+        "inputTokens": 741,
+        "outputTokens": 115,
+        "cacheReadTokens": 44544,
+        "cacheWriteTokens": 0,
+        "totalTokens": 45400
+      },
+      {
+        "step": 27,
+        "inputTokens": 1147,
+        "outputTokens": 615,
+        "cacheReadTokens": 45312,
+        "cacheWriteTokens": 0,
+        "totalTokens": 47074
+      }
+    ],
+    "monetaryCost": null
+  },
+  "checks": {
+    "initialVerification": "NO_CODE_CHANGE",
+    "lockedOriginalTally": {
+      "fail": 3
+    },
+    "finalVerdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "freshOriginal": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "matches": true
+    },
+    "protectedCaseAndLockUnchanged": true,
+    "protectedTestsConfigurationAndDraftUnchanged": true,
+    "sourceOnlyPatch": true,
+    "finalNamesVerdict": true,
+    "caseSha256": "a6f70ebc26c034ed7fa7f153c250727e96de5c1e5bc1c4eaba6f0fb62262dff0",
+    "lockSha256": "fc45712ba2a522f84b6e804cce222c34be633e8f77ea61a687780408db9796c6"
+  },
+  "regressions": {
+    "scope": "12 existing DBML-import test files",
+    "files": [
+      "src/lib/dbml/dbml-import/__tests__/composite-pk-name.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-array-fields.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-cardinality-import.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-character-varying.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-check-constraints-validation.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-import-cases.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-import-fantasy-examples.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-import.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-integration.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-multi-schema-relationships.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-pk-not-null.test.ts",
+      "src/lib/dbml/dbml-import/__tests__/dbml-schema-handling.test.ts"
+    ],
+    "before": {
+      "exitCode": 0,
+      "passed": 99,
+      "failed": 0,
+      "pending": 0,
+      "total": 99,
+      "success": true,
+      "reportSha256": "7d12a7ca1dfa25f5617b4901a29ccfbd60dce0ba611e4b8a61230d83a3deda0b"
+    },
+    "after": {
+      "exitCode": 0,
+      "passed": 99,
+      "failed": 0,
+      "pending": 0,
+      "total": 99,
+      "success": true,
+      "reportSha256": "ad681a8efc5c1cc0ac381c52e9d9d86b2481aae1d3b2a787363d98d778300820"
+    }
+  },
+  "patch": {
+    "file": "bench/repairs/chartdb-dbml-index/repair.patch",
+    "sha256": "8af32da040ce5fa35efcdb7764d2c81bed47a5c6492e7bf4580a839eda017d07",
+    "changedFiles": [
+      "src/lib/dbml/dbml-import/dbml-import.ts"
+    ],
+    "licenseFile": "bench/repairs/chartdb-dbml-index/LICENSE"
+  },
+  "lifecycle": {
+    "exitCode": 0,
+    "processRangeEmpty": true,
+    "rawEventsPublished": false
+  },
+  "preparation": {
+    "attempts": 2,
+    "modelSessions": 1,
+    "earlierAttempt": {
+      "phase": "before model invocation",
+      "modelCalls": 0,
+      "result": "driver exit-field mismatch; original 99 application regressions passed"
+    }
+  },
+  "inputAudit": {
+    "referencedPaths": 28,
+    "outsideProjectPaths": 0,
+    "networkShellOrDelegationToolCalls": 0,
+    "referencePatchSupplied": false,
+    "referenceHistorySupplied": false
+  },
+  "outcome": "PASSED"
+}

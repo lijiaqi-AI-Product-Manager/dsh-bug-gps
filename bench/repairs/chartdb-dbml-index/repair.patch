@@ -1,0 +1,63 @@
+diff --git a/src/lib/dbml/dbml-import/dbml-import.ts b/src/lib/dbml/dbml-import/dbml-import.ts
+index aa1196c..f393b02 100644
+--- a/src/lib/dbml/dbml-import/dbml-import.ts
++++ b/src/lib/dbml/dbml-import/dbml-import.ts
+@@ -15,7 +15,12 @@ import {
+ import { defaultTableColor } from '@/lib/colors';
+ import { DatabaseType } from '@/lib/domain/database-type';
+ import type Field from '@dbml/core/types/model_structure/field';
+-import { getTableIndexesWithPrimaryKey, type DBIndex } from '@/lib/domain';
++import {
++    getTableIndexesWithPrimaryKey,
++    INDEX_TYPES,
++    type DBIndex,
++    type IndexType,
++} from '@/lib/domain';
+ import {
+     DBCustomTypeKind,
+     type DBCustomType,
+@@ -288,6 +293,7 @@ interface DBMLIndex {
+     unique?: boolean;
+     name?: string;
+     pk?: boolean; // Primary key index flag
++    type?: string | null; // Index method (e.g. "gin", "hash")
+ }
+ 
+ interface DBMLTable {
+@@ -362,6 +368,20 @@ const relationToCardinality = (relation: '1' | '*'): Cardinality => {
+     return relation === '1' ? 'one' : 'many';
+ };
+ 
++// Normalize the index type declared in the DBML index attributes
++// (e.g. `body [type: gin, name: 'body_search']`) to a supported index type.
++const normalizeDBMLIndexType = (
++    indexType?: string | null
++): IndexType | undefined => {
++    if (!indexType) return undefined;
++
++    const normalizedIndexType = indexType.trim().toLowerCase();
++
++    return INDEX_TYPES.includes(normalizedIndexType as IndexType)
++        ? (normalizedIndexType as IndexType)
++        : undefined;
++};
++
+ export const importDBMLToDiagram = async (
+     dbmlContent: string,
+     options: {
+@@ -621,6 +641,7 @@ export const importDBMLToDiagram = async (
+                                     unique: dbmlIndex.unique || false,
+                                     name: indexName,
+                                     pk: Boolean(dbmlIndex.pk) || false,
++                                    type: dbmlIndex.type,
+                                 };
+                             }) || [],
+                     });
+@@ -832,6 +853,7 @@ export const importDBMLToDiagram = async (
+                                 `idx_${table.name}_${(dbmlIndex.columns as string[]).join('_')}`,
+                             fieldIds,
+                             unique: dbmlIndex.unique || false,
++                            type: normalizeDBMLIndexType(dbmlIndex.type),
+                             createdAt: Date.now(),
+                         };
+                     }) || [];
