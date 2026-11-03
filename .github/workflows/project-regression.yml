@@ -46,7 +46,7 @@ jobs:
           assert.equal(new Set(all).size, all.length);
           assert.ok(all.length > 0 && all.length <= 24);
           assert.ok(all.every((id) => /^[a-z0-9][a-z0-9-]{0,79}$/.test(id)));
-          const selected = process.env.BUGGPS_RELEASE_CASES === '1' ? all : ['it-tools-799', 'it-tools-1368', 'drawdb-1037'];
+          const selected = process.env.BUGGPS_RELEASE_CASES === '1' ? all : ['it-tools-799', 'it-tools-1368', 'drawdb-1037', 'it-tools-1359'];
           assert.ok(selected.every((id) => all.includes(id)));
           appendFileSync(process.env.GITHUB_OUTPUT, 'cases=' + JSON.stringify(selected) + '\n');
           console.log(JSON.stringify({ release: process.env.BUGGPS_RELEASE_CASES === '1', selected, denominator: manifest.denominator }));
