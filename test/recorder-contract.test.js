@@ -33,10 +33,12 @@ test('password is stored as a secret reference, checkpoint and also-check are re
   const { page } = rec;
   page.on('dialog', (d) => d.accept(d.defaultValue())); // the user confirms what is shown
   await page.getByRole('textbox', { name: 'User' }).fill('alice');
+  await page.locator('#__buggps_toolbar summary').click();
   await page.getByRole('button', { name: /此刻应为/ }).click();
   await page.getByRole('textbox', { name: 'User' }).click();
   await page.getByLabel('Password').fill(PASSWORD);
   await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.locator('#__buggps_toolbar summary').click();
   await page.getByRole('button', { name: /不应报错/ }).click();
   await page.getByRole('button', { name: /预期文本/ }).click();
   await page.locator('#out').click();

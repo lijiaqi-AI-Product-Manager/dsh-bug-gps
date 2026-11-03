@@ -32,7 +32,8 @@
     "test:package": "node test/package-smoke.mjs",
     "test:live-model": "node test/e2e/live-model.mjs",
     "bench": "node bench/run.mjs",
-    "demo:gif": "node docs/demo/make-demo.mjs"
+    "demo:gif": "node docs/demo/make-demo.mjs",
+    "demo:toolbar": "node docs/demo/capture-toolbar.mjs"
   },
   "engines": {
     "node": ">=20",

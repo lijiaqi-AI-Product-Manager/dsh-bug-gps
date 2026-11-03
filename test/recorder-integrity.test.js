@@ -33,6 +33,7 @@ test('typing after a checkpoint preserves both values and replays the original s
   const rec = await recording(t);
   const page = rec.page;
   await page.getByLabel('User').fill('alice');
+  await page.locator('#__buggps_toolbar summary').click();
   await page.getByRole('button', { name: /此刻应为/ }).click();
   await page.getByLabel('User').click();
   await page.getByLabel('User').fill('bob');
@@ -85,6 +86,7 @@ test('Escape cancels picking without recording an application keypress', async (
 test('typing after pinning does not overwrite the pinned input', async (t) => {
   const rec = await recording(t);
   await rec.page.getByLabel('User').fill('first');
+  await rec.page.locator('#__buggps_toolbar summary').click();
   await rec.page.getByRole('button', { name: /上一步是关键/ }).click();
   await rec.page.getByLabel('User').fill('second');
   const fills = (await rec.stop()).filter((s) => s.action === 'fill');

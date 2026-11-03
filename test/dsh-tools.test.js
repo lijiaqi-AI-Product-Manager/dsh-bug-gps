@@ -129,6 +129,7 @@ test('record: toolbar flow saves a draft the agent can lock', async () => {
           await page.getByRole('textbox', { name: 'Coupon' }).fill('SAVE10');
           await page.getByRole('button', { name: 'Apply coupon' }).click();
           await page.getByRole('button', { name: 'Remove Apple' }).click();
+          await page.locator('#__buggps_toolbar summary').click();
           await page.getByRole('button', { name: /上一步是关键/ }).click();
           await page.getByRole('button', { name: /预期文本/ }).click();
           await page.getByTestId('total').click();

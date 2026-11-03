@@ -5,13 +5,29 @@
 import { secretName } from './secrets.js';
 import { EnvBlockedError, TestDefinitionError } from './errors.js';
 import { CODE_EDITOR_SELECTOR, MAX_EDITOR_CLIPBOARD_BYTES } from './editor-input.js';
+import { TOOLBAR_SCRIPT, TOOLBAR_LANGUAGES, recordingToolbarState } from './recording-toolbar.js';
 
 const RECORDER_SCRIPT = String.raw`(() => {
   if (window.__buggpsRecorderInstalled) return;
   window.__buggpsRecorderInstalled = true;
   const clipboardLimit = ${MAX_EDITOR_CLIPBOARD_BYTES};
   const codeEditorSelector = ${JSON.stringify(CODE_EDITOR_SELECTOR)};
-  const send = (ev) => { try { window.__buggpsRecord(ev); } catch {} };
+  const pendingRecords = new Set();
+  let recordingConnectionFailed = false;
+  window.__buggpsFlushRecording = async () => {
+    const completed = await Promise.all([...pendingRecords]);
+    if (recordingConnectionFailed || completed.some((ok) => !ok)) throw new Error('Recording acknowledgement failed');
+  };
+  const send = (ev) => {
+    const completed = Promise.resolve().then(() => window.__buggpsRecord(ev)).then((view) => {
+        if (!view) return;
+        if (!window.__buggpsToolbarState || view.revision >= window.__buggpsToolbarState.revision) window.__buggpsToolbarState = view;
+        window.__buggpsUpdateToolbar && window.__buggpsUpdateToolbar(view);
+      }).then(() => true).catch(() => { recordingConnectionFailed = true; window.__buggpsToast && window.__buggpsToast('disconnected'); return false; });
+    pendingRecords.add(completed);
+    void completed.then(() => pendingRecords.delete(completed));
+    return completed;
+  };
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   const documentId = Date.now().toString(36) + Math.random().toString(36).slice(2);
   const elementIds = new WeakMap();
@@ -254,7 +270,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
   let pastedTarget = null;
   const captureIssue = (message) => {
     send({ type: 'capture-issue', code: 'editor-input', message });
-    window.__buggpsToast && window.__buggpsToast(message);
+    window.__buggpsToast && window.__buggpsToast('unsupported-input');
   };
   document.addEventListener('pointerdown', (e) => {
     if (fromToolbar(e)) return;
@@ -293,6 +309,18 @@ const RECORDER_SCRIPT = String.raw`(() => {
   }, true);
   let lastApplicationFocus = null;
   let spaceClickTarget = null;
+  window.__buggpsRestoreApplicationFocus = () => {
+    if (!lastApplicationFocus?.isConnected) return false;
+    lastApplicationFocus.focus({ preventScroll: true });
+    return true;
+  };
+  window.__buggpsCancelPick = () => {
+    window.__buggpsPickKind = null;
+    const focused = document.activeElement;
+    if (focused?.id === '__buggps_toolbar') focused.shadowRoot?.activeElement?.blur();
+    window.__buggpsRestoreApplicationFocus();
+    window.__buggpsToast && window.__buggpsToast('selection-cancelled');
+  };
   document.addEventListener('focusin', (e) => {
     if (e.target !== replacementTarget) replacementTarget = null;
     if (!fromToolbar(e) && e.target instanceof HTMLElement) lastApplicationFocus = e.target;
@@ -313,31 +341,30 @@ const RECORDER_SCRIPT = String.raw`(() => {
       e.preventDefault();
       e.stopImmediatePropagation();
       window.__buggpsPickKind = null;
+      window.__buggpsSelectionChanged && window.__buggpsSelectionChanged();
       const el = e.target instanceof Element ? (e.target.closest('[data-testid]') || e.target) : null;
       if (!el) return;
       const target = candidates(el);
       if (!target.length) target.push({ by: 'text', value: clean(el.textContent).slice(0, 80) });
-      if (isSecret(el)) { window.__buggpsToast && window.__buggpsToast('✗ 敏感字段不能作为预期 / not on a secret field'); return; }
+      if (isSecret(el)) { window.__buggpsToast && window.__buggpsToast('secret-refused'); return; }
       if (kind === 'checkpoint') {
         // "At this point the page shows X": holds before AND after the fix, so a fix cannot
         // skip the situation the user recorded (and shortening cannot drop the step leading here).
         const field = el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement;
         const now = field ? String(el.value ?? '') : clean(el.textContent);
         const ck = field ? 'value' : (now ? 'text' : 'visible');
-        const equals = ck === 'visible' ? undefined : window.prompt('BugGPS 检查点 / checkpoint: 此刻应为 / at this point it is:', now);
-        if (equals === null) return;
-        send({ type: 'checkpoint', check: { kind: ck, target, ...(equals !== undefined ? { equals } : {}) } });
-        window.__buggpsToast && window.__buggpsToast('✓ 检查点已记录 / checkpoint set');
+        const equals = ck === 'visible' ? undefined : window.prompt(window.__buggpsFormatMessage ? window.__buggpsFormatMessage('checkpointPrompt') : 'BugGPS checkpoint: what should be shown at this point?', now);
+        if (equals === null) { window.__buggpsToast && window.__buggpsToast('selection-cancelled'); return; }
+        send({ type: 'checkpoint', check: { kind: ck, target, ...(equals !== undefined ? { equals } : {}) } }).then((ok) => { if (ok) window.__buggpsToast && window.__buggpsToast('checkpoint-set'); });
         return;
       }
       const current = kind === 'value' ? (el.value ?? '') : clean(el.textContent);
       let equals;
       if (kind === 'text' || kind === 'value') {
-        equals = window.prompt('BugGPS: 现在显示 / now shows: "' + current + '"\n正确应为 / should be:', current);
-        if (equals === null) return;
+        equals = window.prompt(window.__buggpsFormatMessage ? window.__buggpsFormatMessage('expectedPrompt', { value: current }) : 'BugGPS: current content: "' + current + '"\nWhat should it be?', current);
+        if (equals === null) { window.__buggpsToast && window.__buggpsToast('selection-cancelled'); return; }
       }
-      send({ type: 'expect', expectation: { kind, target, ...(equals !== undefined ? { equals } : {}) }, current });
-      window.__buggpsToast && window.__buggpsToast('✓ 预期已记录 / expectation set');
+      send({ type: 'expect', expectation: { kind, target, ...(equals !== undefined ? { equals } : {}) }, current }).then((ok) => { if (ok) window.__buggpsToast && window.__buggpsToast('expectation-set'); });
       return;
     }
     const el = e.target instanceof Element ? clickTarget(e.target) : null;
@@ -388,13 +415,9 @@ const RECORDER_SCRIPT = String.raw`(() => {
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && window.__buggpsPickKind) {
-      window.__buggpsPickKind = null;
       e.preventDefault();
       e.stopImmediatePropagation();
-      const focused = e.composedPath()[0];
-      if (fromToolbar(e) && focused instanceof HTMLElement) focused.blur();
-      if (lastApplicationFocus?.isConnected) lastApplicationFocus.focus({ preventScroll: true });
-      window.__buggpsToast && window.__buggpsToast('已取消选择 / selection cancelled');
+      window.__buggpsCancelPick();
       return;
     }
     if (fromToolbar(e)) return;
@@ -422,49 +445,6 @@ const RECORDER_SCRIPT = String.raw`(() => {
   }, true);
 })();`;
 
-// Floating toolbar for headed recording, in a shadow root so page styles do not leak in.
-const TOOLBAR_SCRIPT = String.raw`(() => {
-  const mount = () => {
-    if (document.getElementById('__buggps_toolbar') || !document.body) return;
-    const host = document.createElement('div');
-    host.id = '__buggps_toolbar';
-    host.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:2147483647';
-    const root = host.attachShadow({ mode: 'open' });
-    root.innerHTML = '<style>div{font:12px system-ui;background:#111;color:#fff;border-radius:8px;padding:8px;display:flex;gap:6px;flex-wrap:wrap;max-width:420px;box-shadow:0 2px 8px #0006}button{font:12px system-ui;border:0;border-radius:6px;padding:5px 8px;cursor:pointer;background:#2d6cdf;color:#fff}button.stop{background:#c0392b}span{width:100%;opacity:.8}</style>'
-      + '<div><span id="msg">● BugGPS 录制中 / recording</span>'
-      + '<button data-k="text">预期文本 text</button><button data-k="value">预期输入值 value</button>'
-      + '<button data-k="visible">应可见 visible</button><button data-k="hidden">应消失 hidden</button>'
-      + '<button data-k="no-page-error">不应报错 no error</button>'
-      + '<button data-k="checkpoint" title="点选元素：记录此刻它的内容，修复后这一步也必须一样 / the page must look like this at this point, before and after the fix">✓ 此刻应为 checkpoint</button>'
-      + '<button class="pin" title="缩减时永远保留上一步 / never delete the last step when shortening">⚑ 上一步是关键 key step</button>'
-      + '<button class="stop">■ 结束 stop</button></div>';
-    const msg = root.getElementById('msg');
-    window.__buggpsToast = (t) => { msg.textContent = t; };
-    root.querySelectorAll('button[data-k]').forEach((b) => b.addEventListener('click', () => {
-      const k = b.dataset.k;
-      if (k === 'no-page-error') {
-        window.__buggpsPickKind = null;
-        window.__buggpsRecord({ type: 'expect', expectation: { kind: k } });
-        msg.textContent = '✓ 不应报错。再用「应可见 / 预期文本」标出正确结果 / now also mark what SHOULD show';
-        return;
-      }
-      window.__buggpsPickKind = k;
-      msg.textContent = '点选页面元素 / click an element (' + k + ')';
-    }));
-    root.querySelector('.pin').addEventListener('click', () => {
-      window.__buggpsRecord({ type: 'pin' });
-      msg.textContent = '⚑ 已标记关键步骤 / key step pinned';
-    });
-    root.querySelector('.stop').addEventListener('click', () => {
-      window.__buggpsPickKind = null;
-      msg.textContent = '已结束 / stopped';
-      window.__buggpsRecord({ type: 'stop' });
-    });
-    document.documentElement.appendChild(host);
-  };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
-})();`;
-
 /**
  * Starts recording in a new context of `browser`. Returns { page, stop(), steps, finished }.
  * `stop()` resolves to the recorded steps (consecutive keystroke fills merged into one).
@@ -488,12 +468,22 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   const secretFields = new Map();
   const secretNames = new Set();
   let recordingActive = true;
-  await context.exposeBinding('__buggpsRecord', (_src, ev) => {
+  let stopRequested = false;
+  let toolbarRevision = 0;
+  const preferences = { language: 'zh-CN', collapsed: false, corner: 'br' };
+  const view = () => toolbar ? recordingToolbarState(steps, result, preferences, ++toolbarRevision, stopRequested) : null;
+  const recordEvent = (ev) => {
     if (!recordingActive) return;
+    if (ev?.type === 'toolbar') {
+      if (TOOLBAR_LANGUAGES.includes(ev.language)) preferences.language = ev.language;
+      if (typeof ev.collapsed === 'boolean') preferences.collapsed = ev.collapsed;
+      if (['br', 'bl', 'tl', 'tr'].includes(ev.corner)) preferences.corner = ev.corner;
+      return;
+    }
     if (ev?.type) lastFillIdentity = null;
     if (ev?.type === 'expect') { addExpectation(result, ev.expectation, ev.current); return; }
     if (ev?.type === 'checkpoint') { steps[steps.length - 1].check = ev.check; return; }
-    if (ev?.type === 'stop') { finish('stop'); return; }
+    if (ev?.type === 'stop') { stopRequested = true; finish('stop'); return; }
     if (ev?.type === 'pin') { if (steps.length > 1) steps[steps.length - 1].pinned = true; return; }
     if (ev?.type === 'viewport') { steps.push({ action: 'viewport', width: ev.width, height: ev.height, pinned: true }); return; }
     if (ev?.type === 'fullscreen-exit') { steps.push({ action: 'exit-fullscreen', pinned: true }); return; }
@@ -524,7 +514,9 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
     }
     steps.push(ev);
     lastFillIdentity = ev.action === 'fill' ? identity : null;
-  });
+  };
+  await context.exposeBinding('__buggpsRecord', (_src, ev) => { recordEvent(ev); return view(); });
+  if (toolbar) await context.exposeBinding('__buggpsGetState', () => view());
   await context.addInitScript(RECORDER_SCRIPT);
   if (toolbar) await context.addInitScript(TOOLBAR_SCRIPT);
   const page = await context.newPage();
