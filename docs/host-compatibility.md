@@ -11,12 +11,12 @@ BugGPS 当前仅声明 DSH `0.2.1-rc.5`。本仓库的 `overrides` 固定开发�
 | MCP client | 2.3.0 | [安全公告](https://github.com/advisories/GHSA-6prh-2h8m-c8cw) |
 | fflate | 0.8.3 | [安全公告](https://github.com/advisories/GHSA-px8p-9vwx-vf98) |
 
-此清单用于隔离的兼容检查。每次安装生成自己的锁文件，其他传递依赖的解析结果可能变化，需保留实际版本和锁文件指纹。它不改写桌面安装目录。
+此清单用于隔离的兼容检查，并提供完整锁文件。使用 `npm ci` 按锁安装，保留实际版本和锁文件指纹；更新依赖后需重新运行检查。它不改写桌面安装目录。
 
 在仓库根目录运行以下 PowerShell 命令：
 
 ```powershell
-npm.cmd install --prefix test/fixtures/host-rc5 --ignore-scripts --no-fund
+npm.cmd ci --prefix test/fixtures/host-rc5 --ignore-scripts --no-audit --no-fund
 npm.cmd audit --prefix test/fixtures/host-rc5 --omit=dev
 $env:BUGGPS_DSH_DIR = (Resolve-Path test/fixtures/host-rc5).Path
 node --test test/e2e/managed-process.test.mjs
@@ -43,3 +43,5 @@ npm.cmd run test:live-model
 依赖审计反映检查时数据库中的已知公告。Zod 的长度约束能在解析超大集合前拒绝输入；未设置约束的集合仍会逐项解析。验证结论限定在实际执行的 BugGPS 流程和记录的依赖环境中。
 
 English: this fixture checks BugGPS on DSH rc.5 with the exact versions above. Repository, standalone-package and host audits are separate. `BUGGPS_E2E_TARBALL=1` tests the packed plugin with a scripted model; `BUGGPS_LIVE_PACKAGE` selects a tarball for the optional signed-in account check. The fixture does not patch an installed desktop application. Keep each generated lockfile and the corresponding run record when reproducing results.
+
+持续集成的 `host-rc5` 作业运行锁定依赖安装、两种依赖审计、受控进程检查、压缩包完整流程和启动失败控制。实际账户检查另行显式运行。

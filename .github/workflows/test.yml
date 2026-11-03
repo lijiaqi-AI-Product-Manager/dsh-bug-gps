@@ -26,3 +26,61 @@ jobs:
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: node --test --test-concurrency=1 --test-timeout=120000 "test/*.test.js"
       - run: npm run test:package
+
+  host-rc5:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      BUGGPS_DSH_DIR: ${{ github.workspace }}/test/fixtures/host-rc5
+      BUGGPS_E2E_TARBALL: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            test/fixtures/host-rc5/package-lock.json
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm ci --prefix test/fixtures/host-rc5 --ignore-scripts --no-audit --no-fund
+      - name: Audit development and host dependencies
+        shell: pwsh
+        run: |
+          foreach ($scope in @('repository', 'host')) {
+            $auditFile = Join-Path $env:RUNNER_TEMP "$scope-audit.json"
+            $errorFile = Join-Path $env:RUNNER_TEMP "$scope-audit.stderr.log"
+            if ($scope -eq 'host') {
+              npm audit --prefix test/fixtures/host-rc5 --omit=dev --json --fetch-retries=1 --fetch-timeout=30000 1> $auditFile 2> $errorFile
+            } else {
+              npm audit --json --fetch-retries=1 --fetch-timeout=30000 1> $auditFile 2> $errorFile
+            }
+            $auditExit = $LASTEXITCODE
+            $audit = Get-Content -LiteralPath $auditFile -Raw | ConvertFrom-Json
+            if (-not $audit.metadata) { throw "$scope audit did not return complete metadata" }
+            @{ scope = $scope; vulnerabilities = $audit.metadata.vulnerabilities } | ConvertTo-Json -Compress
+            if ($auditExit -ne 0) { exit $auditExit }
+          }
+      - run: node --test test/e2e/managed-process.test.mjs
+      - name: Check packed plugin workflow
+        env:
+          BUGGPS_E2E_OUT: ${{ runner.temp }}/buggps-host-check.json
+        run: node test/e2e/dsh-e2e.mjs
+      - name: Check early startup failure is reported
+        shell: pwsh
+        env:
+          BUGGPS_E2E_STARTUP_IMPORT: ${{ github.workspace }}/test/fixtures/host-startup-failure.mjs
+          BUGGPS_E2E_OUT: ${{ runner.temp }}/buggps-host-startup-failure.json
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $false
+          node test/e2e/dsh-e2e.mjs
+          $expectedExit = $LASTEXITCODE
+          $record = Get-Content -LiteralPath $env:BUGGPS_E2E_OUT -Raw | ConvertFrom-Json
+          $preserved = ($record.hostExit.errors -join ' ') -match 'Fixture host startup failed before the first provider request'
+          if ($expectedExit -ne 1 -or $record.passed -ne $false -or $record.hostExit.code -ne 1 -or $record.requestLog.status -ne 'MISSING' -or -not $preserved) {
+            throw 'Early startup failure did not retain its original diagnostic'
+          }
+          Write-Output 'Early startup failure correctly refused'
+          exit 0

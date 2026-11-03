@@ -107,7 +107,7 @@ const t0 = Date.now();
 const startupImport = process.env.BUGGPS_E2E_STARTUP_IMPORT ? resolve(process.env.BUGGPS_E2E_STARTUP_IMPORT) : null;
 if (startupImport) out.startupControl = { file: basename(startupImport), sha256: createHash('sha256').update(readFileSync(startupImport)).digest('hex') };
 const turn = await new Promise((done) => {
-  const p = spawn(process.execPath, [...(startupImport ? ['--import', startupImport] : []), DSH_BIN, '--profile', 'headless', '--json', 'Fix the coupon total bug using BugGPS.'], { cwd: project.root, env });
+  const p = spawn(process.execPath, [...(startupImport ? ['--import', pathToFileURL(startupImport).href] : []), DSH_BIN, '--profile', 'headless', '--json', 'Fix the coupon total bug using BugGPS.'], { cwd: project.root, env });
   let stdout = ''; let stderr = '';
   p.stdout.on('data', (d) => { stdout += d; });
   p.stderr.on('data', (d) => { stderr += d; });
