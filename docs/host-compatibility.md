@@ -38,7 +38,7 @@ $env:BUGGPS_LIVE_RAW_DIR = (Join-Path (Resolve-Path .buggps/host-check).Path 'pr
 npm.cmd run test:live-model
 ```
 
-账户检查使用一次性示例项目及本次创建的唯一配置，保留固定条件、补丁及结构化结果；金额成本在服务未返回时为未知。分享前应检查结果中的路径和业务内容。
+账户检查使用一次性示例项目及本次创建的唯一配置，记录固定条件与补丁的指纹及结构化结果。示例工作区会清理；此入口不导出完整补丁，独立项目的可重放补丁另有[案例说明](../bench/repairs/chartdb-dbml-index/README.md)。金额成本在服务未返回时为未知，分享前应检查结果中的路径和业务内容。
 
 ## 已执行的限定检查
 

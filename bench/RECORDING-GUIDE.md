@@ -40,6 +40,15 @@ JWT 案例只使用无认证能力的合成夹具，录制仍保留敏感字段�
 
 ## 自选人工体验反馈
 
+`drawdb-1031` 的[第 3 版执行定义](holdout-recordings/v3/drawdb-1031.json)是根据应用源码编写的路径：保存 `New`，在同一浏览器上下文中重新进入编辑器并确认已加载标题，再选择最近图表并首次导出。文件名前缀仍要求为 `New_`。原 11 步路径未复现、v2 错误的第二次数据库弹窗假设及其 `TEST_INVALID` 结果均保留。v3 的原代码、无关改动、上游修复与独立原代码对照符合预设结果；15→15 的预算耗尽不计缩减收益。[最新历史索引](results/regression-summary-012c4ecf2d0d.json)保留 33 次尝试，12 例各自最近一次结果为 11 `VERIFIED`、1 预期 `NEEDS_REVIEW`，尚不是同一最终提交的统一验收。
+
+单独复验此定义时，显式指定版本目录，准备工作区的步骤保持不变：
+
+```powershell
+$env:BUGGPS_HOLDOUT_INPUTS = (Resolve-Path bench/holdout-recordings/v3).Path
+node bench/holdout.mjs drawdb-1031
+```
+
 可用 `node bench/real.mjs serve drawdb-943` 启动旧开发案例，再用 CLI `record` 或插件工具录制。工具栏可以标注预期、检查点和关键步骤；操作范围及限制以 [README](../README.md#保护机制与已知限制) 为准。
 
 录制结束后先在本地检查内容。凭据、私有代码、业务数据、截图、路径和运行日志需要单独审阅；导出或分享由录制者选择。人工体验反馈应标注来源和环境，不用于替代固定案例验证。
