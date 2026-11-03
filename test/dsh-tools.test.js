@@ -11,7 +11,7 @@ import { recordSession } from '../bench/sessions.js';
 import { createToolSpecs } from '../src/dsh/tools.js';
 import { hashCase } from '../src/core/caselock.js';
 
-let repo; let server; let guard = true; let tools; let serve; let serveCmd;
+let repo; let server; let guard = true; let tools; let serve; let serveCmd; let repairSource;
 const exec = () => ({ signal: new AbortController().signal });
 const run = (name, args) => tools.find((t) => t.name === name).execute(args, exec());
 const appJs = () => join(repo.root, 'app.js');
@@ -19,6 +19,7 @@ const BUG = /\/\/ SEEDED BUG 1: should call recompute\(\);[^\r\n]*\r?\n\s*render
 
 before(async () => {
   repo = await tempRepo();
+  repairSource = await readFile(appJs(), 'utf8');
   server = await startStaticServer(repo.root);
   serve = await serveSpec(repo.root);
   // As a user would type it: quoted paths (the repo path contains a space).
@@ -48,29 +49,41 @@ test('lock: dev server down is ENV_BLOCKED and nothing is locked', async () => {
   assert.deepEqual(st.cases, []);
 });
 
-test('lock -> verify(no change) -> verify(wrong fix) -> verify(real fix)', async () => {
+// These ordered steps share the fixture. Each tool call keeps the runner's per-test
+// deadline; the default 90-second reduction budget is separate from later verification.
+test('lock: reproduce, shorten and freeze the original scenario', async () => {
   const locked = await run('buggps_lock', { draft: '.buggps/drafts/coupon.json', case_id: 'coupon', serve: serveCmd, serve_url: serve.url });
   assert.equal(locked.status, 'LOCKED', JSON.stringify(locked));
   assert.match(locked.binding, /^managed/);
   assert.equal(locked.observed_now, '$17.00');
   assert.equal(locked.minimization.model_calls, 0);
   assert.ok(locked.shortened_steps.length < locked.recorded_steps);
+});
 
+test('verify: unchanged baseline is NO_CODE_CHANGE', async () => {
   assert.equal((await run('buggps_verify', { case_id: 'coupon' })).status, 'NO_CODE_CHANGE');
+});
 
-  const src = await readFile(appJs(), 'utf8');
-  await writeFile(appJs(), src.replace('let total = subtotal() - state.discount;', 'let total = Math.max(0, subtotal() - state.discount);'));
+test('verify: an unrelated change preserves the original failure', async () => {
+  await writeFile(appJs(), repairSource.replace('let total = subtotal() - state.discount;', 'let total = Math.max(0, subtotal() - state.discount);'));
   const wrong = await run('buggps_verify', { case_id: 'coupon' });
   assert.equal(wrong.status, 'STILL_FAILING');
+  assert.deepEqual(wrong.runs, { fail: 3 });
   assert.match(wrong.next, /Keep working/);
+});
 
-  await writeFile(appJs(), src.replace(BUG, 'recompute();'));
+test('verify: a real fix passes with a matching fresh original-code control', async () => {
+  await writeFile(appJs(), repairSource.replace(BUG, 'recompute();'));
   const ok = await run('buggps_verify', { case_id: 'coupon' });
   assert.equal(ok.status, 'VERIFIED', JSON.stringify(ok));
+  assert.deepEqual(ok.runs, { pass: 3 });
   assert.match(ok.patch, /app\.js/);
   assert.equal(ok.shortened_case_agrees, true);
   const runRecord = JSON.parse(await readFile(join(repo.root, ok.run_record), 'utf8'));
   assert.equal(runRecord.verdict, 'VERIFIED');
+  assert.equal(runRecord.baselineControl.status, 'REPRODUCED');
+  assert.equal(runRecord.baselineControl.matchesLockedFailure, true);
+  assert.deepEqual(runRecord.baselineControl.tally, { fail: 3 });
 });
 
 test('changing only lock metadata is CASE_TAMPERED in-session', async () => {
