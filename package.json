@@ -20,17 +20,25 @@
     "src",
     "bin",
     "examples",
+    "assets/buggps-icon.png",
     "cordis.patch.yml"
   ],
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "marketplace": {
+      "profiles": ["headless", "web"],
+      "requiresBuildApproval": false,
+      "requiresRestart": true,
+      "manualSteps": true
     }
   },
   "scripts": {
     "test": "node --test --test-concurrency=1 \"test/*.test.js\"",
     "test:package": "node test/package-smoke.mjs",
     "test:live-model": "node test/e2e/live-model.mjs",
+    "check:distribution": "node scripts/prepare-distribution.mjs",
     "bench": "node bench/run.mjs",
     "demo:gif": "node docs/demo/make-demo.mjs",
     "demo:toolbar": "node docs/demo/capture-toolbar.mjs"

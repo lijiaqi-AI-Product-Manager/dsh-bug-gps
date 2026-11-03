@@ -140,7 +140,7 @@ dsh --profile <你的 profile> --dump-config
 - **操作就绪**：新录制保存控件操作时是否可用。原来可用的控件在回放时会等待其恢复可用，受当前步骤超时、总预算和取消约束；超时仍禁用时继续记录为受阻动作，不把禁用按钮当成修复成功。原来禁用的动作与缺少该元数据的历史录制保留既有处理。嵌套文本若与唯一按钮同名，新录制只保留该按钮范围并等待其出现，不提前采用画布或输入代码中的全页同名文本。
 - **同名图标选项**：重复的控件名称若能由唯一命名图像区分，新录制会保留原动作标签和该图像。只接受原标签，以及它与图像名称前后组合的精确匹配，不扩大为任意包含匹配；操作名称改变、图像重复或目标不唯一时仍拒绝采用。
 - **缩短步骤**：结果是“已验证过的较短路径”，不保证最短，也不代表因果链。判定始终以完整录制为准。
-- **实测范围**：React + Vite、Chromium 系浏览器、可重置的前端状态、DOM 断言。其他环境没有经过验收。
+- **实测范围**：Chromium 系浏览器、Vite、可重置的前端状态与 DOM 断言；已保留 React、Vue 的具体历史案例和结果，框架兼容以实际场景为准。
 
 ## 证据
 
@@ -152,7 +152,7 @@ dsh --profile <你的 profile> --dump-config
   - 改名导致模糊匹配
   - 两个仓库用同一个 case id
 - `node test/e2e/dsh-e2e.mjs`：在真实 DSH 上做端到端测试。模型是脚本化的，DSH 本身是真的。加 `BUGGPS_E2E_TARBALL=1` 则安装 `npm pack` 打出的包。
-- `npm run test:live-model`：真实 DSH 0.2.1-rc.5 与现有账号的模型工作流，包含独立读取、修改源码后验证，以及遇到 `NEEDS_REVIEW` 时保留原判定。输入为植入问题示例的脚本录制，参见 [运行记录](bench/results/live-provider-2026-11-02.json)。运行需要显式提供宿主安装目录，不随普通回归自动消耗模型调用。
+- `npm run test:live-model`：真实 DSH 0.2.1-rc.5 与现有账号的模型工作流，包含独立读取、修改源码后验证，以及遇到 `NEEDS_REVIEW` 时保留原判定。输入为植入问题示例的脚本录制，参见 [运行记录](bench/results/live-provider-rc5-a696fe2-2026-11-03.json)与 [宿主兼容记录](docs/host-compatibility.md)。运行需要显式提供宿主安装目录，不随普通回归自动消耗模型调用。
 - [bench/RECORDING-GUIDE.md](bench/RECORDING-GUIDE.md)：冻结的 12 个历史案例及复核入口。应用版本、脚本输入、环境失败与上游修复结果分别记录；这类运行不调用模型。
 - [bench/spike-s2-s3.md](bench/spike-s2-s3.md)：植入问题示例与 3 个早期开发案例的历史记录，不属于独立案例集。
 - [spikes/s1-dsh/REPORT.md](spikes/s1-dsh/REPORT.md)：DSH 插件 API 实测。
@@ -168,6 +168,8 @@ npm test
 ```
 
 `@deepseek-ai/dsh-tools` 是可选的宿主 peer，开发测试使用固定版本。独立 CLI 安装不会自动安装宿主工具依赖树；插件运行时由 DSH 提供该模块。依赖审计应同时检查开发仓库和全新消费项目安装的压缩包，不能从其中一个结果推断另一个。
+
+[插件目录、市场适配与推荐规则](docs/distribution.md) · [收录条目与资源检查](distribution/README.md)
 
 ## License
 

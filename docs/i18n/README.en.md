@@ -84,6 +84,8 @@ If BugGPS helped you verify a repair, a Star helps others discover it.
 
 [Host dependency compatibility and package checks](../host-compatibility.md)
 
+[Plugin directories and marketplace integration](../distribution.md) · [Catalog entry preparation](../../distribution/README.md)
+
 MIT · [LICENSE](../../LICENSE)
 
 

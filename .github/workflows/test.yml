@@ -24,6 +24,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run check:distribution
       - run: node --test --test-concurrency=1 --test-timeout=120000 "test/*.test.js"
       - run: npm run test:package
 

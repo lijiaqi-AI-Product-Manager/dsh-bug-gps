@@ -1,0 +1,51 @@
+{
+  "checkedOn": "2026-11-04",
+  "publication": "prepared; not submitted or published",
+  "catalogs": {
+    "awesome-dsh-plugin": {
+      "guide": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md",
+      "target": "data/plugins/lijiaqi-AI-Product-Manager__dsh-bug-gps.yml",
+      "entry": {
+        "url": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps",
+        "name": "lijiaqi-AI-Product-Manager/dsh-bug-gps",
+        "category": "browser",
+        "description": {
+          "en": "Records browser bugs, freezes expected results, and verifies fixes against a fresh original-code control.",
+          "zh": "录制浏览器问题、固定预期，并通过独立原代码对照复核修复。"
+        },
+        "icon": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/main/assets/buggps-icon.png"
+      }
+    },
+    "1024-store": {
+      "guide": "https://github.com/imsai-sh/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md",
+      "target": "catalog/plugins/lijiaqi-ai-product-manager--dsh-bug-gps.json",
+      "entry": {
+        "$schema": "../schema/plugin.schema.json",
+        "id": "lijiaqi-AI-Product-Manager/dsh-bug-gps",
+        "name": "BugGPS",
+        "repository": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps",
+        "category": "dev",
+        "description": {
+          "en": "Records browser bugs, freezes expected results, and verifies fixes against a fresh original-code control.",
+          "zh": "录制浏览器问题、固定预期，并通过独立原代码对照复核修复。"
+        },
+        "added": "2026-11-04"
+      }
+    },
+    "dshworks": {
+      "guide": "https://github.com/dshworks/awesome-dsh-plugins/blob/main/CONTRIBUTING.md",
+      "target": "data/plugins.json#plugins",
+      "entry": {
+        "name": "BugGPS",
+        "repo": "lijiaqi-AI-Product-Manager/dsh-bug-gps",
+        "description": "Records browser bugs, freezes expected results, and verifies fixes against a fresh original-code control.",
+        "category": "bundle",
+        "tags": ["devtools", "observability"],
+        "added": "2026-11-04",
+        "lastVerified": "2026-11-04",
+        "verifiedAgainst": "0.2.1-rc.5",
+        "status": "unverified"
+      }
+    }
+  }
+}

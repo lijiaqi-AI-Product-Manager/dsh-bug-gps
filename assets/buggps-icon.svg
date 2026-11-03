@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180" role="img" aria-labelledby="title">
+  <title id="title">BugGPS</title>
+  <defs>
+    <linearGradient id="pin" x1="42" y1="30" x2="136" y2="149" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#58e1c1"/>
+      <stop offset="1" stop-color="#87a8ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="#111b2b"/>
+  <path d="M90 24c-29 0-51 21-51 49 0 34 51 82 51 82s51-48 51-82c0-28-22-49-51-49Z" fill="url(#pin)"/>
+  <circle cx="90" cy="75" r="32" fill="#111b2b"/>
+  <g stroke="#dffcf6" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="m75 66-9-6m9 16H64m12 10-9 7m38-27 9-6m-9 16h11m-12 10 9 7M84 54l-4-7m16 7 4-7"/>
+  </g>
+  <rect x="77" y="57" width="26" height="37" rx="13" fill="#dffcf6"/>
+  <path d="M90 70v19" stroke="#111b2b" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="85" cy="65" r="2" fill="#111b2b"/>
+  <circle cx="95" cy="65" r="2" fill="#111b2b"/>
+</svg>
