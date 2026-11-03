@@ -5,12 +5,10 @@ on:
     paths:
       - '.github/workflows/project-regression.yml'
       - 'bench/**'
-      - 'src/core/baseline.js'
-      - 'src/core/caselock.js'
-      - 'src/core/replay.js'
-      - 'src/core/reproduce.js'
-      - 'src/core/oracle.js'
-      - 'src/core/snapshot.js'
+      - 'src/core/**'
+      - 'bin/**'
+      - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
 
 concurrency:
@@ -21,7 +19,41 @@ permissions:
   contents: read
 
 jobs:
+  select-cases:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      cases: ${{ steps.select.outputs.cases }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+      - id: select
+        name: Select frozen cases for this source revision
+        env:
+          BUGGPS_RELEASE_CASES: ${{ startsWith(github.head_ref || github.ref_name, 'release/') && '1' || '0' }}
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { readFileSync, appendFileSync } from 'node:fs';
+          const manifest = JSON.parse(readFileSync('bench/holdout-cases.json', 'utf8'));
+          const all = manifest.cases.map((entry) => entry.id);
+          assert.equal(all.length, manifest.denominator);
+          assert.equal(new Set(all).size, all.length);
+          assert.ok(all.length > 0 && all.length <= 24);
+          assert.ok(all.every((id) => /^[a-z0-9][a-z0-9-]{0,79}$/.test(id)));
+          const selected = process.env.BUGGPS_RELEASE_CASES === '1' ? all : ['it-tools-799', 'it-tools-1368'];
+          assert.ok(selected.every((id) => all.includes(id)));
+          appendFileSync(process.env.GITHUB_OUTPUT, 'cases=' + JSON.stringify(selected) + '\n');
+          console.log(JSON.stringify({ release: process.env.BUGGPS_RELEASE_CASES === '1', selected, denominator: manifest.denominator }));
+          NODE
+
   projects:
+    needs: select-cases
     name: ${{ matrix.case }}
     runs-on: windows-latest
     timeout-minutes: 35
@@ -29,7 +61,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        case: [it-tools-799, it-tools-1368]
+        case: ${{ fromJSON(needs.select-cases.outputs.cases) }}
     env:
       GIT_TERMINAL_PROMPT: '0'
       GCM_INTERACTIVE: Never
