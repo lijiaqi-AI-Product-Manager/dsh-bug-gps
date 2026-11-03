@@ -357,7 +357,19 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
     },
   };
 
-  return [record, lock, verify, status];
+  return [record, lock, verify, status].map((spec) => ({
+    ...spec,
+    async execute(args, exec) {
+      try {
+        exec?.signal?.throwIfAborted();
+        return await spec.execute(args, exec);
+      } catch (error) {
+        if (exec?.signal?.aborted) return { status: 'ABORTED', message: 'cancelled', next: NEXT[Verdict.ABORTED] };
+        if (error instanceof EnvBlockedError) return envBlocked(error.message, error.hint);
+        throw error;
+      }
+    },
+  }));
 }
 
 function parseServeLabel(serve) {
