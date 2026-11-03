@@ -28,7 +28,7 @@ function importantFirst(value, names) {
 function valueText(key, value) {
   if (typeof value === 'string') return value;
   // Keep conclusions ahead of potentially large observations, expectations or profiles.
-  if (key === 'baseline_control') value = importantFirst(value, ['status', 'tally', 'matchesLockedFailure', 'reason']);
+  if (key === 'baseline_control') value = importantFirst(value, ['status', 'tally', 'matchesLockedFailure', 'reason', 'stepIndex', 'trialIssues', 'trialIssuesOmitted']);
   if (key === 'cases' && Array.isArray(value)) value = value.map((item) => importantFirst(item, ['case_id', 'latest', 'error', 'binding', 'steps']));
   return JSON.stringify(value) ?? String(value);
 }

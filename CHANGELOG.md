@@ -12,5 +12,6 @@ The package manifest is prepared for the first stable release. Public availabili
 - CLI `--version` / `-v` and JSON version identity; environment diagnostics enforce the tested host version and bound tool output and execution time.
 - Completed-run ordering and explicit historical applicability checks for code, frozen conditions and evaluator versions.
 - Tool previews limited to 12,000 characters with evidence references and next actions first; complete structured values and saved evidence remain unchanged.
+- Inconclusive original-code controls retain the failed step and bounded trial issues in saved records and tool previews; mixed results still require review.
 
 Desktop acceptance, final release-source case checks and public package publication remain tracked separately. Version preparation does not declare those checks complete or create a public release.

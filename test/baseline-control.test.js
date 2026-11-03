@@ -66,6 +66,41 @@ test('a real fix replays its baseline without changing the user index or candida
   assert.equal(await git(root, ['worktree', 'list', '--porcelain']), before);
 });
 
+test('a mixed baseline preserves the failed run and step without claiming a fix', { timeout: 120_000 }, async (t) => {
+  const root = await repository(t);
+  const original = '<!doctype html><button data-testid="trigger">Run</button><p data-testid="result">BAD</p>';
+  await writeFile(join(root, 'index.html'), original);
+  await git(root, ['add', '--', 'index.html']);
+  await git(root, ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'recorded trigger']);
+  const port = await freePort();
+  const serve = { command: [process.execPath, fileURLToPath(new URL('./fixtures/baseline-flaky-server.js', import.meta.url)), String(port)], url: `http://127.0.0.1:${port}/` };
+  const definition = { ...contract, serve, steps: [...contract.steps, { action: 'click', target: [{ by: 'testId', value: 'trigger' }] }] };
+  const locked = await lockCase(env.browser, env, root, definition, { id: 'mixed-baseline', runs: 3 });
+  assert.equal(locked.caseId, 'mixed-baseline');
+  const caseDir = join(root, '.buggps/cases', locked.caseId);
+  const protectedBefore = await Promise.all(['case.json', 'lock.json'].map(name => readFile(join(caseDir, name), 'utf8')));
+  const fixed = original.replace('>BAD<', '>GOOD<');
+  await writeFile(join(root, 'index.html'), fixed);
+  const indexBefore = await readFile(join(root, '.git/index'));
+  const worktreesBefore = await git(root, ['worktree', 'list', '--porcelain']);
+  const result = await verifyCase(env.browser, env, root, locked.caseId, { runs: 3 });
+  assert.equal(result.verdict, Verdict.NEEDS_REVIEW);
+  assert.ok(result.reviewReasons.includes('baseline-not-reproduced'));
+  assert.deepEqual(result.check.tally, { pass: 3 });
+  assert.equal(result.baselineControl.status, 'FLAKY');
+  assert.deepEqual(result.baselineControl.tally, { 'step-error': 1, fail: 2 });
+  assert.equal(result.baselineControl.matchesLockedFailure, false);
+  assert.equal(result.baselineControl.stepIndex, 1);
+  assert.deepEqual(result.baselineControl.trialIssues, [{ run: 1, outcome: 'step-error', stepIndex: 1, reason: 'target not-found' }]);
+  assert.equal(result.baselineControl.trialIssuesOmitted, 0);
+  const saved = JSON.parse(await readFile(join(root, '.buggps/runs', `${result.runId}.json`), 'utf8'));
+  assert.deepEqual(saved.baselineControl, JSON.parse(JSON.stringify(result.baselineControl)));
+  assert.deepEqual(await Promise.all(['case.json', 'lock.json'].map(name => readFile(join(caseDir, name), 'utf8'))), protectedBefore);
+  assert.deepEqual(await readFile(join(root, '.git/index')), indexBefore);
+  assert.equal(await readFile(join(root, 'index.html'), 'utf8'), fixed);
+  assert.equal(await git(root, ['worktree', 'list', '--porcelain']), worktreesBefore);
+});
+
 test('a baseline source mutation remains reviewable and names the changed file', async (t) => {
   const root = await repository(t);
   await writeFile(join(root, 'generated-types.d.ts'), 'export {};\n');

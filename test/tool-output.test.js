@@ -46,6 +46,23 @@ test('baseline status and matching control remain visible before a large observa
   assert.equal(value.baseline_control.observed.length, 262144);
 });
 
+test('baseline step and trial diagnostics precede large observations and profiles', () => {
+  const value = { status: 'NEEDS_REVIEW', baseline_control: {
+    observed: 'X'.repeat(262144), stepIndex: 1,
+    trialIssues: [{ run: 1, outcome: 'step-error', stepIndex: 1, reason: 'target not-found' }],
+    trialIssuesOmitted: 0, resolutionProfile: { large: 'Y'.repeat(262144) },
+    status: 'FLAKY', tally: { 'step-error': 1, fail: 2 }, matchesLockedFailure: false, reason: 'target not-found',
+  }, run_record: '.buggps/runs/run.json', next: 'Inspect the baseline failure.' };
+  const before = JSON.stringify(value);
+  const text = textFor(value);
+  assert.ok(text.length <= limit);
+  assert.ok(text.includes('"stepIndex":1'));
+  assert.ok(text.includes('"trialIssues":[{"run":1,"outcome":"step-error"'));
+  assert.ok(text.includes('"trialIssuesOmitted":0'));
+  assert.match(text, /preview.*abbreviated/i);
+  assert.equal(JSON.stringify(value), before);
+});
+
 test('case verdicts precede large expectations in a multi-case status preview', () => {
   const cases = ['first', 'middle', 'last'].map((case_id) => ({ case_id, expectation: 'X'.repeat(262144),
     latest: { verdict: case_id === 'first' ? 'STILL_FAILING' : 'NEEDS_REVIEW', applies_to_current_code: true } }));

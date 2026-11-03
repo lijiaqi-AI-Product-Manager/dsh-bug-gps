@@ -73,6 +73,17 @@ export function hashCase(testCase) {
 
 const casesDir = (repo) => join(repo, '.buggps', 'cases');
 
+function baselineTrialIssues(result) {
+  const issues = [];
+  let total = 0;
+  for (const [index, trial] of (result.trials ?? []).entries()) {
+    if (trial.outcome === 'pass' || trial.outcome === 'fail') continue;
+    total++;
+    if (issues.length < 8) issues.push({ run: index + 1, outcome: trial.outcome, stepIndex: trial.stepIndex ?? null, reason: trial.reason ?? null });
+  }
+  return { stepIndex: result.stepIndex ?? null, trialIssues: issues, trialIssuesOmitted: total - issues.length };
+}
+
 /** Normalizes and checks a serve spec: { command: argv, url (loopback), readyTimeoutMs? }. */
 export function normalizeServe(serve) {
   if (!serve) return undefined;
@@ -270,7 +281,9 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
           const red = control.result;
           const changed = resolutionChanges(lock.red.resolutionProfile, red.resolutionProfile);
           const matchesLockedFailure = red.status === Status.REPRODUCED && red.signatureKey === lock.red.signatureKey && changed.length === 0;
-          record.baselineControl = { status: red.status, tally: red.tally, observed: red.observed, signatureKey: red.signatureKey, matchesLockedFailure, resolutionChanges: changed, resolutionProfile: red.resolutionProfile, visibilityHistory: red.visibilityHistory, runtimeInputs: control.runtimeInputs, reason: red.reason, treeChanges: red.treeChanges, durationMs: red.durationMs };
+          record.baselineControl = { status: red.status, tally: red.tally, observed: red.observed, signatureKey: red.signatureKey, matchesLockedFailure,
+            ...baselineTrialIssues(red), resolutionChanges: changed, resolutionProfile: red.resolutionProfile, visibilityHistory: red.visibilityHistory,
+            runtimeInputs: control.runtimeInputs, reason: red.reason, treeChanges: red.treeChanges, durationMs: red.durationMs };
           if (signal?.aborted || red.status === Status.ABORTED) return finish(Verdict.ABORTED);
           if (!matchesLockedFailure) reasons.push(ReviewReason.BASELINE_NOT_REPRODUCED);
         } catch (err) {
