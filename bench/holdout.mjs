@@ -76,9 +76,9 @@ for (const spec of selected) {
       oldSecrets.set(name, process.env[name]); process.env[name] = value;
     }
     const port = await freePort();
-    const serverEntry = spec.project === 'chartdb' ? 'bench/vite-chartdb-serve.mjs' : 'bench/vite-serve.mjs';
+    const serverEntry = spec.project === 'chartdb' ? 'bench/vite-chartdb-serve.mjs' : spec.id === 'it-tools-1368' ? 'bench/vite-it-tools-serve.mjs' : 'bench/vite-serve.mjs';
     const serve = { command: [process.execPath, join(source, serverEntry), String(port)], url: `http://127.0.0.1:${port}/`, readyTimeoutMs: 120_000 };
-    out.fixtureRuntime = { entry: serverEntry, sha256: hash(await readFile(join(source, serverEntry))), cache: 'per-checkout', dependencyMode: entry.dependencyMode ?? 'linked-cache', ...(spec.project === 'chartdb' ? { fixture: 'github_repo_opened=true suppresses the promotional dialog only' } : {}) };
+    out.fixtureRuntime = { entry: serverEntry, sha256: hash(await readFile(join(source, serverEntry))), cache: 'per-checkout', dependencyMode: entry.dependencyMode ?? 'linked-cache', ...(spec.project === 'chartdb' ? { fixture: 'github_repo_opened=true suppresses the promotional dialog only' } : {}), ...(spec.id === 'it-tools-1368' ? { preparation: 'Vite4 resolveConfig/optimizeDeps before listen; marked and dompurify included from the observed dependency graph; no application-source or check changes' } : {}) };
     const testCase = { steps: draft.steps, expectation: draft.expectation, also: draft.also ?? [], observeMs: draft.observeMs ?? 1000, browser: draft.browser, serve };
     env = await launchBrowser(); out.browser = { channel: env.channel, version: env.browser.version() };
     const raw = { ...testCase, steps: draft.rawSteps ?? draft.steps };
