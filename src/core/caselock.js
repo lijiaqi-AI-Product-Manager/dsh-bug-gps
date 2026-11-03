@@ -17,7 +17,7 @@ import { join } from 'node:path';
 import os from 'node:os';
 import { contractOf, reproduce, Status } from './reproduce.js';
 import { runTrial } from './replay.js';
-import { snapshotTree, diffTrees, diffStat } from './snapshot.js';
+import { snapshotTree, diffTrees, diffStat, describeTreeChanges } from './snapshot.js';
 import { DEFAULT_OBSERVE_MS, EVALUATOR_VERSION, hasPositiveCheck, validateCase } from './oracle.js';
 import { parseCommand, startDevServer } from './devserver.js';
 import { EnvBlockedError, TestDefinitionError } from './errors.js';
@@ -240,7 +240,7 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
     record.minimizedCheck = { status: short.status, tally: short.tally, observed: short.observed, agreesWithRecording: short.status === result.status && short.signatureKey === result.signatureKey };
   }
   record.check = { status: result.status, tally: result.tally, observed: result.observed, reason: result.reason, durationMs: result.durationMs, observation: result.observation, resolutionProfile: result.resolutionProfile, visibilityHistory: result.visibilityHistory };
-  if (bound.treeAfter !== bound.treeBefore || bound.treeBefore !== treeNow) return finish(Verdict.STALE);
+  if (bound.treeAfter !== bound.treeBefore || bound.treeBefore !== treeNow) return finish(Verdict.STALE, { treeChanges: await describeTreeChanges(repoDir, treeNow, bound.treeAfter) });
 
   const sameFailure = result.trials.every((t) => t.outcome === 'fail') && result.signatureKey === lock.red.signatureKey;
   const disabledSteps = [...new Set(result.trials.flatMap((t) => t.disabledSteps ?? []))];
@@ -265,12 +265,12 @@ export async function verifyCase(browser, env, repoDir, id, { baseUrl, runs = 3,
         try {
           const control = await withBaseline(repoDir, lock.baselineTree, serve, async (baselineDir, baselineServe) => {
             const checked = await withManagedServer(baselineDir, baselineServe, (u) => reproduce(browser, body, { baseUrl: u, runs, signal }), { warmup: warmupPage(browser, body, { signal }), subprocess: env?.subprocess, signal });
-            return checked.treeBefore === checked.treeAfter ? checked.result : { status: Verdict.STALE, reason: 'baseline files changed while running' };
+            return checked.treeBefore === checked.treeAfter ? checked.result : { status: Verdict.STALE, reason: 'baseline files changed while running', treeChanges: await describeTreeChanges(baselineDir, checked.treeBefore, checked.treeAfter) };
           }, { signal });
           const red = control.result;
           const changed = resolutionChanges(lock.red.resolutionProfile, red.resolutionProfile);
           const matchesLockedFailure = red.status === Status.REPRODUCED && red.signatureKey === lock.red.signatureKey && changed.length === 0;
-          record.baselineControl = { status: red.status, tally: red.tally, observed: red.observed, signatureKey: red.signatureKey, matchesLockedFailure, resolutionChanges: changed, resolutionProfile: red.resolutionProfile, visibilityHistory: red.visibilityHistory, runtimeInputs: control.runtimeInputs, reason: red.reason, durationMs: red.durationMs };
+          record.baselineControl = { status: red.status, tally: red.tally, observed: red.observed, signatureKey: red.signatureKey, matchesLockedFailure, resolutionChanges: changed, resolutionProfile: red.resolutionProfile, visibilityHistory: red.visibilityHistory, runtimeInputs: control.runtimeInputs, reason: red.reason, treeChanges: red.treeChanges, durationMs: red.durationMs };
           if (signal?.aborted || red.status === Status.ABORTED) return finish(Verdict.ABORTED);
           if (!matchesLockedFailure) reasons.push(ReviewReason.BASELINE_NOT_REPRODUCED);
         } catch (err) {

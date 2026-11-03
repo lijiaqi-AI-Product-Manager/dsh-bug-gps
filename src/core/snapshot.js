@@ -10,14 +10,25 @@ const excluded = (file) => file === '.buggps' || file.startsWith('.buggps/')
   || /(?:^|\/)vite\.config\.[^/]*\.timestamp-[^/]*\.mjs$/.test(file);
 const nulList = (files) => Buffer.from(files.join('\0') + '\0');
 
-export function git(cwd, args, { env, input, maxBuffer = 64 * 1024 * 1024 } = {}) {
+export function git(cwd, args, { env, input, maxBuffer = 64 * 1024 * 1024, timeout = 0 } = {}) {
   return new Promise((ok, fail) => {
-    const child = execFile('git', args, { cwd, env: { ...process.env, ...env }, maxBuffer, windowsHide: true }, (err, stdout, stderr) => {
+    const child = execFile('git', args, { cwd, env: { ...process.env, ...env }, maxBuffer, timeout, windowsHide: true }, (err, stdout, stderr) => {
       if (err) { err.stderr = stderr; fail(err); } else ok(stdout);
     });
     child.stdin.on('error', fail);
     child.stdin.end(input);
   });
+}
+
+/** Bounded diagnostics only; failure to inspect changes never means no changes. */
+export async function describeTreeChanges(repoDir, before, after) {
+  try {
+    const output = await git(repoDir, ['diff', '--no-ext-diff', '--name-only', '-z', before, after, '--'], { maxBuffer: 256 * 1024, timeout: 2000 });
+    const files = output.split('\0').filter(Boolean);
+    return { before, after, availability: 'available', files: files.slice(0, 50), total: files.length, truncated: files.length > 50 };
+  } catch (error) {
+    return { before, after, availability: 'unavailable', files: null, total: null, truncated: null, error: String(error.code ?? error.name ?? 'UNKNOWN') };
+  }
 }
 
 export async function snapshotTree(repoDir) {

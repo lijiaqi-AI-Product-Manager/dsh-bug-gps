@@ -164,6 +164,7 @@ test('invalid global inputs produce twelve TEST_INVALID records and a failing pr
   for (const entry of cases) {
     assert.equal(entry.status, 'TEST_INVALID');
     assert.match(entry.reason, /frozen dataset/);
+    assert.equal(entry.blockedStage, 'preparation');
     assert.equal(entry.browser, undefined);
     assert.equal(entry.lock, undefined);
   }

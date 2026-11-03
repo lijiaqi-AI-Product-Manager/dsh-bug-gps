@@ -58,6 +58,7 @@ for (const spec of selected) {
   let dir;
   const oldSecrets = new Map();
   try {
+    out.stage = 'preparation';
     if (inputSelectionError) throw inputSelectionError;
     const entry = state.cases.find((c) => c.id === spec.id);
     out.preparation = { status: entry?.status ?? 'MISSING', attempts: (entry?.attempts ?? []).map((a) => ({ status: a.status, reason: a.reason?.replaceAll(root, '<fixture-root>') })), manager: entry?.manager, managerVersion: entry?.managerVersion, lockSha256: entry?.lockSha256 };
@@ -86,18 +87,22 @@ for (const spec of selected) {
     const serve = { command: [process.execPath, join(source, serverEntry), String(port)], url: `http://127.0.0.1:${port}/`, readyTimeoutMs: 120_000 };
     out.fixtureRuntime = { entry: serverEntry, sha256: hash(await readFile(join(source, serverEntry))), cache: 'per-checkout', dependencyMode: entry.dependencyMode ?? 'linked-cache', ...(spec.project === 'chartdb' ? { fixture: 'github_repo_opened=true suppresses the promotional dialog only' } : {}), ...(spec.id === 'it-tools-1368' ? { preparation: 'Vite4 resolveConfig/optimizeDeps before listen; marked and dompurify included from the observed dependency graph; no application-source or check changes' } : {}) };
     const testCase = { steps: draft.steps, expectation: draft.expectation, also: draft.also ?? [], observeMs: draft.observeMs ?? 1000, browser: draft.browser, serve };
+    out.stage = 'browser';
     env = await launchBrowser(); out.browser = { channel: env.channel, version: env.browser.version() };
     const raw = { ...testCase, steps: draft.rawSteps ?? draft.steps };
     out.execution = { rawStepTimeoutMs: DEFAULT_STEP_TIMEOUT_MS, replayStepTimeoutMs: DEFAULT_STEP_TIMEOUT_MS, reductionMaxMs: 30_000 };
+    out.stage = 'original-replay';
     const rawRun = await withManagedServer(dir, serve, (url) => reproduce(env.browser, raw, { baseUrl: url, runs: 1, stepTimeoutMs: DEFAULT_STEP_TIMEOUT_MS }), { warmup: warmupPage(env.browser, raw) });
     out.rawRecording = summary(rawRun.result);
     const id = 'holdout-' + spec.id + '-' + randomUUID().slice(0, 8);
+    out.stage = 'lock';
     const locked = await lockCase(env.browser, env, dir, testCase, { id, runs: 3 });
     out.lock = { status: locked.status, reason: locked.reason, red: summary(locked.red ?? locked.lock?.red) };
     if (!locked.caseId) { out.status = locked.status; continue; }
     const casePath = join(dir, '.buggps/cases', id, 'case.json');
     const lockPath = join(dir, '.buggps/cases', id, 'lock.json');
     const before = [hash(await readFile(casePath)), hash(await readFile(lockPath))];
+    out.stage = 'shorten';
     const reduced = await withManagedServer(dir, serve, (url) => minimize(env.browser, testCase, { baseUrl: url, signature: locked.lock.red.signature, late: locked.lock.red.late, maxMs: 30_000, maxTrials: 20, concurrency: 2 }), { warmup: warmupPage(env.browser, testCase) });
     const m = reduced.result;
     out.minimize = { status: m.status, confirmed: m.confirmed, original: m.originalSteps, shortened: m.minimizedSteps, stats: m.stats, steps: m.testCase.steps };
@@ -105,12 +110,18 @@ for (const spec of selected) {
     const readmePath = join(dir, 'README.md');
     readme = await readFile(readmePath);
     await writeFile(readmePath, Buffer.concat([readme, Buffer.from('\n<!-- holdout negative control -->\n')]));
+    out.stage = 'negative-control';
     try { out.negativeControl = summary(await verifyCase(env.browser, env, dir, id, { runs: 3 })); }
     finally { await writeFile(readmePath, readme); readme = undefined; }
     applied = true;
+    out.stage = 'apply-upstream';
     await git(dir, ['--literal-pathspecs', 'restore', '--source', spec.fixCommit, '--worktree', '--', ...spec.fixFiles]);
+    out.stage = 'full-path-verification';
     out.fixed = summary(await verifyCase(env.browser, env, dir, id, { runs: 3 }));
+    const afterFullPath = [hash(await readFile(casePath)), hash(await readFile(lockPath))];
+    out.fullPathOutcome = { verdict: out.fixed.verdict, protectedInputsUnchanged: before.every((h, i) => h === afterFullPath[i]), expectedOutcome: out.fixed.verdict === spec.expectedFixedVerdict && out.negativeControl.verdict === 'STILL_FAILING' && before.every((h, i) => h === afterFullPath[i]) };
     if (m.confirmed && m.minimizedSteps < m.originalSteps) {
+      out.stage = 'shortened-comparison';
       const short = await withManagedServer(dir, serve, (url) => reproduce(env.browser, m.testCase, { baseUrl: url, runs: 3 }), { warmup: warmupPage(env.browser, m.testCase) });
       out.minimize.fixedComparison = summary(short.result);
       out.minimize.agreesWithFullRecording = short.result.status === 'NOT_REPRODUCED' && ['VERIFIED', 'NEEDS_REVIEW'].includes(out.fixed.verdict);
@@ -119,9 +130,15 @@ for (const spec of selected) {
     out.protectedInputs = { unchanged: before.every((h, i) => h === after[i]), caseSha256: before[0], lockSha256: before[1] };
     out.status = out.fixed.verdict;
     out.expectedOutcome = out.fixed.verdict === spec.expectedFixedVerdict && out.negativeControl.verdict === 'STILL_FAILING' && out.protectedInputs.unchanged;
+    out.stage = 'completed';
   } catch (error) {
     out.status = error.name === 'EnvBlockedError' ? 'ENV_BLOCKED' : error.name === 'TestDefinitionError' || error.code === 'ENOENT' ? 'TEST_INVALID' : 'RUNNER_ERROR';
     out.reason = String(error.message).replaceAll(root, '<fixture-root>').replaceAll(source, '<source-root>').slice(0, 1600);
+    out.blockedStage = out.stage;
+    if (out.stage === 'shortened-comparison' && out.minimize) {
+      out.minimize.fixedComparison = { status: out.status, reason: out.reason };
+      out.minimize.agreesWithFullRecording = null;
+    }
   } finally {
     if (readme && dir) await writeFile(join(dir, 'README.md'), readme);
     if (applied) await git(dir, ['--literal-pathspecs', 'restore', '--source', spec.buggyCommit, '--worktree', '--', ...spec.fixFiles]);
