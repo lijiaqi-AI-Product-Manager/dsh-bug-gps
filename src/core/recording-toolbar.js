@@ -144,6 +144,8 @@ function installToolbar(i18n) {
     let preferenceRequest = 0;
     const newDocumentId = () => globalThis.crypto?.randomUUID?.() ?? Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
     let documentId = newDocumentId();
+    window.__buggpsToolbarDocumentId = documentId;
+    let documentReady;
     let submissionFailed = false;
     const pendingSubmissions = new Set();
     const pendingPreferences = new Map();
@@ -220,6 +222,7 @@ function installToolbar(i18n) {
       };
       const send = async () => {
         try {
+          if (preference && !await documentReady) throw new Error('Toolbar page registration failed');
           const view = await window.__buggpsRecord(event);
           clearPreferences(); update(view); return true;
         } catch {
@@ -309,13 +312,21 @@ function installToolbar(i18n) {
     });
     render();
     update(window.__buggpsToolbarState);
-    const registerDocument = () => Promise.resolve(window.__buggpsGetState({ documentId })).then(update).catch(() => { notice = 'disconnected'; render(); });
-    void registerDocument();
+    const registerDocument = () => {
+      const id = documentId;
+      return Promise.resolve(window.__buggpsGetState({ documentId: id })).then((view) => {
+        if (view?.registeredDocumentId !== id) throw new Error('Toolbar page registration was superseded');
+        if (id === documentId) update(view);
+        return true;
+      }).catch(() => { notice = 'disconnected'; render(); return false; });
+    };
+    documentReady = registerDocument();
     window.addEventListener('pageshow', (event) => {
       if (!event.persisted) return;
       documentId = newDocumentId();
+      window.__buggpsToolbarDocumentId = documentId;
       pendingPreferences.clear();
-      void registerDocument();
+      documentReady = registerDocument();
     });
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true }); else mount();

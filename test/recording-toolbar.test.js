@@ -339,3 +339,88 @@ test('a delayed language change keeps independent collapse and corner preference
     await page.evaluate(() => window.__releaseToolbarPreference?.()).catch(() => {});
   }
 });
+
+test('preferences wait for their page registration before being acknowledged', { timeout: 10000 }, async (t) => {
+  let release;
+  const gate = new Promise((resolve) => { release = resolve; });
+  let observedPage;
+  const originalNewContext = env.browser.newContext;
+  env.browser.newContext = async (...args) => {
+    const context = await originalNewContext.apply(env.browser, args);
+    const expose = context.exposeBinding.bind(context);
+    let held = false;
+    context.exposeBinding = (name, callback, options) => expose(name, name === '__buggpsGetState' ? async (source, meta) => {
+      if (meta?.documentId && source.frame.url().startsWith('http:') && !held) { held = true; await gate; }
+      return callback(source, meta);
+    } : callback, options);
+    return context;
+  };
+  try {
+    const { rec, page, ui } = await begin(t);
+    observedPage = page;
+    env.browser.newContext = originalNewContext;
+    await ui.locator('select').selectOption('en');
+    await ui.locator('select').selectOption('ja');
+    assert.equal((await page.evaluate(() => window.__buggpsGetState())).language, 'zh-CN');
+    release();
+    await page.waitForFunction(async () => (await window.__buggpsGetState()).language === 'ja', undefined, { timeout: 3000 });
+    await page.getByRole('link', { name: 'About', exact: true }).click();
+    await ui.getByRole('button', { name: '期待するテキスト', exact: true }).waitFor();
+    assert.deepEqual((await rec.stop()).map((step) => step.action), ['goto', 'click']);
+  } catch (error) {
+    if (observedPage) {
+      const ui = await observedPage.evaluate(() => { const root=document.getElementById('__buggps_toolbar')?.shadowRoot; return {url:location.pathname,toolbarState:window.__buggpsToolbarState,selected:root?.getElementById('language')?.value,buttons:[...(root?.querySelectorAll('button')??[])].map(x=>({text:x.textContent,hidden:!x.getClientRects().length}))}; }).catch(e=>({error:e.message}));
+      const host = await observedPage.evaluate(() => window.__buggpsGetState()).catch(e=>({error:e.message}));
+      t.diagnostic(JSON.stringify({ui,host}));
+    }
+    throw error;
+  } finally {
+    release();
+    env.browser.newContext = originalNewContext;
+  }
+});
+
+test('an old page registration cannot retire preferences on the next page', { timeout: 10000 }, async (t) => {
+  let release; let settled;
+  const gate = new Promise((resolve) => { release = resolve; });
+  const oldRegistration = new Promise((resolve) => { settled = resolve; });
+  let observedPage;
+  const originalNewContext = env.browser.newContext;
+  env.browser.newContext = async (...args) => {
+    const context = await originalNewContext.apply(env.browser, args);
+    const expose = context.exposeBinding.bind(context);
+    let held = false;
+    context.exposeBinding = (name, callback, options) => expose(name, name === '__buggpsGetState' ? async (source, meta) => {
+      const delayed = meta?.documentId && source.frame.url().startsWith('http:') && !held;
+      if (delayed) { held = true; await gate; }
+      const view = await callback(source, meta);
+      if (delayed) settled();
+      return view;
+    } : callback, options);
+    return context;
+  };
+  try {
+    const { rec, page, ui } = await begin(t);
+    observedPage = page;
+    env.browser.newContext = originalNewContext;
+    await page.getByRole('link', { name: 'About', exact: true }).click();
+    await ui.locator('select').selectOption('ja');
+    await page.waitForFunction(async () => (await window.__buggpsGetState()).language === 'ja', undefined, { timeout: 3000 });
+    release();
+    await oldRegistration;
+    await ui.locator('select').selectOption('ko');
+    await page.waitForFunction(async () => (await window.__buggpsGetState()).language === 'ko', undefined, { timeout: 3000 });
+    await ui.getByRole('button', { name: '기대 텍스트', exact: true }).waitFor();
+    assert.deepEqual((await rec.stop()).map((step) => step.action), ['goto', 'click']);
+  } catch (error) {
+    if (observedPage) {
+      const ui = await observedPage.evaluate(() => { const root=document.getElementById('__buggps_toolbar')?.shadowRoot; return {url:location.pathname,toolbarState:window.__buggpsToolbarState,selected:root?.getElementById('language')?.value,buttons:[...(root?.querySelectorAll('button')??[])].map(x=>({text:x.textContent,hidden:!x.getClientRects().length}))}; }).catch(e=>({error:e.message}));
+      const host = await observedPage.evaluate(() => window.__buggpsGetState()).catch(e=>({error:e.message}));
+      t.diagnostic(JSON.stringify({ui,host}));
+    }
+    throw error;
+  } finally {
+    release();
+    env.browser.newContext = originalNewContext;
+  }
+});

@@ -516,15 +516,25 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
     lastFillIdentity = ev.action === 'fill' ? identity : null;
   };
   const toolbarDocuments = new WeakMap();
+  const toolbarNavigations = new WeakMap();
+  context.on('page', (page) => page.on('framenavigated', (frame) => {
+    toolbarNavigations.set(frame, (toolbarNavigations.get(frame) ?? 0) + 1);
+    const entry = toolbarDocuments.get(frame);
+    if (entry) entry.current = null;
+  }));
   const validDocument = (id) => typeof id === 'string' && id.length > 0 && id.length <= 128;
-  const registerToolbar = (frame, id) => {
-    if (!frame || !validDocument(id)) return;
+  const registerToolbar = async (frame, id) => {
+    if (!frame || !validDocument(id)) return false;
+    const navigation = toolbarNavigations.get(frame) ?? 0;
+    const current = await frame.evaluate(() => window.__buggpsToolbarDocumentId).catch(() => null);
+    if (current !== id || navigation !== (toolbarNavigations.get(frame) ?? 0)) return false;
     let entry = toolbarDocuments.get(frame);
     if (!entry) { entry = { current: null, documents: new Map() }; toolbarDocuments.set(frame, entry); }
-    if (entry.documents.has(id)) return;
+    if (entry.documents.has(id)) return entry.current === id;
     entry.current = id;
     entry.documents.set(id, new Map());
     if (entry.documents.size > 64) entry.documents.delete(entry.documents.keys().next().value);
+    return true;
   };
   const orderedPreference = (source, ev) => {
     // Existing callers without a toolbar envelope retain their original behavior.
@@ -545,9 +555,10 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
     recordEvent(ev?.type === 'toolbar' ? orderedPreference(source, ev) : ev);
     return view();
   });
-  if (toolbar) await context.exposeBinding('__buggpsGetState', (source, meta) => {
-    registerToolbar(source.frame, meta?.documentId);
-    return view();
+  if (toolbar) await context.exposeBinding('__buggpsGetState', async (source, meta) => {
+    if (!meta?.documentId) return view();
+    const accepted = await registerToolbar(source.frame, meta.documentId);
+    return { ...view(), registeredDocumentId: accepted ? meta.documentId : null };
   });
   await context.addInitScript(RECORDER_SCRIPT);
   if (toolbar) await context.addInitScript(TOOLBAR_SCRIPT);
