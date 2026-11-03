@@ -1,0 +1,556 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "chartdb-1089",
+  "upstream": "https://github.com/chartdb/chartdb/pull/1089",
+  "buggyCommit": "0b73295922f87b3b59bc8ef98b27a7328b6d66c0",
+  "fixCommit": "0e7fa6c75efb3fb3ac0406fdca2796941a7de87d",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T12:31:38.264Z",
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\chartdb.git worktree add --detach <run-root>\\cases\\chartdb-1089 0b73295922f87b3b59bc8ef98b27a7328b6d66c0\nPreparing worktree (detached HEAD 0b73295)\nerror: unable to read sha1 file of CHANGELOG.md (85d2ea8689b38d5e6b9bd80bb030b7f175e93a27)\nerror: unable to read sha1 file of src/lib/domain/db-table.ts (246542cd3a19360eae4fbe618afd1cf23fee4c77)\nUpdating files:  77% (591/759)\rUpdating files:  78% (593/759)\rerror: unable to read sha1 file of src/lib/utils/area-utils.ts (22f423749bd782a188827007349a8b5fd387338f)\nUpdating files:  79% (600/759)\rerror: unable to read sha1 file of src/pages/editor-page/canvas/area-node/area-node-context-menu.tsx (c1aeca67f1eb759ae9776e25d5fdc198750ca2c3)\nUpdating files:  80% (608/759)\rUpdating files:  81% (615/759)\rUpdating files:  82% (623/759)\rerror: unable to read sha1 file of src/pages/editor-page/canvas/table-node/table-node-context-menu.tsx (b89efef2b18aab42031ad366dda9ce728af1fb66)\nUpdating files:  83% (630/759)\rUpdating files:  84% (638/759)\rUpdating files:  85% (646/759)\rUpdating files:  86% (653/759)\rUpdating files:  87% (661/759)\rUpdating files:  88% (668/759)\rUpdating files:  8"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "cac799326dc439d8addd45debb5bc8759c25709bd5715ad109cad9ec26919a25",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    },
+    "file": "bench/holdout-recordings/v5/chartdb-1089.json",
+    "source": "scripted",
+    "sha256": "4260937a51da2edaee37fb5455cc27be75e80b72c3c43c368b22ed0f960c30e2",
+    "canonicalSha256": "21348a6a995036c8ab4e319b462e584ca48ff06d4549c6d8a0678c9009e244eb",
+    "definitionRevision": 5,
+    "definitionBasis": {
+      "repository": "https://github.com/chartdb/chartdb",
+      "commit": "0b73295922f87b3b59bc8ef98b27a7328b6d66c0",
+      "upstream": "https://github.com/chartdb/chartdb/pull/1089",
+      "previousInputSha256": "e5da87114ad6d12f254694a684c2d9ef7c83c64ca78b05a32fb76a45fcd85dbb",
+      "inputMethod": "Select All and a scripted ClipboardEvent; not native clipboard capture",
+      "note": "Use a valid PostgreSQL JSONB field for the GIN index; verify the named imported index in its actual properties. Keep the exact named table-button scope while it mounts; do not adopt a same-text editor token or canvas label.",
+      "producer": "bench/capture-editor.mjs",
+      "producerSha256": "95f4e2189fc5709f1122540176ec0c5d5d9410da553497da08a288beea57faae",
+      "recorderSha256": "f5cd7e41ef25258d8472f5e3277659aabfbb23f7c3e6b26af84850e8517a58ce",
+      "evaluator": "buggps.oracle/v8",
+      "runtimeCommit": "313fb3ab0b130d3f8b9217b1bd067f6f28470017"
+    },
+    "authoredCheckpoints": [
+      {
+        "afterStepIndex": 3,
+        "check": {
+          "kind": "value",
+          "target": [
+            {
+              "by": "css",
+              "value": "div:has(> div:text-is(\"DBML Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+            }
+          ],
+          "equals": "Table documents {\n id int [pk]\n body jsonb\n indexes {\n body [type: gin, name: 'body_search']\n }\n}"
+        }
+      }
+    ],
+    "steps": 8,
+    "authoredTargets": [],
+    "dropped": 0,
+    "expectation": {
+      "kind": "text",
+      "target": [
+        {
+          "by": "css",
+          "value": "label[for=\"indexType\"] + button"
+        }
+      ],
+      "equals": "GIN"
+    },
+    "also": [
+      {
+        "kind": "value",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "within": {
+              "role": "dialog"
+            }
+          }
+        ],
+        "equals": "body_search"
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-chartdb-serve.mjs",
+    "sha256": "4a99ee3d11b0572424a6ade16d7ccecf628134c169845959e35b1d5bec86f03a",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "fixture": "github_repo_opened=true suppresses the promotional dialog only"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "B-tree (default)",
+    "signature": {
+      "kind": "text",
+      "target": "css=label[for=\"indexType\"] + button",
+      "actual": "B-tree (default)",
+      "resolution": {
+        "by": "css",
+        "value": "label[for=\"indexType\"] + button"
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "text",
+            "target": "css=label[for=\"indexType\"] + button",
+            "actual": "B-tree (default)",
+            "resolution": {
+              "by": "css",
+              "value": "label[for=\"indexType\"] + button"
+            }
+          }
+        },
+        {
+          "check": 1,
+          "outcome": "pass",
+          "resolution": {
+            "by": "role",
+            "role": "textbox",
+            "within": {
+              "role": "dialog"
+            }
+          }
+        }
+      ]
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"nameWithChild\":true,\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"DBML\",\"role\":\"radio\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"documents\",\"within\":{\"name\":\"documents\",\"role\":\"button\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"Indexes\",\"within\":{\"name\":\"documents\",\"role\":\"region\"}}"
+      ],
+      "step:7": [
+        "{\"by\":\"role\",\"index\":2,\"role\":\"button\",\"within\":{\"name\":\"Indexes\",\"role\":\"region\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"label[for=\\\"indexType\\\"] + button\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"role\":\"textbox\",\"within\":{\"role\":\"dialog\"}}"
+      ]
+    },
+    "durationMs": 7842
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "B-tree (default)",
+      "signature": {
+        "kind": "text",
+        "target": "css=label[for=\"indexType\"] + button",
+        "actual": "B-tree (default)",
+        "resolution": {
+          "by": "css",
+          "value": "label[for=\"indexType\"] + button"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "text",
+              "target": "css=label[for=\"indexType\"] + button",
+              "actual": "B-tree (default)",
+              "resolution": {
+                "by": "css",
+                "value": "label[for=\"indexType\"] + button"
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "pass",
+            "resolution": {
+              "by": "role",
+              "role": "textbox",
+              "within": {
+                "role": "dialog"
+              }
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"nameWithChild\":true,\"role\":\"radio\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"DBML\",\"role\":\"radio\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "checkpoint:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"documents\",\"within\":{\"name\":\"documents\",\"role\":\"button\"}}"
+        ],
+        "step:6": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"Indexes\",\"within\":{\"name\":\"documents\",\"role\":\"region\"}}"
+        ],
+        "step:7": [
+          "{\"by\":\"role\",\"index\":2,\"role\":\"button\",\"within\":{\"name\":\"Indexes\",\"role\":\"region\"}}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"label[for=\\\"indexType\\\"] + button\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"role\":\"textbox\",\"within\":{\"role\":\"dialog\"}}"
+        ]
+      },
+      "durationMs": 25556
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": false,
+    "original": 8,
+    "shortened": 8,
+    "stats": {
+      "trials": 4,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 4,
+      "differentFailure": 0,
+      "stepTimeoutMs": 8000,
+      "durationMs": 30076,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold",
+            "child": {
+              "role": "img",
+              "name": "PostgreSQL"
+            },
+            "nameWithChild": true
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "DBML"
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "paste",
+        "editor": "monaco",
+        "mode": "replace-all",
+        "target": [
+          {
+            "by": "css",
+            "value": "div:has(> div:text-is(\"DBML Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+          }
+        ],
+        "wasEnabled": true,
+        "value": "Table documents {\n id int [pk]\n body jsonb\n indexes {\n body [type: gin, name: 'body_search']\n }\n}",
+        "check": {
+          "kind": "value",
+          "target": [
+            {
+              "by": "css",
+              "value": "div:has(> div:text-is(\"DBML Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+            }
+          ],
+          "equals": "Table documents {\n id int [pk]\n body jsonb\n indexes {\n body [type: gin, name: 'body_search']\n }\n}"
+        }
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Import"
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "documents",
+            "within": {
+              "role": "button",
+              "name": "documents"
+            },
+            "index": 0
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "Indexes",
+            "within": {
+              "role": "region",
+              "name": "documents"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "Indexes"
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "within": {
+              "role": "region",
+              "name": "Indexes"
+            },
+            "index": 2
+          },
+          {
+            "by": "role",
+            "role": "button"
+          }
+        ],
+        "wasEnabled": true
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "B-tree (default)",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"nameWithChild\":true,\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"DBML\",\"role\":\"radio\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "checkpoint:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"documents\",\"within\":{\"name\":\"documents\",\"role\":\"button\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"Indexes\",\"within\":{\"name\":\"documents\",\"role\":\"region\"}}"
+      ],
+      "step:7": [
+        "{\"by\":\"role\",\"index\":2,\"role\":\"button\",\"within\":{\"name\":\"Indexes\",\"role\":\"region\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"label[for=\\\"indexType\\\"] + button\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"role\":\"textbox\",\"within\":{\"role\":\"dialog\"}}"
+      ]
+    },
+    "durationMs": 18743,
+    "caseSha256": "15ad1eee3de9a4fe57759875b65f20139ff92372bb206e52b54b91259dae5fe7",
+    "lockSha256": "b480a1b8e172f9c98d7b011bc956ae8f62f0f188323ded5bbbf4241b2c87514a"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"nameWithChild\":true,\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"DBML\",\"role\":\"radio\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "checkpoint:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"documents\",\"within\":{\"name\":\"documents\",\"role\":\"button\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"Indexes\",\"within\":{\"name\":\"documents\",\"role\":\"region\"}}"
+      ],
+      "step:7": [
+        "{\"by\":\"role\",\"index\":2,\"role\":\"button\",\"within\":{\"name\":\"Indexes\",\"role\":\"region\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"label[for=\\\"indexType\\\"] + button\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"role\":\"textbox\",\"within\":{\"role\":\"dialog\"}}"
+      ]
+    },
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "B-tree (default)",
+      "signatureKey": "{\"actual\":\"B-tree (default)\",\"check\":0,\"checks\":[{\"check\":0,\"outcome\":\"fail\",\"signature\":{\"actual\":\"B-tree (default)\",\"kind\":\"text\",\"resolution\":{\"by\":\"css\",\"value\":\"label[for=\\\"indexType\\\"] + button\"},\"target\":\"css=label[for=\\\"indexType\\\"] + button\"}},{\"check\":1,\"outcome\":\"pass\",\"resolution\":{\"by\":\"role\",\"role\":\"textbox\",\"within\":{\"role\":\"dialog\"}}}],\"kind\":\"text\",\"resolution\":{\"by\":\"css\",\"value\":\"label[for=\\\"indexType\\\"] + button\"},\"target\":\"css=label[for=\\\"indexType\\\"] + button\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"nameWithChild\":true,\"role\":\"radio\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"DBML\",\"role\":\"radio\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "checkpoint:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"DBML Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"documents\",\"within\":{\"name\":\"documents\",\"role\":\"button\"}}"
+        ],
+        "step:6": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"Indexes\",\"within\":{\"name\":\"documents\",\"role\":\"region\"}}"
+        ],
+        "step:7": [
+          "{\"by\":\"role\",\"index\":2,\"role\":\"button\",\"within\":{\"name\":\"Indexes\",\"role\":\"region\"}}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"label[for=\\\"indexType\\\"] + button\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"role\":\"textbox\",\"within\":{\"role\":\"dialog\"}}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 18385
+    },
+    "durationMs": 21410,
+    "caseSha256": "15ad1eee3de9a4fe57759875b65f20139ff92372bb206e52b54b91259dae5fe7",
+    "lockSha256": "b480a1b8e172f9c98d7b011bc956ae8f62f0f188323ded5bbbf4241b2c87514a"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "35c6be04e1378ed02e3f7a6bed67111ef7859e838f59555c64aa55a7e4d32eba",
+    "lockSha256": "cc2b9839092ffbaf4463b1354dc27af8f3d0bbe769c61e6172f5fbf77255b2d6"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 412203
+}

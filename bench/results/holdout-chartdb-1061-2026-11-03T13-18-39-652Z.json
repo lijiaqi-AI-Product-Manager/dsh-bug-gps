@@ -1,0 +1,528 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "chartdb-1061",
+  "upstream": "https://github.com/chartdb/chartdb/pull/1061",
+  "buggyCommit": "5754538d7ef31d900cf754c68f2a51a0ce7ed54a",
+  "fixCommit": "b21202e6c7ecc1807a1ef09853532f1282c6f88e",
+  "expectedFixedVerdict": "NEEDS_REVIEW",
+  "at": "2026-11-03T13:18:39.652Z",
+  "runtime": {
+    "commit": "eb1d0161bd6e0cb98341c7313d5dd4324d20ffa6",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "65607032941a7951a14dce9360c865dd0c048b409d5f1a41f55f9ae7fb76b8e7",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\chartdb.git worktree add --detach <run-root>\\cases\\chartdb-1061 5754538d7ef31d900cf754c68f2a51a0ce7ed54a\nPreparing worktree (detached HEAD 5754538)\nerror: unable to read sha1 file of CHANGELOG.md (85d2ea8689b38d5e6b9bd80bb030b7f175e93a27)\nerror: unable to read sha1 file of src/lib/domain/db-table.ts (246542cd3a19360eae4fbe618afd1cf23fee4c77)\nerror: unable to read sha1 file of src/lib/utils/area-utils.ts (22f423749bd782a188827007349a8b5fd387338f)\nUpdating files:  78% (598/759)\rUpdating files:  79% (600/759)\rerror: unable to read sha1 file of src/pages/editor-page/canvas/area-node/area-node-context-menu.tsx (c1aeca67f1eb759ae9776e25d5fdc198750ca2c3)\nUpdating files:  80% (608/759)\rUpdating files:  81% (615/759)\rUpdating files:  82% (623/759)\rerror: unable to read sha1 file of src/pages/editor-page/canvas/table-node/table-node-context-menu.tsx (b89efef2b18aab42031ad366dda9ce728af1fb66)\nUpdating files:  83% (630/759)\rUpdating files:  84% (638/759)\rUpdating files:  85% (646/759)\rUpdating files:  86% (653/759)\rUpdating files:  87% (661/759)\rUpdating files:  88% (668/759)\rUpdating files:  89% (676/759)\rUpdating files:  9"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "cac799326dc439d8addd45debb5bc8759c25709bd5715ad109cad9ec26919a25",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "d6d79642befe99eb3b03239a24ac971e5f43969f7d8b06df61efc8d6808fd424"
+    },
+    "file": "bench/holdout-recordings/v2/chartdb-1061.json",
+    "source": "scripted-with-scoped-target-and-checkpoints",
+    "sha256": "6472180e211a732a896eeea18ae04f92b0d2b669a12d591d5e3ec7d3ead48b01",
+    "canonicalSha256": "5561b894cdffcb4e510c495425c6936864c1533c165cb45ef193030fdeea3d14",
+    "definitionRevision": 2,
+    "definitionBasis": {
+      "repository": "https://github.com/chartdb/chartdb",
+      "commit": "5754538d7ef31d900cf754c68f2a51a0ce7ed54a",
+      "files": [
+        "src/pages/editor-page/side-panel/tables-section/table-list/table-list-item/table-list-item-content/table-field/table-field.tsx"
+      ],
+      "previousInput": "bench/holdout-recordings/chartdb-1061.json",
+      "previousInputSha256": "403d7907797e0e4c08d6b819caeddb20c5a806a53edb44068f7b5f2aa111e33c",
+      "previousInputCanonicalSha256": "43b5c6f3e08db6ba423f82f30257f1f70197af2ac375118ac91dc0aa407e87ac",
+      "note": "Retain all six actions, the hidden active-N expectation, and the visible Name check. Restrict the N click to the same side-panel control used by the original expectation. Confirm that control is visible after Add Table and Escape; do not require it enabled, because the upstream disabled-control change must remain reviewable. This does not establish the unique cause of the earlier click timeout."
+    },
+    "authoredCheckpoints": [
+      {
+        "step": 3,
+        "reason": "The recorded side-panel nullable control must exist after Add Table."
+      },
+      {
+        "step": 4,
+        "reason": "The same control must remain visible after Escape before clicking it; disabled controls remain eligible for review."
+      }
+    ],
+    "steps": 6,
+    "authoredTargets": [
+      {
+        "index": 3,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"Add Table\") >> nth=0"
+          }
+        ],
+        "reason": "Two Add Table buttons share the same name in the empty view; select the toolbar control."
+      },
+      {
+        "index": 5,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"N\")"
+          }
+        ],
+        "reason": "Target the same side-panel N control that the unchanged original expectation inspects."
+      }
+    ],
+    "dropped": null,
+    "expectation": {
+      "kind": "hidden",
+      "target": [
+        {
+          "by": "css",
+          "value": "aside button[data-state=\"on\"]:text-is(\"N\")"
+        }
+      ]
+    },
+    "also": [
+      {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          }
+        ]
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-chartdb-serve.mjs",
+    "sha256": "4a99ee3d11b0572424a6ade16d7ccecf628134c169845959e35b1d5bec86f03a",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "fixture": "github_repo_opened=true suppresses the promotional dialog only"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "TEST_INVALID",
+    "tally": {
+      "step-error": 1
+    },
+    "reason": "target ambiguous",
+    "stepIndex": 3,
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"Empty database\",\"role\":\"button\"}"
+      ]
+    },
+    "durationMs": 13784
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "visible",
+      "signature": {
+        "kind": "hidden",
+        "target": "css=aside button[data-state=\"on\"]:text-is(\"N\")",
+        "actual": "true",
+        "resolution": {
+          "by": "css",
+          "value": "aside button[data-state=\"on\"]:text-is(\"N\")"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "hidden",
+              "target": "css=aside button[data-state=\"on\"]:text-is(\"N\")",
+              "actual": "true",
+              "resolution": {
+                "by": "css",
+                "value": "aside button[data-state=\"on\"]:text-is(\"N\")"
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "pass",
+            "resolution": {
+              "by": "role",
+              "role": "textbox",
+              "name": "Name"
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"Empty database\",\"role\":\"button\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"Add Table\\\") >> nth=0\"}"
+        ],
+        "checkpoint:3": [
+          "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"N\\\")\"}"
+        ],
+        "checkpoint:4": [
+          "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"N\\\")\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"N\\\")\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"aside button[data-state=\\\"on\\\"]:text-is(\\\"N\\\")\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+        ]
+      },
+      "visibilityHistory": [
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "textbox",
+              "name": "Name"
+            },
+            "source": "final-check",
+            "stepIndex": 5,
+            "elapsedMs": 3272
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "textbox",
+              "name": "Name"
+            },
+            "source": "final-check",
+            "stepIndex": 5,
+            "elapsedMs": 5645
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "textbox",
+              "name": "Name"
+            },
+            "source": "final-check",
+            "stepIndex": 5,
+            "elapsedMs": 5986
+          }
+        }
+      ],
+      "durationMs": 14963
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": false,
+    "original": 6,
+    "shortened": 6,
+    "stats": {
+      "trials": 4,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 3,
+      "differentFailure": 0,
+      "stepTimeoutMs": 4106,
+      "durationMs": 30016,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold"
+          },
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold",
+            "child": {
+              "role": "img",
+              "name": "PostgreSQL"
+            }
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Empty database"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"Add Table\") >> nth=0"
+          }
+        ],
+        "check": {
+          "kind": "visible",
+          "target": [
+            {
+              "by": "css",
+              "value": "aside button:text-is(\"N\")"
+            }
+          ]
+        }
+      },
+      {
+        "action": "key",
+        "target": [
+          {
+            "by": "page"
+          }
+        ],
+        "value": "Escape",
+        "check": {
+          "kind": "visible",
+          "target": [
+            {
+              "by": "css",
+              "value": "aside button:text-is(\"N\")"
+            }
+          ]
+        }
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"N\")"
+          }
+        ]
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "visible",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"Empty database\",\"role\":\"button\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"Add Table\\\") >> nth=0\"}"
+      ],
+      "checkpoint:3": [
+        "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"N\\\")\"}"
+      ],
+      "checkpoint:4": [
+        "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"N\\\")\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"N\\\")\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"aside button[data-state=\\\"on\\\"]:text-is(\\\"N\\\")\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          },
+          "source": "final-check",
+          "stepIndex": 5,
+          "elapsedMs": 3876
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          },
+          "source": "final-check",
+          "stepIndex": 5,
+          "elapsedMs": 4042
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          },
+          "source": "final-check",
+          "stepIndex": 5,
+          "elapsedMs": 4045
+        }
+      }
+    ],
+    "durationMs": 12024,
+    "caseSha256": "29bf770afbcd68eac16c9c9412e07a0337fd8e8e330bb514576aa00ef9cad661",
+    "lockSha256": "32fab38d7e88a2486a858523d4277be0394de3aa1a9d8226a95a02d749122d90"
+  },
+  "fixed": {
+    "verdict": "NEEDS_REVIEW",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "reviewReasons": [
+      "disabled-control"
+    ],
+    "disabledSteps": [
+      5
+    ],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"Empty database\",\"role\":\"button\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"Add Table\\\") >> nth=0\"}"
+      ],
+      "checkpoint:3": [
+        "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"N\\\")\"}"
+      ],
+      "checkpoint:4": [
+        "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"N\\\")\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"N\\\")\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          },
+          "source": "final-check",
+          "stepIndex": 5,
+          "elapsedMs": 3747
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          },
+          "source": "final-check",
+          "stepIndex": 5,
+          "elapsedMs": 4197
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          },
+          "source": "final-check",
+          "stepIndex": 5,
+          "elapsedMs": 4514
+        }
+      }
+    ],
+    "durationMs": 12518,
+    "caseSha256": "29bf770afbcd68eac16c9c9412e07a0337fd8e8e330bb514576aa00ef9cad661",
+    "lockSha256": "32fab38d7e88a2486a858523d4277be0394de3aa1a9d8226a95a02d749122d90"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "1b41eb43e867749f044ac4d33c0cad7171008d45158de0109851f381086d54c3",
+    "lockSha256": "5f23ed71ba22f5191f00ff5c96b9a3992505e1f3a356e9113f9e28058c14246c"
+  },
+  "status": "NEEDS_REVIEW",
+  "expectedOutcome": true,
+  "durationMs": 175662
+}

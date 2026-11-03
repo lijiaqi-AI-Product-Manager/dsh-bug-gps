@@ -1,0 +1,760 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "drawdb-1037",
+  "upstream": "https://github.com/drawdb-io/drawdb/pull/1037",
+  "buggyCommit": "2065254f267d1ecb71faa8e58307124e7821d650",
+  "fixCommit": "81e625e886f5b893582d7cce83fb8f2e52b075e6",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T12:06:53.135Z",
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\drawdb.git worktree add --detach <run-root>\\cases\\drawdb-1037 2065254f267d1ecb71faa8e58307124e7821d650\nPreparing worktree (detached HEAD 2065254)\nerror: unable to read sha1 file of Dockerfile (1f87fd3917422cee87bddd499ce3a3076122ebfd)\nerror: unable to read sha1 file of README.md (61ce89ecb0c9b134cec87980e78babacc8b75ce1)\nerror: unable to read sha1 file of index.html (dd19a675f6cdfa1ec25c2f0fd3d9c521d750ea16)\nerror: unable to read sha1 file of package-lock.json (5473d4e1b4af02755b2d87178744939cfdfa7474)\nerror: unable to read sha1 file of package.json (ec6cd4951839a2079e597c23bfc2bd11b3a54aa5)\nerror: unable to read sha1 file of src/App.jsx (ababeb3ce4e1bf96c7077d8972c553d36840deff)\nerror: unable to read sha1 file of src/components/EditorCanvas/Area.jsx (3c6df9e9e88a53789cb1d42969b5cf7ee5c49790)\nerror: unable to read sha1 file of src/components/EditorCanvas/Canvas.jsx (f556daed082c8dd1ade91c30ef1e80cff7f8f5d0)\nerror: unable to read sha1 file of src/components/EditorCanvas/Note.jsx (4ee79a155945dd28d2342ee318eec479d28de229)\nerror: unable to read sha1 file of src/components/EditorCanvas/Relationship.jsx (a19fd1e245eec"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "e35c933ad1c20b9624fc54754e6229330288327fba9c855bc44a5332ae43173b",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    },
+    "file": "bench/holdout-recordings/drawdb-1037.json",
+    "source": "scripted",
+    "sha256": "317579b9fc87b2f3f0dd9df17619dbebbcfabc81bc9592493369d9b9aaaa4f6d",
+    "canonicalSha256": "4ee45d71f5f0f675c7b8c10378903e58591626fd3729c797bd07a0002840880f",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 7,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "visible",
+      "target": [
+        {
+          "by": "css",
+          "value": "nav"
+        }
+      ]
+    },
+    "also": [
+      {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          }
+        ]
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "9290b8b4c2a903721154eaf5f026031cb0a95d2cf111a5b67e6aa5c1620691dc",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "not visible (was visible earlier)",
+    "signature": {
+      "kind": "visible",
+      "target": "css=nav",
+      "actual": "false:was visible earlier",
+      "priorResolution": {
+        "by": "css",
+        "value": "nav"
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "visible",
+            "target": "css=nav",
+            "actual": "false:was visible earlier",
+            "priorResolution": {
+              "by": "css",
+              "value": "nav"
+            }
+          }
+        },
+        {
+          "check": 1,
+          "outcome": "fail",
+          "signature": {
+            "kind": "visible",
+            "target": "role=button[name=plus 添加表]",
+            "actual": "false:was visible earlier",
+            "priorResolution": {
+              "by": "role",
+              "role": "button",
+              "name": "plus 添加表"
+            }
+          }
+        }
+      ]
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+      ],
+      "step:4": [
+        "{\"by\":\"text\",\"value\":\"视图\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"role\",\"name\":\"演示模式\",\"role\":\"menuitem\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"nav\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"plus 添加表\",\"role\":\"button\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 3697
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 3703
+        }
+      }
+    ],
+    "durationMs": 4405
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "not visible (was visible earlier)",
+      "signature": {
+        "kind": "visible",
+        "target": "css=nav",
+        "actual": "false:was visible earlier",
+        "priorResolution": {
+          "by": "css",
+          "value": "nav"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "visible",
+              "target": "css=nav",
+              "actual": "false:was visible earlier",
+              "priorResolution": {
+                "by": "css",
+                "value": "nav"
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "fail",
+            "signature": {
+              "kind": "visible",
+              "target": "role=button[name=plus 添加表]",
+              "actual": "false:was visible earlier",
+              "priorResolution": {
+                "by": "role",
+                "role": "button",
+                "name": "plus 添加表"
+              }
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:2": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:3": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+        ],
+        "step:4": [
+          "{\"by\":\"text\",\"value\":\"视图\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"role\",\"name\":\"演示模式\",\"role\":\"menuitem\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"nav\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"plus 添加表\",\"role\":\"button\"}"
+        ]
+      },
+      "visibilityHistory": [
+        {
+          "final:0": {
+            "seen": true,
+            "candidate": {
+              "by": "css",
+              "value": "nav"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 3476
+          },
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "plus 添加表"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 3485
+          }
+        },
+        {
+          "final:0": {
+            "seen": true,
+            "candidate": {
+              "by": "css",
+              "value": "nav"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 3599
+          },
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "plus 添加表"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 3607
+          }
+        },
+        {
+          "final:0": {
+            "seen": true,
+            "candidate": {
+              "by": "css",
+              "value": "nav"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 3434
+          },
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "plus 添加表"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 3347
+          }
+        }
+      ],
+      "durationMs": 12586
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": false,
+    "original": 7,
+    "shortened": 7,
+    "stats": {
+      "trials": 7,
+      "probeRuns": 2,
+      "cacheHits": 1,
+      "unresolved": 5,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2000,
+      "durationMs": 30230,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/editor"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "MySQL",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "MySQL"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "确认",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "确认"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "添加表",
+            "within": {
+              "role": "tabpanel",
+              "name": "表 (0)"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "添加表"
+          }
+        ]
+      },
+      {
+        "action": "hover",
+        "target": [
+          {
+            "by": "text",
+            "value": "视图"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "menuitem",
+            "name": "演示模式"
+          }
+        ]
+      },
+      {
+        "action": "exit-fullscreen",
+        "pinned": true
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "not visible (was visible earlier)",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+      ],
+      "step:4": [
+        "{\"by\":\"text\",\"value\":\"视图\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"role\",\"name\":\"演示模式\",\"role\":\"menuitem\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"nav\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"plus 添加表\",\"role\":\"button\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 3499
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 3505
+        }
+      },
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 3506
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 3515
+        }
+      },
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 3510
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "replay-sample",
+          "stepIndex": 5,
+          "elapsedMs": 3518
+        }
+      }
+    ],
+    "durationMs": 12480,
+    "caseSha256": "c8e1dafef54e91a5c053a44d14e7cee59167f96cc3bfafa8201ffa56a9ec71bf",
+    "lockSha256": "4099e8b73eb2133a45303c9cd78e95d33d0bba92773a3b4de9e3492ee90b3919"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+      ],
+      "step:4": [
+        "{\"by\":\"text\",\"value\":\"视图\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"role\",\"name\":\"演示模式\",\"role\":\"menuitem\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"nav\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"plus 添加表\",\"role\":\"button\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 4730
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 4738
+        }
+      },
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 4697
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 4709
+        }
+      },
+      {
+        "final:0": {
+          "seen": true,
+          "candidate": {
+            "by": "css",
+            "value": "nav"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 4668
+        },
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "plus 添加表"
+          },
+          "source": "final-check",
+          "stepIndex": 6,
+          "elapsedMs": 4677
+        }
+      }
+    ],
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "not visible (was visible earlier)",
+      "signatureKey": "{\"actual\":\"false:was visible earlier\",\"check\":0,\"checks\":[{\"check\":0,\"outcome\":\"fail\",\"signature\":{\"actual\":\"false:was visible earlier\",\"kind\":\"visible\",\"priorResolution\":{\"by\":\"css\",\"value\":\"nav\"},\"target\":\"css=nav\"}},{\"check\":1,\"outcome\":\"fail\",\"signature\":{\"actual\":\"false:was visible earlier\",\"kind\":\"visible\",\"priorResolution\":{\"by\":\"role\",\"name\":\"plus 添加表\",\"role\":\"button\"},\"target\":\"role=button[name=plus 添加表]\"}}],\"kind\":\"visible\",\"priorResolution\":{\"by\":\"css\",\"value\":\"nav\"},\"target\":\"css=nav\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:2": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:3": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+        ],
+        "step:4": [
+          "{\"by\":\"text\",\"value\":\"视图\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"role\",\"name\":\"演示模式\",\"role\":\"menuitem\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"nav\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"plus 添加表\",\"role\":\"button\"}"
+        ]
+      },
+      "visibilityHistory": [
+        {
+          "final:0": {
+            "seen": true,
+            "candidate": {
+              "by": "css",
+              "value": "nav"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 3517
+          },
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "plus 添加表"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 3423
+          }
+        },
+        {
+          "final:0": {
+            "seen": true,
+            "candidate": {
+              "by": "css",
+              "value": "nav"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 4044
+          },
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "plus 添加表"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 3942
+          }
+        },
+        {
+          "final:0": {
+            "seen": true,
+            "candidate": {
+              "by": "css",
+              "value": "nav"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 4212
+          },
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "plus 添加表"
+            },
+            "source": "replay-sample",
+            "stepIndex": 5,
+            "elapsedMs": 4221
+          }
+        }
+      ],
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 13873
+    },
+    "durationMs": 14211,
+    "caseSha256": "c8e1dafef54e91a5c053a44d14e7cee59167f96cc3bfafa8201ffa56a9ec71bf",
+    "lockSha256": "4099e8b73eb2133a45303c9cd78e95d33d0bba92773a3b4de9e3492ee90b3919"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "b807f5b3a7184abcccfe59038a819fc29cadf2bc008068a095e70e864674b2dc",
+    "lockSha256": "41c1e3de26d727eb51a668ab0e3385b119cf950f10fdfc58702839b5372fc8fd"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 259662
+}

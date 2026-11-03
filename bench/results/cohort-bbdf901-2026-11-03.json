@@ -1,0 +1,156 @@
+{
+  "schema": "buggps.regression-cohort/v1",
+  "at": "2026-11-03T13:44:18.454Z",
+  "dataset": "browser-state-12",
+  "evaluation": "Expanded regression; cases informed implementation. Not a blind evaluation or field success rate.",
+  "producer": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "denominator": 12,
+  "attempted": 12,
+  "expectedOutcomes": 9,
+  "byStatus": {
+    "VERIFIED": 9,
+    "FLAKY": 1,
+    "ENV_BLOCKED": 1,
+    "NEEDS_REVIEW": 1
+  },
+  "processExitCode": 1,
+  "acceptancePassed": false,
+  "selection": "versioned-index",
+  "inputIndex": {
+    "file": "bench/regression-inputs.json",
+    "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+  },
+  "sourceIntegrity": {
+    "allSourceRevisionsMatch": true,
+    "allChangedSourceListsEmpty": true,
+    "engineHashes": [
+      "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8"
+    ],
+    "indexHashes": [
+      "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    ]
+  },
+  "results": [
+    {
+      "case": "chartdb-1031",
+      "file": "holdout-chartdb-1031-2026-11-03T12-06-53-135Z.json",
+      "sha256": "bf0226d267fad823b2a7d384c5306ad42234f02182af3a9fc70b839f80dac81f",
+      "status": "VERIFIED",
+      "expectedOutcome": true,
+      "durationMs": 436674
+    },
+    {
+      "case": "chartdb-1045",
+      "file": "holdout-chartdb-1045-2026-11-03T12-06-53-135Z.json",
+      "sha256": "be76450f3ccb319a6d15647cf06cb6de5e4d42e3d1a68eb2ff43276f734fc4a2",
+      "status": "VERIFIED",
+      "expectedOutcome": true,
+      "durationMs": 364962
+    },
+    {
+      "case": "chartdb-1061",
+      "file": "holdout-chartdb-1061-2026-11-03T12-06-53-135Z.json",
+      "sha256": "e48c467d8b0d2a9b411307468527a25f01812fe9947021d50aa63275a5b41f76",
+      "status": "FLAKY",
+      "expectedOutcome": false,
+      "durationMs": 156149
+    },
+    {
+      "case": "chartdb-1089",
+      "file": "holdout-chartdb-1089-2026-11-03T12-06-53-135Z.json",
+      "sha256": "fe3a9690ea4b0cec4fc48fc3284f5d3948a5aea874bed11d6ff4c9f77d976887",
+      "status": "VERIFIED",
+      "expectedOutcome": true,
+      "durationMs": 412203
+    },
+    {
+      "case": "drawdb-1031",
+      "file": "holdout-drawdb-1031-2026-11-03T12-06-53-135Z.json",
+      "sha256": "234d981e654efc0687309cf241a89faac8bd0fe45c4901e2e4617fa5d509a880",
+      "status": "VERIFIED",
+      "expectedOutcome": true,
+      "durationMs": 303043
+    },
+    {
+      "case": "drawdb-1037",
+      "file": "holdout-drawdb-1037-2026-11-03T12-06-53-135Z.json",
+      "sha256": "b6cdc44f3d8efd7b094a4a90008f74cbe024505572956e424a33422d470e24fc",
+      "status": "VERIFIED",
+      "expectedOutcome": true,
+      "durationMs": 259662
+    },
+    {
+      "case": "drawdb-1066",
+      "file": "holdout-drawdb-1066-2026-11-03T12-06-53-135Z.json",
+      "sha256": "9ed92474d9fc0bd6d698db06d69e41f7159b0d698633445eea898ae38feaa844",
+      "status": "VERIFIED",
+      "expectedOutcome": true,
+      "durationMs": 329581
+    },
+    {
+      "case": "it-tools-1359",
+      "file": "holdout-it-tools-1359-2026-11-03T12-06-53-135Z.json",
+      "sha256": "7ed59a4e4ed30b9d683cc20a468bb03d4ec8748b8c2f95e4e6d350929c102390",
+      "status": "VERIFIED",
+      "expectedOutcome": true,
+      "durationMs": 348207
+    },
+    {
+      "case": "it-tools-1368",
+      "file": "holdout-it-tools-1368-2026-11-03T12-06-53-135Z.json",
+      "sha256": "1de64ec45747b3650478f2055238d9066471d882cd2536216b38237e449b6611",
+      "status": "ENV_BLOCKED",
+      "expectedOutcome": false,
+      "durationMs": 797229
+    },
+    {
+      "case": "it-tools-799",
+      "file": "holdout-it-tools-799-2026-11-03T12-06-53-135Z.json",
+      "sha256": "a15795fb9736cf0780ac6e6675f3c0ed86e3276ac642d2f6c933db013e2c842b",
+      "status": "NEEDS_REVIEW",
+      "expectedOutcome": false,
+      "durationMs": 388695
+    },
+    {
+      "case": "it-tools-872",
+      "file": "holdout-it-tools-872-2026-11-03T12-06-53-135Z.json",
+      "sha256": "7a2f6f468297792992e79697b7d379f7de4ed7f0918e215fd3c09a882f283b24",
+      "status": "VERIFIED",
+      "expectedOutcome": true,
+      "durationMs": 348762
+    },
+    {
+      "case": "qwerty-learner-793",
+      "file": "holdout-qwerty-learner-793-2026-11-03T12-06-53-135Z.json",
+      "sha256": "85764a192a399ee27ee77dee10f01ed07e9d10be3f389c7ac73ce461b573180a",
+      "status": "VERIFIED",
+      "expectedOutcome": true,
+      "durationMs": 163636
+    }
+  ],
+  "followUp": {
+    "case": "chartdb-1061",
+    "definition": "bench/holdout-recordings/v2/chartdb-1061.json",
+    "source": "eb1d0161bd6e0cb98341c7313d5dd4324d20ffa6",
+    "result": "holdout-chartdb-1061-2026-11-03T13-18-39-652Z.json",
+    "status": "NEEDS_REVIEW",
+    "expectedOutcome": true,
+    "limits": "Separate versioned follow-up, not a replacement or pass for the first uniform cohort."
+  },
+  "limits": [
+    "it-tools-1368 retains ENV_BLOCKED overall although its full-path candidate and independent original control completed; the subsequent shortened-path comparison did not start successfully.",
+    "The it-tools-1368 interval overlapped system sleep transitions. This does not excuse or convert the recorded failed attempt.",
+    "it-tools-799 requires review because the original-control tree changed during execution; do not ignore or adopt those changes.",
+    "All failed attempts and original definitions remain available."
+  ]
+}

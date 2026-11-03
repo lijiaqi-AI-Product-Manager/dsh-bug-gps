@@ -1,0 +1,635 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "drawdb-1066",
+  "upstream": "https://github.com/drawdb-io/drawdb/pull/1066",
+  "buggyCommit": "9428511e77af48ea96404cbf7da3eda13b1a7266",
+  "fixCommit": "a4cd06735ec61aaa8119698eb22391c1e028c8b7",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T12:16:15.849Z",
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\drawdb.git worktree add --detach <run-root>\\cases\\drawdb-1066 9428511e77af48ea96404cbf7da3eda13b1a7266\nPreparing worktree (detached HEAD 9428511)\nerror: unable to read sha1 file of Dockerfile (1f87fd3917422cee87bddd499ce3a3076122ebfd)\nerror: unable to read sha1 file of README.md (61ce89ecb0c9b134cec87980e78babacc8b75ce1)\nerror: unable to read sha1 file of index.html (dd19a675f6cdfa1ec25c2f0fd3d9c521d750ea16)\nerror: unable to read sha1 file of package-lock.json (fa13f737c02381d76a1d09b6e2dcffec854e2e04)\nerror: unable to read sha1 file of package.json (7857c010dc4449dd4012b4393014f5193777cb17)\nerror: unable to read sha1 file of src/App.jsx (ababeb3ce4e1bf96c7077d8972c553d36840deff)\nerror: unable to read sha1 file of src/api/gists.js (7f05bcf4bd6bcf6709f7899c58758880475ef78c)\nerror: unable to read sha1 file of src/components/EditorCanvas/Area.jsx (3c6df9e9e88a53789cb1d42969b5cf7ee5c49790)\nerror: unable to read sha1 file of src/components/EditorCanvas/Canvas.jsx (976dcd33c58afe0bc6dd42d613daa042e530358d)\nerror: unable to read sha1 file of src/components/EditorCanvas/Note.jsx (4ee79a155945dd28d2342ee318eec479d28de229)"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "c2679d446c8436bcb53ec06a2b9a5347c651b9b3040fc8f4e74f52c74312ef43",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    },
+    "file": "bench/holdout-recordings/v3/drawdb-1066.json",
+    "source": "scripted-with-corrected-check-target",
+    "sha256": "15ed9a1a34b1798480de4a44771949f2d55c045cf267be12c8861fc78ebd46d5",
+    "canonicalSha256": "d6a570768a1e7827a79b452a35a1e8d0654c2cc3339365ca8fda7c5a9c15f46d",
+    "definitionRevision": 3,
+    "definitionBasis": {
+      "repository": "https://github.com/drawdb-io/drawdb",
+      "commit": "9428511e77af48ea96404cbf7da3eda13b1a7266",
+      "file": "src/components/EditorHeader/ControlPanel.jsx",
+      "observedBeforeSaveAs": "Diagrams/Original",
+      "previousInputSha256": "73d5aee9fd26ea64e44127542835c69f905e0634af68ee889b7b352085b2eea7",
+      "note": "Versioned check-target correction only. The actual Copy link contains a direct span with exact Copy text. Preserve its editor href prefix and count 1; preserve the exact pre-Save-As title, every recorded step, checkpoint, browser setting and observation window. The old anchor:text-is selector returned zero even when the correctly named link and independent copy were present.",
+      "previousDefinitionRevision": 2
+    },
+    "authoredCheckpoints": [
+      {
+        "afterStepIndex": 6,
+        "check": {
+          "kind": "text",
+          "target": [
+            {
+              "by": "css",
+              "value": "nav .text-xl"
+            }
+          ],
+          "equals": "Diagrams/Original"
+        }
+      }
+    ],
+    "steps": 11,
+    "authoredTargets": [],
+    "dropped": 0,
+    "expectation": {
+      "kind": "text",
+      "target": [
+        {
+          "by": "css",
+          "value": "nav .text-xl"
+        }
+      ],
+      "equals": "Diagrams/Original"
+    },
+    "also": [
+      {
+        "kind": "count",
+        "target": [
+          {
+            "by": "css",
+            "value": "a[href^=\"/editor/diagrams/\"]:has(> span:text-is(\"Copy\"))"
+          }
+        ],
+        "equals": 1
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "9290b8b4c2a903721154eaf5f026031cb0a95d2cf111a5b67e6aa5c1620691dc",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "Diagrams/Copy",
+    "signature": {
+      "kind": "text",
+      "target": "css=nav .text-xl",
+      "actual": "Diagrams/Copy",
+      "resolution": {
+        "by": "css",
+        "value": "nav .text-xl"
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "text",
+            "target": "css=nav .text-xl",
+            "actual": "Diagrams/Copy",
+            "resolution": {
+              "by": "css",
+              "value": "nav .text-xl"
+            }
+          }
+        },
+        {
+          "check": 1,
+          "outcome": "fail",
+          "signature": {
+            "kind": "count",
+            "target": "css=a[href^=\"/editor/diagrams/\"]:has(> span:text-is(\"Copy\"))",
+            "actual": "0",
+            "resolution": {
+              "by": "css",
+              "value": "a[href^=\"/editor/diagrams/\"]:has(> span:text-is(\"Copy\"))",
+              "collection": true
+            }
+          }
+        }
+      ]
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"value\":\"Diagrams/Untitled Diagram\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+      ],
+      "step:7": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:8": [
+        "{\"by\":\"role\",\"name\":\"另存为 Ctrl+Shift+S\",\"role\":\"menuitem\"}"
+      ],
+      "step:9": [
+        "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+      ],
+      "step:10": [
+        "{\"by\":\"text\",\"index\":1,\"value\":\"另存为\",\"within\":{\"name\":\"另存为\",\"role\":\"dialog\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href^=\\\"/editor/diagrams/\\\"]:has(> span:text-is(\\\"Copy\\\"))\"}"
+      ]
+    },
+    "durationMs": 7411
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "Diagrams/Copy",
+      "signature": {
+        "kind": "text",
+        "target": "css=nav .text-xl",
+        "actual": "Diagrams/Copy",
+        "resolution": {
+          "by": "css",
+          "value": "nav .text-xl"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "text",
+              "target": "css=nav .text-xl",
+              "actual": "Diagrams/Copy",
+              "resolution": {
+                "by": "css",
+                "value": "nav .text-xl"
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "fail",
+            "signature": {
+              "kind": "count",
+              "target": "css=a[href^=\"/editor/diagrams/\"]:has(> span:text-is(\"Copy\"))",
+              "actual": "0",
+              "resolution": {
+                "by": "css",
+                "value": "a[href^=\"/editor/diagrams/\"]:has(> span:text-is(\"Copy\"))",
+                "collection": true
+              }
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:2": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:3": [
+          "{\"by\":\"text\",\"value\":\"Diagrams/Untitled Diagram\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+        ],
+        "step:6": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+        ],
+        "checkpoint:6": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "step:7": [
+          "{\"by\":\"text\",\"value\":\"文件\"}"
+        ],
+        "step:8": [
+          "{\"by\":\"role\",\"name\":\"另存为 Ctrl+Shift+S\",\"role\":\"menuitem\"}"
+        ],
+        "step:9": [
+          "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+        ],
+        "step:10": [
+          "{\"by\":\"text\",\"index\":1,\"value\":\"另存为\",\"within\":{\"name\":\"另存为\",\"role\":\"dialog\"}}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href^=\\\"/editor/diagrams/\\\"]:has(> span:text-is(\\\"Copy\\\"))\"}"
+        ]
+      },
+      "durationMs": 21641
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": false,
+    "original": 11,
+    "shortened": 11,
+    "stats": {
+      "trials": 5,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 2,
+      "differentFailure": 3,
+      "stepTimeoutMs": 2000,
+      "durationMs": 30054,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/editor"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "MySQL",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "MySQL"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "确认",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "确认"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "Diagrams/Untitled Diagram"
+          }
+        ]
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "名称"
+          }
+        ],
+        "value": "Original"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "重命名",
+            "within": {
+              "role": "dialog",
+              "name": "重命名图表"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "重命名"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "添加表",
+            "within": {
+              "role": "tabpanel",
+              "name": "表 (0)"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "添加表"
+          }
+        ],
+        "check": {
+          "kind": "text",
+          "target": [
+            {
+              "by": "css",
+              "value": "nav .text-xl"
+            }
+          ],
+          "equals": "Diagrams/Original"
+        }
+      },
+      {
+        "action": "hover",
+        "target": [
+          {
+            "by": "text",
+            "value": "文件"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "menuitem",
+            "name": "另存为 Ctrl+Shift+S"
+          }
+        ]
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "名称"
+          }
+        ],
+        "value": "Copy"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "另存为",
+            "within": {
+              "role": "dialog",
+              "name": "另存为"
+            },
+            "index": 1
+          },
+          {
+            "by": "text",
+            "value": "另存为"
+          }
+        ]
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "Diagrams/Copy",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"value\":\"Diagrams/Untitled Diagram\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+      ],
+      "checkpoint:6": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "step:7": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:8": [
+        "{\"by\":\"role\",\"name\":\"另存为 Ctrl+Shift+S\",\"role\":\"menuitem\"}"
+      ],
+      "step:9": [
+        "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+      ],
+      "step:10": [
+        "{\"by\":\"text\",\"index\":1,\"value\":\"另存为\",\"within\":{\"name\":\"另存为\",\"role\":\"dialog\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href^=\\\"/editor/diagrams/\\\"]:has(> span:text-is(\\\"Copy\\\"))\"}"
+      ]
+    },
+    "durationMs": 22621,
+    "caseSha256": "c8e3b5a1f71d180c540630ee6c1f214187507324fd0f4a7e1cf4bfdf57a038b1",
+    "lockSha256": "5f45d09810bda78b6ec0667da4342e5aab0e25bdcd8820465ec4012f091c38ed"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"value\":\"Diagrams/Untitled Diagram\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+      ],
+      "checkpoint:6": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "step:7": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:8": [
+        "{\"by\":\"role\",\"name\":\"另存为 Ctrl+Shift+S\",\"role\":\"menuitem\"}"
+      ],
+      "step:9": [
+        "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+      ],
+      "step:10": [
+        "{\"by\":\"text\",\"index\":1,\"value\":\"另存为\",\"within\":{\"name\":\"另存为\",\"role\":\"dialog\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href^=\\\"/editor/diagrams/\\\"]:has(> span:text-is(\\\"Copy\\\"))\"}"
+      ]
+    },
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "Diagrams/Copy",
+      "signatureKey": "{\"actual\":\"Diagrams/Copy\",\"check\":0,\"checks\":[{\"check\":0,\"outcome\":\"fail\",\"signature\":{\"actual\":\"Diagrams/Copy\",\"kind\":\"text\",\"resolution\":{\"by\":\"css\",\"value\":\"nav .text-xl\"},\"target\":\"css=nav .text-xl\"}},{\"check\":1,\"outcome\":\"fail\",\"signature\":{\"actual\":\"0\",\"kind\":\"count\",\"resolution\":{\"by\":\"css\",\"collection\":true,\"value\":\"a[href^=\\\"/editor/diagrams/\\\"]:has(> span:text-is(\\\"Copy\\\"))\"},\"target\":\"css=a[href^=\\\"/editor/diagrams/\\\"]:has(> span:text-is(\\\"Copy\\\"))\"}}],\"kind\":\"text\",\"resolution\":{\"by\":\"css\",\"value\":\"nav .text-xl\"},\"target\":\"css=nav .text-xl\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:2": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:3": [
+          "{\"by\":\"text\",\"value\":\"Diagrams/Untitled Diagram\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+        ],
+        "step:6": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+        ],
+        "checkpoint:6": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "step:7": [
+          "{\"by\":\"text\",\"value\":\"文件\"}"
+        ],
+        "step:8": [
+          "{\"by\":\"role\",\"name\":\"另存为 Ctrl+Shift+S\",\"role\":\"menuitem\"}"
+        ],
+        "step:9": [
+          "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+        ],
+        "step:10": [
+          "{\"by\":\"text\",\"index\":1,\"value\":\"另存为\",\"within\":{\"name\":\"另存为\",\"role\":\"dialog\"}}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href^=\\\"/editor/diagrams/\\\"]:has(> span:text-is(\\\"Copy\\\"))\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 21345
+    },
+    "durationMs": 23115,
+    "caseSha256": "c8e3b5a1f71d180c540630ee6c1f214187507324fd0f4a7e1cf4bfdf57a038b1",
+    "lockSha256": "5f45d09810bda78b6ec0667da4342e5aab0e25bdcd8820465ec4012f091c38ed"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "43c2a8534061460e4eb02944729b35ee725bc3e2cc7153559b795ceb07b8dab0",
+    "lockSha256": "b48cc02c152a679265c09a87affa9087d0272bd966fab44f101474ee96d6dd70"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 329581
+}

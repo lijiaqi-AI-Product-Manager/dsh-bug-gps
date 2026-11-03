@@ -1,0 +1,79 @@
+{
+  "schema": "buggps.holdout-batch/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "attempted": 12,
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "results": [
+    {
+      "case": "drawdb-1037",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "drawdb-1031",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "drawdb-1066",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "chartdb-1031",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "chartdb-1061",
+      "status": "FLAKY",
+      "expectedOutcome": false
+    },
+    {
+      "case": "chartdb-1089",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "chartdb-1045",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "it-tools-1359",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "it-tools-872",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    },
+    {
+      "case": "it-tools-799",
+      "status": "NEEDS_REVIEW",
+      "expectedOutcome": false
+    },
+    {
+      "case": "it-tools-1368",
+      "status": "ENV_BLOCKED",
+      "expectedOutcome": false
+    },
+    {
+      "case": "qwerty-learner-793",
+      "status": "VERIFIED",
+      "expectedOutcome": true
+    }
+  ]
+}

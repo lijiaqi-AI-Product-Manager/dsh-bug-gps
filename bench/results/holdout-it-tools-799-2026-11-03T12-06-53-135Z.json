@@ -1,0 +1,281 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "it-tools-799",
+  "upstream": "https://github.com/CorentinTh/it-tools/pull/799",
+  "buggyCommit": "80e46c92922c1a886be08f4747b6c9f791a625e8",
+  "fixCommit": "5ed36935c7fb56d8c0ce89cdd06c6a0afb60fd28",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T12:56:12.484Z",
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Existing dependency junction already matched the verified cache."
+      }
+    ],
+    "manager": "pnpm",
+    "managerVersion": "8.15.9",
+    "lockSha256": "dde4af5af1dd23e15bfe6561cd12311b06a13df16642b63e40577f8525c4b1d4",
+    "generatedDeclarations": [
+      {
+        "path": ".eslintrc-auto-import.json",
+        "sha256": "3e4d724135e21f9b661f701b671c92308744a54e25c709f95ab04b7da4a17d06"
+      },
+      {
+        "path": "components.d.ts",
+        "sha256": "e34f34c51413f4e495d14033b17eb98f7ef970253db98064c91cfeea0091f29d"
+      }
+    ],
+    "generatedPatchSha256": "73537e3e5b35d337b65e149054d3762a4ba64e3f2173f719980ba1ac04e1dadb"
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    },
+    "file": "bench/holdout-recordings/it-tools-799.json",
+    "source": "scripted",
+    "sha256": "739ccd51d7b9dbddc87ab88830929975667bff464fcfc3c51906ff10c2baccf4",
+    "canonicalSha256": "a9a0a632ee63ecd18f78ba92b3fcfb25f401254541b1dae9f6b13cc7cd38760a",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 2,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "text",
+      "target": [
+        {
+          "by": "css",
+          "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+        }
+      ],
+      "equals": "[ \"reader\", \"writer\" ]"
+    },
+    "also": []
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "9290b8b4c2a903721154eaf5f026031cb0a95d2cf111a5b67e6aa5c1620691dc",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "reader,writer",
+    "signature": {
+      "kind": "text",
+      "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+      "actual": "reader,writer",
+      "resolution": {
+        "by": "css",
+        "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "text",
+            "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+            "actual": "reader,writer",
+            "resolution": {
+              "by": "css",
+              "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+            }
+          }
+        }
+      ]
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"JWT to decode\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"}"
+      ]
+    },
+    "durationMs": 2469
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "reader,writer",
+      "signature": {
+        "kind": "text",
+        "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+        "actual": "reader,writer",
+        "resolution": {
+          "by": "css",
+          "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "text",
+              "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+              "actual": "reader,writer",
+              "resolution": {
+                "by": "css",
+                "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+              }
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"name\":\"JWT to decode\",\"role\":\"textbox\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"}"
+        ]
+      },
+      "durationMs": 7759
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 2,
+    "shortened": 2,
+    "stats": {
+      "trials": 1,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 1,
+      "differentFailure": 0,
+      "stepTimeoutMs": 3152,
+      "durationMs": 17162,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/jwt-parser"
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "JWT to decode"
+          },
+          {
+            "by": "label",
+            "value": "JWT to decode"
+          },
+          {
+            "by": "css",
+            "value": "#id-d5wzu45mls"
+          }
+        ],
+        "value": {
+          "secret": "HOLDOUT_JWT_ARRAY"
+        }
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "reader,writer",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"JWT to decode\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"}"
+      ]
+    },
+    "durationMs": 7620,
+    "caseSha256": "a77e97f7768a96ff84d8d7c63aa0deed2832f6673e364e1196c23573a4083311",
+    "lockSha256": "8404f8e3d16d2d3747169d33a40f9ccf749b5caf30958f782a798e4cb911040d"
+  },
+  "fixed": {
+    "verdict": "NEEDS_REVIEW",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "reviewReasons": [
+      "baseline-not-reproduced"
+    ],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"JWT to decode\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"}"
+      ]
+    },
+    "baselineControl": {
+      "status": "STALE",
+      "matchesLockedFailure": false,
+      "resolutionChanges": [],
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": "baseline files changed while running"
+    },
+    "durationMs": 10289,
+    "caseSha256": "a77e97f7768a96ff84d8d7c63aa0deed2832f6673e364e1196c23573a4083311",
+    "lockSha256": "8404f8e3d16d2d3747169d33a40f9ccf749b5caf30958f782a798e4cb911040d"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "8acfe2672a96132a1dfe26128e9ec1e89d9ed24a94c88f3121cff7dbec9d843d",
+    "lockSha256": "73613c5e07526fc6421b5946fc81e3f848571e97db188edf22082cb1a8f40eb8"
+  },
+  "status": "NEEDS_REVIEW",
+  "expectedOutcome": false,
+  "durationMs": 388695
+}

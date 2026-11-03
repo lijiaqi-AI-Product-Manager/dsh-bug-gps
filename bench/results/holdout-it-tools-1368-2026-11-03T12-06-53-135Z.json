@@ -1,0 +1,446 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "it-tools-1368",
+  "upstream": "https://github.com/CorentinTh/it-tools/pull/1368",
+  "buggyCommit": "c7b80fbc78e2f8487ea317724b46e2d74ed5129f",
+  "fixCommit": "ae1363937bf365a0cd4ce6031971908c4b31f55f",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T13:02:41.183Z",
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "dependency install exited 1; inspect owned install.log"
+      }
+    ],
+    "manager": "pnpm",
+    "managerVersion": "8.15.3",
+    "lockSha256": "ace96ac8df9fe7c64880d02538412cb8cb09f1ba119e1a1711d5ebaaa84f9edc",
+    "generatedDeclarations": [
+      {
+        "path": ".eslintrc-auto-import.json",
+        "sha256": "3e4d724135e21f9b661f701b671c92308744a54e25c709f95ab04b7da4a17d06"
+      },
+      {
+        "path": "components.d.ts",
+        "sha256": "128122ff8f5f0cc87e224212ee161ad6e967149942b492bc2a658e3180c6839a"
+      }
+    ],
+    "generatedPatchSha256": "15b636177d3cc08dbad6ed2866c5d7532b057899b4a81c1e35015128f050ddc4"
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    },
+    "file": "bench/holdout-recordings/it-tools-1368.json",
+    "source": "scripted-with-authored-targets",
+    "sha256": "66ec7e813ed3e77bf762b31ea8c6c4608b3895091cfeffadd9e5a345939cac14",
+    "canonicalSha256": "de24e099cec7a8ac27c6ec9f149c66041eb4e1f11ec26b0571474710a7c43ebb",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 2,
+    "authoredTargets": [
+      {
+        "index": 1,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "h1 + div button"
+          }
+        ],
+        "reason": "The unnamed favorite button is scoped to the tool header."
+      }
+    ],
+    "dropped": null,
+    "expectation": {
+      "kind": "count",
+      "target": [
+        {
+          "by": "css",
+          "value": "a[href=\"/hash-text\"]"
+        }
+      ],
+      "equals": 2
+    },
+    "also": [
+      {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          }
+        ]
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-it-tools-serve.mjs",
+    "sha256": "7dd4228f057f41f5212a63399eff83240302db10e226eac8064c53f8dae9b9cf",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "preparation": "Vite4 resolveConfig/optimizeDeps before listen; marked and dompurify included from the observed dependency graph; no application-source or check changes"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "TEST_INVALID",
+    "tally": {
+      "step-error": 1
+    },
+    "reason": "target ambiguous",
+    "stepIndex": 1,
+    "disabledSteps": [],
+    "resolutionProfile": {},
+    "durationMs": 11220
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "1 matching elements",
+      "signature": {
+        "kind": "count",
+        "target": "css=a[href=\"/hash-text\"]",
+        "actual": "1",
+        "resolution": {
+          "by": "css",
+          "value": "a[href=\"/hash-text\"]",
+          "collection": true
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "count",
+              "target": "css=a[href=\"/hash-text\"]",
+              "actual": "1",
+              "resolution": {
+                "by": "css",
+                "value": "a[href=\"/hash-text\"]",
+                "collection": true
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "pass",
+            "resolution": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"css\",\"value\":\"h1 + div button\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"Hash text\",\"role\":\"heading\"}"
+        ]
+      },
+      "visibilityHistory": [
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 1,
+            "elapsedMs": 3248
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 1,
+            "elapsedMs": 3316
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 1,
+            "elapsedMs": 3328
+          }
+        }
+      ],
+      "durationMs": 9986
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 2,
+    "shortened": 1,
+    "stats": {
+      "trials": 1,
+      "probeRuns": 2,
+      "cacheHits": 1,
+      "unresolved": 0,
+      "differentFailure": 0,
+      "stepTimeoutMs": 3521,
+      "durationMs": 20903,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/hash-text"
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "1 matching elements",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"css\",\"value\":\"h1 + div button\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"Hash text\",\"role\":\"heading\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 3610
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 3859
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 3450
+        }
+      }
+    ],
+    "durationMs": 11017,
+    "caseSha256": "8eee81e3e93bc71999b9ec1b9ac6777ee7b5899d7dc666d53a1f651a4d7897a9",
+    "lockSha256": "77219c7a1e00ee72f1932dd9306fcfccd6e1ea238fcdf20a27aadf587850efdd"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"css\",\"value\":\"h1 + div button\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"Hash text\",\"role\":\"heading\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 4656
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 4578
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 4474
+        }
+      }
+    ],
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "1 matching elements",
+      "signatureKey": "{\"actual\":\"1\",\"check\":0,\"checks\":[{\"check\":0,\"outcome\":\"fail\",\"signature\":{\"actual\":\"1\",\"kind\":\"count\",\"resolution\":{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"},\"target\":\"css=a[href=\\\"/hash-text\\\"]\"}},{\"check\":1,\"outcome\":\"pass\",\"resolution\":{\"by\":\"role\",\"name\":\"Hash text\",\"role\":\"heading\"}}],\"kind\":\"count\",\"resolution\":{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"},\"target\":\"css=a[href=\\\"/hash-text\\\"]\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"css\",\"value\":\"h1 + div button\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"Hash text\",\"role\":\"heading\"}"
+        ]
+      },
+      "visibilityHistory": [
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 1,
+            "elapsedMs": 2850
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 1,
+            "elapsedMs": 2918
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 1,
+            "elapsedMs": 3266
+          }
+        }
+      ],
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 9131
+    },
+    "durationMs": 13810,
+    "caseSha256": "8eee81e3e93bc71999b9ec1b9ac6777ee7b5899d7dc666d53a1f651a4d7897a9",
+    "lockSha256": "77219c7a1e00ee72f1932dd9306fcfccd6e1ea238fcdf20a27aadf587850efdd"
+  },
+  "status": "ENV_BLOCKED",
+  "reason": "dev server did not answer at http://127.0.0.1:65151/ within 120000 ms\n",
+  "durationMs": 797229
+}

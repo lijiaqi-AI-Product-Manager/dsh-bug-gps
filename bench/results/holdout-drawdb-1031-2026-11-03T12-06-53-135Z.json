@@ -1,0 +1,692 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "drawdb-1031",
+  "upstream": "https://github.com/drawdb-io/drawdb/pull/1031",
+  "buggyCommit": "913427b38f61b29f93b07b713123e908c44300c6",
+  "fixCommit": "86099382b8b7d312710b62c2dd711bcf2ef0068b",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T12:11:12.802Z",
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\drawdb.git worktree add --detach <run-root>\\cases\\drawdb-1031 913427b38f61b29f93b07b713123e908c44300c6\nPreparing worktree (detached HEAD 913427b)\nerror: unable to read sha1 file of README.md (61ce89ecb0c9b134cec87980e78babacc8b75ce1)\nerror: unable to read sha1 file of index.html (dd19a675f6cdfa1ec25c2f0fd3d9c521d750ea16)\nerror: unable to read sha1 file of package-lock.json (087da14ad3f579dd34dbbec50a2efa96d0dfc7a2)\nerror: unable to read sha1 file of package.json (cdcf32c8514fb469d4653791aefe33212650f667)\nerror: unable to read sha1 file of src/App.jsx (ababeb3ce4e1bf96c7077d8972c553d36840deff)\nerror: unable to read sha1 file of src/components/EditorCanvas/Area.jsx (3c6df9e9e88a53789cb1d42969b5cf7ee5c49790)\nerror: unable to read sha1 file of src/components/EditorCanvas/Canvas.jsx (f556daed082c8dd1ade91c30ef1e80cff7f8f5d0)\nerror: unable to read sha1 file of src/components/EditorCanvas/Note.jsx (4ee79a155945dd28d2342ee318eec479d28de229)\nerror: unable to read sha1 file of src/components/EditorCanvas/Relationship.jsx (a19fd1e245eec2bfb8933af3849c69326cddcf0e)\nerror: unable to read sha1 file of src/components/EditorCanv"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "c6f294042b707155f90fa47ba7b6f8df9916471248a3ff2f725ac47af1d7c0ce",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    },
+    "file": "bench/holdout-recordings/v3/drawdb-1031.json",
+    "source": "authored-executable-scenario",
+    "sha256": "c06fc0f43bd6bd93bcba9efce7624f32db8d793cb94e6920d0a12f9b17af36e0",
+    "canonicalSha256": "6b7e65b5f37dada5664dbef61d32239af842e43681fcc7bd1b02730ad841fffa",
+    "definitionRevision": 3,
+    "definitionBasis": {
+      "repository": "https://github.com/drawdb-io/drawdb",
+      "commit": "913427b38f61b29f93b07b713123e908c44300c6",
+      "file": "src/components/EditorHeader/ControlPanel.jsx",
+      "previousInput": "bench/holdout-recordings/v2/drawdb-1031.json",
+      "previousInputSha256": "62cb4a5294ae44563fe9f121cd0bf3769fe6792c38b22d68a27518b6f0814ff4",
+      "note": "V2 correctly saved New, but wrongly assumed that a second /editor navigation shows the database dialog. Workspace.loadLatestDiagram actually loads the newest stored diagram and navigates to its route. Remove only those two nonexistent dialog actions and explicitly confirm the loaded New title at navigation; retain recent-diagram selection, original raw path, browser settings and exact New_ filename-prefix expectation. No modal is closed after loading."
+    },
+    "authoredCheckpoints": [
+      {
+        "step": 6,
+        "reason": "Confirm New before saving."
+      },
+      {
+        "step": 8,
+        "reason": "Wait for the application save-state text before navigating away."
+      },
+      {
+        "step": 9,
+        "reason": "Confirm the application loaded the latest saved New diagram after navigation."
+      },
+      {
+        "step": 12,
+        "reason": "Confirm the recent-diagram action selected New before the first export."
+      }
+    ],
+    "steps": 15,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "value",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "文件名"
+        }
+      ],
+      "comparison": "startsWith",
+      "equals": "New_"
+    },
+    "also": []
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "9290b8b4c2a903721154eaf5f026031cb0a95d2cf111a5b67e6aa5c1620691dc",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "NOT_REPRODUCED",
+    "tally": {
+      "pass": 1
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"导出为 SQL 源代码\",\"role\":\"menuitem\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"取消\",\"within\":{\"name\":\"导出\",\"role\":\"dialog\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"text\",\"value\":\"Diagrams / Untitled Diagram\"}"
+      ],
+      "step:7": [
+        "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+      ],
+      "step:8": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+      ],
+      "step:9": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:10": [
+        "{\"by\":\"role\",\"name\":\"导出为 SQL 源代码\",\"role\":\"menuitem\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"role\",\"name\":\"文件名\",\"role\":\"textbox\"}"
+      ]
+    },
+    "durationMs": 6037
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "Untitled Diagram_2026-11-03T12:12:05.299Z",
+      "signature": {
+        "kind": "value",
+        "target": "role=textbox[name=文件名]",
+        "actual": {
+          "comparison": "startsWith",
+          "value": "Unti"
+        },
+        "resolution": {
+          "by": "role",
+          "role": "textbox",
+          "name": "文件名"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "value",
+              "target": "role=textbox[name=文件名]",
+              "actual": {
+                "comparison": "startsWith",
+                "value": "Unti"
+              },
+              "resolution": {
+                "by": "role",
+                "role": "textbox",
+                "name": "文件名"
+              }
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:2": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:3": [
+          "{\"by\":\"text\",\"value\":\"Diagrams / Untitled Diagram\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+        ],
+        "step:6": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+        ],
+        "checkpoint:6": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "step:7": [
+          "{\"by\":\"text\",\"value\":\"文件\"}"
+        ],
+        "step:8": [
+          "{\"by\":\"role\",\"name\":\"保存 Ctrl+S\",\"role\":\"menuitem\"}"
+        ],
+        "checkpoint:8": [
+          "{\"by\":\"css\",\"value\":\"nav .semi-tag-content\"}"
+        ],
+        "checkpoint:9": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "step:10": [
+          "{\"by\":\"text\",\"value\":\"文件\"}"
+        ],
+        "step:11": [
+          "{\"by\":\"role\",\"loose\":true,\"name\":\"打开最近的图表\",\"role\":\"menuitem\"}"
+        ],
+        "step:12": [
+          "{\"by\":\"text\",\"value\":\"New\"}"
+        ],
+        "checkpoint:12": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "step:13": [
+          "{\"by\":\"text\",\"value\":\"文件\"}"
+        ],
+        "step:14": [
+          "{\"by\":\"role\",\"name\":\"导出为 SQL 源代码\",\"role\":\"menuitem\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"role\",\"name\":\"文件名\",\"role\":\"textbox\"}"
+        ]
+      },
+      "durationMs": 24046
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": false,
+    "original": 15,
+    "shortened": 15,
+    "stats": {
+      "trials": 4,
+      "probeRuns": 1,
+      "cacheHits": 1,
+      "unresolved": 3,
+      "differentFailure": 0,
+      "stepTimeoutMs": 5168,
+      "durationMs": 30248,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/editor"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "MySQL",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "MySQL"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "确认",
+            "within": {
+              "role": "dialog",
+              "name": "选择数据库"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "确认"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "Diagrams / Untitled Diagram"
+          }
+        ]
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "名称"
+          }
+        ],
+        "value": "New"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "重命名",
+            "within": {
+              "role": "dialog",
+              "name": "重命名图表"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "重命名"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "添加表",
+            "within": {
+              "role": "tabpanel",
+              "name": "表 (0)"
+            },
+            "index": 0
+          },
+          {
+            "by": "text",
+            "value": "添加表"
+          }
+        ],
+        "check": {
+          "kind": "text",
+          "target": [
+            {
+              "by": "css",
+              "value": "nav .text-xl"
+            }
+          ],
+          "equals": "Diagrams / New"
+        }
+      },
+      {
+        "action": "hover",
+        "target": [
+          {
+            "by": "text",
+            "value": "文件"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "menuitem",
+            "name": "保存 Ctrl+S"
+          }
+        ],
+        "check": {
+          "kind": "text",
+          "target": [
+            {
+              "by": "css",
+              "value": "nav .semi-tag-content"
+            }
+          ],
+          "comparison": "startsWith",
+          "equals": "上次保存"
+        }
+      },
+      {
+        "action": "goto",
+        "url": "/editor",
+        "check": {
+          "kind": "text",
+          "target": [
+            {
+              "by": "css",
+              "value": "nav .text-xl"
+            }
+          ],
+          "equals": "Diagrams / New"
+        }
+      },
+      {
+        "action": "hover",
+        "target": [
+          {
+            "by": "text",
+            "value": "文件"
+          }
+        ]
+      },
+      {
+        "action": "hover",
+        "target": [
+          {
+            "by": "role",
+            "role": "menuitem",
+            "name": "打开最近的图表"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "New"
+          }
+        ],
+        "check": {
+          "kind": "text",
+          "target": [
+            {
+              "by": "css",
+              "value": "nav .text-xl"
+            }
+          ],
+          "equals": "Diagrams / New"
+        }
+      },
+      {
+        "action": "hover",
+        "target": [
+          {
+            "by": "text",
+            "value": "文件"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "menuitem",
+            "name": "导出为 SQL 源代码"
+          }
+        ]
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "Untitled Diagram_2026-11-03T12:13:56.877Z",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"value\":\"Diagrams / Untitled Diagram\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+      ],
+      "checkpoint:6": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "step:7": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:8": [
+        "{\"by\":\"role\",\"name\":\"保存 Ctrl+S\",\"role\":\"menuitem\"}"
+      ],
+      "checkpoint:8": [
+        "{\"by\":\"css\",\"value\":\"nav .semi-tag-content\"}"
+      ],
+      "checkpoint:9": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "step:10": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:11": [
+        "{\"by\":\"role\",\"loose\":true,\"name\":\"打开最近的图表\",\"role\":\"menuitem\"}"
+      ],
+      "step:12": [
+        "{\"by\":\"text\",\"value\":\"New\"}"
+      ],
+      "checkpoint:12": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "step:13": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:14": [
+        "{\"by\":\"role\",\"name\":\"导出为 SQL 源代码\",\"role\":\"menuitem\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"role\",\"name\":\"文件名\",\"role\":\"textbox\"}"
+      ]
+    },
+    "durationMs": 28076,
+    "caseSha256": "ae4b5dd506f47e676a167d216583716b83fc6d5aa57eace496a7633e205ddd05",
+    "lockSha256": "9225421526a91da4352f6f111ec0b03d1caddc1d5702d75927be996f2752b1c9"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"value\":\"Diagrams / Untitled Diagram\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+      ],
+      "checkpoint:6": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "step:7": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:8": [
+        "{\"by\":\"role\",\"name\":\"保存 Ctrl+S\",\"role\":\"menuitem\"}"
+      ],
+      "checkpoint:8": [
+        "{\"by\":\"css\",\"value\":\"nav .semi-tag-content\"}"
+      ],
+      "checkpoint:9": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "step:10": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:11": [
+        "{\"by\":\"role\",\"loose\":true,\"name\":\"打开最近的图表\",\"role\":\"menuitem\"}"
+      ],
+      "step:12": [
+        "{\"by\":\"text\",\"value\":\"New\"}"
+      ],
+      "checkpoint:12": [
+        "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+      ],
+      "step:13": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:14": [
+        "{\"by\":\"role\",\"name\":\"导出为 SQL 源代码\",\"role\":\"menuitem\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"role\",\"name\":\"文件名\",\"role\":\"textbox\"}"
+      ]
+    },
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "Untitled Diagram_2026-11-03T12:15:50.051Z",
+      "signatureKey": "{\"actual\":{\"comparison\":\"startsWith\",\"value\":\"Unti\"},\"check\":0,\"checks\":[{\"check\":0,\"outcome\":\"fail\",\"signature\":{\"actual\":{\"comparison\":\"startsWith\",\"value\":\"Unti\"},\"kind\":\"value\",\"resolution\":{\"by\":\"role\",\"name\":\"文件名\",\"role\":\"textbox\"},\"target\":\"role=textbox[name=文件名]\"}}],\"kind\":\"value\",\"resolution\":{\"by\":\"role\",\"name\":\"文件名\",\"role\":\"textbox\"},\"target\":\"role=textbox[name=文件名]\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:2": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:3": [
+          "{\"by\":\"text\",\"value\":\"Diagrams / Untitled Diagram\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+        ],
+        "step:6": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+        ],
+        "checkpoint:6": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "step:7": [
+          "{\"by\":\"text\",\"value\":\"文件\"}"
+        ],
+        "step:8": [
+          "{\"by\":\"role\",\"name\":\"保存 Ctrl+S\",\"role\":\"menuitem\"}"
+        ],
+        "checkpoint:8": [
+          "{\"by\":\"css\",\"value\":\"nav .semi-tag-content\"}"
+        ],
+        "checkpoint:9": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "step:10": [
+          "{\"by\":\"text\",\"value\":\"文件\"}"
+        ],
+        "step:11": [
+          "{\"by\":\"role\",\"loose\":true,\"name\":\"打开最近的图表\",\"role\":\"menuitem\"}"
+        ],
+        "step:12": [
+          "{\"by\":\"text\",\"value\":\"New\"}"
+        ],
+        "checkpoint:12": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "step:13": [
+          "{\"by\":\"text\",\"value\":\"文件\"}"
+        ],
+        "step:14": [
+          "{\"by\":\"role\",\"name\":\"导出为 SQL 源代码\",\"role\":\"menuitem\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"role\",\"name\":\"文件名\",\"role\":\"textbox\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 23533
+    },
+    "durationMs": 27064,
+    "caseSha256": "ae4b5dd506f47e676a167d216583716b83fc6d5aa57eace496a7633e205ddd05",
+    "lockSha256": "9225421526a91da4352f6f111ec0b03d1caddc1d5702d75927be996f2752b1c9"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "4c33ac7885032c89dd091b88aa1dc1894a6dfca228583515ab1f228e8bf3b644",
+    "lockSha256": "cbc41b04a01bb86f76b75c4b59c714e24391ef8be24451e33d1abf3dec5e5160"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 303043
+}

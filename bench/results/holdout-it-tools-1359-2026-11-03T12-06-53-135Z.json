@@ -1,0 +1,290 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "it-tools-1359",
+  "upstream": "https://github.com/CorentinTh/it-tools/pull/1359",
+  "buggyCommit": "aa8cba96de8477fcc63d91d3800568267c55e1cd",
+  "fixCommit": "f8366664177674c6e6ceaf4c88d9840b2517073a",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T12:44:35.436Z",
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "dependency install exited 1; inspect owned install.log"
+      }
+    ],
+    "manager": "pnpm",
+    "managerVersion": "8.15.3",
+    "lockSha256": "ace96ac8df9fe7c64880d02538412cb8cb09f1ba119e1a1711d5ebaaa84f9edc",
+    "generatedDeclarations": [
+      {
+        "path": ".eslintrc-auto-import.json",
+        "sha256": "3e4d724135e21f9b661f701b671c92308744a54e25c709f95ab04b7da4a17d06"
+      },
+      {
+        "path": "components.d.ts",
+        "sha256": "ea9dadde7118e436e14e58e2771ff833a6bb9d00bcafa4de0cecd6df7072ad60"
+      }
+    ],
+    "generatedPatchSha256": "bc510e15fe31934870e29b27e893d14da07a1ff1c14842b1bb7d578dbe032f15"
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    },
+    "file": "bench/holdout-recordings/it-tools-1359.json",
+    "source": "scripted",
+    "sha256": "1558e6cf5e4d48bd42ac96f636e5e562a60e18637760920c087e330660773170",
+    "canonicalSha256": "e00d351b25b2c6ea7fa7a23655f6adb0b7d34d9368a4536d574dd4be97834555",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 2,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "text",
+      "target": [
+        {
+          "by": "css",
+          "value": "code"
+        }
+      ],
+      "equals": "{ \"base\": { \"label\": \"GPS\" }, \"copy\": { \"label\": \"GPS\" } }"
+    },
+    "also": []
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "9290b8b4c2a903721154eaf5f026031cb0a95d2cf111a5b67e6aa5c1620691dc",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "{ \"base\": { \"label\": \"GPS\" }, \"copy\": { \"<<\": { \"label\": \"GPS\" } } }",
+    "signature": {
+      "kind": "text",
+      "target": "css=code",
+      "actual": "{ \"base\": { \"label\": \"GPS\" }, \"copy\": { \"<<\": { \"label\": \"GPS\" } } }",
+      "resolution": {
+        "by": "css",
+        "value": "code"
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "text",
+            "target": "css=code",
+            "actual": "{ \"base\": { \"label\": \"GPS\" }, \"copy\": { \"<<\": { \"label\": \"GPS\" } } }",
+            "resolution": {
+              "by": "css",
+              "value": "code"
+            }
+          }
+        }
+      ]
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"Your YAML\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"code\"}"
+      ]
+    },
+    "durationMs": 2740
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "{ \"base\": { \"label\": \"GPS\" }, \"copy\": { \"<<\": { \"label\": \"GPS\" } } }",
+      "signature": {
+        "kind": "text",
+        "target": "css=code",
+        "actual": "{ \"base\": { \"label\": \"GPS\" }, \"copy\": { \"<<\": { \"label\": \"GPS\" } } }",
+        "resolution": {
+          "by": "css",
+          "value": "code"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "text",
+              "target": "css=code",
+              "actual": "{ \"base\": { \"label\": \"GPS\" }, \"copy\": { \"<<\": { \"label\": \"GPS\" } } }",
+              "resolution": {
+                "by": "css",
+                "value": "code"
+              }
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"name\":\"Your YAML\",\"role\":\"textbox\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"code\"}"
+        ]
+      },
+      "durationMs": 8057
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 2,
+    "shortened": 2,
+    "stats": {
+      "trials": 1,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 0,
+      "differentFailure": 1,
+      "stepTimeoutMs": 2945,
+      "durationMs": 15973,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/yaml-to-json-converter"
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Your YAML"
+          },
+          {
+            "by": "label",
+            "value": "Your YAML"
+          },
+          {
+            "by": "css",
+            "value": "#id-anbdst6ygs"
+          }
+        ],
+        "value": "base: &base\n  label: GPS\ncopy:\n  <<: *base\n"
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "{ \"base\": { \"label\": \"GPS\" }, \"copy\": { \"<<\": { \"label\": \"GPS\" } } }",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"Your YAML\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"code\"}"
+      ]
+    },
+    "durationMs": 8212,
+    "caseSha256": "8fe98a3f7d8dba9a9f466e7fe3d4a1b6426e7d0219631410b22a6e7c03a994d6",
+    "lockSha256": "2fbb074443c8d80dd9aa38a383cfaa4983e9e656be842c12d60605232812a6ea"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"Your YAML\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"code\"}"
+      ]
+    },
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "{ \"base\": { \"label\": \"GPS\" }, \"copy\": { \"<<\": { \"label\": \"GPS\" } } }",
+      "signatureKey": "{\"actual\":\"{ \\\"base\\\": { \\\"label\\\": \\\"GPS\\\" }, \\\"copy\\\": { \\\"<<\\\": { \\\"label\\\": \\\"GPS\\\" } } }\",\"check\":0,\"checks\":[{\"check\":0,\"outcome\":\"fail\",\"signature\":{\"actual\":\"{ \\\"base\\\": { \\\"label\\\": \\\"GPS\\\" }, \\\"copy\\\": { \\\"<<\\\": { \\\"label\\\": \\\"GPS\\\" } } }\",\"kind\":\"text\",\"resolution\":{\"by\":\"css\",\"value\":\"code\"},\"target\":\"css=code\"}}],\"kind\":\"text\",\"resolution\":{\"by\":\"css\",\"value\":\"code\"},\"target\":\"css=code\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"name\":\"Your YAML\",\"role\":\"textbox\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"code\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 8284
+    },
+    "durationMs": 10477,
+    "caseSha256": "8fe98a3f7d8dba9a9f466e7fe3d4a1b6426e7d0219631410b22a6e7c03a994d6",
+    "lockSha256": "2fbb074443c8d80dd9aa38a383cfaa4983e9e656be842c12d60605232812a6ea"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "3d435bd1e44c1e1f1c7e781782fd9ded65b1be87fe1dd7cd6092ed7ec058420c",
+    "lockSha256": "e7a28a96e615a7dbac70525f1f72af7ed5c8fe5057e3102186238120eca3c3cb"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 348207
+}

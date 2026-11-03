@@ -1,0 +1,578 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "qwerty-learner-793",
+  "upstream": "https://github.com/RealKai42/qwerty-learner/pull/793",
+  "buggyCommit": "3426282c52b41133ca1565104b6d8fe4ce853427",
+  "fixCommit": "da9313f119536a28c6dcf6f245ced1b7d23f1962",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T13:15:58.415Z",
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\qwerty-learner.git worktree add --detach <run-root>\\cases\\qwerty-learner-793 3426282c52b41133ca1565104b6d8fe4ce853427\nPreparing worktree (detached HEAD 3426282)\nerror: unable to read sha1 file of .vscode/settings.json (a87c8622f1fdaeceb9b630b8b08ef468a3759367)\nerror: unable to read sha1 file of Dockerfile (e42b152a542b205ee4e78165f8b1b4afa4435d8d)\nerror: unable to read sha1 file of README.md (476f5c8693b195569545b4e6ffef2221f3f94b7b)\nerror: unable to read sha1 file of docker-compose.yaml (dad01db779ffa2f36fe7b7305d873246ae90635c)\nerror: unable to read sha1 file of package.json (bc14cc1fb74d913373408533175343ec4c3961d4)\nerror: unable to read sha1 file of public/dicts/HeQiong_IELTS.json (3acc8cd36937a569a3b9be4774977904576cceb8)\nerror: unable to read sha1 file of public/dicts/NCE_1.json (07e3a60b0165480de19e421b0189956ffaa6c718)\nerror: unable to read sha1 file of public/dicts/TOEFL_ZhangHongYan.json (5c2b51dfe16c91ec07e0eaf43d1a67465ae47ee6)\nerror: unable to read sha1 file of public/dicts/gre-ciyileiji.json (53639de12b4206387a5c408e9f27e351b4d4d5f4)\nerror: unable to read sha1 file of public/dicts/raz-AA.json (188a7"
+      }
+    ],
+    "manager": "yarn",
+    "managerVersion": "1.22.22",
+    "lockSha256": "2bcdf7b0f38724e67a254c7bcd9f83f3836668edcaadd42f01a0c6e77e342a70",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    },
+    "file": "bench/holdout-recordings/qwerty-learner-793.json",
+    "source": "scripted",
+    "sha256": "6bdf4f0be218136ffc36a58e9576b14af74d517d5c9130fd3f22ba2c12b10f6f",
+    "canonicalSha256": "e1481035fe616ec8170e00f962e4a6374e284297746d8646f57459f8b8ebdfa4",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 5,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "hidden",
+      "target": [
+        {
+          "by": "role",
+          "role": "listbox"
+        }
+      ]
+    },
+    "also": [
+      {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          }
+        ]
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "9290b8b4c2a903721154eaf5f026031cb0a95d2cf111a5b67e6aa5c1620691dc",
+    "cache": "per-checkout",
+    "dependencyMode": "copied-into-worktree"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "visible",
+    "signature": {
+      "kind": "hidden",
+      "target": "role=listbox[name=]",
+      "actual": "true",
+      "resolution": {
+        "by": "role",
+        "role": "listbox"
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "hidden",
+            "target": "role=listbox[name=]",
+            "actual": "true",
+            "resolution": {
+              "by": "role",
+              "role": "listbox"
+            }
+          }
+        },
+        {
+          "check": 1,
+          "outcome": "pass",
+          "resolution": {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          }
+        }
+      ]
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"关闭提示\",\"role\":\"button\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"第 1 章\",\"role\":\"button\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"option\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"role\",\"role\":\"listbox\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          },
+          "source": "final-check",
+          "stepIndex": 4,
+          "elapsedMs": 2409
+        }
+      }
+    ],
+    "durationMs": 2433
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "visible",
+      "signature": {
+        "kind": "hidden",
+        "target": "role=listbox[name=]",
+        "actual": "true",
+        "resolution": {
+          "by": "role",
+          "role": "listbox"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "hidden",
+              "target": "role=listbox[name=]",
+              "actual": "true",
+              "resolution": {
+                "by": "role",
+                "role": "listbox"
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "pass",
+            "resolution": {
+              "by": "role",
+              "role": "button",
+              "name": "第 2 章"
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"name\":\"关闭提示\",\"role\":\"button\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"第 1 章\",\"role\":\"button\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"option\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"role\",\"role\":\"listbox\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+        ]
+      },
+      "visibilityHistory": [
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "第 2 章"
+            },
+            "source": "final-check",
+            "stepIndex": 4,
+            "elapsedMs": 2350
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "第 2 章"
+            },
+            "source": "final-check",
+            "stepIndex": 4,
+            "elapsedMs": 2326
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "第 2 章"
+            },
+            "source": "final-check",
+            "stepIndex": 4,
+            "elapsedMs": 2365
+          }
+        }
+      ],
+      "durationMs": 7105
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 5,
+    "shortened": 5,
+    "stats": {
+      "trials": 4,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 1,
+      "differentFailure": 2,
+      "stepTimeoutMs": 2000,
+      "durationMs": 17129,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "关闭提示"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "第 1 章"
+          },
+          {
+            "by": "css",
+            "value": "#headlessui-listbox-button-\\:r1\\:"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "option",
+            "name": "第 2 章"
+          },
+          {
+            "by": "css",
+            "value": "#headlessui-listbox-option-\\:rn\\:"
+          }
+        ]
+      },
+      {
+        "action": "press",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          },
+          {
+            "by": "css",
+            "value": "#headlessui-listbox-button-\\:r1\\:"
+          }
+        ],
+        "value": "Space"
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "visible",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"关闭提示\",\"role\":\"button\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"第 1 章\",\"role\":\"button\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"option\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"role\",\"role\":\"listbox\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          },
+          "source": "final-check",
+          "stepIndex": 4,
+          "elapsedMs": 2266
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          },
+          "source": "final-check",
+          "stepIndex": 4,
+          "elapsedMs": 2262
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          },
+          "source": "final-check",
+          "stepIndex": 4,
+          "elapsedMs": 2331
+        }
+      }
+    ],
+    "durationMs": 6917,
+    "caseSha256": "894c95eaf9abbe5a1b5fb25172c46ca302d7db53d4a444d869f48f85044e5f55",
+    "lockSha256": "d35e4b95aefd7728fedfca9c80ec8be12e0ede6c2fcd015fa6a5ebe95a81577b"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"关闭提示\",\"role\":\"button\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"第 1 章\",\"role\":\"button\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"option\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          },
+          "source": "final-check",
+          "stepIndex": 4,
+          "elapsedMs": 3157
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          },
+          "source": "final-check",
+          "stepIndex": 4,
+          "elapsedMs": 3053
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "button",
+            "name": "第 2 章"
+          },
+          "source": "final-check",
+          "stepIndex": 4,
+          "elapsedMs": 2999
+        }
+      }
+    ],
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "visible",
+      "signatureKey": "{\"actual\":\"true\",\"check\":0,\"checks\":[{\"check\":0,\"outcome\":\"fail\",\"signature\":{\"actual\":\"true\",\"kind\":\"hidden\",\"resolution\":{\"by\":\"role\",\"role\":\"listbox\"},\"target\":\"role=listbox[name=]\"}},{\"check\":1,\"outcome\":\"pass\",\"resolution\":{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}}],\"kind\":\"hidden\",\"resolution\":{\"by\":\"role\",\"role\":\"listbox\"},\"target\":\"role=listbox[name=]\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"name\":\"关闭提示\",\"role\":\"button\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"第 1 章\",\"role\":\"button\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"option\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"role\",\"role\":\"listbox\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"第 2 章\",\"role\":\"button\"}"
+        ]
+      },
+      "visibilityHistory": [
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "第 2 章"
+            },
+            "source": "final-check",
+            "stepIndex": 4,
+            "elapsedMs": 2379
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "第 2 章"
+            },
+            "source": "final-check",
+            "stepIndex": 4,
+            "elapsedMs": 2379
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "button",
+              "name": "第 2 章"
+            },
+            "source": "final-check",
+            "stepIndex": 4,
+            "elapsedMs": 2305
+          }
+        }
+      ],
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 7109
+    },
+    "durationMs": 9256,
+    "caseSha256": "894c95eaf9abbe5a1b5fb25172c46ca302d7db53d4a444d869f48f85044e5f55",
+    "lockSha256": "d35e4b95aefd7728fedfca9c80ec8be12e0ede6c2fcd015fa6a5ebe95a81577b"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "67086fd43b1ab676585771907f456ba7799b49fd5e7b5f63dc03a6eb7e64daad",
+    "lockSha256": "fba8dc24b4cafe6964592050456485e0ff7b9d3b3d26a3a971b43fa8fbcd3226"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 163636
+}

@@ -1,0 +1,293 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "it-tools-872",
+  "upstream": "https://github.com/CorentinTh/it-tools/pull/872",
+  "buggyCommit": "23f82d956a8af21e176f7268c9414244168bd4eb",
+  "fixCommit": "9eac9cb2a9d23619b0d3c044f1bc1385aab427e4",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T12:50:23.719Z",
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "dependency install exited 1; inspect owned install.log"
+      }
+    ],
+    "manager": "pnpm",
+    "managerVersion": "8.15.9",
+    "lockSha256": "d2932dafa510a0912ecc0573327bc37a30350574f53346d80bb7a53cd3e8859a",
+    "generatedDeclarations": [
+      {
+        "path": ".eslintrc-auto-import.json",
+        "sha256": "3e4d724135e21f9b661f701b671c92308744a54e25c709f95ab04b7da4a17d06"
+      },
+      {
+        "path": "components.d.ts",
+        "sha256": "6d99a5264a76d5e1ca1c2ff3ce767fe7785d1c5d1230acf840c4f54c442673a6"
+      }
+    ],
+    "generatedPatchSha256": "754020f816788d9aaf381ea475f1448413baeddbd39aba930d6e8cd2ad259709"
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    },
+    "file": "bench/holdout-recordings/it-tools-872.json",
+    "source": "scripted",
+    "sha256": "7d983a75871da494cc28437dbab7ad7931ffe329dd8467f4abd5723044d0f102",
+    "canonicalSha256": "143bc0dfcc2a765a031724ac31f2a957a1d4c3d334bd59cbed5c256e408e842b",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 2,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "value",
+      "target": [
+        {
+          "by": "css",
+          "value": "input[placeholder=\"Decimal version will be here...\"]"
+        }
+      ],
+      "equals": "9007199254740993"
+    },
+    "also": []
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "9290b8b4c2a903721154eaf5f026031cb0a95d2cf111a5b67e6aa5c1620691dc",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "9007199254740992",
+    "signature": {
+      "kind": "value",
+      "target": "css=input[placeholder=\"Decimal version will be here...\"]",
+      "actual": "9007199254740992",
+      "resolution": {
+        "by": "css",
+        "value": "input[placeholder=\"Decimal version will be here...\"]"
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "value",
+            "target": "css=input[placeholder=\"Decimal version will be here...\"]",
+            "actual": "9007199254740992",
+            "resolution": {
+              "by": "css",
+              "value": "input[placeholder=\"Decimal version will be here...\"]"
+            }
+          }
+        }
+      ]
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"Input number\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"input[placeholder=\\\"Decimal version will be here...\\\"]\"}"
+      ]
+    },
+    "durationMs": 2522
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "9007199254740992",
+      "signature": {
+        "kind": "value",
+        "target": "css=input[placeholder=\"Decimal version will be here...\"]",
+        "actual": "9007199254740992",
+        "resolution": {
+          "by": "css",
+          "value": "input[placeholder=\"Decimal version will be here...\"]"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "value",
+              "target": "css=input[placeholder=\"Decimal version will be here...\"]",
+              "actual": "9007199254740992",
+              "resolution": {
+                "by": "css",
+                "value": "input[placeholder=\"Decimal version will be here...\"]"
+              }
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"label\",\"value\":\"Input number\"}",
+          "{\"by\":\"role\",\"name\":\"Input number\",\"role\":\"textbox\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"input[placeholder=\\\"Decimal version will be here...\\\"]\"}"
+        ]
+      },
+      "durationMs": 8102
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 2,
+    "shortened": 2,
+    "stats": {
+      "trials": 1,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 0,
+      "differentFailure": 1,
+      "stepTimeoutMs": 2963,
+      "durationMs": 15648,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/base-converter"
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Input number"
+          },
+          {
+            "by": "label",
+            "value": "Input number"
+          },
+          {
+            "by": "css",
+            "value": "#id-tx87er9llk"
+          }
+        ],
+        "value": "9007199254740993"
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "9007199254740992",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"Input number\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"input[placeholder=\\\"Decimal version will be here...\\\"]\"}"
+      ]
+    },
+    "durationMs": 7972,
+    "caseSha256": "292e10f6ef9ad1eecb144530fe79382d5baeda074831c6a71246c9b85f3f77ea",
+    "lockSha256": "149265ec725ab1e083c2f454d47a6a47fed40dc6cf2dc1b58db3c1213ad22eeb"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"label\",\"value\":\"Input number\"}",
+        "{\"by\":\"role\",\"name\":\"Input number\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"input[placeholder=\\\"Decimal version will be here...\\\"]\"}"
+      ]
+    },
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "9007199254740992",
+      "signatureKey": "{\"actual\":\"9007199254740992\",\"check\":0,\"checks\":[{\"check\":0,\"outcome\":\"fail\",\"signature\":{\"actual\":\"9007199254740992\",\"kind\":\"value\",\"resolution\":{\"by\":\"css\",\"value\":\"input[placeholder=\\\"Decimal version will be here...\\\"]\"},\"target\":\"css=input[placeholder=\\\"Decimal version will be here...\\\"]\"}}],\"kind\":\"value\",\"resolution\":{\"by\":\"css\",\"value\":\"input[placeholder=\\\"Decimal version will be here...\\\"]\"},\"target\":\"css=input[placeholder=\\\"Decimal version will be here...\\\"]\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"label\",\"value\":\"Input number\"}",
+          "{\"by\":\"role\",\"name\":\"Input number\",\"role\":\"textbox\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"input[placeholder=\\\"Decimal version will be here...\\\"]\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 9596
+    },
+    "durationMs": 10341,
+    "caseSha256": "292e10f6ef9ad1eecb144530fe79382d5baeda074831c6a71246c9b85f3f77ea",
+    "lockSha256": "149265ec725ab1e083c2f454d47a6a47fed40dc6cf2dc1b58db3c1213ad22eeb"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "f94445d768e95965aff55adfd9a8ca704b599df8e06998be3571b29175d8d7ac",
+    "lockSha256": "efee90eb3461d07daefc4ac39fa736a0954128646533437e8ce0f7ee0d966a09"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 348762
+}

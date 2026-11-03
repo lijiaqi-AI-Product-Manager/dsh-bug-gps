@@ -1,0 +1,452 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "chartdb-1045",
+  "upstream": "https://github.com/chartdb/chartdb/pull/1045",
+  "buggyCommit": "ded5b14a62eaf352b372cb5f2f6e225de9d53a44",
+  "fixCommit": "84e55f5df654be47c27f17fac55359d6a454d87d",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T12:38:30.471Z",
+  "runtime": {
+    "commit": "bbdf901c5ae472c90eb5558bc7de2202665b3add",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "81229589fd36b7b5f1e944944f55a27a381c44017e2fdf32244cb824e04371f3",
+    "inputSelectorSha256": "d220381f1cbcd6009f24396896dc643b080db5487661bfa285378cbbbc13cf1f",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\chartdb.git worktree add --detach <run-root>\\cases\\chartdb-1045 ded5b14a62eaf352b372cb5f2f6e225de9d53a44\nPreparing worktree (detached HEAD ded5b14)\nerror: unable to read sha1 file of CHANGELOG.md (85d2ea8689b38d5e6b9bd80bb030b7f175e93a27)\nerror: unable to read sha1 file of src/context/chartdb-context/chartdb-context.tsx (c8450528dfecb5a8932833487f7b9ec53eac69e4)\nerror: unable to read sha1 file of src/context/history-context/history-provider.tsx (8c814daac43546fbb655c57352c208e51292cc90)\nerror: unable to read sha1 file of src/context/history-context/redo-undo-action.ts (ef32f6b04b9a62859319985e2c4567fb1569a19d)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mssql.ts (36a2653a24132a0b5e3b45e290512a386f099faf)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mysql.ts (b52a4b3012748ef173c9c94f6a93fe39e6caf04d)\nerror: unable to read sha1 file of src/lib/data/sql-export/export-sql-script.ts (12c95ed9025f626deab0fe37754595ac3de913f8)\nerror: unable to read sha1 file of src/lib/domain/database-capabilities.ts (8fad91bb8cfcb669ba16ace331e61c4265e"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "cac799326dc439d8addd45debb5bc8759c25709bd5715ad109cad9ec26919a25",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "3ee2959e1b66d71b01a4badefff1c08122859baaa56760a04175f1d7bbcba2d9"
+    },
+    "file": "bench/holdout-recordings/chartdb-1045.json",
+    "source": "scripted-with-authored-targets",
+    "sha256": "e52c229a017a462aa90244db302b58fd520aac7e6ad2fbaee3ea46462b60d664",
+    "canonicalSha256": "964c9fad8bf9c0505137def6e8fd800c5e6468d2663756aa511cb412165f08f2",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 9,
+    "authoredTargets": [
+      {
+        "index": 3,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"Add Table\") >> nth=0"
+          }
+        ],
+        "reason": "Use the toolbar Add Table control among the two empty-state buttons."
+      },
+      {
+        "index": 7,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "[role=application] button:has(svg.lucide-search)"
+          }
+        ],
+        "reason": "The unnamed search icon opens the table filter."
+      },
+      {
+        "index": 8,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "[role=application] button:has(svg.lucide-eye) >> nth=1"
+          }
+        ],
+        "reason": "Toggle the first table in the schema, after the schema-wide visibility control."
+      }
+    ],
+    "dropped": null,
+    "expectation": {
+      "kind": "count",
+      "target": [
+        {
+          "by": "css",
+          "value": "[role=application] :text-is(\"1/2\")"
+        }
+      ],
+      "equals": 1
+    },
+    "also": [
+      {
+        "kind": "count",
+        "target": [
+          {
+            "by": "css",
+            "value": ".react-flow__node:has-text(\"table_2\")"
+          }
+        ],
+        "equals": 1
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-chartdb-serve.mjs",
+    "sha256": "4a99ee3d11b0572424a6ade16d7ccecf628134c169845959e35b1d5bec86f03a",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "fixture": "github_repo_opened=true suppresses the promotional dialog only"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "TEST_INVALID",
+    "tally": {
+      "step-error": 1
+    },
+    "reason": "target ambiguous",
+    "stepIndex": 3,
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"loose\":true,\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"Empty database\",\"role\":\"button\"}"
+      ]
+    },
+    "durationMs": 14141
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "0 matching elements",
+      "signature": {
+        "kind": "count",
+        "target": "css=[role=application] :text-is(\"1/2\")",
+        "actual": "0",
+        "resolution": {
+          "by": "css",
+          "value": "[role=application] :text-is(\"1/2\")",
+          "collection": true
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "count",
+              "target": "css=[role=application] :text-is(\"1/2\")",
+              "actual": "0",
+              "resolution": {
+                "by": "css",
+                "value": "[role=application] :text-is(\"1/2\")",
+                "collection": true
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "pass",
+            "resolution": {
+              "by": "css",
+              "value": ".react-flow__node:has-text(\"table_2\")",
+              "collection": true
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"loose\":true,\"name\":\"Toggle bold\",\"role\":\"radio\"}",
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"Empty database\",\"role\":\"button\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"Add Table\\\") >> nth=0\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"role\",\"name\":\"Add Table\",\"role\":\"button\"}"
+        ],
+        "step:7": [
+          "{\"by\":\"css\",\"value\":\"[role=application] button:has(svg.lucide-search)\"}"
+        ],
+        "step:8": [
+          "{\"by\":\"css\",\"value\":\"[role=application] button:has(svg.lucide-eye) >> nth=1\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"[role=application] :text-is(\\\"1/2\\\")\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\".react-flow__node:has-text(\\\"table_2\\\")\"}"
+        ]
+      },
+      "durationMs": 18105
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": false,
+    "original": 9,
+    "shortened": 9,
+    "stats": {
+      "trials": 6,
+      "probeRuns": 1,
+      "cacheHits": 1,
+      "unresolved": 2,
+      "differentFailure": 1,
+      "stepTimeoutMs": 7604,
+      "durationMs": 30122,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold"
+          },
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold",
+            "child": {
+              "role": "img",
+              "name": "PostgreSQL"
+            }
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Empty database"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "aside button:text-is(\"Add Table\") >> nth=0"
+          }
+        ]
+      },
+      {
+        "action": "key",
+        "target": [
+          {
+            "by": "page"
+          }
+        ],
+        "value": "Escape"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Add Table"
+          }
+        ]
+      },
+      {
+        "action": "key",
+        "target": [
+          {
+            "by": "page"
+          }
+        ],
+        "value": "Escape"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "[role=application] button:has(svg.lucide-search)"
+          }
+        ]
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "[role=application] button:has(svg.lucide-eye) >> nth=1"
+          }
+        ]
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "0 matching elements",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"loose\":true,\"name\":\"Toggle bold\",\"role\":\"radio\"}",
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"Empty database\",\"role\":\"button\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"Add Table\\\") >> nth=0\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"role\",\"name\":\"Add Table\",\"role\":\"button\"}"
+      ],
+      "step:7": [
+        "{\"by\":\"css\",\"value\":\"[role=application] button:has(svg.lucide-search)\"}"
+      ],
+      "step:8": [
+        "{\"by\":\"css\",\"value\":\"[role=application] button:has(svg.lucide-eye) >> nth=1\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"[role=application] :text-is(\\\"1/2\\\")\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\".react-flow__node:has-text(\\\"table_2\\\")\"}"
+      ]
+    },
+    "durationMs": 18633,
+    "caseSha256": "d518c1e72143bb54c64dccead25094f32ee1ada225815b13bd7bd3334ea3b15d",
+    "lockSha256": "0e5be42531772353a5520739e5143df18d178e9551ce91e15c191229c4cbcff2"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"Empty database\",\"role\":\"button\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"Add Table\\\") >> nth=0\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"role\",\"name\":\"Add Table\",\"role\":\"button\"}"
+      ],
+      "step:7": [
+        "{\"by\":\"css\",\"value\":\"[role=application] button:has(svg.lucide-search)\"}"
+      ],
+      "step:8": [
+        "{\"by\":\"css\",\"value\":\"[role=application] button:has(svg.lucide-eye) >> nth=1\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"[role=application] :text-is(\\\"1/2\\\")\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\".react-flow__node:has-text(\\\"table_2\\\")\"}"
+      ]
+    },
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "0 matching elements",
+      "signatureKey": "{\"actual\":\"0\",\"check\":0,\"checks\":[{\"check\":0,\"outcome\":\"fail\",\"signature\":{\"actual\":\"0\",\"kind\":\"count\",\"resolution\":{\"by\":\"css\",\"collection\":true,\"value\":\"[role=application] :text-is(\\\"1/2\\\")\"},\"target\":\"css=[role=application] :text-is(\\\"1/2\\\")\"}},{\"check\":1,\"outcome\":\"pass\",\"resolution\":{\"by\":\"css\",\"collection\":true,\"value\":\".react-flow__node:has-text(\\\"table_2\\\")\"}}],\"kind\":\"count\",\"resolution\":{\"by\":\"css\",\"collection\":true,\"value\":\"[role=application] :text-is(\\\"1/2\\\")\"},\"target\":\"css=[role=application] :text-is(\\\"1/2\\\")\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"role\":\"radio\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"Empty database\",\"role\":\"button\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"css\",\"value\":\"aside button:text-is(\\\"Add Table\\\") >> nth=0\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"role\",\"name\":\"Add Table\",\"role\":\"button\"}"
+        ],
+        "step:7": [
+          "{\"by\":\"css\",\"value\":\"[role=application] button:has(svg.lucide-search)\"}"
+        ],
+        "step:8": [
+          "{\"by\":\"css\",\"value\":\"[role=application] button:has(svg.lucide-eye) >> nth=1\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"[role=application] :text-is(\\\"1/2\\\")\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\".react-flow__node:has-text(\\\"table_2\\\")\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 17995
+    },
+    "durationMs": 20888,
+    "caseSha256": "d518c1e72143bb54c64dccead25094f32ee1ada225815b13bd7bd3334ea3b15d",
+    "lockSha256": "0e5be42531772353a5520739e5143df18d178e9551ce91e15c191229c4cbcff2"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "dadea673ad08e6cfa12ba37fb001b1242149b80b9a8602c60d5b218477bb66fa",
+    "lockSha256": "9283037dd025495d23b67a1a4568b1cf81912eaa51fcd4e5e1f0eb2e1fc2f11c"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 364962
+}
