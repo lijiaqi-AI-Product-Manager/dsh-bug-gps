@@ -109,6 +109,49 @@ test('checkpoint and pinned-step summaries survive navigation and preserve the o
   assert.equal(steps[1].check.equals, '1');
 });
 
+test('a delayed language request cannot replace a newer choice after navigation', { timeout: 10000 }, async (t) => {
+  const { rec, page, ui } = await begin(t);
+  await page.evaluate(() => {
+    const record = window.__buggpsRecord;
+    window.__toolbarLanguageSettled = new Promise((resolve) => { window.__resolveToolbarLanguage = resolve; });
+    window.__buggpsRecord = async (event) => {
+      if (event.type === 'toolbar' && event.language === 'en') await new Promise((resolve) => setTimeout(resolve, 300));
+      const view = await record(event);
+      if (event.type === 'toolbar' && event.language === 'en') window.__resolveToolbarLanguage();
+      return view;
+    };
+  });
+  await ui.locator('select').selectOption('en');
+  await ui.locator('select').selectOption('ja');
+  await page.evaluate(() => window.__toolbarLanguageSettled);
+  await ui.getByRole('button', { name: '期待するテキスト', exact: true }).waitFor();
+  await page.getByRole('link', { name: 'About', exact: true }).click();
+  await ui.getByRole('button', { name: '期待するテキスト', exact: true }).waitFor();
+  assert.deepEqual((await rec.stop()).map((step) => step.action), ['goto', 'click']);
+});
+
+test('finishing retains a pinned step whose acknowledgement is delayed', { timeout: 10000 }, async (t) => {
+  const { rec, page, ui } = await begin(t);
+  await ui.getByRole('button', { name: '应可见', exact: true }).click();
+  await page.getByRole('heading', { name: 'Demo', exact: true }).click();
+  await ui.getByText('已设置 1 项预期', { exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Add', exact: true }).click();
+  await page.evaluate(() => {
+    const record = window.__buggpsRecord;
+    window.__buggpsRecord = async (event) => {
+      if (event.type === 'pin') await new Promise((resolve) => setTimeout(resolve, 500));
+      return record(event);
+    };
+  });
+  await ui.locator('summary').click();
+  await ui.getByRole('button', { name: '上一步是关键', exact: true }).click();
+  await ui.getByRole('button', { name: '结束录制', exact: true }).click();
+  assert.equal(await rec.finished, 'stop');
+  const steps = await rec.stop();
+  assert.equal(steps.at(-1).pinned, true);
+  assert.deepEqual(steps.map((step) => step.action), ['goto', 'click']);
+});
+
 test('absence of page errors alone cannot bypass the positive-expectation warning', async (t) => {
   const { rec, page, ui } = await begin(t);
   await ui.locator('summary').click();

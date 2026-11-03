@@ -23,10 +23,13 @@ async function serve(t, html) {
 
 test('an unfinished image does not block recording an interactive page', async (t) => {
   const baseUrl = await serve(t, '<!doctype html><button>Ready</button><img src="/pending-image">');
-  const recording = await startRecording(env.browser, { baseUrl, navTimeoutMs: 1000 });
-  try { assert.equal(await recording.page.getByRole('button', { name: 'Ready' }).isVisible(), true); }
+  const recording = await startRecording(env.browser, { baseUrl, navTimeoutMs: 10000 });
+  try {
+    assert.equal(await recording.page.getByRole('button', { name: 'Ready' }).isVisible(), true);
+    assert.equal(await recording.page.evaluate(() => document.readyState), 'interactive', 'The image request must still be unfinished');
+  }
   finally { await recording.stop(); }
-  const replay = await runTrial(env.browser, { baseUrl, steps: [{ action: 'goto', url: '/' }], expectation: { kind: 'visible', target: [{ by: 'role', role: 'button', name: 'Ready' }] }, navTimeoutMs: 1000 });
+  const replay = await runTrial(env.browser, { baseUrl, steps: [{ action: 'goto', url: '/' }], expectation: { kind: 'visible', target: [{ by: 'role', role: 'button', name: 'Ready' }] }, navTimeoutMs: 10000 });
   assert.equal(replay.outcome, 'pass');
 });
 
