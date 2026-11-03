@@ -141,6 +141,11 @@ function installToolbar(i18n) {
     let warning = false;
     let finishing = false;
     let pickerCollapsed = false;
+    let preferenceRequest = 0;
+    let preferenceTail = Promise.resolve();
+    let submissionFailed = false;
+    const pendingSubmissions = new Set();
+    const pendingPreferences = new Map();
     const kindKey = (kind) => ({ 'no-page-error': 'noError' }[kind] ?? kind);
     const tr = (key, args = {}) => {
       const value = (i18n[state.language] ?? i18n.en)[key] ?? i18n.en[key] ?? key;
@@ -173,7 +178,6 @@ function installToolbar(i18n) {
         button.setAttribute('aria-pressed', String(window.__buggpsPickKind === button.dataset.k));
       }
       for (const id of ['more', 'summary', 'pin', 'move', 'finish', 'continue', 'incomplete', 'cancel']) label(el(id), id === 'pin' ? 'pin' : id);
-      el('pin').disabled = state.stopped || state.stepCount <= 1;
       el('cancel').hidden = !picking;
       text(el('expectations'), state.expectationCount ? tr(state.expectationCount === 1 ? 'expectationOne' : 'expectations', { n: state.expectationCount }) : tr('noExpectation'));
       const entries = state.checks.map((check) => tr(kindKey(check.kind)) + (check.equals === undefined ? '' : ': ' + check.equals));
@@ -193,19 +197,40 @@ function installToolbar(i18n) {
       const left = state.corner.endsWith('l'); const top = state.corner.startsWith('t');
       host.style.left = left ? '12px' : ''; host.style.right = left ? '' : '12px';
       host.style.top = top ? '12px' : ''; host.style.bottom = top ? '' : '12px';
-      for (const control of root.querySelectorAll('button,select')) if (state.stopped) control.disabled = true;
-      for (const id of ['finish', 'finish-mini', 'incomplete']) el(id).disabled = state.stopped || finishing;
+      for (const control of root.querySelectorAll('button,select')) control.disabled = state.stopped || finishing;
+      el('pin').disabled = state.stopped || finishing || state.stepCount <= 1;
     };
     const update = (view) => {
       if (!view || !Number.isInteger(view.revision) || view.revision < state.revision) return;
       if (view.stepCount !== state.stepCount) notice = null;
       state = { ...state, ...view };
+      for (const [key, pending] of pendingPreferences) state[key] = pending.value;
       window.__buggpsToolbarState = state;
       render();
     };
-    const submit = async (event) => {
-      try { const view = await window.__buggpsRecord(event); update(view); return true; }
-      catch { notice = 'disconnected'; render(); return false; }
+    const submit = (event) => {
+      const preference = event.type === 'toolbar';
+      const request = preference ? ++preferenceRequest : null;
+      const keys = preference ? ['language', 'collapsed', 'corner'].filter((key) => key in event) : [];
+      for (const key of keys) pendingPreferences.set(key, { request, value: event[key] });
+      const clearPreferences = () => {
+        for (const key of keys) if (pendingPreferences.get(key)?.request === request) pendingPreferences.delete(key);
+      };
+      const send = async () => {
+        try {
+          const view = await window.__buggpsRecord(event);
+          clearPreferences(); update(view); return true;
+        } catch {
+          clearPreferences(); submissionFailed = true; notice = 'disconnected'; render(); return false;
+        }
+      };
+      // Preserve preference intent when requests or replies arrive at different times.
+      // Stop and incomplete-draft markers remain available if a preference is stalled.
+      const completed = preference ? preferenceTail.then(send) : send();
+      if (preference) preferenceTail = completed;
+      pendingSubmissions.add(completed);
+      void completed.then(() => pendingSubmissions.delete(completed));
+      return completed;
     };
     window.__buggpsUpdateToolbar = update;
     window.__buggpsSelectionChanged = render;
@@ -231,7 +256,12 @@ function installToolbar(i18n) {
       finishing = true; render();
       let timer;
       try {
-        const acknowledged = (async () => { await window.__buggpsFlushRecording?.(); return window.__buggpsGetState(); })();
+        const acknowledged = (async () => {
+          await window.__buggpsFlushRecording?.();
+          const completed = await Promise.all([...pendingSubmissions]);
+          if (submissionFailed || completed.some((ok) => !ok)) throw new Error('Toolbar acknowledgement failed');
+          return window.__buggpsGetState();
+        })();
         try { update(await Promise.race([acknowledged, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Recording acknowledgement timed out')), 3000); })])); }
         catch {
           if (!incomplete) { notice = 'syncFailed'; return; }
