@@ -1,0 +1,560 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "chartdb-1031",
+  "upstream": "https://github.com/chartdb/chartdb/pull/1031",
+  "buggyCommit": "fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68",
+  "fixCommit": "674ed2249ee46b0dce14b1cc10be45755460b03d",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T00:36:50.219Z",
+  "runtime": {
+    "commit": "54be9fa435777c3552c2f2ef8f0af39dff6d840a",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "303784caf0bcadb6f6c22fcfd72f22ad27642c298e19be6f9b47839d642101d6",
+    "engineFilesSha256": "fb6778638aa76517c0c14296f504e6f45e0d5c3c6e6e928f87cbdb9c6972a9de",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\chartdb.git worktree add --detach <run-root>\\cases\\chartdb-1031 fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68\nPreparing worktree (detached HEAD fb19a7a)\nerror: unable to read sha1 file of CHANGELOG.md (85d2ea8689b38d5e6b9bd80bb030b7f175e93a27)\nerror: unable to read sha1 file of src/context/chartdb-context/chartdb-context.tsx (c8450528dfecb5a8932833487f7b9ec53eac69e4)\nerror: unable to read sha1 file of src/context/history-context/history-provider.tsx (8c814daac43546fbb655c57352c208e51292cc90)\nerror: unable to read sha1 file of src/context/history-context/redo-undo-action.ts (ef32f6b04b9a62859319985e2c4567fb1569a19d)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mssql.ts (36a2653a24132a0b5e3b45e290512a386f099faf)\nerror: unable to read sha1 file of src/lib/data/sql-export/cross-dialect/postgresql/to-mysql.ts (b52a4b3012748ef173c9c94f6a93fe39e6caf04d)\nerror: unable to read sha1 file of src/lib/data/sql-export/export-sql-script.ts (12c95ed9025f626deab0fe37754595ac3de913f8)\nUpdating files:  66% (491/743)\rUpdating files:  67% (498/743)\rUpdating files:  68% (506/743)\rUpdating files:  6"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "cac799326dc439d8addd45debb5bc8759c25709bd5715ad109cad9ec26919a25",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "scripted",
+    "sha256": "a27c12729bf239c54524b9cc1a7a11b5b414cc9dfc47f0eae853c2298eca983e",
+    "canonicalSha256": "84af705a77f9f58e9d202fb76cadc0a85f7b07f03bec3477cbbbc966442bfb7b",
+    "definitionRevision": 5,
+    "definitionBasis": {
+      "repository": "https://github.com/chartdb/chartdb",
+      "commit": "fb19a7ac2f8e5270c1c1dfdc0e32e5004327bc68",
+      "upstream": "https://github.com/chartdb/chartdb/pull/1031",
+      "previousInputSha256": "b3853fcd8c3b1f278515e2c03a9bddb9674f4b4c21e16f98d129ebb2b77dd891",
+      "inputMethod": "Select All and a scripted ClipboardEvent; not native clipboard capture",
+      "note": "Verify precision 15 and scale 2 in the amount field properties, as required by the upstream regression test. The previous sidebar count used numeric(15,2), while the fixed UI displays numeric(15, 2); retain that failed definition and establish a new original-code basis. Keep the exact named table-button scope while it mounts; do not adopt a same-text editor token or canvas label.",
+      "producer": "bench/capture-editor.mjs",
+      "producerSha256": "95f4e2189fc5709f1122540176ec0c5d5d9410da553497da08a288beea57faae",
+      "recorderSha256": "f5cd7e41ef25258d8472f5e3277659aabfbb23f7c3e6b26af84850e8517a58ce",
+      "evaluator": "buggps.oracle/v8",
+      "runtimeCommit": "313fb3ab0b130d3f8b9217b1bd067f6f28470017"
+    },
+    "authoredCheckpoints": [
+      {
+        "afterStepIndex": 3,
+        "check": {
+          "kind": "value",
+          "target": [
+            {
+              "by": "css",
+              "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+            }
+          ],
+          "equals": "CREATE TABLE invoice (amount decimal(15,2));"
+        }
+      }
+    ],
+    "steps": 7,
+    "authoredTargets": [],
+    "dropped": 0,
+    "expectation": {
+      "kind": "value",
+      "target": [
+        {
+          "by": "css",
+          "value": "[role=\"dialog\"] label:text-is(\"Scale\") + input"
+        }
+      ],
+      "equals": "2"
+    },
+    "also": [
+      {
+        "kind": "value",
+        "target": [
+          {
+            "by": "css",
+            "value": "[role=\"dialog\"] label:text-is(\"Precision\") + input"
+          }
+        ],
+        "equals": "15"
+      },
+      {
+        "kind": "value",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          }
+        ],
+        "equals": "amount"
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-chartdb-serve.mjs",
+    "sha256": "0f058cc653f232b73a998955a25acee14f4d9228d52eea0540a2063c8c61ec91",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "fixture": "github_repo_opened=true suppresses the promotional dialog only"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "",
+    "signature": {
+      "kind": "value",
+      "target": "css=[role=\"dialog\"] label:text-is(\"Scale\") + input",
+      "actual": "",
+      "resolution": {
+        "by": "css",
+        "value": "[role=\"dialog\"] label:text-is(\"Scale\") + input"
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "value",
+            "target": "css=[role=\"dialog\"] label:text-is(\"Scale\") + input",
+            "actual": "",
+            "resolution": {
+              "by": "css",
+              "value": "[role=\"dialog\"] label:text-is(\"Scale\") + input"
+            }
+          }
+        },
+        {
+          "check": 1,
+          "outcome": "fail",
+          "signature": {
+            "kind": "value",
+            "target": "css=[role=\"dialog\"] label:text-is(\"Precision\") + input",
+            "actual": "",
+            "resolution": {
+              "by": "css",
+              "value": "[role=\"dialog\"] label:text-is(\"Precision\") + input"
+            }
+          }
+        },
+        {
+          "check": 2,
+          "outcome": "pass",
+          "resolution": {
+            "by": "role",
+            "role": "textbox",
+            "name": "Name"
+          }
+        }
+      ]
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"nameWithChild\":true,\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"SQL Script\",\"role\":\"radio\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"invoice\",\"within\":{\"name\":\"invoice\",\"role\":\"button\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"role\",\"index\":3,\"role\":\"button\",\"within\":{\"name\":\"Fields\",\"role\":\"region\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Scale\\\") + input\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Precision\\\") + input\"}"
+      ],
+      "final:2": [
+        "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+      ]
+    },
+    "durationMs": 9182
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "",
+      "signature": {
+        "kind": "value",
+        "target": "css=[role=\"dialog\"] label:text-is(\"Scale\") + input",
+        "actual": "",
+        "resolution": {
+          "by": "css",
+          "value": "[role=\"dialog\"] label:text-is(\"Scale\") + input"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "value",
+              "target": "css=[role=\"dialog\"] label:text-is(\"Scale\") + input",
+              "actual": "",
+              "resolution": {
+                "by": "css",
+                "value": "[role=\"dialog\"] label:text-is(\"Scale\") + input"
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "fail",
+            "signature": {
+              "kind": "value",
+              "target": "css=[role=\"dialog\"] label:text-is(\"Precision\") + input",
+              "actual": "",
+              "resolution": {
+                "by": "css",
+                "value": "[role=\"dialog\"] label:text-is(\"Precision\") + input"
+              }
+            }
+          },
+          {
+            "check": 2,
+            "outcome": "pass",
+            "resolution": {
+              "by": "role",
+              "role": "textbox",
+              "name": "Name"
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"nameWithChild\":true,\"role\":\"radio\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"SQL Script\",\"role\":\"radio\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "checkpoint:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"invoice\",\"within\":{\"name\":\"invoice\",\"role\":\"button\"}}"
+        ],
+        "step:6": [
+          "{\"by\":\"role\",\"index\":3,\"role\":\"button\",\"within\":{\"name\":\"Fields\",\"role\":\"region\"}}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Scale\\\") + input\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Precision\\\") + input\"}"
+        ],
+        "final:2": [
+          "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+        ]
+      },
+      "durationMs": 26728
+    }
+  },
+  "minimize": {
+    "status": "BUDGET_EXHAUSTED",
+    "confirmed": false,
+    "original": 7,
+    "shortened": 7,
+    "stats": {
+      "trials": 4,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 4,
+      "differentFailure": 0,
+      "stepTimeoutMs": 6326,
+      "durationMs": 30141,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/"
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "Toggle bold",
+            "child": {
+              "role": "img",
+              "name": "PostgreSQL"
+            },
+            "nameWithChild": true
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "radio",
+            "name": "SQL Script"
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "paste",
+        "editor": "monaco",
+        "mode": "replace-all",
+        "target": [
+          {
+            "by": "css",
+            "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+          }
+        ],
+        "wasEnabled": true,
+        "value": "CREATE TABLE invoice (amount decimal(15,2));",
+        "check": {
+          "kind": "value",
+          "target": [
+            {
+              "by": "css",
+              "value": "div:has(> div:text-is(\"SQL Script\")) .monaco-editor textarea[aria-label=\"Editor content\"]"
+            }
+          ],
+          "equals": "CREATE TABLE invoice (amount decimal(15,2));"
+        }
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "name": "Import"
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "text",
+            "value": "invoice",
+            "within": {
+              "role": "button",
+              "name": "invoice"
+            },
+            "index": 0
+          }
+        ],
+        "wasEnabled": true
+      },
+      {
+        "action": "click",
+        "target": [
+          {
+            "by": "role",
+            "role": "button",
+            "within": {
+              "role": "region",
+              "name": "Fields"
+            },
+            "index": 3
+          },
+          {
+            "by": "role",
+            "role": "button"
+          }
+        ],
+        "wasEnabled": true
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"nameWithChild\":true,\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"SQL Script\",\"role\":\"radio\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "checkpoint:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"invoice\",\"within\":{\"name\":\"invoice\",\"role\":\"button\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"role\",\"index\":3,\"role\":\"button\",\"within\":{\"name\":\"Fields\",\"role\":\"region\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Scale\\\") + input\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Precision\\\") + input\"}"
+      ],
+      "final:2": [
+        "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+      ]
+    },
+    "durationMs": 20271,
+    "caseSha256": "b14e11782d51b0f68e9a604642035c59d902643adc4fe197bfd39d9348bd295f",
+    "lockSha256": "95edd228279f1ec71ac7e2cb00bb8108f5c6d97c3a658520e461cd42c1cfdb86"
+  },
+  "fixed": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"nameWithChild\":true,\"role\":\"radio\"}"
+      ],
+      "step:2": [
+        "{\"by\":\"role\",\"name\":\"SQL Script\",\"role\":\"radio\"}"
+      ],
+      "step:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "checkpoint:3": [
+        "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"invoice\",\"within\":{\"name\":\"invoice\",\"role\":\"button\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"role\",\"index\":3,\"role\":\"button\",\"within\":{\"name\":\"Fields\",\"role\":\"region\"}}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Scale\\\") + input\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Precision\\\") + input\"}"
+      ],
+      "final:2": [
+        "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+      ]
+    },
+    "baselineControl": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "",
+      "signatureKey": "{\"actual\":\"\",\"check\":0,\"checks\":[{\"check\":0,\"outcome\":\"fail\",\"signature\":{\"actual\":\"\",\"kind\":\"value\",\"resolution\":{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Scale\\\") + input\"},\"target\":\"css=[role=\\\"dialog\\\"] label:text-is(\\\"Scale\\\") + input\"}},{\"check\":1,\"outcome\":\"fail\",\"signature\":{\"actual\":\"\",\"kind\":\"value\",\"resolution\":{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Precision\\\") + input\"},\"target\":\"css=[role=\\\"dialog\\\"] label:text-is(\\\"Precision\\\") + input\"}},{\"check\":2,\"outcome\":\"pass\",\"resolution\":{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}}],\"kind\":\"value\",\"resolution\":{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Scale\\\") + input\"},\"target\":\"css=[role=\\\"dialog\\\"] label:text-is(\\\"Scale\\\") + input\"}",
+      "matchesLockedFailure": true,
+      "resolutionChanges": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"child\":{\"name\":\"PostgreSQL\",\"role\":\"img\"},\"name\":\"Toggle bold\",\"nameWithChild\":true,\"role\":\"radio\"}"
+        ],
+        "step:2": [
+          "{\"by\":\"role\",\"name\":\"SQL Script\",\"role\":\"radio\"}"
+        ],
+        "step:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "checkpoint:3": [
+          "{\"by\":\"css\",\"value\":\"div:has(> div:text-is(\\\"SQL Script\\\")) .monaco-editor textarea[aria-label=\\\"Editor content\\\"]\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"Import\",\"role\":\"button\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"invoice\",\"within\":{\"name\":\"invoice\",\"role\":\"button\"}}"
+        ],
+        "step:6": [
+          "{\"by\":\"role\",\"index\":3,\"role\":\"button\",\"within\":{\"name\":\"Fields\",\"role\":\"region\"}}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Scale\\\") + input\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"css\",\"value\":\"[role=\\\"dialog\\\"] label:text-is(\\\"Precision\\\") + input\"}"
+        ],
+        "final:2": [
+          "{\"by\":\"role\",\"name\":\"Name\",\"role\":\"textbox\"}"
+        ]
+      },
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": null,
+      "durationMs": 21959
+    },
+    "durationMs": 22253,
+    "caseSha256": "b14e11782d51b0f68e9a604642035c59d902643adc4fe197bfd39d9348bd295f",
+    "lockSha256": "95edd228279f1ec71ac7e2cb00bb8108f5c6d97c3a658520e461cd42c1cfdb86"
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "b1f9da0104f5c71712fc960c5784b38e6f7a762b3dd97d417626262e44432923",
+    "lockSha256": "3e0e5f83489fb26e7c17823785d242eac70ba15a1ee457ac5736b3cb850064d6"
+  },
+  "status": "VERIFIED",
+  "expectedOutcome": true,
+  "durationMs": 417263
+}
