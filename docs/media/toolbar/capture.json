@@ -1,0 +1,40 @@
+{
+  "schema": "buggps.toolbar-capture/v1",
+  "source": "scripted seeded example",
+  "scope": "recording and expectation setup only; no repair or verification result",
+  "sourceHashKind": "sha256 of UTF-8 source with LF line endings",
+  "producer": "docs/demo/capture-toolbar.mjs",
+  "producerSha256": "8eec8d40afcf71612cf5da44e83004939bd0cd212e77135262dc58b876bd859f",
+  "browserVersion": "156.0.4314.58",
+  "platform": "win32",
+  "captures": [
+    {
+      "file": "zh-CN.png",
+      "language": "zh-CN",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "ba5b521fa6a0a1693ab54cc38272f9e9b4515183d98f42d4335806157348b07e"
+    },
+    {
+      "file": "en.png",
+      "language": "en",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "de1ae68e2f503ca70e0408cf9b213c3c87498825ff756c83801d9848b031422c"
+    }
+  ],
+  "sources": [
+    {
+      "path": "src/core/recorder.js",
+      "sha256": "7b4c6292fe03529c777fb48446a9bc05b5429292e3e17805c30f91d9c391938b"
+    },
+    {
+      "path": "src/core/recording-toolbar.js",
+      "sha256": "9ff82117ea42951e3a2c035fce04870be3828b99a87aa697efbf2c3c68e3fbd0"
+    }
+  ]
+}

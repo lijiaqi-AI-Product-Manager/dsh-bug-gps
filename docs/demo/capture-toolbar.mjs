@@ -1,13 +1,14 @@
 // Captures the running toolbar on the seeded shop example. No repair is performed.
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { withEnv } from '../../test/helpers.js';
 import { startRecording } from '../../src/core/recorder.js';
 
 const source = fileURLToPath(new URL('../..', import.meta.url));
 const output = join(source, 'docs/media/toolbar');
+const sourceHash = async (path) => createHash('sha256').update((await readFile(path, 'utf8')).replace(/\r\n/g, '\n')).digest('hex');
 await mkdir(output, { recursive: true });
 const env = await withEnv();
 const captures = [];
@@ -35,7 +36,7 @@ try {
     captures.push({ file: language + '.png', language, viewport: { width: 375, height: 812 }, sha256: createHash('sha256').update(await readFile(path)).digest('hex') });
   }
   const files = ['src/core/recorder.js', 'src/core/recording-toolbar.js'];
-  const sources = await Promise.all(files.map(async (path) => ({ path, sha256: createHash('sha256').update(await readFile(join(source, path))).digest('hex') })));
-  await writeFile(join(output, 'capture.json'), JSON.stringify({ schema: 'buggps.toolbar-capture/v1', source: 'scripted seeded example', scope: 'recording and expectation setup only; no repair or verification result', producer: 'docs/demo/capture-toolbar.mjs', captures, sources }, null, 2) + '\n');
+  const sources = await Promise.all(files.map(async (path) => ({ path, sha256: await sourceHash(join(source, path)) })));
+  await writeFile(join(output, 'capture.json'), JSON.stringify({ schema: 'buggps.toolbar-capture/v1', source: 'scripted seeded example', scope: 'recording and expectation setup only; no repair or verification result', sourceHashKind: 'sha256 of UTF-8 source with LF line endings', producer: 'docs/demo/capture-toolbar.mjs', producerSha256: await sourceHash(fileURLToPath(import.meta.url)), browserVersion: env.browser.version(), platform: process.platform, captures, sources }, null, 2) + '\n');
   console.log(JSON.stringify({ output: 'docs/media/toolbar', screenshots: captures.length }));
 } finally { await rec?.stop(); await env.close(); }
