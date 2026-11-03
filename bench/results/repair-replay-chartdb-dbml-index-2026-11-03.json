@@ -1,0 +1,51 @@
+{
+  "schema": "buggps.repair-replay/v1",
+  "at": "2026-11-03T02:29:57.888Z",
+  "evaluator": "buggps.oracle/v8",
+  "case": "chartdb-dbml-index",
+  "inputCanonicalSha256": "137a68e3ea00c933755d0248ea4f79bd6c594c93777a9be2317ca211a8b75789",
+  "patchSha256": "8af32da040ce5fa35efcdb7764d2c81bed47a5c6492e7bf4580a839eda017d07",
+  "modelCalls": 0,
+  "status": "VERIFIED",
+  "producerCommit": "0970455249ec8467dfab18305735a2c1efd74eee",
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    }
+  },
+  "initialVerification": "NO_CODE_CHANGE",
+  "unrelatedChange": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    }
+  },
+  "candidate": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reviewReasons": []
+  },
+  "freshOriginal": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "matches": true
+  },
+  "protectedInputsUnchanged": true,
+  "runtimeInputs": [
+    {
+      "path": "node_modules",
+      "mode": "shared-dependencies"
+    }
+  ],
+  "durationMs": 158746,
+  "artifacts": ".buggps/repair-replay/2026-11-03T02-29-57-885Z-11ba6180"
+}
