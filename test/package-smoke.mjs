@@ -7,6 +7,7 @@ import { basename, dirname, join } from 'node:path';
 import { createServer } from 'node:net';
 
 const source = process.cwd();
+const sourcePackage = JSON.parse(await readFile(join(source, 'package.json'), 'utf8'));
 
 const root = await mkdtemp(join(tmpdir(), 'buggps-package-check-'));
 const npmCli = [process.env.npm_execpath,
@@ -30,6 +31,9 @@ try {
   assert.equal(hostPackages.length, 0);
   assert.equal(audit.metadata.vulnerabilities.total, 0);
   const cli = join(consumer, 'node_modules', 'dsh-bug-gps', 'bin', 'buggps.js');
+  const packageVersion = node([cli, '--version'], consumer).trim();
+  assert.equal(packageVersion, sourcePackage.version);
+  assert.deepEqual(JSON.parse(node([cli, '--version', '--json'], consumer)), { name: sourcePackage.name, version: sourcePackage.version });
   const demo = join(root, 'demo');
   node([cli, 'demo', demo], consumer);
   const port = await new Promise((resolve, reject) => {
@@ -53,7 +57,7 @@ try {
   await writeFile(appPath, fixed);
   const verified = JSON.parse(node([cli, 'verify', '--repo', demo, '--id', 'package-smoke', '--json']));
   assert.equal(verified.verdict, 'VERIFIED');
-  const summary = { installed_packages: installedPackages, host_packages: hostPackages.length, production_advisories: audit.metadata.vulnerabilities.total, packed_files: packed.files.length, installed_demo_locked: true, verdict: verified.verdict, tally: verified.check.tally };
+  const summary = { package_version: packageVersion, node: process.version, installed_packages: installedPackages, host_packages: hostPackages.length, production_advisories: audit.metadata.vulnerabilities.total, packed_files: packed.files.length, installed_demo_locked: true, verdict: verified.verdict, tally: verified.check.tally };
 
   console.log(JSON.stringify(summary));
 } finally {

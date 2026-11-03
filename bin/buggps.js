@@ -2,7 +2,7 @@
 // BugGPS CLI: the same core functions the DSH tools call, plus `demo` (a ready-to-run seeded
 // project) and `doctor` (environment check).
 import { parseArgs } from 'node:util';
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
@@ -16,6 +16,10 @@ import { validateCase } from '../src/core/oracle.js';
 import { parseCaseText } from '../src/core/case-input.js';
 import { EnvBlockedError, TestDefinitionError } from '../src/core/errors.js';
 import { CONFIG_FILE, readProjectConfig, applyProjectConfig } from '../src/core/config.js';
+import { killTree } from '../src/core/devserver.js';
+
+const packageInfo = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+const packageIdentity = { name: packageInfo.name, version: packageInfo.version };
 
 const USAGE = `buggps <command> [options]
 
@@ -30,7 +34,7 @@ const USAGE = `buggps <command> [options]
   lock/verify start the app themselves when a serve command is given (or in ${CONFIG_FILE});
   only then can verify say VERIFIED. With --url alone a pass is PASSED_UNBOUND.
 
-  common: --json  --browser-path <chrome/edge exe>  --headed`;
+  common: --json  --browser-path <chrome/edge exe>  --headed  --version`;
 
 const { positionals, values: o } = parseArgs({
   allowPositionals: true,
@@ -41,11 +45,14 @@ const { positionals, values: o } = parseArgs({
     serve: { type: 'string' }, 'serve-url': { type: 'string' },
     json: { type: 'boolean', default: false }, 'browser-path': { type: 'string' }, headed: { type: 'boolean', default: false },
     help: { type: 'boolean', short: 'h', default: false },
+    version: { type: 'boolean', short: 'v', default: false },
   },
 });
 
 const cmd = positionals[0];
+if (o.version) { console.log(o.json ? JSON.stringify(packageIdentity) : packageIdentity.version); process.exit(0); }
 if (!cmd || o.help) { console.log(USAGE); process.exit(o.help ? 0 : 64); }
+if (!['demo', 'doctor', 'record', 'reproduce', 'minimize', 'lock', 'verify'].includes(cmd)) { console.error(USAGE); process.exit(64); }
 const need = (k) => { if (!o[k]) { console.error(`missing --${k}\n\n${USAGE}`); process.exit(64); } return o[k]; };
 const print = (human, data) => console.log(o.json ? JSON.stringify(data, null, 2) : human);
 
@@ -176,21 +183,22 @@ async function doctor() {
   const repo = resolve(o.repo);
   const checks = [];
   const add = (name, ok, detail) => checks.push({ name, ok, detail });
-  // Fixed command lines only (no user input); a shell resolves npm-style .cmd shims on Windows.
-  const tool = (bin, args) => {
-    const r = spawnSync([bin, ...args].join(' '), { encoding: 'utf8', shell: true, windowsHide: true });
-    return r.status === 0 ? (r.stdout || r.stderr).trim().split('\n')[0] : null;
-  };
+  add('BugGPS', true, `${packageIdentity.name}@${packageIdentity.version}`);
   add('node >= 20', Number(process.versions.node.split('.')[0]) >= 20, process.version);
-  const gitV = tool('git', ['--version']);
-  add('git', Boolean(gitV), gitV ?? 'not on PATH');
-  const inRepo = gitV && spawnSync('git', ['rev-parse', '--is-inside-work-tree'], { cwd: repo, encoding: 'utf8' }).stdout.trim() === 'true';
+  const gitV = await probeTool('git', ['--version']);
+  const gitFound = gitV.ok && /^git version \d/.test(gitV.text);
+  add('git', gitFound, gitFound ? gitV.text : gitV.reason ?? 'unrecognized version output');
+  const repositoryProbe = gitFound ? await probeTool('git', ['rev-parse', '--is-inside-work-tree'], repo) : null;
+  const inRepo = repositoryProbe?.ok && repositoryProbe.text === 'true';
   add(`project is a git repository (${repo})`, Boolean(inRepo), inRepo ? 'yes' : 'BugGPS snapshots the working tree with git');
   try { const b = await launchBrowser({ executablePath: o['browser-path'] }); add('browser (system Edge/Chrome)', true, `${b.channel} ${b.version}`); await b.browser.close(); } catch (err) { add('browser (system Edge/Chrome)', false, err.message); }
-  const pnpm = tool('pnpm', ['--version']);
-  add('pnpm >= 10 (dsh plugin add needs it)', Boolean(pnpm) && Number(pnpm.split('.')[0]) >= 10, pnpm ?? 'not on PATH');
-  const dsh = tool('dsh', ['--version']);
-  add('dsh (tested: 0.2.1-rc.5)', Boolean(dsh), dsh ?? 'not on PATH');
+  const pnpm = await probeTool('pnpm', ['--version']);
+  const pnpmVersion = exactVersion(pnpm.text);
+  add('pnpm >= 10 (dsh plugin add needs it)', pnpm.ok && Boolean(pnpmVersion) && Number(pnpmVersion.split('.')[0]) >= 10, pnpmVersion ?? pnpm.reason ?? 'unrecognized version output');
+  const dsh = await probeTool('dsh', ['--version']);
+  const dshVersion = exactVersion(dsh.text);
+  const compatible = dsh.ok && dshVersion === packageInfo.engines.dsh;
+  add(`dsh (required: ${packageInfo.engines.dsh})`, compatible, dshVersion ? `${dshVersion}${compatible ? '' : `; use DSH ${packageInfo.engines.dsh}`}` : dsh.reason ?? 'unrecognized version output');
   let serve;
   try { serve = await serveFor(repo); add(`serve command (${CONFIG_FILE})`, Boolean(serve), serve ? `${serve.command.join(' ')} -> ${serve.url}` : 'none: verify can say at most PASSED_UNBOUND'); } catch (err) { add(`serve command (${CONFIG_FILE})`, false, err.message); }
   if (serve) {
@@ -201,6 +209,41 @@ async function doctor() {
     const up = await fetch(o.url, { signal: AbortSignal.timeout(3000) }).then((r) => r.status < 500, () => false);
     add('dev server for recording', up, o.url);
   }
-  print(checks.map((c) => `${c.ok ? 'ok  ' : 'FAIL'}  ${c.name}: ${c.detail}`).join('\n'), { status: checks.every((c) => c.ok) ? 'OK' : 'PROBLEMS', checks });
+  print(checks.map((c) => `${c.ok ? 'ok  ' : 'FAIL'}  ${c.name}: ${c.detail}`).join('\n'), { status: checks.every((c) => c.ok) ? 'OK' : 'PROBLEMS', package: packageIdentity, checks });
   return checks.every((c) => c.ok) ? 0 : 1;
+}
+
+function exactVersion(text) {
+  return /^v?((?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?)(?:\+[0-9A-Za-z.-]+)?$/.exec(text ?? '')?.[1] ?? null;
+}
+
+function probeTool(bin, args, cwd) {
+  return new Promise((resolve) => {
+    // Only the fixed doctor commands reach this function. Windows resolves their .cmd shims.
+    const child = spawn(bin, args, { cwd, windowsHide: true, shell: process.platform === 'win32', detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'] });
+    let stdout = ''; let stderr = ''; let bytes = 0; let done = false; let stopping = false; let timer;
+    const finish = (result) => { if (done) return; done = true; clearTimeout(timer); resolve(result); };
+    const stop = async (reason) => {
+      if (done || stopping) return;
+      stopping = true;
+      try { await killTree(child); } catch { reason += '; cleanup failed'; }
+      if (child.exitCode === null && child.signalCode === null) reason += '; process exit was not confirmed';
+      finish({ ok: false, reason });
+    };
+    const collect = (chunk, target) => {
+      if (done || stopping) return;
+      bytes += chunk.length;
+      if (bytes > 64 * 1024) { void stop('version output exceeded 64 KiB'); return; }
+      if (target === 'stdout') stdout += chunk.toString(); else stderr += chunk.toString();
+    };
+    child.stdout.on('data', (chunk) => collect(chunk, 'stdout'));
+    child.stderr.on('data', (chunk) => collect(chunk, 'stderr'));
+    child.once('error', () => finish({ ok: false, reason: 'command unavailable; check PATH and the project directory' }));
+    child.once('close', (code) => {
+      if (done || stopping) return;
+      const text = (stdout || stderr).trim().split(/\r?\n/)[0].replace(/\u001b\[[0-9;]*m/g, '').slice(0, 240);
+      finish(code === 0 && text ? { ok: true, text } : { ok: false, reason: code === 0 ? 'no version output' : `command exited with code ${code}` });
+    });
+    timer = setTimeout(() => void stop('timed out after 10000 ms'), 10000);
+  });
 }

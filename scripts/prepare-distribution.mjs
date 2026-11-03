@@ -8,10 +8,24 @@ const root = await realpath(fileURLToPath(new URL('..', import.meta.url)));
 const json = async (file) => JSON.parse(await readFile(join(root, file), 'utf8'));
 const pkg = await json('package.json');
 const entries = await json('distribution/entries.json');
+const targets = await json('distribution/targets.json');
 const screenshots = await json('screenshots.json');
 const repository = pkg.repository.url.replace(/^git\+/, '').replace(/\.git$/, '');
 const slug = new URL(repository).pathname.slice(1);
 const raster = new Set(['.png', '.jpg', '.jpeg', '.webp']);
+assert.equal(targets.schema, 'buggps.distribution-targets/v1');
+assert.equal(targets.release.version, pkg.version, 'Distribution targets must track the prepared package version');
+assert.equal(new Set(targets.targets.map((target) => target.id)).size, targets.targets.length);
+for (const target of targets.targets) {
+  for (const value of [target.url, target.rules]) {
+    const link = new URL(value);
+    assert.equal(link.protocol, 'https:');
+    assert.ok(!link.username && !link.password);
+  }
+  assert.ok(Array.isArray(target.requires));
+  assert.ok(['entry', 'metadata', 'submission-fields', 'conditional', 'research-only'].includes(target.prepared));
+}
+for (const id of Object.keys(entries.catalogs)) assert.ok(targets.targets.some((target) => target.id === id && target.prepared === 'entry'));
 async function asset(file, image = false) {
   assert.equal(typeof file, 'string');
   assert.ok(!isAbsolute(file) && !file.split(/[\\/]/).some((p) => p === '..' || p === '.'), 'Asset must stay in the repository');
@@ -77,4 +91,4 @@ if (args.length) {
   await writeFile(join(out, 'dshworks-entry.json'), JSON.stringify(c, null, 2) + '\n', { flag: 'wx' });
 }
 console.log(JSON.stringify({ package: pkg.name, version: pkg.version, catalogs: Object.keys(entries.catalogs), screenshots: screenshots.length,
-  profiles: pkg.dsh.marketplace.profiles, publication: entries.publication, exported: args.length > 0 }));
+  profiles: pkg.dsh.marketplace.profiles, targets: targets.targets.length, publication: entries.publication, exported: args.length > 0 }));

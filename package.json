@@ -1,6 +1,6 @@
 {
   "name": "dsh-bug-gps",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -28,7 +28,10 @@
       "patch": "./cordis.patch.yml"
     },
     "marketplace": {
-      "profiles": ["headless", "web"],
+      "profiles": [
+        "headless",
+        "web"
+      ],
       "requiresBuildApproval": false,
       "requiresRestart": true,
       "manualSteps": true

@@ -36,6 +36,7 @@ BugGPS 的目标发布版本为 1.0.0；当前仍在准备，尚未发布 npm。
 | [岚叔插件目录](https://github.com/cclank/dsh-plugin-hub) | 社区清单、topic 与根 manifest；“岚叔严选”绑定维护者审阅的具体提交。 |
 | [dsh-hub.cc](https://github.com/sliverp/dsh-hub-plugin) | topic 或发布页面；确认仓库默认分支和安装方式。 |
 | [统一市场](https://github.com/jing-hy/dsh-unified-market) | 合并 awesome、GitHub topic 与 npm；通过公共元数据接入，不重复建立运行时协议。 |
+| [deepseek404 插件商店](https://dsh.deepseek404.com/) | 声明聚合 GitHub 插件，并链接 `dsh-plugin` topic。页面显示自身快照日期；未确认独立投稿入口和更新周期，不能将 topic 设置当作已经收录。 |
 
 ## 独立申请与精选
 
@@ -51,6 +52,9 @@ BugGPS 的目标发布版本为 1.0.0；当前仍在准备，尚未发布 npm。
 | [DSH Market](https://dshmarket.ai/plugins/) | 编辑精选、包版本和兼容说明分别展示；公开通用推荐申请流程尚未确认。 |
 | [DSH Plugin Leaderboard](https://github.com/sandbaseai/dsh-plugin-store) | 独立 Catalog 与客户端；依据实际公开接口和条目规则核对，不自报评分或下载安装量。 |
 | [TYEclipse 清单](https://github.com/TYEclipse/dsh-plugins-hub) | Plugin Submission Issue，附 release、许可和安装命令；对方有独立的安装及工具调用流程。 |
+| [DSHX Hub](https://dshx.io/en/plugins) / [精选](https://dshx.io/en/featured) | 提交公开 GitHub 仓库，目录补充包、兼容范围和来源。Featured 是运营者人工挑选，强调兼容和持续维护，不是自动 Star 排名；未确认单独的公开精选申请表。收录不要求把 BugGPS 改写为 DSHX 项目。 |
+| [DSH Plugin Registry](https://dshplugin.app/submit) | 公开仓库 URL 必填，邮箱和备注可选，无需账户；提交页有安全验证。`Indexed` 与版本绑定的 `Runtime Verified` 分开，提供实际 rc.5 记录供对方判断，不自行申请为已验收状态。 |
+| [dsh-TUI 生态目录](https://dshtui.com/plugins/) / [贡献说明](https://github.com/dsh-tui-ecosystem/dsh-tui-site/blob/main/CONTRIBUTING.md) | `public/plugins/plugins.json` 的 PR 或在线表单。官网额外要求 README 回链、真实扩展关系和仓库身份；先核对 rc.5 环境中工具与技能可用性，再提供准确的适用范围。不得复制仅适合 TUI 皮肤的兼容说明，也不自行设置编辑推荐。 |
 
 ## 评测目录与其他精选清单
 
@@ -68,4 +72,6 @@ BugGPS 的目标发布版本为 1.0.0；当前仍在准备，尚未发布 npm。
 4. 精选申请附实际案例、失败分类、已知范围和可运行命令；不宣称原始录制都能缩减，也不把植入示例当外部案例。
 5. 分别记录“可检索 / 已收录 / 可安装 / 可加载 / 完成任务 / 推荐状态”、来源、具体版本和复查日期；只在状态已生效时添加相应徽章。
 
-入口按核查日期维护。新增入口优先复用公共 bundle、npm 和截图声明；公开协议确实不同时，再增加对应适配并记录实测结果。
+独立申请的字段、可直接复用的简介及推荐依据见[申请材料](../distribution/submissions.md)。[入口状态清单](../distribution/targets.json)记录已核实的主要数据来源、共享关系、申请门槛及尚未发生的外部动作。
+
+入口按核查日期维护。新增入口优先复用公共 bundle、npm 和截图声明；公开协议确实不同时，再增加对应适配并记录实测结果。目录覆盖不意味着支持新的 DSH 宿主或版本；不同市场的标签、评论和其他项目介绍也不进入 BugGPS 自身的功能或质量声明。

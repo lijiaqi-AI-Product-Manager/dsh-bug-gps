@@ -19,4 +19,4 @@ node scripts/prepare-distribution.mjs --out .buggps/catalog-submission
 
 发布 npm 后，补充 dshworks 的真实包名，并核对 registry 中的 `repository` 映射。awesome-dsh-plugin 的 npm 映射由其采集器读取，条目中不添加 `npm` 键。GitHub Release 备用包使用固定 tag URL；若使用 `latest/download/`，资产文件名须保持不含版本，防止下次发版链接失效。
 
-其他已核查入口、推荐机制与待办见 [多市场分发](../docs/distribution.md)。
+其他已核查入口、推荐机制与待办见 [多市场分发](../docs/distribution.md)。独立表单、Issue 和精选申请的可复用字段见 [申请材料](submissions.md)，主要入口的来源、前置条件与真实提交状态见 [状态清单](targets.json)。清单中的准备状态不表示已被收录或推荐。
