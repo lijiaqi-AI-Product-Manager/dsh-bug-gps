@@ -1,0 +1,422 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "authored-executable-scenario",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Diagrams / Untitled Diagram"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "名称"
+        }
+      ],
+      "value": "New"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "重命名",
+          "within": {
+            "role": "dialog",
+            "name": "重命名图表"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "重命名"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "添加表",
+          "within": {
+            "role": "tabpanel",
+            "name": "表 (0)"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "添加表"
+        }
+      ],
+      "check": {
+        "kind": "text",
+        "target": [
+          {
+            "by": "css",
+            "value": "nav .text-xl"
+          }
+        ],
+        "equals": "Diagrams / New"
+      }
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "保存 Ctrl+S"
+        }
+      ],
+      "check": {
+        "kind": "text",
+        "target": [
+          {
+            "by": "css",
+            "value": "nav .semi-tag-content"
+          }
+        ],
+        "comparison": "startsWith",
+        "equals": "上次保存"
+      }
+    },
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "打开最近的图表"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "New"
+        }
+      ],
+      "check": {
+        "kind": "text",
+        "target": [
+          {
+            "by": "css",
+            "value": "nav .text-xl"
+          }
+        ],
+        "equals": "Diagrams / New"
+      }
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "导出为 SQL 源代码"
+        }
+      ]
+    }
+  ],
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "文件名"
+      }
+    ],
+    "comparison": "startsWith",
+    "equals": "New_"
+  },
+  "also": [],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "导出为 SQL 源代码"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "取消",
+          "within": {
+            "role": "dialog",
+            "name": "导出"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "取消"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Diagrams / Untitled Diagram"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "名称"
+        }
+      ],
+      "value": "New"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "重命名",
+          "within": {
+            "role": "dialog",
+            "name": "重命名图表"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "重命名"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "导出为 SQL 源代码"
+        }
+      ]
+    }
+  ],
+  "targetOverrides": [],
+  "definitionRevision": 2,
+  "definitionBasis": {
+    "repository": "https://github.com/drawdb-io/drawdb",
+    "commit": "913427b38f61b29f93b07b713123e908c44300c6",
+    "file": "src/components/EditorHeader/ControlPanel.jsx",
+    "previousInput": "bench/holdout-recordings/drawdb-1031.json",
+    "previousInputSha256": "258541625f4bad44e42f631c8684df3bd610df0dc1b684e4ab77920a77ba85d9",
+    "note": "Preserve the New_ filename-prefix expectation. Save the New diagram and reopen it through the recent-diagram menu after a full navigation to /editor in the same context. Export only after the loaded title is confirmed; do not open or close another modal after loading. The original export-then-rename path remains in rawSteps and in the prior definition. New prerequisites are authored, not captured browser input."
+  },
+  "authoredCheckpoints": [
+    {
+      "step": 6,
+      "reason": "Confirm the New diagram title before saving."
+    },
+    {
+      "step": 8,
+      "reason": "Wait for the application save-state text before navigating away."
+    },
+    {
+      "step": 14,
+      "reason": "Confirm that the recent-diagram action loaded New before the first export."
+    }
+  ]
+}
