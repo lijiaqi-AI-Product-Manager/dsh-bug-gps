@@ -30,6 +30,13 @@
 | [cordis.run](https://cordis.run/en) | 登录后填写已发布 npm 包和仓库。 | 先完成真实 npm 发布，安装命令使用已实测的官方 rc.5 语法。 |
 | [dsh-TUI 生态目录](https://dshtui.com/plugins/) | 名称、显示名、简介、作者、仓库、可选 npm、标签、`kind: plugin`。 | 先确认实际适用范围、README 回链和身份规则；不自行设置 `featured`。 |
 | [DSH-Store](https://github.com/AI-Scarlett/DSH-Store) / [TYEclipse](https://github.com/TYEclipse/dsh-plugins-hub) | 各自 Plugin Submission Issue 的必填字段。 | 逐项按当前表单填写，附实际版本和入口，不把一家市场的检查标签带到另一家。 |
+| [DeepseekPlugin](https://deepseekplugin.org/en/docs/submit-plugin) | 单个公开仓库 URL，分类等从公开元数据提取。 | 默认分支、topic、README、许可和 patch 就绪；提交后另查实际详情和检索。 |
+| [DSH Plugin Store](https://dshpluginstore.com/submit) | 仓库、英文简介、分类及可选兼容备注。 | 有真实 bundle 和可运行安装路径；邮箱可留空。 |
+| [dshplugin.dev](https://dshplugin.dev/submit) | 仓库、可选备注与联系地址，同意公开仓库评阅政策。 | 不将初审或私有候选当作公开收录，收录后再添加真实条目徽章。 |
+| [HackSing](https://github.com/HackSing/dsh-plugins/issues/new?template=submit-plugin.yml) | Primary value、Primary category、Installation and removal、Compatibility and verification 及表单勾选。 | 类别优先 `Tools & Capabilities / 工具与能力`；提供安装和卸载文档、rc.5 / Windows 的具体实测范围，其他组合注明未验收。推荐或案例展示按其贡献指南走 Discussions。 |
+| [DSH Plugin Radar](https://github.com/AdamPlatin123/dsh-plugin-radar) | topic 或当前 `PLUGINS.md` 的登记 PR。 | 阅读当前模板，核对组织快照与镜像来源；兼容或推荐标签需要对方对应版本的依据。 |
+
+DSH Directory、DSHToolkit 与 DSH Plugins Marketplace 的投稿页面或指定仓库尚需确认可用性，保持跟踪，不把访问失败判断成拒绝或不收录。Mayfly 社区目录另有 manifest、作者授权和前端能力协议；当前只记录入口，待其实际宿主与版本相容时再准备条目，不从示例复制不存在的工具、权限或已验证字段。
 
 ## 精选申请依据
 
