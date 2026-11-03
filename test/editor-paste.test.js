@@ -238,15 +238,19 @@ test('unsupported rich editing is reported without storing its content', async (
   assert.doesNotMatch(JSON.stringify({ steps, result: rec.result, dropped: rec.dropped }), /RICH_INPUT_FIXTURE/);
 });
 
-test('record and lock tools retain and reject incomplete editor drafts', async () => {
+test('record and lock tools retain and reject incomplete editor drafts', { timeout: 20000 }, async (t) => {
   let drive;
   const tools = createToolSpecs({ resolveCwd: async () => root, guardActive: () => true, testHooks: { headedRecording: false, onRecordingPage(page) {
     drive = (async () => {
       try { await page.locator('#editor').fill(text); }
-      finally { await page.getByRole('button', { name: /结束/ }).click(); }
+      finally {
+        await page.getByRole('button', { name: '结束录制', exact: true }).click();
+        await page.getByRole('button', { name: '保留未完成记录并结束', exact: true }).click();
+      }
     })();
+    void drive.catch(() => {}); // Awaited below; keep an early driver failure from becoming unhandled.
   } } });
-  const exec = { signal: new AbortController().signal };
+  const exec = { signal: t.signal };
   const recorded = await tools.find((tool) => tool.name === 'buggps_record').execute({ url: server.url }, exec);
   await drive;
   assert.equal(recorded.status, Status.TEST_INVALID);
