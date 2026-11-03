@@ -1,0 +1,400 @@
+{
+  "schema": "buggps.draft/v1",
+  "source": "authored-executable-scenario",
+  "browser": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "zh-CN",
+    "timezoneId": "Asia/Shanghai",
+    "deviceScaleFactor": 1
+  },
+  "observeMs": 1000,
+  "steps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Diagrams / Untitled Diagram"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "名称"
+        }
+      ],
+      "value": "New"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "重命名",
+          "within": {
+            "role": "dialog",
+            "name": "重命名图表"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "重命名"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "添加表",
+          "within": {
+            "role": "tabpanel",
+            "name": "表 (0)"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "添加表"
+        }
+      ],
+      "check": {
+        "kind": "text",
+        "target": [
+          {
+            "by": "css",
+            "value": "nav .text-xl"
+          }
+        ],
+        "equals": "Diagrams / New"
+      }
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "保存 Ctrl+S"
+        }
+      ],
+      "check": {
+        "kind": "text",
+        "target": [
+          {
+            "by": "css",
+            "value": "nav .semi-tag-content"
+          }
+        ],
+        "comparison": "startsWith",
+        "equals": "上次保存"
+      }
+    },
+    {
+      "action": "goto",
+      "url": "/editor",
+      "check": {
+        "kind": "text",
+        "target": [
+          {
+            "by": "css",
+            "value": "nav .text-xl"
+          }
+        ],
+        "equals": "Diagrams / New"
+      }
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "打开最近的图表"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "New"
+        }
+      ],
+      "check": {
+        "kind": "text",
+        "target": [
+          {
+            "by": "css",
+            "value": "nav .text-xl"
+          }
+        ],
+        "equals": "Diagrams / New"
+      }
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "导出为 SQL 源代码"
+        }
+      ]
+    }
+  ],
+  "expectation": {
+    "kind": "value",
+    "target": [
+      {
+        "by": "role",
+        "role": "textbox",
+        "name": "文件名"
+      }
+    ],
+    "comparison": "startsWith",
+    "equals": "New_"
+  },
+  "also": [],
+  "rawSteps": [
+    {
+      "action": "goto",
+      "url": "/editor"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "MySQL",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "MySQL"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "确认",
+          "within": {
+            "role": "dialog",
+            "name": "选择数据库"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "确认"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "导出为 SQL 源代码"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "取消",
+          "within": {
+            "role": "dialog",
+            "name": "导出"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "取消"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "Diagrams / Untitled Diagram"
+        }
+      ]
+    },
+    {
+      "action": "fill",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "名称"
+        }
+      ],
+      "value": "New"
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "text",
+          "value": "重命名",
+          "within": {
+            "role": "dialog",
+            "name": "重命名图表"
+          },
+          "index": 0
+        },
+        {
+          "by": "text",
+          "value": "重命名"
+        }
+      ]
+    },
+    {
+      "action": "hover",
+      "target": [
+        {
+          "by": "text",
+          "value": "文件"
+        }
+      ]
+    },
+    {
+      "action": "click",
+      "target": [
+        {
+          "by": "role",
+          "role": "menuitem",
+          "name": "导出为 SQL 源代码"
+        }
+      ]
+    }
+  ],
+  "targetOverrides": [],
+  "definitionRevision": 3,
+  "definitionBasis": {
+    "repository": "https://github.com/drawdb-io/drawdb",
+    "commit": "913427b38f61b29f93b07b713123e908c44300c6",
+    "file": "src/components/EditorHeader/ControlPanel.jsx",
+    "previousInput": "bench/holdout-recordings/v2/drawdb-1031.json",
+    "previousInputSha256": "62cb4a5294ae44563fe9f121cd0bf3769fe6792c38b22d68a27518b6f0814ff4",
+    "note": "V2 correctly saved New, but wrongly assumed that a second /editor navigation shows the database dialog. Workspace.loadLatestDiagram actually loads the newest stored diagram and navigates to its route. Remove only those two nonexistent dialog actions and explicitly confirm the loaded New title at navigation; retain recent-diagram selection, original raw path, browser settings and exact New_ filename-prefix expectation. No modal is closed after loading."
+  },
+  "authoredCheckpoints": [
+    {
+      "step": 6,
+      "reason": "Confirm New before saving."
+    },
+    {
+      "step": 8,
+      "reason": "Wait for the application save-state text before navigating away."
+    },
+    {
+      "step": 9,
+      "reason": "Confirm the application loaded the latest saved New diagram after navigation."
+    },
+    {
+      "step": 12,
+      "reason": "Confirm the recent-diagram action selected New before the first export."
+    }
+  ]
+}

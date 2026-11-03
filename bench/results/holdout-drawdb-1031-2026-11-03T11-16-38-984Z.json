@@ -1,0 +1,187 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "drawdb-1031",
+  "upstream": "https://github.com/drawdb-io/drawdb/pull/1031",
+  "buggyCommit": "913427b38f61b29f93b07b713123e908c44300c6",
+  "fixCommit": "86099382b8b7d312710b62c2dd711bcf2ef0068b",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T11:16:38.984Z",
+  "runtime": {
+    "commit": "47ffbce3f173a145949326ef9c250003ad7247b8",
+    "node": "v24.22.0",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "cb9c008ecc70123c26368bf4ef417220d1804d610b4c648c3dbb11e9d811d15a",
+    "engineFilesSha256": "ff9fa86490a6ea22ebce3e74a21c83514a01f360c9557cb2fb198ccea71d0be8",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "preparation": {
+    "status": "READY",
+    "attempts": [
+      {
+        "status": "ENV_BLOCKED",
+        "reason": "Command failed: git -c core.longpaths=true --git-dir <run-root>\\repos\\drawdb.git worktree add --detach <run-root>\\cases\\drawdb-1031 913427b38f61b29f93b07b713123e908c44300c6\nPreparing worktree (detached HEAD 913427b)\nerror: unable to read sha1 file of README.md (61ce89ecb0c9b134cec87980e78babacc8b75ce1)\nerror: unable to read sha1 file of index.html (dd19a675f6cdfa1ec25c2f0fd3d9c521d750ea16)\nerror: unable to read sha1 file of package-lock.json (087da14ad3f579dd34dbbec50a2efa96d0dfc7a2)\nerror: unable to read sha1 file of package.json (cdcf32c8514fb469d4653791aefe33212650f667)\nerror: unable to read sha1 file of src/App.jsx (ababeb3ce4e1bf96c7077d8972c553d36840deff)\nerror: unable to read sha1 file of src/components/EditorCanvas/Area.jsx (3c6df9e9e88a53789cb1d42969b5cf7ee5c49790)\nerror: unable to read sha1 file of src/components/EditorCanvas/Canvas.jsx (f556daed082c8dd1ade91c30ef1e80cff7f8f5d0)\nerror: unable to read sha1 file of src/components/EditorCanvas/Note.jsx (4ee79a155945dd28d2342ee318eec479d28de229)\nerror: unable to read sha1 file of src/components/EditorCanvas/Relationship.jsx (a19fd1e245eec2bfb8933af3849c69326cddcf0e)\nerror: unable to read sha1 file of src/components/EditorCanv"
+      }
+    ],
+    "manager": "npm",
+    "managerVersion": null,
+    "lockSha256": "c6f294042b707155f90fa47ba7b6f8df9916471248a3ff2f725ac47af1d7c0ce",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "source": "authored-executable-scenario",
+    "sha256": "62cb4a5294ae44563fe9f121cd0bf3769fe6792c38b22d68a27518b6f0814ff4",
+    "canonicalSha256": "f3fa63f979830d27175e1411e796714f94208ccdcb2d6c1c695828635c5cee79",
+    "definitionRevision": 2,
+    "definitionBasis": {
+      "repository": "https://github.com/drawdb-io/drawdb",
+      "commit": "913427b38f61b29f93b07b713123e908c44300c6",
+      "file": "src/components/EditorHeader/ControlPanel.jsx",
+      "previousInput": "bench/holdout-recordings/drawdb-1031.json",
+      "previousInputSha256": "258541625f4bad44e42f631c8684df3bd610df0dc1b684e4ab77920a77ba85d9",
+      "note": "Preserve the New_ filename-prefix expectation. Save the New diagram and reopen it through the recent-diagram menu after a full navigation to /editor in the same context. Export only after the loaded title is confirmed; do not open or close another modal after loading. The original export-then-rename path remains in rawSteps and in the prior definition. New prerequisites are authored, not captured browser input."
+    },
+    "authoredCheckpoints": [
+      {
+        "step": 6,
+        "reason": "Confirm the New diagram title before saving."
+      },
+      {
+        "step": 8,
+        "reason": "Wait for the application save-state text before navigating away."
+      },
+      {
+        "step": 14,
+        "reason": "Confirm that the recent-diagram action loaded New before the first export."
+      }
+    ],
+    "steps": 17,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "value",
+      "target": [
+        {
+          "by": "role",
+          "role": "textbox",
+          "name": "文件名"
+        }
+      ],
+      "comparison": "startsWith",
+      "equals": "New_"
+    },
+    "also": []
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "9290b8b4c2a903721154eaf5f026031cb0a95d2cf111a5b67e6aa5c1620691dc",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.58"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "NOT_REPRODUCED",
+    "tally": {
+      "pass": 1
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:2": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+      ],
+      "step:3": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:4": [
+        "{\"by\":\"role\",\"name\":\"导出为 SQL 源代码\",\"role\":\"menuitem\"}"
+      ],
+      "step:5": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"取消\",\"within\":{\"name\":\"导出\",\"role\":\"dialog\"}}"
+      ],
+      "step:6": [
+        "{\"by\":\"text\",\"value\":\"Diagrams / Untitled Diagram\"}"
+      ],
+      "step:7": [
+        "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+      ],
+      "step:8": [
+        "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+      ],
+      "step:9": [
+        "{\"by\":\"text\",\"value\":\"文件\"}"
+      ],
+      "step:10": [
+        "{\"by\":\"role\",\"name\":\"导出为 SQL 源代码\",\"role\":\"menuitem\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"role\",\"name\":\"文件名\",\"role\":\"textbox\"}"
+      ]
+    },
+    "durationMs": 8492
+  },
+  "lock": {
+    "status": "TEST_INVALID",
+    "reason": "target not-found",
+    "red": {
+      "status": "TEST_INVALID",
+      "tally": {
+        "step-error": 3
+      },
+      "reason": "target not-found",
+      "stepIndex": 10,
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"MySQL\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:2": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"确认\",\"within\":{\"name\":\"选择数据库\",\"role\":\"dialog\"}}"
+        ],
+        "step:3": [
+          "{\"by\":\"text\",\"value\":\"Diagrams / Untitled Diagram\"}"
+        ],
+        "step:4": [
+          "{\"by\":\"role\",\"name\":\"名称\",\"role\":\"textbox\"}"
+        ],
+        "step:5": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"重命名\",\"within\":{\"name\":\"重命名图表\",\"role\":\"dialog\"}}"
+        ],
+        "step:6": [
+          "{\"by\":\"text\",\"index\":0,\"value\":\"添加表\",\"within\":{\"name\":\"表 (0)\",\"role\":\"tabpanel\"}}"
+        ],
+        "checkpoint:6": [
+          "{\"by\":\"css\",\"value\":\"nav .text-xl\"}"
+        ],
+        "step:7": [
+          "{\"by\":\"text\",\"value\":\"文件\"}"
+        ],
+        "step:8": [
+          "{\"by\":\"role\",\"name\":\"保存 Ctrl+S\",\"role\":\"menuitem\"}"
+        ],
+        "checkpoint:8": [
+          "{\"by\":\"css\",\"value\":\"nav .semi-tag-content\"}"
+        ]
+      },
+      "durationMs": 50289
+    }
+  },
+  "status": "TEST_INVALID",
+  "durationMs": 142333
+}
