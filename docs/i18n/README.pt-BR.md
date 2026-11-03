@@ -8,7 +8,7 @@ BugGPS é um plugin para DeepSeek Harness (DSH), voltado a problemas de navegado
 
 > Pré-lançamento. O pacote npm ainda não foi publicado. A instalação usa uma cópia local do código. A compatibilidade atual está limitada ao DSH **0.2.1-rc.5**.
 
-![BugGPS](https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/main/docs/media/buggps-demo.gif)
+![BugGPS](../media/buggps-demo.gif)
 
 A demonstração usa um script para operar o exemplo incluído, que contém um defeito intencional, e aplica alterações preparadas. As páginas e saídas são reais, mas os quadros foram editados: a duração do vídeo não representa o tempo da tarefa. Cartões de resultado, cursor e legendas são elementos de apresentação.
 
@@ -17,7 +17,7 @@ A demonstração usa um script para operar o exemplo incluído, que contém um d
 Requer Node.js ≥20, Git e Microsoft Edge ou Google Chrome instalado. As verificações registradas no Windows usam Node 24.22.0 e Edge 156; isso não comprova suporte a todos os navegadores e sistemas.
 
 ```bash
-git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch test/release-integration --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 node bin/buggps.js demo ../buggps-demo
@@ -83,3 +83,5 @@ Se BugGPS ajudou a verificar uma correção, uma Star ajuda outras pessoas a enc
 
 MIT · [LICENSE](../../LICENSE)
 
+
+[Reproduzir a verificação da correção do ChartDB](../../bench/repairs/chartdb-dbml-index/README.md) · [DSH rc.5](../../bench/results/account-project-chartdb-dbml-index-2026-11-03.json) · [Caso ChartDB: AGPLv3](../../bench/repairs/chartdb-dbml-index/LICENSE)

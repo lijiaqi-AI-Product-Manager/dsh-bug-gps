@@ -7,18 +7,18 @@
 
 DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标出“正确应该是什么”；BugGPS 把它锁成一个会失败的检查，修复后由 BugGPS 自己启动应用、按原条件重放，只有全部检查都通过才给出 `VERIFIED`。
 
-![BugGPS 演示：录制 bug → 锁定 → 错误修复被驳回 → 真修复通过](https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/main/docs/media/buggps-demo.gif)
+![BugGPS 演示：录制 bug → 锁定 → 错误修复被驳回 → 真修复通过](docs/media/buggps-demo.gif)
 
-<sub>演示由脚本操作仓库自带的植入 bug 示例，并应用预置的错误和正确修改。页面与工具结果来自实际运行，采用关键帧剪辑；片长不代表任务耗时。结果卡片为演示排版，光标与字幕叠加。查看 [本次场景与运行摘要](docs/media/demo-run.json)；真实 DSH 集成另见测试说明。重新生成：`npm run demo:gif`（需要 ffmpeg）。也有 [MP4 版本](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/docs/media/buggps-demo.mp4)。</sub>
+<sub>演示由脚本操作仓库自带的植入 bug 示例，并应用预置的错误和正确修改。页面与工具结果来自实际运行，采用关键帧剪辑；片长不代表任务耗时。结果卡片为演示排版，光标与字幕叠加。查看 [本次场景与运行摘要](docs/media/demo-run.json)；真实 DSH 集成另见测试说明。重新生成：`npm run demo:gif`（需要 ffmpeg）。也有 [MP4 版本](docs/media/buggps-demo.mp4)。</sub>
 
 > 状态：预发布，**还没发布到 npm**。下面的命令已在 DSH 0.2.1-rc.5 / Windows 11 上实测，使用本地 checkout 或 `npm pack` 打出的包。
 
 ## 试用内置示例
 
-首次从源码试用，先准备依赖：
+首次从源码试用，使用已整合的预发布候选分支，再准备依赖。候选仍在验收中，阻断项见 [发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)：
 
 ```bash
-git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch test/release-integration --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 ```
@@ -52,6 +52,12 @@ node bin/buggps.js doctor --repo ../buggps-demo
 3. **修复**：DSH 的 agent 用常规工具改代码。
 4. **验证**（`buggps_verify`）：BugGPS 再次从工作区启动应用，默认重放你的**完整录制** 3 次。最后一步后先检查所有条件，再在观察窗口内按 50 ms 目标间隔重复检查（默认观察 1000 ms）；任一采样失败就不通过。运行记录保留实际采样次数和最大间隔。该检查不覆盖采样间隙及观察窗口以外的状态变化。
 
+## 可复核的外部案例
+
+ChartDB 的 DBML 导入曾将 GIN 索引显示为默认 B-tree。DSH 0.2.1-rc.5 在未提供参考补丁或修复历史的应用副本中修改一个源文件：候选通过 3/3，新启动的原代码再次匹配失败 3/3；12 个既有 DBML 导入测试文件共 99 项，前后均通过。会话耗时 206.5 秒，包含锁定、读取、修改和验证，环境准备及应用回归另计。
+
+查看 [实际账户流程记录](bench/results/account-project-chartdb-dbml-index-2026-11-03.json)、[输入、补丁与复核命令](bench/repairs/chartdb-dbml-index/README.md)和 [输入校验修复后的补丁重放](bench/results/repair-replay-case-input-2026-11-03.json)。后一次重放耗时 497,334 ms，使用已安装依赖且没有模型调用；原代码、无关改动、候选及新启动的原代码控制均执行 3 次。两类运行分别记录，不把固定补丁重放当作新的独立修复。这一案例已用于改进实现，不能估算真实用户成功率。
+
 ## `buggps.config.json`
 
 ```json
@@ -82,7 +88,7 @@ node bin/buggps.js doctor --repo ../buggps-demo
 | `NO_CODE_CHANGE` | 锁定之后代码没有变化 |
 | `CASE_TAMPERED` | 锁定的用例被改动过，不给判定 |
 | `STALE` | 验证过程中文件发生了变化 |
-| `TEST_INVALID` | 录制无法重放 |
+| `TEST_INVALID` | 案例定义、定位器或录制无法执行；不作为应用故障 |
 | `ENV_BLOCKED` | 环境问题，不是代码问题：浏览器、端口、dev server 或未提供的 secret |
 | `FLAKY` | 多次重放结果不一致 |
 | `BUDGET_EXHAUSTED` | 预算已耗尽，证据尚未齐备 |
@@ -164,4 +170,4 @@ npm test
 
 ## License
 
-MIT
+BugGPS 软件包：MIT。ChartDB 历史案例的源上下文与补丁按 [AGPLv3](bench/repairs/chartdb-dbml-index/LICENSE) 提供，该夹具不进入 npm 文件范围。

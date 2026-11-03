@@ -8,7 +8,7 @@ BugGPS는 DeepSeek Harness(DSH) 플러그인입니다. 이미 발견한 브라�
 
 > 사전 출시 버전입니다. npm 패키지는 아직 배포되지 않았으며 아래 설치는 로컬 소스를 사용합니다. 현재 호환성을 확인한 DSH 버전은 **0.2.1-rc.5**입니다.
 
-![BugGPS](https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/main/docs/media/buggps-demo.gif)
+![BugGPS](../media/buggps-demo.gif)
 
 데모는 의도적으로 결함을 넣은 예제를 스크립트로 조작하고 준비된 변경을 적용합니다. 화면과 도구 출력은 실제 실행 결과지만 주요 프레임을 편집했으므로 영상 길이는 작업 시간이 아닙니다. 결과 카드, 커서와 자막은 연출용 표시입니다.
 
@@ -17,7 +17,7 @@ BugGPS는 DeepSeek Harness(DSH) 플러그인입니다. 이미 발견한 브라�
 Node.js ≥20, Git, 설치된 Microsoft Edge 또는 Google Chrome이 필요합니다. 기록된 Windows 검증은 Node 24.22.0과 Edge 156을 사용했습니다. 모든 브라우저와 운영체제의 지원을 뜻하지는 않습니다.
 
 ```bash
-git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch test/release-integration --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 node bin/buggps.js demo ../buggps-demo
@@ -83,3 +83,5 @@ DSH 버전, 운영체제, 기대 동작, 정확한 판정과 안전하게 공유
 
 MIT · [LICENSE](../../LICENSE)
 
+
+[외부 ChartDB 수정 사례 재검증](../../bench/repairs/chartdb-dbml-index/README.md) · [DSH rc.5](../../bench/results/account-project-chartdb-dbml-index-2026-11-03.json) · [ChartDB 검증 자료: AGPLv3](../../bench/repairs/chartdb-dbml-index/LICENSE)
