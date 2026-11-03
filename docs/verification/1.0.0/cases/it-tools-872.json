@@ -1,0 +1,46 @@
+{
+  "schema": "buggps.public-case-summary/v1",
+  "source": "9cab2a1285caef92c81453843098767005c43509",
+  "engineFilesSha256": "69a1a24a487e0445f3e43b37ae99cdb13de6df7b1fc0139502320acb902acccd",
+  "case": "it-tools-872",
+  "evaluation": "Frozen public historical cases, expanded regression; upstream reference patches, no model calls; not blind or field success rate",
+  "expectedVerdict": "VERIFIED",
+  "verdict": "VERIFIED",
+  "expectedOutcome": true,
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    }
+  },
+  "candidate": {
+    "verdict": "VERIFIED",
+    "tally": {
+      "pass": 3
+    },
+    "reviewReasons": []
+  },
+  "freshOriginal": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 3
+    },
+    "matchesLockedFailure": true
+  },
+  "protectedInputsUnchanged": true,
+  "input": {
+    "sha256": "7d983a75871da494cc28437dbab7ad7931ffe329dd8467f4abd5723044d0f102",
+    "canonicalSha256": "143bc0dfcc2a765a031724ac31f2a957a1d4c3d334bd59cbed5c256e408e842b",
+    "steps": 2
+  },
+  "reduction": {
+    "budgetMs": 30000,
+    "confirmed": true,
+    "originalSteps": 2,
+    "shortenedSteps": 2,
+    "agreesWithFullPath": null
+  },
+  "durationMs": 129069,
+  "rawArtifactSha256": "d7bd6c477c89ce1b7aacd9e354a024503590a275d0bea1afc3afd0cedb88f37e",
+  "rawEventsPublished": false
+}

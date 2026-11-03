@@ -1,0 +1,51 @@
+{
+  "schema": "buggps.public-provider-summary/v1",
+  "source": "9cab2a1285caef92c81453843098767005c43509",
+  "host": {
+    "name": "DeepSeek Harness",
+    "version": "0.2.1-rc.5",
+    "interface": "CLI"
+  },
+  "artifact": {
+    "version": "1.0.0",
+    "kind": "package-tarball",
+    "sha256": "fe62622631f58a2b1798ae2e14ebe8d99e553d43b798a7d3ab63b097539de8b7"
+  },
+  "scope": "Two seeded example scenarios, scripted browser inputs, real provider workflow; not external-project field usage",
+  "rawEventsPublished": false,
+  "privateConfigurationPublished": false,
+  "monetaryCost": null,
+  "checks": [
+    {
+      "scenario": "stale-discount",
+      "verdict": "VERIFIED",
+      "tally": {
+        "pass": 3
+      },
+      "reviewReasons": [],
+      "durationMs": 125368,
+      "toolCallCount": 9,
+      "protectedInputsUnchanged": true,
+      "finalRetainsVerdict": true,
+      "caseSha256": "20f400e57a21043f29c043b285f7dc8e6b129408fa35ffd4b0e1c2b146480b4f",
+      "lockSha256": "1f7ddc7a3f8ffa980d64ba6f9bbf53bb5e851d6bb5625566fe06b76cd08400a1"
+    },
+    {
+      "scenario": "changelog-crash",
+      "verdict": "NEEDS_REVIEW",
+      "tally": {
+        "pass": 3
+      },
+      "reviewReasons": [
+        "disabled-control"
+      ],
+      "durationMs": 88571,
+      "toolCallCount": 4,
+      "protectedInputsUnchanged": true,
+      "finalRetainsVerdict": true,
+      "caseSha256": "416448f5eae0025a7a64a6c981c3a0a1301f2ab5b728d568ebcb06d788857af6",
+      "lockSha256": "05003f613ad2295a543b2f8eed85f9f758cb1b2617f1f83f7858c552ddba5b4a"
+    }
+  ],
+  "outcome": "PASSED"
+}

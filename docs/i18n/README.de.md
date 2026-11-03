@@ -8,6 +8,8 @@ BugGPS ist ein Plugin für DeepSeek Harness (DSH). Es richtet sich an bereits en
 
 > Vorabversion. Das npm-Paket ist noch nicht veröffentlicht. Die Installation verwendet einen lokalen Quellcode-Checkout. Die Kompatibilität ist derzeit auf DSH **0.2.1-rc.5** begrenzt.
 
+[Installation und Entfernen (Chinesisch/Englisch)](../installation.md) · [Versionsbezogene Prüfungen](../verification/1.0.0/README.md).
+
 ![BugGPS](../media/buggps-demo.gif)
 
 Die Demo steuert das mitgelieferte Beispiel mit eingebautem Fehler per Skript und wendet vorbereitete Änderungen an. Seiten und Werkzeugausgaben stammen aus echten Durchläufen; ausgewählte Bilder wurden geschnitten. Die Videolänge entspricht keiner gemessenen Laufzeit. Ergebniskarten, Mauszeiger und Untertitel sind Präsentationselemente.
@@ -17,7 +19,7 @@ Die Demo steuert das mitgelieferte Beispiel mit eingebautem Fehler per Skript un
 Benötigt Node.js ≥20, Git sowie Microsoft Edge oder Google Chrome. Die dokumentierten Windows-Prüfungen verwenden Node 24.22.0 und Edge 156. Andere Browser und Betriebssysteme sind damit nicht abgedeckt.
 
 ```bash
-git clone --branch test/release-integration --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch release/v1.0.0-preparation --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 node bin/buggps.js demo ../buggps-demo

@@ -1,0 +1,98 @@
+{
+  "schema": "buggps.public-cohort-summary/v1",
+  "source": "9cab2a1285caef92c81453843098767005c43509",
+  "engineFilesSha256": "69a1a24a487e0445f3e43b37ae99cdb13de6df7b1fc0139502320acb902acccd",
+  "workflow": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/actions/runs/41687171684",
+  "denominator": 12,
+  "attempted": 12,
+  "expectedOutcomes": 12,
+  "verdicts": {
+    "VERIFIED": 11,
+    "NEEDS_REVIEW": 1
+  },
+  "controls": {
+    "negativeStillFailing": 12,
+    "protectedInputsUnchanged": 12,
+    "freshOriginalMatchesForVerified": 11
+  },
+  "evaluation": "Expanded regression informed implementation; upstream patches; no model calls; not blind or field usage",
+  "reduction": {
+    "budgetPerCaseMs": 30000,
+    "demonstratedUsefulGains": 0,
+    "nonEquivalentShortening": "it-tools-1368: 2 to 1; fixed comparison still failed; original full path retained"
+  },
+  "results": [
+    {
+      "case": "chartdb-1031",
+      "status": "VERIFIED",
+      "file": "cases/chartdb-1031.json",
+      "sha256": "d7ee3a8fa9a71df5c52348f6130eaf34f7ce55da40c660fd0958cfaed7d82a57"
+    },
+    {
+      "case": "chartdb-1045",
+      "status": "VERIFIED",
+      "file": "cases/chartdb-1045.json",
+      "sha256": "4dea5fd061cfc7f86739952694fccdc10019412875ec1df36062d02bbd02ee77"
+    },
+    {
+      "case": "chartdb-1061",
+      "status": "NEEDS_REVIEW",
+      "file": "cases/chartdb-1061.json",
+      "sha256": "fc1858304a25d71091d3c67da8567fcff76f0d32e724e4454d72573bea569550"
+    },
+    {
+      "case": "chartdb-1089",
+      "status": "VERIFIED",
+      "file": "cases/chartdb-1089.json",
+      "sha256": "c8f0c7b16b051c14162f63064b10029cfe0a8a02764393a99faae5a35300cb49"
+    },
+    {
+      "case": "drawdb-1031",
+      "status": "VERIFIED",
+      "file": "cases/drawdb-1031.json",
+      "sha256": "a2a33044f4194f708b872d6577a2e23207fd9a54af0d1fe15632d047bb51861c"
+    },
+    {
+      "case": "drawdb-1037",
+      "status": "VERIFIED",
+      "file": "cases/drawdb-1037.json",
+      "sha256": "a92fed1077e4d14c772db69d2b60b20e28f3ba9b6fe46ff1a1333daaed8c6321"
+    },
+    {
+      "case": "drawdb-1066",
+      "status": "VERIFIED",
+      "file": "cases/drawdb-1066.json",
+      "sha256": "f3621c89906d626ae4d3fca2a33fb9df75cfca3ad734ce915cf948f8d26a0834"
+    },
+    {
+      "case": "it-tools-1359",
+      "status": "VERIFIED",
+      "file": "cases/it-tools-1359.json",
+      "sha256": "414e85bcb87369c587a047269c7e106f302a7341371bcf4ebe613c25af889675"
+    },
+    {
+      "case": "it-tools-1368",
+      "status": "VERIFIED",
+      "file": "cases/it-tools-1368.json",
+      "sha256": "9f66b4a45cc424a1e0ec406599208267e66858301f162b507a28f1e9b8f94682"
+    },
+    {
+      "case": "it-tools-799",
+      "status": "VERIFIED",
+      "file": "cases/it-tools-799.json",
+      "sha256": "294710dc7bfdd5840b6281d473b5f6804a8d6d244b3791e3883da37471d70dec"
+    },
+    {
+      "case": "it-tools-872",
+      "status": "VERIFIED",
+      "file": "cases/it-tools-872.json",
+      "sha256": "54300fb766187a6f11c9f3bfd914b4f9bb1f4132a3650ff0e9ddee33bb3d8d3e"
+    },
+    {
+      "case": "qwerty-learner-793",
+      "status": "VERIFIED",
+      "file": "cases/qwerty-learner-793.json",
+      "sha256": "8bb8ce3b192b0654df86472ba5a834f010719dcb667ed6e26ea14631e31f0603"
+    }
+  ]
+}

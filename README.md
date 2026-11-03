@@ -13,12 +13,14 @@ DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标�
 
 > 状态：预发布，**还没发布到 npm**。下面的命令已在 DSH 0.2.1-rc.5 / Windows 11 上实测，使用本地 checkout 或 `npm pack` 打出的包。
 
+可直接使用经过验证的固定 Git 版本，见 [安装与移除](docs/installation.md)。当前版本的 [运行依据](docs/verification/1.0.0/README.md)记录 238 项检查、固定案例组、实际账户场景和分发路径，并区分各自的验证范围。
+
 ## 试用内置示例
 
 首次从源码试用，使用已整合的预发布候选分支，再准备依赖。候选仍在验收中，阻断项见 [发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)：
 
 ```bash
-git clone --branch test/release-integration --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch release/v1.0.0-preparation --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 ```

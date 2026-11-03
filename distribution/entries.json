@@ -40,11 +40,90 @@
         "repo": "lijiaqi-AI-Product-Manager/dsh-bug-gps",
         "description": "Records browser bugs, freezes expected results, and verifies fixes against a fresh original-code control.",
         "category": "bundle",
-        "tags": ["devtools", "observability"],
+        "tags": [
+          "devtools",
+          "observability"
+        ],
         "added": "2026-11-04",
         "lastVerified": "2026-11-04",
         "verifiedAgainst": "0.2.1-rc.5",
         "status": "unverified"
+      }
+    },
+    "diegosouzapw": {
+      "guide": "https://github.com/diegosouzapw/awesome-omni-dsh-plugins/blob/main/CONTRIBUTING.md",
+      "target": "catalog/plugins/lijiaqi-ai-product-manager-dsh-bug-gps.yaml",
+      "observation": {
+        "checkedAt": "2026-11-03T19:12:43.344Z",
+        "starsSource": "https://api.github.com/repos/lijiaqi-AI-Product-Manager/dsh-bug-gps",
+        "stars": 1,
+        "scope": "prepared; subject to maintainer admission"
+      },
+      "entry": {
+        "schemaVersion": 1,
+        "id": "lijiaqi-ai-product-manager-dsh-bug-gps",
+        "name": "BugGPS",
+        "description": {
+          "en": "Records browser bugs, freezes expected results, and verifies fixes against a fresh original-code control.",
+          "evidencePath": "README.md"
+        },
+        "unofficial": true,
+        "kind": "plugin",
+        "primaryCategory": "coding-developer-tools",
+        "tags": [
+          "bug-reproduction",
+          "browser-debugging",
+          "regression-testing"
+        ],
+        "source": {
+          "repository": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps",
+          "repositoryNodeId": "R_kgDOVfhbfA",
+          "subpath": null,
+          "commit": "9cab2a1285caef92c81453843098767005c43509"
+        },
+        "creator": {
+          "github": "lijiaqi-AI-Product-Manager"
+        },
+        "package": {
+          "ecosystem": "source"
+        },
+        "dsh": {
+          "profiles": [
+            "headless",
+            "web"
+          ],
+          "evidencePath": "package.json"
+        },
+        "repositoryScope": "dedicated",
+        "popularity": {
+          "starsPolicy": "exact-repository",
+          "stars": 1
+        },
+        "license": {
+          "spdx": "MIT"
+        },
+        "verification": {
+          "status": "eligible",
+          "checkedAt": "2026-11-03T19:12:43.344Z",
+          "repositoryIdentity": "resolved",
+          "smokeTest": null
+        },
+        "media": [
+          {
+            "kind": "screenshot",
+            "url": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/9cab2a1285caef92c81453843098767005c43509/docs/media/toolbar/zh-CN.png",
+            "alt": "Scripted recording toolbar on the seeded example, Simplified Chinese."
+          },
+          {
+            "kind": "screenshot",
+            "url": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/9cab2a1285caef92c81453843098767005c43509/docs/media/toolbar/en.png",
+            "alt": "Scripted recording toolbar on the seeded example, English."
+          }
+        ],
+        "provenance": {
+          "discussion": null,
+          "comment": null
+        }
       }
     }
   }

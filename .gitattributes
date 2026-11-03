@@ -1,0 +1,2 @@
+# Keep published evidence byte hashes stable in Windows checkouts.
+docs/verification/** text eol=lf

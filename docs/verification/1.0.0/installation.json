@@ -1,0 +1,63 @@
+{
+  "schema": "buggps.public-installation-summary/v1",
+  "source": "9cab2a1285caef92c81453843098767005c43509",
+  "scope": "Official CLI add, composed configuration and remove; full headless tool execution has separate CI evidence; web interaction and desktop acceptance are not claimed",
+  "profiles": [
+    {
+      "profile": "headless",
+      "host": "0.2.1-rc.5",
+      "sources": [
+        {
+          "kind": "tarball",
+          "installed": true,
+          "configurationLayerPresent": true,
+          "removedDependency": true,
+          "configurationLayerRemoved": true
+        },
+        {
+          "kind": "git",
+          "installed": true,
+          "configurationLayerPresent": true,
+          "removedDependency": true,
+          "configurationLayerRemoved": true
+        }
+      ],
+      "ownedResourcesCleaned": true,
+      "indexContract": {
+        "schemaFixtureOnly": true,
+        "parseAccepted": true,
+        "shortCommitRejected": true,
+        "mixedCaseLocaleRejected": true,
+        "onlineDirectoryListingClaimed": false
+      }
+    },
+    {
+      "profile": "web",
+      "host": "0.2.1-rc.5",
+      "sources": [
+        {
+          "kind": "tarball",
+          "installed": true,
+          "configurationLayerPresent": true,
+          "removedDependency": true,
+          "configurationLayerRemoved": true
+        },
+        {
+          "kind": "git",
+          "installed": true,
+          "configurationLayerPresent": true,
+          "removedDependency": true,
+          "configurationLayerRemoved": true
+        }
+      ],
+      "ownedResourcesCleaned": true,
+      "indexContract": {
+        "schemaFixtureOnly": true,
+        "parseAccepted": true,
+        "shortCommitRejected": true,
+        "mixedCaseLocaleRejected": true,
+        "onlineDirectoryListingClaimed": false
+      }
+    }
+  ]
+}

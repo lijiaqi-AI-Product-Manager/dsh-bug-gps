@@ -8,6 +8,8 @@ BugGPS は DeepSeek Harness（DSH）のプラグインです。すでに見つ�
 
 > プレリリースです。npm パッケージは未公開のため、以下ではローカルのソースを使います。現在の互換性確認対象は DSH **0.2.1-rc.5** のみです。
 
+[インストールと削除（中国語・英語）](../installation.md) · [バージョン別の検証範囲](../verification/1.0.0/README.md)。
+
 ![BugGPS](../media/buggps-demo.gif)
 
 デモは付属の不具合入りサンプルをスクリプトで操作し、用意した変更を適用しています。画面とツールの出力は実行結果ですが、キーフレームを編集しているため動画の長さは処理時間を表しません。結果カード、カーソル、字幕は演出用の重ね表示です。
@@ -17,7 +19,7 @@ BugGPS は DeepSeek Harness（DSH）のプラグインです。すでに見つ�
 Node.js ≥20、Git、インストール済みの Microsoft Edge または Google Chrome が必要です。記録済みの Windows 検証は Node 24.22.0 と Edge 156 を使用しています。他のすべての環境での動作を示すものではありません。
 
 ```bash
-git clone --branch test/release-integration --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch release/v1.0.0-preparation --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 node bin/buggps.js demo ../buggps-demo

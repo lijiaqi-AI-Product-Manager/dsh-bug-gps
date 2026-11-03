@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFile, realpath, stat, mkdir, writeFile } from 'node:fs/promises';
 import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,7 +18,7 @@ assert.equal(targets.schema, 'buggps.distribution-targets/v1');
 assert.equal(targets.release.version, pkg.version, 'Distribution targets must track the prepared package version');
 assert.equal(new Set(targets.targets.map((target) => target.id)).size, targets.targets.length);
 for (const target of targets.targets) {
-  for (const value of [target.url, target.rules]) {
+  for (const value of [target.url, target.rules, ...(target.aliases ?? [])]) {
     const link = new URL(value);
     assert.equal(link.protocol, 'https:');
     assert.ok(!link.username && !link.password);
@@ -74,6 +75,51 @@ if (Object.hasOwn(c, 'npm')) {
   assert.ok(Number.isFinite(Date.parse(entries.npmPublication?.publishedAt)), 'Record the observed registry publication time');
 }
 
+const d = entries.catalogs.diegosouzapw.entry;
+const creator = slug.split('/')[0];
+const creatorNamespace = creator.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+assert.equal(d.schemaVersion, 1);
+assert.equal(d.id, creatorNamespace + '-' + pkg.name);
+assert.equal(d.creator.github, creator);
+assert.equal(d.source.repository, repository);
+assert.ok(typeof d.source.repositoryNodeId === 'string' && d.source.repositoryNodeId.length > 0);
+assert.match(d.source.commit, /^[a-f0-9]{40}$/);
+assert.equal(d.source.subpath, null);
+assert.equal(d.unofficial, true);
+assert.equal(d.kind, 'plugin');
+assert.equal(d.primaryCategory, 'coding-developer-tools');
+assert.equal(d.description.en, a.description.en);
+assert.deepEqual(d.package, { ecosystem: 'source' });
+assert.deepEqual(d.dsh.profiles, pkg.dsh.marketplace.profiles);
+assert.equal(d.license.spdx, pkg.license);
+assert.equal(d.repositoryScope, 'dedicated');
+assert.equal(d.popularity.starsPolicy, 'exact-repository');
+assert.ok(Number.isSafeInteger(d.popularity.stars) && d.popularity.stars >= 0);
+assert.equal(d.popularity.stars, entries.catalogs.diegosouzapw.observation.stars);
+assert.equal(d.verification.status, 'eligible');
+assert.equal(d.verification.repositoryIdentity, 'resolved');
+assert.equal(d.verification.smokeTest, null);
+assert.ok(Number.isFinite(Date.parse(d.verification.checkedAt)));
+await asset(d.description.evidencePath);
+await asset(d.dsh.evidencePath);
+for (const item of d.media) {
+  assert.equal(item.kind, 'screenshot');
+  const prefix = 'https://raw.githubusercontent.com/' + slug + '/' + d.source.commit + '/';
+  assert.ok(item.url.startsWith(prefix));
+  await asset(item.url.slice(prefix.length), true);
+}
+
+const evidenceRoot = 'docs/verification/1.0.0';
+const evidence = await json(evidenceRoot + '/cases.json');
+assert.equal(evidence.results.length, evidence.denominator);
+assert.equal(new Set(evidence.results.map((item) => item.case)).size, evidence.denominator);
+for (const item of evidence.results) {
+  const file = await asset(evidenceRoot + '/' + item.file);
+  const bytes = await readFile(file);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), item.sha256, 'Published case summary content changed');
+  assert.equal(JSON.parse(bytes.toString('utf8')).source, evidence.source);
+}
+
 const args = process.argv.slice(2);
 if (args.length) {
   assert.ok(args.length === 2 && args[0] === '--out', 'Use --out <new directory>');
@@ -89,6 +135,8 @@ if (args.length) {
   await writeFile(join(out, 'lijiaqi-AI-Product-Manager__dsh-bug-gps.yml'), yaml, { flag: 'wx' });
   await writeFile(join(out, 'lijiaqi-ai-product-manager--dsh-bug-gps.json'), JSON.stringify(b, null, 2) + '\n', { flag: 'wx' });
   await writeFile(join(out, 'dshworks-entry.json'), JSON.stringify(c, null, 2) + '\n', { flag: 'wx' });
+  // JSON syntax is valid YAML 1.2; keep one source of structured values.
+  await writeFile(join(out, d.id + '.yaml'), JSON.stringify(d, null, 2) + '\n', { flag: 'wx' });
 }
 console.log(JSON.stringify({ package: pkg.name, version: pkg.version, catalogs: Object.keys(entries.catalogs), screenshots: screenshots.length,
   profiles: pkg.dsh.marketplace.profiles, targets: targets.targets.length, publication: entries.publication, exported: args.length > 0 }));

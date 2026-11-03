@@ -1,6 +1,6 @@
 # 独立目录申请材料
 
-材料状态：准备中，未发送。对外提交前先核对默认分支、最终压缩包、版本和每个入口的最新规则。只引用公开材料，不上传本地执行日志、账户配置、业务截图或私有项目。
+结构化目录条目仍在准备；[HackSing 收录申请 #351](https://github.com/HackSing/dsh-plugins/issues/351)已提交，待审核。对外提交前先核对目标读取的是默认分支还是固定提交、实际压缩包、版本及最新规则。只引用公开材料与经过筛选的运行摘要，不上传本地原始事件、账户配置、业务截图或私有项目。
 
 ## 可复用字段
 
@@ -35,6 +35,9 @@
 | [dshplugin.dev](https://dshplugin.dev/submit) | 仓库、可选备注与联系地址，同意公开仓库评阅政策。 | 不将初审或私有候选当作公开收录，收录后再添加真实条目徽章。 |
 | [HackSing](https://github.com/HackSing/dsh-plugins/issues/new?template=submit-plugin.yml) | Primary value、Primary category、Installation and removal、Compatibility and verification 及表单勾选。 | 类别优先 `Tools & Capabilities / 工具与能力`；提供安装和卸载文档、rc.5 / Windows 的具体实测范围，其他组合注明未验收。推荐或案例展示按其贡献指南走 Discussions。 |
 | [DSH Plugin Radar](https://github.com/AdamPlatin123/dsh-plugin-radar) | topic 或当前 `PLUGINS.md` 的登记 PR。 | 阅读当前模板，核对组织快照与镜像来源；兼容或推荐标签需要对方对应版本的依据。 |
+| [Omni DSH](https://github.com/diegosouzapw/awesome-omni-dsh-plugins/blob/main/CONTRIBUTING.md) | 第四份导出 YAML、原仓库节点 ID、完整提交、作者、真实 Star 与许可。 | 一分支一条目，公开字段来自原仓库的固定提交；保持 `eligible` 和空 smokeTest，由维护者执行来源门控。 |
+| [bruc3van 自荐](https://github.com/bruc3van/awesome-dsh-plugin/blob/main/CONTRIBUTING.md) | 仅向 `SHOWCASE.md` 末尾各追加一条中英自荐，并在 PR 给出用途与受众。 | 仓库必须超过 10 个真实 Star，当前 1 Star 暂不满足；自荐不等于编辑精选，不提交生成预览。 |
+| [web-casa 清单](https://github.com/web-casa/Awesome-DeepSeek-Harness-Plugins/blob/main/CONTRIBUTING.md) | 通过 cordis.run 的正式表单。 | 不向生成 README 或数据文件提交新增插件；与 cordis.run 归并为同一上游申请。 |
 
 DSH Directory、DSHToolkit 与 DSH Plugins Marketplace 的投稿页面或指定仓库尚需确认可用性，保持跟踪，不把访问失败判断成拒绝或不收录。Mayfly 社区目录另有 manifest、作者授权和前端能力协议；当前只记录入口，待其实际宿主与版本相容时再准备条目，不从示例复制不存在的工具、权限或已验证字段。
 
@@ -43,6 +46,8 @@ DSH Directory、DSHToolkit 与 DSH Plugins Marketplace 的投稿页面或指定�
 提供一个完整可复核的外部案例：原问题、原预期、固定检查、补丁、候选验证及新建原代码对照。植入问题示例与外部案例分别标注，GIF 仅用于理解流程。若缩减没有收益，明确保留原路径。
 
 同时提供安装要求、精确宿主范围、已知限制、失败分类、相关版本的检查链接及问题反馈入口。维护者可以判断其适用性，不能将材料准备或普通收录写成获得推荐。
+
+[1.0.0 准备版本的摘要](../docs/verification/1.0.0/README.md)提供 238 项检查、固定源码 11 VERIFIED / 1 NEEDS_REVIEW、两个植入问题的真实提供方流程，以及四条安装/移除路径。金额成本未知，缩减收益未证实；旧外部项目实际修复记录按其自己的提交阅读。摘要不包含原始事件、模型正文、工具输入、本机路径或账号标识。
 
 有公开申请流程的按流程提交；没有单独精选入口的，通过其允许的普通投稿附一次事实性说明，不批量私信、不反复催促、不刷版本或交换 Star。获得标签后再引用对方实际页面和适用版本。
 

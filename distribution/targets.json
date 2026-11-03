@@ -7,69 +7,749 @@
     "defaultBranchReady": false,
     "desktopAccepted": false
   },
-  "observation": "Intake rules and preparation only. Search visibility, admission, installation and editorial decisions have not yet been confirmed for these targets.",
+  "observation": "Intake preparation and one submitted application. Search visibility, admission, installation and recommendations are tracked separately.",
   "targets": [
-    { "id": "awesome-dsh-plugin", "url": "https://awesome-dsh-plugin.com", "rules": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md", "intake": "catalog-pr", "prepared": "entry", "recommendation": "curated-list", "requires": ["default-branch", "hosted-assets"] },
-    { "id": "dsh-market", "url": "https://dshmarket.com/zh/", "rules": "https://github.com/dsh-market/dsh-market#submit-your-plugin", "intake": "shared-catalog", "source": "awesome-dsh-plugin", "prepared": "metadata", "recommendation": "not-confirmed", "requires": ["upstream-admission"] },
-    { "id": "dsh-native-index", "url": "https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md", "rules": "https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md", "intake": "generated-index", "source": "catalog-specific", "prepared": "metadata", "recommendation": "version-selection", "requires": ["actual-index-entry", "compatible-install-source"] },
-    { "id": "dsh-find-plugin", "url": "https://github.com/awesome-dsh-plugin/dsh-find-plugin", "rules": "https://github.com/awesome-dsh-plugin/dsh-find-plugin", "intake": "topic", "prepared": "metadata", "recommendation": "not-confirmed", "requires": ["actual-search-result"] },
-    { "id": "petct-market", "url": "https://github.com/PetCT/dsh-plugin-marketplace", "rules": "https://github.com/PetCT/dsh-plugin-marketplace", "intake": "shared-catalog", "source": "awesome-dsh-plugin", "prepared": "metadata", "recommendation": "not-confirmed", "requires": ["upstream-admission"] },
-    { "id": "1024-store", "url": "https://deepseek1024.com/", "rules": "https://github.com/imsai-sh/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md", "intake": "catalog-pr", "prepared": "entry", "recommendation": "not-confirmed", "requires": ["default-branch", "npm-for-installation"] },
-    { "id": "dshworks", "url": "https://dsh.works/awesome-dsh-plugins/", "rules": "https://github.com/dshworks/awesome-dsh-plugins/blob/main/CONTRIBUTING.md", "intake": "catalog-pr", "prepared": "entry", "recommendation": "editorial", "requires": ["default-branch", "npm-for-native-index"] },
-    { "id": "brade-marketplace", "url": "https://github.com/bradeGithub/DSH-Plugins-Marketplace", "rules": "https://github.com/bradeGithub/DSH-Plugins-Marketplace/blob/main/STANDARD.md", "intake": "topic-manifest", "prepared": "metadata", "recommendation": "not-confirmed", "requires": ["actual-search-result"] },
-    { "id": "dshmk", "url": "https://dshmk.com/", "rules": "https://github.com/ZASENJC/dsh-plugins-store", "intake": "topic", "prepared": "metadata", "recommendation": "not-confirmed", "requires": ["dsh-plugin-and-deepseek-harness-topics", "actual-search-result"] },
-    { "id": "dshfind", "url": "https://dshfind.com/", "rules": "https://github.com/hikariming/dshfind", "intake": "topic", "prepared": "metadata", "recommendation": "editorial", "requires": ["actual-search-result"] },
-    { "id": "dsh-index", "url": "https://dshindex.dev/", "rules": "https://dshindex.dev/", "intake": "topic", "prepared": "metadata", "recommendation": "none", "requires": ["bounded-topic-candidate-set", "actual-search-result"] },
-    { "id": "dshhub-dev", "url": "https://dshhub.dev/submit", "rules": "https://dshhub.dev/submit", "intake": "issue-or-pr", "prepared": "submission-fields", "recommendation": "repository-ranking", "requires": ["default-branch", "working-install-command"] },
-    { "id": "dsh-market-bingling", "url": "https://dsh.market/", "rules": "https://github.com/2BingLing/dsh-market/blob/master/CONTRIBUTING.md", "intake": "topic-or-issue", "prepared": "metadata", "recommendation": "site-scoring", "requires": ["actual-search-result"] },
-    { "id": "dsh-plugin-org", "url": "https://dsh-plugin.org/zh/submit", "rules": "https://dsh-plugin.org/zh/submit", "intake": "topic-manifest", "prepared": "metadata", "recommendation": "not-confirmed", "requires": ["default-branch", "npm-for-client-installation"] },
-    { "id": "dshx-cn", "url": "https://plugin.dshx.dev/about/", "rules": "https://plugin.dshx.dev/about/", "intake": "manifest", "prepared": "metadata", "recommendation": "editorial", "requires": ["default-branch", "working-install-command"] },
-    { "id": "dsh-wink", "url": "https://dsh.wink.run/", "rules": "https://dsh.wink.run/", "intake": "topic-catalog", "prepared": "metadata", "recommendation": "repository-ranking", "requires": ["actual-search-result"] },
-    { "id": "cclank-directory", "url": "https://github.com/cclank/dsh-plugin-hub", "rules": "https://github.com/cclank/dsh-plugin-hub", "intake": "topic-manifest", "prepared": "metadata", "recommendation": "commit-review", "requires": ["default-branch", "specific-commit-review"] },
-    { "id": "dsh-hub-cc", "url": "https://github.com/sliverp/dsh-hub-plugin", "rules": "https://github.com/sliverp/dsh-hub-plugin", "intake": "topic-manifest", "prepared": "metadata", "recommendation": "not-confirmed", "requires": ["actual-search-result"] },
-    { "id": "unified-market", "url": "https://github.com/jing-hy/dsh-unified-market", "rules": "https://github.com/jing-hy/dsh-unified-market", "intake": "aggregate", "source": "awesome-topic-npm", "prepared": "metadata", "recommendation": "not-confirmed", "requires": ["upstream-indexing", "actual-search-result"] },
-    { "id": "deepseek404", "url": "https://dsh.deepseek404.com/", "rules": "https://dsh.deepseek404.com/", "intake": "topic", "prepared": "metadata", "recommendation": "not-confirmed", "requires": ["snapshot-refresh", "actual-search-result"] },
-    { "id": "dsh-open", "url": "https://dshopen.org/zh/", "rules": "https://github.com/polang233/dsh-plugin-index/blob/main/.github/CONTRIBUTING.md", "intake": "submission-issue", "prepared": "submission-fields", "recommendation": "rotation", "requires": ["npm-or-approved-fixed-git", "default-branch"] },
-    { "id": "dsh-plugin-hub", "url": "https://dshpluginhub.dev/zh/submit", "rules": "https://dshpluginhub.dev/zh/submit", "intake": "signed-in-form", "prepared": "submission-fields", "recommendation": "not-confirmed", "requires": ["default-branch", "sign-in", "candidate-review"] },
-    { "id": "dsh-pub", "url": "https://dsh.pub/en/submit/", "rules": "https://dsh.pub/en/submit/", "intake": "form-to-pr", "prepared": "submission-fields", "recommendation": "repository-ranking", "requires": ["default-branch", "normal-security-verification"] },
-    { "id": "dsh-plus", "url": "https://www.dsh.plus/en/submit/", "rules": "https://www.dsh.plus/en/submit/", "intake": "reviewed-form", "prepared": "submission-fields", "recommendation": "editorial", "requires": ["default-branch", "public-contact-address"] },
-    { "id": "dsh-store", "url": "https://github.com/AI-Scarlett/DSH-Store", "rules": "https://github.com/AI-Scarlett/DSH-Store", "intake": "submission-issue", "prepared": "submission-fields", "recommendation": "catalog-review", "requires": ["default-branch", "working-install-command"] },
-    { "id": "dsh-hub-org", "url": "https://dsh-hub.org/", "rules": "https://dsh-hub.org/", "intake": "not-confirmed", "prepared": "research-only", "recommendation": "featured-intake-not-confirmed", "requires": ["confirm-intake"] },
-    { "id": "cordis-run", "url": "https://cordis.run/en", "rules": "https://cordis.run/en", "intake": "signed-in-form", "prepared": "submission-fields", "recommendation": "editorial", "requires": ["published-npm", "sign-in", "human-review"] },
-    { "id": "dshmarket-ai", "url": "https://dshmarket.ai/plugins/", "rules": "https://dshmarket.ai/plugins/", "intake": "not-confirmed", "prepared": "research-only", "recommendation": "featured-intake-not-confirmed", "requires": ["confirm-intake"] },
-    { "id": "sandbase-leaderboard", "url": "https://github.com/sandbaseai/dsh-plugin-store", "rules": "https://github.com/sandbaseai/dsh-plugin-store", "intake": "independent-catalog", "prepared": "research-only", "recommendation": "not-confirmed", "requires": ["confirm-intake"] },
-    { "id": "tyeclipse", "url": "https://github.com/TYEclipse/dsh-plugins-hub", "rules": "https://github.com/TYEclipse/dsh-plugins-hub", "intake": "submission-issue", "prepared": "submission-fields", "recommendation": "catalog-review", "requires": ["default-branch", "working-install-command"] },
-    { "id": "dshx-hub", "url": "https://dshx.io/en/plugins", "rules": "https://dshx.io/en/featured", "intake": "repository-submission", "prepared": "submission-fields", "recommendation": "editorial", "requires": ["default-branch", "compatibility-evidence", "maintained-release"] },
-    { "id": "dshplugin-app", "url": "https://dshplugin.app/submit", "rules": "https://dshplugin.app/submit", "intake": "public-form", "prepared": "submission-fields", "recommendation": "version-bound-runtime-evidence", "requires": ["default-branch", "normal-security-verification"] },
-    { "id": "dsh-tui-directory", "url": "https://dshtui.com/plugins/", "rules": "https://github.com/dsh-tui-ecosystem/dsh-tui-site/blob/main/CONTRIBUTING.md", "intake": "catalog-pr-or-form", "prepared": "conditional", "recommendation": "editorial", "requires": ["actual-extension-scope", "readme-backlink", "default-branch"] },
-    { "id": "dsh-so", "url": "https://www.dsh.so/", "rules": "https://www.dsh.so/", "intake": "review-directory", "prepared": "submission-fields", "recommendation": "version-bound-review", "requires": ["compatible-review-host", "actual-runtime-evidence"] },
-    { "id": "dshbase", "url": "https://dshbase.com/zh/plugins/directory/", "rules": "https://dshbase.com/zh/plugins/directory/", "intake": "review-directory", "prepared": "submission-fields", "recommendation": "version-bound-review", "requires": ["compatible-review-host", "actual-runtime-evidence"] },
-    { "id": "dpharness", "url": "https://dpharness.com/plugins", "rules": "https://dpharness.com/plugins", "intake": "review-directory", "prepared": "submission-fields", "recommendation": "version-bound-review", "requires": ["compatible-review-host", "actual-runtime-evidence"] },
-    { "id": "dshplugins-org", "url": "https://dshplugins.org/", "rules": "https://dshplugins.org/", "intake": "aggregate", "source": "topic-npm-curated", "prepared": "metadata", "recommendation": "not-confirmed", "requires": ["snapshot-refresh", "actual-search-result"] },
-    { "id": "dshtool-cn", "url": "https://dshtool.cn/plugins/", "rules": "https://dshtool.cn/plugins/", "intake": "curated-list", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "maintainer-admission"] },
-    { "id": "libukai", "url": "https://github.com/libukai/awesome-deepseek-harness", "rules": "https://github.com/libukai/awesome-deepseek-harness", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "0xsline", "url": "https://github.com/0xsline/awesome-deepseek-harness", "rules": "https://github.com/0xsline/awesome-deepseek-harness", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "vvlife", "url": "https://github.com/vvlife/awesome-deepseek-harness-plugins", "rules": "https://github.com/vvlife/awesome-deepseek-harness-plugins", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "walkinglabs", "url": "https://github.com/walkinglabs/awesome-deepseek-harness-plugins", "rules": "https://github.com/walkinglabs/awesome-deepseek-harness-plugins", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "kejixiaoliang", "url": "https://github.com/kejixiaoliang/awesome-dsh-plugins", "rules": "https://github.com/kejixiaoliang/awesome-dsh-plugins", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "bruc3van", "url": "https://github.com/bruc3van/awesome-dsh-plugin", "rules": "https://github.com/bruc3van/awesome-dsh-plugin", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "web-casa-list", "url": "https://github.com/web-casa/Awesome-DeepSeek-Harness-Plugins", "rules": "https://github.com/web-casa/Awesome-DeepSeek-Harness-Plugins", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "cccakeee", "url": "https://github.com/cccakeee/awesome-dsh-plugins", "rules": "https://github.com/cccakeee/awesome-dsh-plugins", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "gordensun", "url": "https://github.com/GordenSun/awesome-dsh-plugins", "rules": "https://github.com/GordenSun/awesome-dsh-plugins", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "white0dew", "url": "https://github.com/white0dew/awesome-dsh-plugins", "rules": "https://github.com/white0dew/awesome-dsh-plugins", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "diegosouzapw", "url": "https://github.com/diegosouzapw/awesome-omni-dsh-plugins", "rules": "https://github.com/diegosouzapw/awesome-omni-dsh-plugins", "intake": "curated-pr", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "current-contribution-rules"] },
-    { "id": "deepseekplugin-org", "url": "https://deepseekplugin.org/en/docs/submit-plugin", "rules": "https://deepseekplugin.org/en/docs/submit-plugin", "intake": "repository-submission", "prepared": "submission-fields", "recommendation": "not-confirmed", "requires": ["default-branch", "actual-detail-and-search-result"] },
-    { "id": "dsh-directory", "url": "https://dsh.directory/about", "rules": "https://dsh.directory/about", "intake": "topic-or-repository-submission", "prepared": "conditional", "recommendation": "none", "requires": ["default-branch", "static-bundle-contract", "confirm-live-submission-page"] },
-    { "id": "dshpluginstore-com", "url": "https://dshpluginstore.com/submit", "rules": "https://dshpluginstore.com/submit", "intake": "reviewed-form", "prepared": "submission-fields", "recommendation": "curated-list", "requires": ["default-branch", "working-install-command", "human-review"] },
-    { "id": "dshplugin-dev", "url": "https://dshplugin.dev/submit", "rules": "https://dshplugin.dev/submit", "intake": "reviewed-form", "prepared": "submission-fields", "recommendation": "editorial", "requires": ["default-branch", "editorial-policy", "candidate-validation-and-publication"] },
-    { "id": "dshtoolkit", "url": "https://dsh.thyfwq.com/submit/", "rules": "https://dsh.thyfwq.com/submit/", "intake": "issue-target-currently-unavailable", "prepared": "conditional", "recommendation": "repository-ranking", "requires": ["confirm-intake-repository", "default-branch"] },
-    { "id": "dsh-plugins-mp", "url": "https://dsh-plugins-mp.com/", "rules": "https://dsh-plugins-mp.com/", "intake": "not-confirmed", "prepared": "research-only", "recommendation": "not-confirmed", "requires": ["confirm-live-intake", "actual-search-result"] },
-    { "id": "hacksing-directory", "url": "https://github.com/HackSing/dsh-plugins", "rules": "https://github.com/HackSing/dsh-plugins/blob/main/CONTRIBUTING.md", "intake": "submission-issue", "prepared": "submission-fields", "recommendation": "discussions-showcase", "requires": ["default-branch", "install-and-removal-instructions", "disclosed-verification-scope"] },
-    { "id": "deepseekdsh", "url": "https://deepseekdsh.com/zh/plugins/explore", "rules": "https://deepseekdsh.com/zh/plugins/explore", "intake": "shared-catalog", "source": "awesome-dsh-plugin", "prepared": "metadata", "recommendation": "separate-install-structure-record", "requires": ["upstream-admission", "separate-registry-version-check"] },
-    { "id": "dsh-plugin-radar", "url": "https://github.com/AdamPlatin123/dsh-plugin-radar", "rules": "https://github.com/AdamPlatin123/dsh-plugin-radar", "intake": "topic-or-registration-pr", "source": "organization-pipeline-and-community-registration", "prepared": "submission-fields", "recommendation": "version-bound-community-record", "requires": ["default-branch", "current-registration-template", "snapshot-and-mirror-date-check"] },
-    { "id": "mayfly-community", "url": "https://github.com/Ephemeral-AI-Lab/dsh-plugins", "rules": "https://github.com/Ephemeral-AI-Lab/dsh-plugins/blob/main/registry/community/README.md", "intake": "manifest-pr", "prepared": "conditional", "recommendation": "catalog-review", "requires": ["compatible-actual-host", "fixed-install-source", "honest-surfaces-and-capabilities", "public-author-listing-authorization"] }
+    {
+      "id": "awesome-dsh-plugin",
+      "url": "https://awesome-dsh-plugin.com",
+      "rules": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md",
+      "intake": "catalog-pr",
+      "prepared": "entry",
+      "recommendation": "curated-list",
+      "requires": [
+        "default-branch",
+        "hosted-assets"
+      ]
+    },
+    {
+      "id": "dsh-market",
+      "url": "https://dshmarket.com/zh/",
+      "rules": "https://github.com/dsh-market/dsh-market#submit-your-plugin",
+      "intake": "shared-catalog",
+      "source": "awesome-dsh-plugin",
+      "prepared": "metadata",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "upstream-admission"
+      ]
+    },
+    {
+      "id": "dsh-native-index",
+      "url": "https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md",
+      "rules": "https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md",
+      "intake": "generated-index",
+      "source": "catalog-specific",
+      "prepared": "metadata",
+      "recommendation": "version-selection",
+      "requires": [
+        "actual-index-entry",
+        "compatible-install-source"
+      ]
+    },
+    {
+      "id": "dsh-find-plugin",
+      "url": "https://github.com/awesome-dsh-plugin/dsh-find-plugin",
+      "rules": "https://github.com/awesome-dsh-plugin/dsh-find-plugin",
+      "intake": "topic",
+      "prepared": "metadata",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "petct-market",
+      "url": "https://github.com/PetCT/dsh-plugin-marketplace",
+      "rules": "https://github.com/PetCT/dsh-plugin-marketplace",
+      "intake": "shared-catalog",
+      "source": "awesome-dsh-plugin",
+      "prepared": "metadata",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "upstream-admission"
+      ]
+    },
+    {
+      "id": "1024-store",
+      "url": "https://deepseek1024.com/",
+      "rules": "https://github.com/imsai-sh/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md",
+      "intake": "catalog-pr",
+      "prepared": "entry",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "default-branch",
+        "npm-for-installation"
+      ]
+    },
+    {
+      "id": "dshworks",
+      "url": "https://dsh.works/awesome-dsh-plugins/",
+      "rules": "https://github.com/dshworks/awesome-dsh-plugins/blob/main/CONTRIBUTING.md",
+      "intake": "catalog-pr",
+      "prepared": "entry",
+      "recommendation": "editorial",
+      "requires": [
+        "default-branch",
+        "npm-for-native-index"
+      ]
+    },
+    {
+      "id": "brade-marketplace",
+      "url": "https://github.com/bradeGithub/DSH-Plugins-Marketplace",
+      "rules": "https://github.com/bradeGithub/DSH-Plugins-Marketplace/blob/main/STANDARD.md",
+      "intake": "topic-manifest",
+      "prepared": "metadata",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "dshmk",
+      "url": "https://dshmk.com/",
+      "rules": "https://github.com/ZASENJC/dsh-plugins-store",
+      "intake": "topic",
+      "prepared": "metadata",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "dsh-plugin-and-deepseek-harness-topics",
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "dshfind",
+      "url": "https://dshfind.com/",
+      "rules": "https://github.com/hikariming/dshfind",
+      "intake": "topic",
+      "prepared": "metadata",
+      "recommendation": "editorial",
+      "requires": [
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "dsh-index",
+      "url": "https://dshindex.dev/",
+      "rules": "https://dshindex.dev/",
+      "intake": "topic",
+      "prepared": "metadata",
+      "recommendation": "none",
+      "requires": [
+        "bounded-topic-candidate-set",
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "dshhub-dev",
+      "url": "https://dshhub.dev/submit",
+      "rules": "https://dshhub.dev/submit",
+      "intake": "issue-or-pr",
+      "prepared": "submission-fields",
+      "recommendation": "repository-ranking",
+      "requires": [
+        "default-branch",
+        "working-install-command"
+      ]
+    },
+    {
+      "id": "dsh-market-bingling",
+      "url": "https://dsh.market/",
+      "rules": "https://github.com/2BingLing/dsh-market/blob/master/CONTRIBUTING.md",
+      "intake": "topic-or-issue",
+      "prepared": "metadata",
+      "recommendation": "site-scoring",
+      "requires": [
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "dsh-plugin-org",
+      "url": "https://dsh-plugin.org/zh/submit",
+      "rules": "https://dsh-plugin.org/zh/submit",
+      "intake": "topic-manifest",
+      "prepared": "metadata",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "default-branch",
+        "npm-for-client-installation"
+      ]
+    },
+    {
+      "id": "dshx-cn",
+      "url": "https://plugin.dshx.dev/about/",
+      "rules": "https://plugin.dshx.dev/about/",
+      "intake": "manifest",
+      "prepared": "metadata",
+      "recommendation": "editorial",
+      "requires": [
+        "default-branch",
+        "working-install-command"
+      ]
+    },
+    {
+      "id": "dsh-wink",
+      "url": "https://dsh.wink.run/",
+      "rules": "https://dsh.wink.run/",
+      "intake": "topic-catalog",
+      "prepared": "metadata",
+      "recommendation": "repository-ranking",
+      "requires": [
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "cclank-directory",
+      "url": "https://github.com/cclank/dsh-plugin-hub",
+      "rules": "https://github.com/cclank/dsh-plugin-hub",
+      "intake": "topic-manifest",
+      "prepared": "metadata",
+      "recommendation": "commit-review",
+      "requires": [
+        "default-branch",
+        "specific-commit-review"
+      ]
+    },
+    {
+      "id": "dsh-hub-cc",
+      "url": "https://github.com/sliverp/dsh-hub-plugin",
+      "rules": "https://github.com/sliverp/dsh-hub-plugin",
+      "intake": "topic-manifest",
+      "prepared": "metadata",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "unified-market",
+      "url": "https://github.com/jing-hy/dsh-unified-market",
+      "rules": "https://github.com/jing-hy/dsh-unified-market",
+      "intake": "aggregate",
+      "source": "awesome-topic-npm",
+      "prepared": "metadata",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "upstream-indexing",
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "deepseek404",
+      "url": "https://dsh.deepseek404.com/",
+      "rules": "https://dsh.deepseek404.com/",
+      "intake": "topic",
+      "prepared": "metadata",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "snapshot-refresh",
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "dsh-open",
+      "url": "https://dshopen.org/zh/",
+      "rules": "https://github.com/polang233/dsh-plugin-index/blob/main/.github/CONTRIBUTING.md",
+      "intake": "submission-issue",
+      "prepared": "submission-fields",
+      "recommendation": "rotation",
+      "requires": [
+        "npm-or-approved-fixed-git",
+        "default-branch"
+      ]
+    },
+    {
+      "id": "dsh-plugin-hub",
+      "url": "https://dshpluginhub.dev/zh/submit",
+      "rules": "https://dshpluginhub.dev/zh/submit",
+      "intake": "signed-in-form",
+      "prepared": "submission-fields",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "default-branch",
+        "sign-in",
+        "candidate-review"
+      ]
+    },
+    {
+      "id": "dsh-pub",
+      "url": "https://dsh.pub/en/submit/",
+      "rules": "https://dsh.pub/en/submit/",
+      "intake": "form-to-pr",
+      "prepared": "submission-fields",
+      "recommendation": "repository-ranking",
+      "requires": [
+        "default-branch",
+        "normal-security-verification"
+      ]
+    },
+    {
+      "id": "dsh-plus",
+      "url": "https://www.dsh.plus/en/submit/",
+      "rules": "https://www.dsh.plus/en/submit/",
+      "intake": "reviewed-form",
+      "prepared": "submission-fields",
+      "recommendation": "editorial",
+      "requires": [
+        "default-branch",
+        "public-contact-address"
+      ]
+    },
+    {
+      "id": "dsh-store",
+      "url": "https://github.com/AI-Scarlett/DSH-Store",
+      "rules": "https://github.com/AI-Scarlett/DSH-Store",
+      "intake": "submission-issue",
+      "prepared": "submission-fields",
+      "recommendation": "catalog-review",
+      "requires": [
+        "default-branch",
+        "working-install-command"
+      ]
+    },
+    {
+      "id": "dsh-hub-org",
+      "url": "https://dsh-hub.org/",
+      "rules": "https://dsh-hub.org/",
+      "intake": "not-confirmed",
+      "prepared": "research-only",
+      "recommendation": "featured-intake-not-confirmed",
+      "requires": [
+        "confirm-intake"
+      ]
+    },
+    {
+      "id": "cordis-run",
+      "url": "https://cordis.run/en",
+      "rules": "https://cordis.run/en",
+      "intake": "signed-in-form",
+      "prepared": "submission-fields",
+      "recommendation": "editorial",
+      "requires": [
+        "published-npm",
+        "sign-in",
+        "human-review"
+      ]
+    },
+    {
+      "id": "dshmarket-ai",
+      "url": "https://dshmarket.ai/plugins/",
+      "rules": "https://dshmarket.ai/plugins/",
+      "intake": "not-confirmed",
+      "prepared": "research-only",
+      "recommendation": "featured-intake-not-confirmed",
+      "requires": [
+        "confirm-intake"
+      ]
+    },
+    {
+      "id": "sandbase-leaderboard",
+      "url": "https://github.com/sandbaseai/dsh-plugin-store",
+      "rules": "https://github.com/sandbaseai/dsh-plugin-store",
+      "intake": "independent-catalog",
+      "prepared": "research-only",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "confirm-intake"
+      ]
+    },
+    {
+      "id": "tyeclipse",
+      "url": "https://github.com/TYEclipse/dsh-plugins-hub",
+      "rules": "https://github.com/TYEclipse/dsh-plugins-hub",
+      "intake": "submission-issue",
+      "prepared": "submission-fields",
+      "recommendation": "catalog-review",
+      "requires": [
+        "default-branch",
+        "working-install-command"
+      ]
+    },
+    {
+      "id": "dshx-hub",
+      "url": "https://dshx.io/en/plugins",
+      "rules": "https://dshx.io/en/featured",
+      "intake": "repository-submission",
+      "prepared": "submission-fields",
+      "recommendation": "editorial",
+      "requires": [
+        "default-branch",
+        "compatibility-evidence",
+        "maintained-release"
+      ]
+    },
+    {
+      "id": "dshplugin-app",
+      "url": "https://dshplugin.app/submit",
+      "rules": "https://dshplugin.app/submit",
+      "intake": "public-form",
+      "prepared": "submission-fields",
+      "recommendation": "version-bound-runtime-evidence",
+      "requires": [
+        "default-branch",
+        "normal-security-verification"
+      ]
+    },
+    {
+      "id": "dsh-tui-directory",
+      "url": "https://dshtui.com/plugins/",
+      "rules": "https://github.com/dsh-tui-ecosystem/dsh-tui-site/blob/main/CONTRIBUTING.md",
+      "intake": "catalog-pr-or-form",
+      "prepared": "conditional",
+      "recommendation": "editorial",
+      "requires": [
+        "actual-extension-scope",
+        "readme-backlink",
+        "default-branch"
+      ]
+    },
+    {
+      "id": "dsh-so",
+      "url": "https://www.dsh.so/",
+      "rules": "https://www.dsh.so/",
+      "intake": "review-directory",
+      "prepared": "submission-fields",
+      "recommendation": "version-bound-review",
+      "requires": [
+        "compatible-review-host",
+        "actual-runtime-evidence"
+      ]
+    },
+    {
+      "id": "dshbase",
+      "url": "https://dshbase.com/zh/plugins/directory/",
+      "rules": "https://dshbase.com/zh/plugins/directory/",
+      "intake": "review-directory",
+      "prepared": "submission-fields",
+      "recommendation": "version-bound-review",
+      "requires": [
+        "compatible-review-host",
+        "actual-runtime-evidence"
+      ]
+    },
+    {
+      "id": "dpharness",
+      "url": "https://dpharness.com/plugins",
+      "rules": "https://dpharness.com/plugins",
+      "intake": "review-directory",
+      "prepared": "submission-fields",
+      "recommendation": "version-bound-review",
+      "requires": [
+        "compatible-review-host",
+        "actual-runtime-evidence"
+      ]
+    },
+    {
+      "id": "dshplugins-org",
+      "url": "https://dshplugins.org/",
+      "rules": "https://dshplugins.org/",
+      "intake": "aggregate",
+      "source": "topic-npm-curated",
+      "prepared": "metadata",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "snapshot-refresh",
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "dshtool-cn",
+      "url": "https://dshtool.cn/plugins/",
+      "rules": "https://dshtool.cn/plugins/",
+      "intake": "curated-list",
+      "prepared": "submission-fields",
+      "recommendation": "curated-list",
+      "requires": [
+        "default-branch",
+        "maintainer-admission"
+      ]
+    },
+    {
+      "id": "libukai",
+      "url": "https://github.com/libukai/awesome-deepseek-harness",
+      "rules": "https://github.com/libukai/awesome-deepseek-harness",
+      "intake": "curated-pr",
+      "prepared": "submission-fields",
+      "recommendation": "curated-list",
+      "requires": [
+        "default-branch",
+        "current-contribution-rules"
+      ]
+    },
+    {
+      "id": "0xsline",
+      "url": "https://github.com/0xsline/awesome-deepseek-harness",
+      "rules": "https://github.com/0xsline/awesome-deepseek-harness/blob/main/contributing.md",
+      "intake": "topic-or-membership-curation",
+      "prepared": "conditional",
+      "recommendation": "curated-list",
+      "requires": [
+        "public-topic-for-catalog",
+        "organization-or-member-project-for-curated-list"
+      ],
+      "source": "public-topic-and-private-dsh-external-hub"
+    },
+    {
+      "id": "vvlife",
+      "url": "https://github.com/vvlife/awesome-deepseek-harness-plugins",
+      "rules": "https://github.com/vvlife/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md",
+      "intake": "topic-or-curated-pr",
+      "prepared": "submission-fields",
+      "recommendation": "curated-list",
+      "requires": [
+        "topic-for-generated-list",
+        "separate-curated-readme-pr"
+      ]
+    },
+    {
+      "id": "walkinglabs",
+      "url": "https://github.com/walkinglabs/awesome-deepseek-harness-plugins",
+      "rules": "https://github.com/walkinglabs/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md",
+      "intake": "curated-pr",
+      "prepared": "submission-fields",
+      "recommendation": "curated-list",
+      "requires": [
+        "default-branch",
+        "source-level-dsh-policy",
+        "alphabetical-neutral-compatible-entry"
+      ]
+    },
+    {
+      "id": "kejixiaoliang",
+      "url": "https://github.com/kejixiaoliang/awesome-dsh-plugins",
+      "rules": "https://github.com/kejixiaoliang/awesome-dsh-plugins/blob/main/CONTRIBUTING.md",
+      "intake": "category-markdown-pr",
+      "prepared": "submission-fields",
+      "recommendation": "curated-list",
+      "requires": [
+        "default-branch",
+        "one-row-in-correct-category-file"
+      ]
+    },
+    {
+      "id": "bruc3van",
+      "url": "https://github.com/bruc3van/awesome-dsh-plugin",
+      "rules": "https://github.com/bruc3van/awesome-dsh-plugin/blob/main/CONTRIBUTING.md",
+      "intake": "author-showcase-or-editorial-pr",
+      "prepared": "conditional",
+      "recommendation": "author-showcase-and-editorial-picks",
+      "requires": [
+        "default-branch",
+        "more-than-10-real-stars-for-author-showcase",
+        "one-owner-entry-bilingual-pr"
+      ],
+      "observedStars": 1,
+      "observedAt": "2026-11-03T19:12:43.344Z"
+    },
+    {
+      "id": "web-casa-list",
+      "url": "https://github.com/web-casa/Awesome-DeepSeek-Harness-Plugins",
+      "rules": "https://github.com/web-casa/Awesome-DeepSeek-Harness-Plugins/blob/main/CONTRIBUTING.md",
+      "intake": "shared-catalog",
+      "prepared": "submission-fields",
+      "recommendation": "curated-list",
+      "requires": [
+        "cordis-run-admission",
+        "generated-index-refresh"
+      ],
+      "source": "cordis-run"
+    },
+    {
+      "id": "cccakeee",
+      "url": "https://github.com/cccakeee/awesome-dsh-plugins",
+      "rules": "https://github.com/cccakeee/awesome-dsh-plugins/blob/main/docs/CONTRIBUTING.zh-CN.md",
+      "intake": "curated-data-pr",
+      "prepared": "submission-fields",
+      "recommendation": "curated-list",
+      "requires": [
+        "default-branch",
+        "exact-install-native-evidence-license-and-risk",
+        "current-contribution-rules"
+      ],
+      "aliases": [
+        "https://deepseekharnessplugins.com"
+      ],
+      "aliasLiveRead": "timed out; address evidenced by upstream README"
+    },
+    {
+      "id": "gordensun",
+      "url": "https://github.com/GordenSun/awesome-dsh-plugins",
+      "rules": "https://github.com/GordenSun/awesome-dsh-plugins",
+      "intake": "issue-or-pr",
+      "prepared": "submission-fields",
+      "recommendation": "curated-list",
+      "requires": [
+        "default-branch",
+        "use-case-and-installation-rationale"
+      ]
+    },
+    {
+      "id": "white0dew",
+      "url": "https://github.com/white0dew/awesome-dsh-plugins",
+      "rules": "https://github.com/white0dew/awesome-dsh-plugins/blob/main/CONTRIBUTING.md",
+      "intake": "source-snapshot-pr",
+      "prepared": "submission-fields",
+      "recommendation": "curated-list",
+      "requires": [
+        "default-branch",
+        "source-snapshot-update-and-generation",
+        "no-hand-edit-of-generated-content"
+      ]
+    },
+    {
+      "id": "diegosouzapw",
+      "url": "https://github.com/diegosouzapw/awesome-omni-dsh-plugins",
+      "rules": "https://github.com/diegosouzapw/awesome-omni-dsh-plugins/blob/main/CONTRIBUTING.md",
+      "intake": "creator-namespaced-yaml-pr",
+      "prepared": "entry",
+      "recommendation": "curated-list",
+      "requires": [
+        "immutable-node-id-and-full-source-pin",
+        "one-entry-per-branch-and-pr",
+        "actual-own-repository-stars",
+        "maintainer-provenance-gate"
+      ]
+    },
+    {
+      "id": "deepseekplugin-org",
+      "url": "https://deepseekplugin.org/en/docs/submit-plugin",
+      "rules": "https://deepseekplugin.org/en/docs/submit-plugin",
+      "intake": "repository-submission",
+      "prepared": "submission-fields",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "default-branch",
+        "actual-detail-and-search-result"
+      ]
+    },
+    {
+      "id": "dsh-directory",
+      "url": "https://dsh.directory/about",
+      "rules": "https://dsh.directory/about",
+      "intake": "topic-or-repository-submission",
+      "prepared": "conditional",
+      "recommendation": "none",
+      "requires": [
+        "default-branch",
+        "static-bundle-contract",
+        "confirm-live-submission-page"
+      ]
+    },
+    {
+      "id": "dshpluginstore-com",
+      "url": "https://dshpluginstore.com/submit",
+      "rules": "https://dshpluginstore.com/submit",
+      "intake": "reviewed-form",
+      "prepared": "submission-fields",
+      "recommendation": "curated-list",
+      "requires": [
+        "default-branch",
+        "working-install-command",
+        "human-review"
+      ]
+    },
+    {
+      "id": "dshplugin-dev",
+      "url": "https://dshplugin.dev/submit",
+      "rules": "https://dshplugin.dev/submit",
+      "intake": "reviewed-form",
+      "prepared": "submission-fields",
+      "recommendation": "editorial",
+      "requires": [
+        "default-branch",
+        "editorial-policy",
+        "candidate-validation-and-publication"
+      ]
+    },
+    {
+      "id": "dshtoolkit",
+      "url": "https://dsh.thyfwq.com/submit/",
+      "rules": "https://dsh.thyfwq.com/submit/",
+      "intake": "issue-target-currently-unavailable",
+      "prepared": "conditional",
+      "recommendation": "repository-ranking",
+      "requires": [
+        "confirm-intake-repository",
+        "default-branch"
+      ]
+    },
+    {
+      "id": "dsh-plugins-mp",
+      "url": "https://dsh-plugins-mp.com/",
+      "rules": "https://dsh-plugins-mp.com/",
+      "intake": "not-confirmed",
+      "prepared": "research-only",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "confirm-live-intake",
+        "actual-search-result"
+      ]
+    },
+    {
+      "id": "hacksing-directory",
+      "url": "https://github.com/HackSing/dsh-plugins",
+      "rules": "https://github.com/HackSing/dsh-plugins/blob/main/CONTRIBUTING.md",
+      "intake": "submission-issue",
+      "prepared": "submission-fields",
+      "recommendation": "discussions-showcase",
+      "requires": [
+        "default-branch",
+        "install-and-removal-instructions",
+        "disclosed-verification-scope"
+      ]
+    },
+    {
+      "id": "deepseekdsh",
+      "url": "https://deepseekdsh.com/zh/plugins/explore",
+      "rules": "https://deepseekdsh.com/zh/plugins/explore",
+      "intake": "shared-catalog",
+      "source": "awesome-dsh-plugin",
+      "prepared": "metadata",
+      "recommendation": "separate-install-structure-record",
+      "requires": [
+        "upstream-admission",
+        "separate-registry-version-check"
+      ]
+    },
+    {
+      "id": "dsh-plugin-radar",
+      "url": "https://github.com/AdamPlatin123/dsh-plugin-radar",
+      "rules": "https://github.com/AdamPlatin123/dsh-plugin-radar",
+      "intake": "topic-or-registration-pr",
+      "source": "organization-pipeline-and-community-registration",
+      "prepared": "submission-fields",
+      "recommendation": "version-bound-community-record",
+      "requires": [
+        "default-branch",
+        "current-registration-template",
+        "snapshot-and-mirror-date-check"
+      ]
+    },
+    {
+      "id": "mayfly-community",
+      "url": "https://github.com/Ephemeral-AI-Lab/dsh-plugins",
+      "rules": "https://github.com/Ephemeral-AI-Lab/dsh-plugins/blob/main/registry/community/README.md",
+      "intake": "manifest-pr",
+      "prepared": "conditional",
+      "recommendation": "catalog-review",
+      "requires": [
+        "compatible-actual-host",
+        "fixed-install-source",
+        "honest-surfaces-and-capabilities",
+        "public-author-listing-authorization"
+      ]
+    }
   ],
-  "submissions": [],
+  "submissions": [
+    {
+      "target": "hacksing-directory",
+      "url": "https://github.com/HackSing/dsh-plugins/issues/351",
+      "submittedAt": "2026-11-03T18:58:03.577Z",
+      "source": "9cab2a1285caef92c81453843098767005c43509",
+      "status": "submitted; admission pending",
+      "admitted": false,
+      "recommended": false
+    }
+  ],
   "observedListings": [],
   "awardedRecommendations": []
 }

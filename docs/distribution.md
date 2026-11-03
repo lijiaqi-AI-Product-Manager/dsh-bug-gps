@@ -72,11 +72,29 @@ BugGPS 的目标发布版本为 1.0.0；当前仍在准备，尚未发布 npm。
 
 [深鲸插件港](https://dshplugins.org/)会聚合 topic、npm 和多个精选来源；静态快照不能保证即时收录。[DSH 手册](https://dshtool.cn/plugins/)以精选条目和 npm 下载展示为主；其条目数与下载量均不等于 DSH 活跃安装。
 
-其他可申请的公开精选入口包括 [libukai](https://github.com/libukai/awesome-deepseek-harness)、[0xsline](https://github.com/0xsline/awesome-deepseek-harness)、[vvlife](https://github.com/vvlife/awesome-deepseek-harness-plugins)、[walkinglabs](https://github.com/walkinglabs/awesome-deepseek-harness-plugins)、[kejixiaoliang](https://github.com/kejixiaoliang/awesome-dsh-plugins)、[bruc3van](https://github.com/bruc3van/awesome-dsh-plugin)、[web-casa](https://github.com/web-casa/Awesome-DeepSeek-Harness-Plugins)、[cccakeee](https://github.com/cccakeee/awesome-dsh-plugins)、[GordenSun](https://github.com/GordenSun/awesome-dsh-plugins)、[white0dew](https://github.com/white0dew/awesome-dsh-plugins)与 [diegosouzapw](https://github.com/diegosouzapw/awesome-omni-dsh-plugins)。逐个遵循其贡献文件，不向不相关的金融、主题、桌宠或纯技能目录投稿。
+其他已核查的公开清单包括 [libukai](https://github.com/libukai/awesome-deepseek-harness)、[0xsline](https://github.com/0xsline/awesome-deepseek-harness)、[vvlife](https://github.com/vvlife/awesome-deepseek-harness-plugins)、[walkinglabs](https://github.com/walkinglabs/awesome-deepseek-harness-plugins)、[kejixiaoliang](https://github.com/kejixiaoliang/awesome-dsh-plugins)、[bruc3van](https://github.com/bruc3van/awesome-dsh-plugin)、[web-casa](https://github.com/web-casa/Awesome-DeepSeek-Harness-Plugins)、[cccakeee](https://github.com/cccakeee/awesome-dsh-plugins)、[GordenSun](https://github.com/GordenSun/awesome-dsh-plugins)、[white0dew](https://github.com/white0dew/awesome-dsh-plugins)与 [diegosouzapw](https://github.com/diegosouzapw/awesome-omni-dsh-plugins)。逐个遵循其贡献文件，不向不相关的金融、主题、桌宠或纯技能目录投稿。
+
+这些清单的具体入口不同，名称带 awesome 不表示都接受修改 README 的 PR：
+
+| 清单 | 已核实的贡献路径与限制 |
+| --- | --- |
+| [bruc3van](https://github.com/bruc3van/awesome-dsh-plugin/blob/main/CONTRIBUTING.md) | 作者自荐只改 `SHOWCASE.md` 的中英列表，一次一个仓库；要求真实 Star **超过 10**，完整列表最多 30 条，首页预览最近 10 条。自荐与编辑精选分开。BugGPS 核查时为 1 Star，当前不满足自荐门槛，不提前申请或自设推荐。 |
+| [web-casa](https://github.com/web-casa/Awesome-DeepSeek-Harness-Plugins/blob/main/CONTRIBUTING.md) | 清单是生成结果；新插件走 `cordis.run/submit`，不修改生成 README 或 `data/plugins.json`。与 cordis.run 按共享来源归并。 |
+| [vvlife](https://github.com/vvlife/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md) | topic 进入每日生成的 `PLUGINS.md`；人工分类 README 是单独 PR 路线，不能将自动发现称为精选。 |
+| [0xsline](https://github.com/0xsline/awesome-deepseek-harness/blob/main/contributing.md) | 手选条目要求属于其组织生态或成员项目；公开 topic 另可进入全量目录。其指南说明 `dsh-external` 组织已转私有，本次 hub API 返回 404；不把私有上游当作可公开投稿的入口。 |
+| [walkinglabs](https://github.com/walkinglabs/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md) | 按源码层面的 DSH 规则提供中性描述和兼容范围，在所属章节按字母排序。 |
+| [kejixiaoliang](https://github.com/kejixiaoliang/awesome-dsh-plugins/blob/main/CONTRIBUTING.md) | 在 `plugins/<分类>.md` 增加条目，不照搬其他目录的生成文件或旧 manifest 示例。 |
+| [white0dew](https://github.com/white0dew/awesome-dsh-plugins/blob/main/CONTRIBUTING.md) | 更新 `data/sources/` 来源快照并生成内容，不手改生成的 TypeScript；Featured 由编辑判断，不自行授予。 |
+| [cccakeee](https://github.com/cccakeee/awesome-dsh-plugins/blob/main/docs/CONTRIBUTING.zh-CN.md) | 主目录数据为 `data/verified-plugins.csv`，全量发现与主目录分开；提交精确安装方法、原生证据、许可与风险。其 README 指向的同构网站本次读取超时，不能据此认定网站不存在。 |
+| [Omni DSH](https://github.com/diegosouzapw/awesome-omni-dsh-plugins/blob/main/CONTRIBUTING.md) | 每个分支和 PR 仅一个作者命名空间 YAML；绑定原仓库节点 ID、完整提交、原生入口、真实仓库 Star 和许可。第四份条目已按原始 Schema 准备，使用固定 Git 来源，保持 `eligible`，由维护者执行来源门控。 |
+
+## 已发生的申请
+
+[HackSing 收录申请 #351](https://github.com/HackSing/dsh-plugins/issues/351)已由维护者账号提交，使用经过验证的完整 Git 提交，公开 npm 未发布、已验收范围及其余未验收部分。目前待审核，未确认收录或推荐。其他结构化目录条目仍为准备状态。
 
 ## 发布与跟踪
 
-1. 默认分支提供最终可运行入口、补丁、截图、图标及安装说明。
+1. 读取默认分支的市场应等待最终入口、补丁、截图、图标及说明生效；明确接受完整 Git 提交的入口可按其规则提交已经验证的固定版本。
 2. 以实际 1.0.0 包验证独立安装和 rc.5 工具闭环，核对 npm 的版本、仓库、发布时间与完整性。
 3. 先提交上游目录，再对需要独立申请的入口提交事实性材料。只填写自己的条目，不改其他项目，不重复催促。
 4. 精选申请附实际案例、失败分类、已知范围和可运行命令；不宣称原始录制都能缩减，也不把植入示例当外部案例。
@@ -85,3 +103,5 @@ BugGPS 的目标发布版本为 1.0.0；当前仍在准备，尚未发布 npm。
 独立申请的字段、可直接复用的简介及推荐依据见[申请材料](../distribution/submissions.md)。[入口状态清单](../distribution/targets.json)记录已核实的主要数据来源、共享关系、申请门槛及尚未发生的外部动作。
 
 入口按核查日期维护。新增入口优先复用公共 bundle、npm 和截图声明；公开协议确实不同时，再增加对应适配并记录实测结果。目录覆盖不意味着支持新的 DSH 宿主或版本；不同市场的标签、评论和其他项目介绍也不进入 BugGPS 自身的功能或质量声明。
+
+当前版本的 [运行依据](verification/1.0.0/README.md)区分完整检查、历史案例、真实提供方流程、安装和移除。当前案例组没有证实可宣传的缩减收益，申请材料主张固定预期下可复核的结果，不填入虚构的 N→M、耗时或用户成功率。
