@@ -1,0 +1,140 @@
+{
+  "schema": "buggps.host-compatibility/v1",
+  "at": "2026-11-03T11:07:19.899Z",
+  "scope": "Isolated Windows CLI fixture for DSH 0.2.1-rc.5; does not patch or establish acceptance of an installed desktop application.",
+  "producer": {
+    "name": "BugGPS",
+    "evaluator": "buggps.oracle/v8"
+  },
+  "fixture": {
+    "manifest": "test/fixtures/host-rc5/package.json",
+    "lock": "test/fixtures/host-rc5/package-lock.json",
+    "lockSha256": "62568d813dd6b8e3ebd283def4eb748baf7485265f4141e8bd0a2ae8339b9e94",
+    "dsh": "0.2.1-rc.5",
+    "platform": "win32",
+    "patches": {
+      "zod": "4.6.7",
+      "undici": "8.12.2",
+      "@modelcontextprotocol/client": "2.3.0",
+      "fflate": "0.8.3"
+    },
+    "installedDesktopModified": false
+  },
+  "audits": {
+    "repository": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0,
+      "recordSha256": "08cf8d3cdb95b1dadf23431ca64bfbabe409379d9d920418e5f76cae133f7956"
+    },
+    "hostProduction": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0,
+      "recordSha256": "45a84591b885d2ce3bc82f8502716ef103c09ddbf448e9c02caf4c77514ae53f"
+    },
+    "initialHost": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 14,
+        "high": 149,
+        "critical": 0,
+        "total": 163
+      },
+      "distinctAdvisories": 11,
+      "advisories": [
+        "https://github.com/advisories/GHSA-6prh-2h8m-c8cw",
+        "https://github.com/advisories/GHSA-px8p-9vwx-vf98",
+        "https://github.com/advisories/GHSA-4qv8-2p9j-2685",
+        "https://github.com/advisories/GHSA-f72v-6w45-q472",
+        "https://github.com/advisories/GHSA-xjj6-f33q-929c",
+        "https://github.com/advisories/GHSA-4w7w-5xrc-9h26",
+        "https://github.com/advisories/GHSA-2m5v-pch6-74hx",
+        "https://github.com/advisories/GHSA-qrxm-fqhp-jwvm",
+        "https://github.com/advisories/GHSA-9fm3-97px-rjf6",
+        "https://github.com/advisories/GHSA-55wc-3pg8-jfw6",
+        "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5"
+      ],
+      "configuration": "DSH rc.5 with only the dsh-llm Zod instance overridden to 4.6.6; other host dependencies remained unpatched. These are affected package records, not independent vulnerabilities."
+    },
+    "limits": "Known advisories at audit time only. Repository, standalone consumer, fixture and installed host are separate scopes."
+  },
+  "processChecks": {
+    "source": "9cfc279ba5913cd97d4a865a904d2eb0fdf8e4a6",
+    "tests": 4,
+    "passed": 4,
+    "skipped": 0
+  },
+  "packedWorkflow": {
+    "source": "9cfc279ba5913cd97d4a865a904d2eb0fdf8e4a6",
+    "producer": {
+      "commit": "9cfc279ba5913cd97d4a865a904d2eb0fdf8e4a6",
+      "runnerSha256": "366d3e13a573b321117c9cf30c998f85c7e461ca978d9b66fa9c6438bbf7ce77",
+      "changedSourceFiles": []
+    },
+    "passed": true,
+    "checks": 15,
+    "durationSeconds": 89,
+    "files": 36,
+    "model": "scripted",
+    "application": "seeded-example",
+    "resultSha256": "00389f3a40e4da49911f5ce84571348c09d1702edfa825c3bbe0ea2a5612370b"
+  },
+  "startupFailureControl": {
+    "source": "9cfc279ba5913cd97d4a865a904d2eb0fdf8e4a6",
+    "controlPassed": true,
+    "hostExitCode": 1,
+    "requestLogStatus": "MISSING",
+    "overallPassed": false,
+    "originalErrorRetained": true,
+    "resultSha256": "1c0536086de3e9f9edc457cd73352a8405a5fa1899b999035891abd40688cc77"
+  },
+  "account": {
+    "before": "bench/results/live-provider-rc5-baseline-9cfc279-2026-11-03.json",
+    "after": "bench/results/live-provider-rc5-a696fe2-2026-11-03.json",
+    "source": "a696fe2916e0cbfbf0430f61f91940bce7d478fd",
+    "outcome": "PASSED",
+    "scenarios": [
+      {
+        "scenario": "stale-discount",
+        "verdict": "VERIFIED",
+        "durationMs": 162423,
+        "toolCalls": 10,
+        "tally": {
+          "pass": 3
+        },
+        "reviewReasons": [],
+        "baselineMatches": true,
+        "protectedSnapshotsUnchanged": true
+      },
+      {
+        "scenario": "changelog-crash",
+        "verdict": "NEEDS_REVIEW",
+        "durationMs": 90611,
+        "toolCalls": 4,
+        "tally": {
+          "pass": 3
+        },
+        "reviewReasons": [
+          "disabled-control"
+        ],
+        "baselineMatches": null,
+        "protectedSnapshotsUnchanged": true
+      }
+    ],
+    "monetaryCost": null
+  },
+  "limits": [
+    "The earlier account attempt remains failed; no unique root cause is claimed.",
+    "The positive scenario verifies its recorded expectations; the negative scenario requires review despite passing assertions.",
+    "Process, scripted package and account checks identify their exact source revisions. Continuous integration results are recorded separately.",
+    "No live-user success rate, general host safety or complete application correctness is inferred."
+  ]
+}

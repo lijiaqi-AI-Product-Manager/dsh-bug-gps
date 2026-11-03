@@ -1,0 +1,113 @@
+{
+  "schema": "buggps.provider-check/v1",
+  "at": "2026-11-03T10:11:48.005Z",
+  "provider": "deepseek-account",
+  "model": "deepseek-flash",
+  "input": "scripted-recording",
+  "application": "seeded-example",
+  "checks": [
+    {
+      "scenario": "stale-discount",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 819652,
+      "calls": [
+        {
+          "tool": "skill",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_status",
+          "status": "OK"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "glob",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_lock",
+          "status": "LOCKED"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "NO_CODE_CHANGE"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        }
+      ],
+      "usageByStep": [
+        {
+          "step": 1,
+          "inputTokens": 667,
+          "outputTokens": 39,
+          "cacheReadTokens": 4864,
+          "cacheWriteTokens": 0,
+          "totalTokens": 5570
+        },
+        {
+          "step": 2,
+          "inputTokens": 729,
+          "outputTokens": 24,
+          "cacheReadTokens": 5504,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6257
+        },
+        {
+          "step": 3,
+          "inputTokens": 198,
+          "outputTokens": 152,
+          "cacheReadTokens": 6144,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6494
+        },
+        {
+          "step": 4,
+          "inputTokens": 773,
+          "outputTokens": 76,
+          "cacheReadTokens": 6400,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7249
+        }
+      ],
+      "rawSha256": "41652a1ce12b12b65c6f21d42a525cee26b35557461a2e7118b47d47441badbb",
+      "recordedSteps": 19,
+      "verdict": "NO_CODE_CHANGE",
+      "reviewReasons": [],
+      "baselineMatches": null,
+      "caseSha256": "aaca36571b6a1ea3ae3d5afcf56cd29cdb8f5a6707219968832aa67828987faa",
+      "lockSha256": "f318b90bb97d58d9ded0e98a2ec6692114c7778f22df61a8907d8af33d06f136",
+      "patchSha256": null,
+      "finalNamesVerdict": true,
+      "protectedSnapshots": 3,
+      "protectedSnapshotsUnchanged": true
+    }
+  ],
+  "install": {
+    "kind": "package-tarball",
+    "file": "dsh-bug-gps-0.0.0.tgz",
+    "sha256": "99d2f6553724740dda5aecbe725aa9eea6c93d16ad2fece7dc199d908aceb9eb",
+    "bytes": 83093
+  },
+  "runnerSha256": "71b811e17cf3da56543a9ee26bed955af788ca38da62aa3fb69b6f3c586fe7c6",
+  "expectedScenarios": [
+    "stale-discount",
+    "changelog-crash"
+  ],
+  "monetaryCost": null,
+  "dshVersion": "0.2.1-rc.5",
+  "pluginCommit": "9cfc279ba5913cd97d4a865a904d2eb0fdf8e4a6",
+  "outcome": "FAILED",
+  "failure": {
+    "name": "AssertionError",
+    "code": "ERR_ASSERTION"
+  },
+  "scope": "Seeded examples with scripted executable inputs, official signed-in account and fixed checks; not independent user cases or a success-rate estimate.",
+  "interpretation": "Incomplete repair: baseline confirmed, no application edit or VERIFIED. Preserved as a failed attempt.",
+  "followUp": "bench/results/live-provider-rc5-a696fe2-2026-11-03.json"
+}

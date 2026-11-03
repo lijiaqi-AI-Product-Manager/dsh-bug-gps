@@ -1,0 +1,254 @@
+{
+  "schema": "buggps.provider-check/v1",
+  "at": "2026-11-03T10:59:32.687Z",
+  "provider": "deepseek-account",
+  "model": "deepseek-flash",
+  "input": "scripted-recording",
+  "application": "seeded-example",
+  "checks": [
+    {
+      "scenario": "stale-discount",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 162423,
+      "calls": [
+        {
+          "tool": "skill",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_status",
+          "status": "OK"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_lock",
+          "status": "LOCKED"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "NO_CODE_CHANGE"
+        },
+        {
+          "tool": "glob",
+          "status": "completed"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        },
+        {
+          "tool": "edit",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "VERIFIED"
+        }
+      ],
+      "usageByStep": [
+        {
+          "step": 1,
+          "inputTokens": 663,
+          "outputTokens": 51,
+          "cacheReadTokens": 4864,
+          "cacheWriteTokens": 0,
+          "totalTokens": 5578
+        },
+        {
+          "step": 2,
+          "inputTokens": 810,
+          "outputTokens": 73,
+          "cacheReadTokens": 5504,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6387
+        },
+        {
+          "step": 3,
+          "inputTokens": 840,
+          "outputTokens": 196,
+          "cacheReadTokens": 6272,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7308
+        },
+        {
+          "step": 4,
+          "inputTokens": 253,
+          "outputTokens": 51,
+          "cacheReadTokens": 7296,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7600
+        },
+        {
+          "step": 5,
+          "inputTokens": 192,
+          "outputTokens": 49,
+          "cacheReadTokens": 7552,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7793
+        },
+        {
+          "step": 6,
+          "inputTokens": 198,
+          "outputTokens": 68,
+          "cacheReadTokens": 7680,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7946
+        },
+        {
+          "step": 7,
+          "inputTokens": 1948,
+          "outputTokens": 240,
+          "cacheReadTokens": 7936,
+          "cacheWriteTokens": 0,
+          "totalTokens": 10124
+        },
+        {
+          "step": 8,
+          "inputTokens": 182,
+          "outputTokens": 42,
+          "cacheReadTokens": 9984,
+          "cacheWriteTokens": 0,
+          "totalTokens": 10208
+        },
+        {
+          "step": 9,
+          "inputTokens": 1112,
+          "outputTokens": 633,
+          "cacheReadTokens": 10112,
+          "cacheWriteTokens": 0,
+          "totalTokens": 11857
+        }
+      ],
+      "rawSha256": "903dc5d470d9d98fff1ec2d027d9c35e05ebf1cde989dd87c1eb5b5b377263b1",
+      "recordedSteps": 19,
+      "verdict": "VERIFIED",
+      "tally": {
+        "pass": 3
+      },
+      "reviewReasons": [],
+      "baselineMatches": true,
+      "caseSha256": "4796ff818880d5075d4f6e108bcc1e482ab96038684556cb5b2c1efb94b563a4",
+      "lockSha256": "8f788fdc2ab580ae5c89d7f45595c2f1b40ce9dbff24a14b4d26c6d4c75f5b0c",
+      "patchSha256": "6043c4bfa9885558c1ddf33201c92a162073dbf2bc620c130697fe23c8e89888",
+      "finalNamesVerdict": true,
+      "protectedSnapshots": 7,
+      "protectedSnapshotsUnchanged": true
+    },
+    {
+      "scenario": "changelog-crash",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 90611,
+      "calls": [
+        {
+          "tool": "skill",
+          "status": "completed"
+        },
+        {
+          "tool": "buggps_status",
+          "status": "OK"
+        },
+        {
+          "tool": "buggps_verify",
+          "status": "NEEDS_REVIEW"
+        },
+        {
+          "tool": "read",
+          "status": "completed"
+        }
+      ],
+      "usageByStep": [
+        {
+          "step": 1,
+          "inputTokens": 618,
+          "outputTokens": 52,
+          "cacheReadTokens": 4864,
+          "cacheWriteTokens": 0,
+          "totalTokens": 5534
+        },
+        {
+          "step": 2,
+          "inputTokens": 766,
+          "outputTokens": 112,
+          "cacheReadTokens": 5504,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6382
+        },
+        {
+          "step": 3,
+          "inputTokens": 239,
+          "outputTokens": 59,
+          "cacheReadTokens": 6272,
+          "cacheWriteTokens": 0,
+          "totalTokens": 6570
+        },
+        {
+          "step": 4,
+          "inputTokens": 424,
+          "outputTokens": 218,
+          "cacheReadTokens": 6528,
+          "cacheWriteTokens": 0,
+          "totalTokens": 7170
+        },
+        {
+          "step": 5,
+          "inputTokens": 282,
+          "outputTokens": 822,
+          "cacheReadTokens": 7168,
+          "cacheWriteTokens": 0,
+          "totalTokens": 8272
+        }
+      ],
+      "rawSha256": "184ae24ccf24023e1cde3a04ca7d8fa763d7760717a8bfd333896950d18f4cca",
+      "recordedSteps": 13,
+      "verdict": "NEEDS_REVIEW",
+      "tally": {
+        "pass": 3
+      },
+      "reviewReasons": [
+        "disabled-control"
+      ],
+      "baselineMatches": null,
+      "caseSha256": "dd4dde365e3e17733beee5d91dd56e85dbd64c7a0c12707154c8d8c59f55d505",
+      "lockSha256": "83b03ec7bde2432cac7a81f798f9ca49bb17a48aa5195f66d52cbd97a1afb305",
+      "patchSha256": "0a628b35f80698492b6d3514e191bf0cc6b35db4576c9801dc06d8c60f0aaf17",
+      "finalNamesVerdict": true,
+      "protectedSnapshots": 5,
+      "protectedSnapshotsUnchanged": true
+    }
+  ],
+  "install": {
+    "kind": "package-tarball",
+    "file": "dsh-bug-gps-0.0.0.tgz",
+    "sha256": "dffd42d7c783488f422ccc54bc5c3b869a31b90aaca53a31c70719f9d71db902",
+    "bytes": 83249
+  },
+  "runnerSha256": "71b811e17cf3da56543a9ee26bed955af788ca38da62aa3fb69b6f3c586fe7c6",
+  "expectedScenarios": [
+    "stale-discount",
+    "changelog-crash"
+  ],
+  "monetaryCost": null,
+  "dshVersion": "0.2.1-rc.5",
+  "pluginCommit": "a696fe2916e0cbfbf0430f61f91940bce7d478fd",
+  "outcome": "PASSED",
+  "scope": "Seeded examples with scripted executable inputs, official signed-in account and fixed checks; not independent user cases or a success-rate estimate.",
+  "hostFixture": "test/fixtures/host-rc5/package.json",
+  "hostLockSha256": "62568d813dd6b8e3ebd283def4eb748baf7485265f4141e8bd0a2ae8339b9e94",
+  "dependencyObservation": {
+    "zodVersions": [
+      "4.6.7"
+    ],
+    "observations": 66,
+    "method": "Node resolution hook returned each original resolver result unchanged; external imports only; no model input or output captured in these observations."
+  },
+  "previousAttempt": "bench/results/live-provider-rc5-baseline-9cfc279-2026-11-03.json"
+}
