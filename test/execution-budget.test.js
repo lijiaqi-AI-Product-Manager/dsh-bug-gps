@@ -23,20 +23,21 @@ async function fixture(t, handler = (_req, res) => res.end('<p id="out">BAD</p>'
   return `http://127.0.0.1:${server.address().port}/`;
 }
 
-function tracked(t, prepare) {
+function tracked(t, prepare, { watchdogMs = 2500, contextDelayMs = 0 } = {}) {
   const opened = [];
   const controller = new AbortController();
   const browser = { async newContext(options) {
     const context = await env.browser.newContext(options);
     opened.push(context);
     prepare?.(context);
+    if (contextDelayMs) await new Promise((resolve) => setTimeout(resolve, contextDelayMs));
     return context;
   } };
   // The watchdog only bounds the failing implementation; it owns these contexts.
   const watchdog = setTimeout(() => {
     controller.abort();
     for (const context of opened) void context.close().catch(() => {});
-  }, 2500);
+  }, watchdogMs);
   t.after(async () => {
     clearTimeout(watchdog);
     await Promise.allSettled(opened.map((context) => context.close()));
@@ -67,7 +68,7 @@ test('a total reproduction deadline interrupts an unanswered navigation and keep
   assert.equal(await page.textContent('p'), 'other task');
 });
 
-test('cancelling a frozen renderer interrupts the pending action', async (t) => {
+for (const contextDelayMs of [0, 3000]) test('cancelling a frozen renderer interrupts the pending action after ' + contextDelayMs + 'ms context readiness', { timeout: 15000 }, async (t) => {
   const baseUrl = await fixture(t, (_req, res) => res.end('<button onclick="console.log(\'frozen\');while(true){}">Freeze</button><p id="out">BAD</p>'));
   let abortedAt;
   const run = tracked(t, (context) => {
@@ -76,7 +77,7 @@ test('cancelling a frozen renderer interrupts the pending action', async (t) => 
       abortedAt = performance.now();
       run.controller.abort();
     }));
-  });
+  }, { contextDelayMs, watchdogMs: 10000 });
   const result = await runTrial(run.browser, { ...definition, baseUrl, steps: [...definition.steps, { action: 'click', target: [{ by: 'role', role: 'button', name: 'Freeze' }] }], signal: run.signal });
   assert.ok(abortedAt, 'the actual page must enter its blocking handler');
   assert.equal(result.outcome, 'aborted');
