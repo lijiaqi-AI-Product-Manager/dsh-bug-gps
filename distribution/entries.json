@@ -79,7 +79,7 @@
           "repository": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps",
           "repositoryNodeId": "R_kgDOVfhbfA",
           "subpath": null,
-          "commit": "9cab2a1285caef92c81453843098767005c43509"
+          "commit": "0a2148647119ad81795b0ed3d9cfa512bf3b928c"
         },
         "creator": {
           "github": "lijiaqi-AI-Product-Manager"
@@ -104,19 +104,19 @@
         },
         "verification": {
           "status": "eligible",
-          "checkedAt": "2026-11-03T19:12:43.344Z",
+          "checkedAt": "2026-11-03T21:52:59.450Z",
           "repositoryIdentity": "resolved",
           "smokeTest": null
         },
         "media": [
           {
             "kind": "screenshot",
-            "url": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/9cab2a1285caef92c81453843098767005c43509/docs/media/toolbar/zh-CN.png",
+            "url": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/0a2148647119ad81795b0ed3d9cfa512bf3b928c/docs/media/toolbar/zh-CN.png",
             "alt": "Scripted recording toolbar on the seeded example, Simplified Chinese."
           },
           {
             "kind": "screenshot",
-            "url": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/9cab2a1285caef92c81453843098767005c43509/docs/media/toolbar/en.png",
+            "url": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/0a2148647119ad81795b0ed3d9cfa512bf3b928c/docs/media/toolbar/en.png",
             "alt": "Scripted recording toolbar on the seeded example, English."
           }
         ],

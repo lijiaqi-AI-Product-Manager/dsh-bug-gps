@@ -7,7 +7,7 @@
     "defaultBranchReady": false,
     "desktopAccepted": false
   },
-  "observation": "Intake preparation and one submitted application. Search visibility, admission, installation and recommendations are tracked separately.",
+  "observation": "Intake preparation and two submitted applications. Search visibility, admission, installation and recommendations are tracked separately.",
   "targets": [
     {
       "id": "awesome-dsh-plugin",
@@ -744,6 +744,15 @@
       "target": "hacksing-directory",
       "url": "https://github.com/HackSing/dsh-plugins/issues/351",
       "submittedAt": "2026-11-03T18:58:03.577Z",
+      "source": "9cab2a1285caef92c81453843098767005c43509",
+      "status": "submitted; admission pending",
+      "admitted": false,
+      "recommended": false
+    },
+    {
+      "target": "dsh-open",
+      "url": "https://github.com/polang233/dsh-plugin-index/issues/224",
+      "submittedAt": "2026-11-03T20:09:49Z",
       "source": "9cab2a1285caef92c81453843098767005c43509",
       "status": "submitted; admission pending",
       "admitted": false,

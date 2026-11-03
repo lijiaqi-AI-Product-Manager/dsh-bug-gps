@@ -6,7 +6,11 @@
 
 BugGPS는 DeepSeek Harness(DSH) 플러그인입니다. 이미 발견한 브라우저 문제의 동작과 기대 결과를 기록하고 반복 가능한 실패를 고정합니다. 수정 후에도 같은 검사와 독립된 기준 코드로 결과를 확인합니다.
 
-> 사전 출시 버전입니다. npm 패키지는 아직 배포되지 않았으며 아래 설치는 로컬 소스를 사용합니다. 현재 호환성을 확인한 DSH 버전은 **0.2.1-rc.5**입니다.
+> registry에 대상 버전이 없으면 고정된 Git 소스를 사용하세요. npm 설치 명령은 해당 버전이 실제로 배포된 뒤 실행합니다. [배포 상태](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)를 확인할 수 있습니다. 호환성 확인 대상은 DSH **0.2.1-rc.5**입니다.
+
+```bash
+dsh plugin --profile headless add dsh-bug-gps@1.0.0
+```
 
 [설치 및 제거(중국어·영어)](../installation.md) · [버전별 확인 범위](../verification/1.0.0/README.md).
 
@@ -19,7 +23,7 @@ BugGPS는 DeepSeek Harness(DSH) 플러그인입니다. 이미 발견한 브라�
 Node.js ≥20, Git, 설치된 Microsoft Edge 또는 Google Chrome이 필요합니다. 기록된 Windows 검증은 Node 24.22.0과 Edge 156을 사용했습니다. 모든 브라우저와 운영체제의 지원을 뜻하지는 않습니다.
 
 ```bash
-git clone --branch fix/tool-output-preview --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch release/v1.0.0-ready --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 node bin/buggps.js demo ../buggps-demo

@@ -2,7 +2,7 @@
 
 当前是提交准备材料，不表示已经收录、获得推荐或发布 npm。
 
-四份结构化目录条目尚未送审；[HackSing 的独立申请 #351](https://github.com/HackSing/dsh-plugins/issues/351)已提交，当前待审核。
+四份结构化目录条目尚未送审；[HackSing #351](https://github.com/HackSing/dsh-plugins/issues/351) 与 [DSH Open #224](https://github.com/polang233/dsh-plugin-index/issues/224) 的独立申请已提交，均待审核。
 
 ```bash
 npm run check:distribution

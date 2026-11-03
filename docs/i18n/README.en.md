@@ -6,7 +6,11 @@
 
 BugGPS is a DeepSeek Harness (DSH) plugin for a browser problem you can already describe or reproduce. Capture the actions and the intended result, establish a repeatable failure, then verify the changed code with the same checks and a fresh baseline control.
 
-> Prerelease. The npm package has not been published. Installation below uses a local source checkout. Compatibility is currently limited to DSH **0.2.1-rc.5**.
+> Use a pinned Git source when the requested version is absent from the registry. Run npm installation commands only after that version exists. Check [release status](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4). Compatibility is limited to DSH **0.2.1-rc.5**.
+
+```bash
+dsh plugin --profile headless add dsh-bug-gps@1.0.0
+```
 
 [Install and remove (Chinese/English)](../installation.md) · [Versioned checks and scope](../verification/1.0.0/README.md).
 
@@ -19,7 +23,7 @@ The demo uses scripted actions on the included seeded example and preset changes
 Requires Node.js ≥20, Git, and an installed Microsoft Edge or Google Chrome. The recorded Windows checks use Node 24.22.0 and Edge 156; this does not establish support for every browser or operating system.
 
 ```bash
-git clone --branch fix/tool-output-preview --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch release/v1.0.0-ready --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 node bin/buggps.js demo ../buggps-demo

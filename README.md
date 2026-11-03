@@ -11,16 +11,20 @@ DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标�
 
 <sub>演示由脚本操作仓库自带的植入 bug 示例，并应用预置的错误和正确修改。页面与工具结果来自实际运行，采用关键帧剪辑；片长不代表任务耗时。结果卡片为演示排版，光标与字幕叠加。查看 [本次场景与运行摘要](docs/media/demo-run.json)；真实 DSH 集成另见测试说明。重新生成：`npm run demo:gif`（需要 ffmpeg）。也有 [MP4 版本](docs/media/buggps-demo.mp4)。</sub>
 
-> 状态：预发布，**还没发布到 npm**。下面的命令已在 DSH 0.2.1-rc.5 / Windows 11 上实测，使用本地 checkout 或 `npm pack` 打出的包。
+> 安装来源：registry 中尚无目标版本时使用固定 Git 源码；npm 命令仅在相应版本真实存在后执行。发布状态见[发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)。兼容范围为 DSH **0.2.1-rc.5**，已记录的环境为 Windows。
+
+```bash
+dsh plugin --profile headless add dsh-bug-gps@1.0.0
+```
 
 可直接使用经过验证的固定 Git 版本，见 [安装与移除](docs/installation.md)。当前版本的 [运行依据](docs/verification/1.0.0/README.md)记录 238 项检查、固定案例组、实际账户场景和分发路径，并区分各自的验证范围。
 
 ## 试用内置示例
 
-首次从源码试用，使用已整合的预发布候选分支，再准备依赖。候选仍在验收中，阻断项见 [发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)：
+从源码试用时，使用下面的版本分支准备依赖。运行记录、支持范围与实际发布状态见 [发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)：
 
 ```bash
-git clone --branch fix/tool-output-preview --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone --branch release/v1.0.0-ready --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
 npm ci
 ```
@@ -196,7 +200,7 @@ Star 历史每天自动更新。更新日期采用 UTC，Star 日期沿用 GitHu
 </picture>
 </a>
 
-此项目没有发布对应的 npm／PyPI 包，暂不展示包下载统计。
+下载统计以实际 registry 的公开记录为准；包下载、插件安装与成功任务分别计算。
 
 [数据来源与统计口径](https://github.com/lijiaqi-AI-Product-Manager/lijiaqi-AI-Product-Manager/blob/main/docs/growth.md)
 

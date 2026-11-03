@@ -1,6 +1,6 @@
 # 独立目录申请材料
 
-结构化目录条目仍在准备；[HackSing 收录申请 #351](https://github.com/HackSing/dsh-plugins/issues/351)已提交，待审核。对外提交前先核对目标读取的是默认分支还是固定提交、实际压缩包、版本及最新规则。只引用公开材料与经过筛选的运行摘要，不上传本地原始事件、账户配置、业务截图或私有项目。
+结构化目录条目仍在准备；[HackSing #351](https://github.com/HackSing/dsh-plugins/issues/351) 与 [DSH Open #224](https://github.com/polang233/dsh-plugin-index/issues/224) 的收录申请已提交，均待审核。对外提交前先核对目标读取的是默认分支还是固定提交、实际压缩包、版本及最新规则。只引用公开材料与经过筛选的运行摘要，不上传本地原始事件、账户配置、业务截图或私有项目。
 
 ## 可复用字段
 

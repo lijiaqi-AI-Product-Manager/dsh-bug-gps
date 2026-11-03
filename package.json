@@ -1,7 +1,7 @@
 {
   "name": "dsh-bug-gps",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git"
@@ -10,7 +10,7 @@
     "url": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues"
   },
   "homepage": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps#readme",
-  "description": "BugGPS for DeepSeek Harness: record a browser bug once, lock it as a failing check, and let the agent fix it until the check really passes.",
+  "description": "BugGPS：录制浏览器问题、固定预期，并以独立原代码对照复核修复。Browser bug reproduction and fix verification for DeepSeek Harness.",
   "type": "module",
   "main": "src/dsh/index.js",
   "bin": {
@@ -67,7 +67,10 @@
     "deepseek-harness",
     "bug-reproduction",
     "browser-debugging",
-    "playwright"
+    "playwright",
+    "regression-testing",
+    "cordis-plugin",
+    "debugging"
   ],
   "license": "MIT",
   "devDependencies": {

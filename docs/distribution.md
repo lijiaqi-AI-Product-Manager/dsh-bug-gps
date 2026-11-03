@@ -90,7 +90,7 @@ BugGPS 的目标发布版本为 1.0.0；当前仍在准备，尚未发布 npm。
 
 ## 已发生的申请
 
-[HackSing 收录申请 #351](https://github.com/HackSing/dsh-plugins/issues/351)已由维护者账号提交，使用经过验证的完整 Git 提交，公开 npm 未发布、已验收范围及其余未验收部分。目前待审核，未确认收录或推荐。其他结构化目录条目仍为准备状态。
+[HackSing #351](https://github.com/HackSing/dsh-plugins/issues/351) 与 [DSH Open #224](https://github.com/polang233/dsh-plugin-index/issues/224) 已由维护者账号提交，均固定经过验证的完整 Git 提交，明确说明 npm 尚未发布、已验收范围及其余未验收部分。目前均待审核，未确认收录或推荐。其他结构化目录条目仍为准备状态；准备材料中的新来源不自动改变已经提交的申请来源。
 
 ## 发布与跟踪
 
