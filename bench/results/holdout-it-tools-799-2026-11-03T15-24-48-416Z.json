@@ -1,0 +1,280 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "it-tools-799",
+  "upstream": "https://github.com/CorentinTh/it-tools/pull/799",
+  "buggyCommit": "80e46c92922c1a886be08f4747b6c9f791a625e8",
+  "fixCommit": "5ed36935c7fb56d8c0ce89cdd06c6a0afb60fd28",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T15:24:48.417Z",
+  "runtime": {
+    "commit": "77b9b9ff327a48ef22c93df63352f713aa3e05b8",
+    "node": "v24.22.2",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "00b3c51bc55b40d554cc69a141cada52f93682a680c551396870c4d98c24a9ee",
+    "setupSha256": "edd78c7ebae8dc645a86841894a0f92ce6df1f68186747343da3cd7d38e6e010",
+    "inputSelectorSha256": "65607032941a7951a14dce9360c865dd0c048b409d5f1a41f55f9ae7fb76b8e7",
+    "engineFilesSha256": "9606c390d26378d4eb6a947e584d0c03d6e35424a8614761e2eb6df569716c62",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "stage": "completed",
+  "preparation": {
+    "status": "READY",
+    "attempts": [],
+    "manager": "pnpm",
+    "managerVersion": "8.15.9",
+    "lockSha256": "dde4af5af1dd23e15bfe6561cd12311b06a13df16642b63e40577f8525c4b1d4",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "d6d79642befe99eb3b03239a24ac971e5f43969f7d8b06df61efc8d6808fd424"
+    },
+    "file": "bench/holdout-recordings/it-tools-799.json",
+    "source": "scripted",
+    "sha256": "739ccd51d7b9dbddc87ab88830929975667bff464fcfc3c51906ff10c2baccf4",
+    "canonicalSha256": "a9a0a632ee63ecd18f78ba92b3fcfb25f401254541b1dae9f6b13cc7cd38760a",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 2,
+    "authoredTargets": [],
+    "dropped": null,
+    "expectation": {
+      "kind": "text",
+      "target": [
+        {
+          "by": "css",
+          "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+        }
+      ],
+      "equals": "[ \"reader\", \"writer\" ]"
+    },
+    "also": []
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-serve.mjs",
+    "sha256": "9290b8b4c2a903721154eaf5f026031cb0a95d2cf111a5b67e6aa5c1620691dc",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.56"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "REPRODUCED",
+    "tally": {
+      "fail": 1
+    },
+    "observed": "reader,writer",
+    "signature": {
+      "kind": "text",
+      "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+      "actual": "reader,writer",
+      "resolution": {
+        "by": "css",
+        "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "text",
+            "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+            "actual": "reader,writer",
+            "resolution": {
+              "by": "css",
+              "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+            }
+          }
+        }
+      ]
+    },
+    "disabledSteps": [],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"JWT to decode\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"}"
+      ]
+    },
+    "durationMs": 2088
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "reader,writer",
+      "signature": {
+        "kind": "text",
+        "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+        "actual": "reader,writer",
+        "resolution": {
+          "by": "css",
+          "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "text",
+              "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+              "actual": "reader,writer",
+              "resolution": {
+                "by": "css",
+                "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+              }
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"role\",\"name\":\"JWT to decode\",\"role\":\"textbox\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"value\":\"tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"}"
+        ]
+      },
+      "durationMs": 5781
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 2,
+    "shortened": 2,
+    "stats": {
+      "trials": 1,
+      "probeRuns": 1,
+      "cacheHits": 0,
+      "unresolved": 1,
+      "differentFailure": 0,
+      "stepTimeoutMs": 2369,
+      "durationMs": 13318,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/jwt-parser"
+      },
+      {
+        "action": "fill",
+        "target": [
+          {
+            "by": "role",
+            "role": "textbox",
+            "name": "JWT to decode"
+          },
+          {
+            "by": "label",
+            "value": "JWT to decode"
+          },
+          {
+            "by": "css",
+            "value": "#id-d5wzu45mls"
+          }
+        ],
+        "value": {
+          "secret": "HOLDOUT_JWT_ARRAY"
+        }
+      }
+    ]
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "reader,writer",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"JWT to decode\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"}"
+      ]
+    },
+    "durationMs": 5725,
+    "caseSha256": "89ac36057c589035fb73d96f0f90945f0f59517492bb7ccc0cfcd0880dc84331",
+    "lockSha256": "5f851bf7cfecd23eadd7569c6f34acd0c94015e643bf7ea3f1974b44d159900f"
+  },
+  "fixed": {
+    "verdict": "NEEDS_REVIEW",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "reviewReasons": [
+      "baseline-not-reproduced"
+    ],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"role\",\"name\":\"JWT to decode\",\"role\":\"textbox\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"value\":\"tr:has(td.claims > span:text-is(\\\"roles\\\")) td:nth-child(2) span:first-child\"}"
+      ]
+    },
+    "baselineControl": {
+      "status": "TEST_INVALID",
+      "tally": {
+        "step-error": 3
+      },
+      "observed": null,
+      "signatureKey": null,
+      "matchesLockedFailure": false,
+      "resolutionChanges": [],
+      "resolutionProfile": {},
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": "target not-found",
+      "durationMs": 30568
+    },
+    "durationMs": 7892,
+    "caseSha256": "89ac36057c589035fb73d96f0f90945f0f59517492bb7ccc0cfcd0880dc84331",
+    "lockSha256": "5f851bf7cfecd23eadd7569c6f34acd0c94015e643bf7ea3f1974b44d159900f"
+  },
+  "fullPathOutcome": {
+    "verdict": "NEEDS_REVIEW",
+    "protectedInputsUnchanged": true,
+    "expectedOutcome": false
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "c9e3cbdeab799466a73cb8476c3a3507cbd673a11b84bc84df00207bb9dfb9e9",
+    "lockSha256": "9c45502f9585bf61e4ea6a6797b4dc596c2f22630d8798fd654db9dcc9a56fc5"
+  },
+  "status": "NEEDS_REVIEW",
+  "expectedOutcome": false,
+  "durationMs": 140215
+}

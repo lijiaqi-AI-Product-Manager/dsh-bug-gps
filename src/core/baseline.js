@@ -18,7 +18,8 @@ function relocated(argv, source, target) {
 /** Runs a baseline snapshot without replacing candidate files or the user's index. */
 export async function withBaseline(repoDir, tree, serve, run, { signal } = {}) {
   checkSignal(signal);
-  const container = await mkdtemp(join(tmpdir(), 'buggps-baseline-'));
+  // Align the application cwd with Node's canonical module paths, including Windows TEMP aliases.
+  const container = await realpath(await mkdtemp(join(tmpdir(), 'buggps-baseline-')));
   const root = join(container, 'worktree');
   const links = [];
   const runtimeInputs = [];

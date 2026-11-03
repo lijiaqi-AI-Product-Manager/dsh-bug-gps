@@ -1,0 +1,25 @@
+{
+  "schema": "buggps.holdout-batch/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "attempted": 1,
+  "runtime": {
+    "commit": "77b9b9ff327a48ef22c93df63352f713aa3e05b8",
+    "node": "v24.22.2",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "00b3c51bc55b40d554cc69a141cada52f93682a680c551396870c4d98c24a9ee",
+    "setupSha256": "edd78c7ebae8dc645a86841894a0f92ce6df1f68186747343da3cd7d38e6e010",
+    "inputSelectorSha256": "65607032941a7951a14dce9360c865dd0c048b409d5f1a41f55f9ae7fb76b8e7",
+    "engineFilesSha256": "9606c390d26378d4eb6a947e584d0c03d6e35424a8614761e2eb6df569716c62",
+    "changedSourceFiles": []
+  },
+  "results": [
+    {
+      "case": "it-tools-799",
+      "status": "NEEDS_REVIEW",
+      "expectedOutcome": false
+    }
+  ]
+}

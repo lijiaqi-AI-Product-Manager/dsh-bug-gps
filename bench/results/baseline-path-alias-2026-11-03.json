@@ -1,0 +1,87 @@
+{
+  "schema": "buggps.baseline-path-check/v1",
+  "at": "2026-11-03T15:47:29.849Z",
+  "scope": "Windows directory-junction alias for TEMP/TMP; one historical IT-Tools 799 scenario. Diagnostic comparison, not a full three-run verification, cohort acceptance, or field success rate.",
+  "producer": {
+    "base": "92df46ecd41926a538bf698791f54b0b07e1be1a",
+    "file": "src/core/baseline.js",
+    "beforeSha256": "566cd66cc16d4a70a6d612232282a28dbd89ee05001825609de55a612e0be549",
+    "afterSha256": "8d1afdfbeed4e743977173417f1b2bc98b10669f13273ba397ade12dc85acdf5",
+    "change": "Resolve the owned temporary container before creating and starting the baseline worktree."
+  },
+  "fixture": {
+    "case": "it-tools-799",
+    "input": "bench/holdout-recordings/it-tools-799.json",
+    "inputSha256": "739ccd51d7b9dbddc87ab88830929975667bff464fcfc3c51906ff10c2baccf4",
+    "requiredSyntheticInputsProvided": true,
+    "temporaryDirectoryAlias": "owned directory junction to the real temporary directory",
+    "originalSourceTreeUnchanged": true,
+    "modelCalls": 0
+  },
+  "before": {
+    "outcome": "step-error",
+    "reason": "target not-found",
+    "pageErrorCount": 1,
+    "moduleResolutionError": true,
+    "applicationSourceUnchanged": true
+  },
+  "after": {
+    "outcome": "fail",
+    "observed": "reader,writer",
+    "signature": {
+      "kind": "text",
+      "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+      "actual": "reader,writer",
+      "resolution": {
+        "by": "css",
+        "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+      },
+      "check": 0,
+      "checks": [
+        {
+          "check": 0,
+          "outcome": "fail",
+          "signature": {
+            "kind": "text",
+            "target": "css=tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child",
+            "actual": "reader,writer",
+            "resolution": {
+              "by": "css",
+              "value": "tr:has(td.claims > span:text-is(\"roles\")) td:nth-child(2) span:first-child"
+            }
+          }
+        }
+      ]
+    },
+    "pageErrorCount": 0,
+    "consoleErrorCount": 0,
+    "failedRequestCount": 0,
+    "applicationSourceUnchanged": true
+  },
+  "regression": {
+    "file": "test/baseline-control.test.js",
+    "name": "baseline entrypoint and imported modules share one root through a temporary-directory alias",
+    "before": "failed: cwd and module root differ",
+    "after": "passed; worktree registration and source tree unchanged"
+  },
+  "ciBefore": {
+    "run": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/actions/runs/41662673927",
+    "source": "77b9b9ff327a48ef22c93df63352f713aa3e05b8",
+    "cases": [
+      "it-tools-799",
+      "it-tools-1368"
+    ],
+    "outcome": "both NEEDS_REVIEW; candidate pass3/3 but independent original targets missing3/3",
+    "records": [
+      "holdout-batch-2026-11-03T15-24-48-416Z.json",
+      "holdout-it-tools-799-2026-11-03T15-24-48-416Z.json",
+      "holdout-batch-2026-11-03T15-23-40-924Z.json",
+      "holdout-it-tools-1368-2026-11-03T15-23-40-924Z.json"
+    ]
+  },
+  "limits": [
+    "The alias diagnostic identifies a reproducible path failure. Clean Windows CI must independently confirm complete controls after the fix.",
+    "A separate warm local 799 follow-up passed before this diagnosis; it did not explain or clear the cold CI failures.",
+    "All earlier failures remain retained; no baseline file changes or failed original controls are ignored."
+  ]
+}

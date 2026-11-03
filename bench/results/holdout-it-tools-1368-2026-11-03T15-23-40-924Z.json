@@ -1,0 +1,490 @@
+{
+  "schema": "buggps.holdout-result/v1",
+  "dataset": "browser-state-12",
+  "evaluator": "buggps.oracle/v8",
+  "evaluation": "expanded-regression; cases informed implementation improvements, not a blind holdout",
+  "denominator": 12,
+  "case": "it-tools-1368",
+  "upstream": "https://github.com/CorentinTh/it-tools/pull/1368",
+  "buggyCommit": "c7b80fbc78e2f8487ea317724b46e2d74ed5129f",
+  "fixCommit": "ae1363937bf365a0cd4ce6031971908c4b31f55f",
+  "expectedFixedVerdict": "VERIFIED",
+  "at": "2026-11-03T15:23:40.925Z",
+  "runtime": {
+    "commit": "77b9b9ff327a48ef22c93df63352f713aa3e05b8",
+    "node": "v24.22.2",
+    "platform": "win32",
+    "arch": "x64",
+    "ci": "true",
+    "runnerSha256": "00b3c51bc55b40d554cc69a141cada52f93682a680c551396870c4d98c24a9ee",
+    "setupSha256": "edd78c7ebae8dc645a86841894a0f92ce6df1f68186747343da3cd7d38e6e010",
+    "inputSelectorSha256": "65607032941a7951a14dce9360c865dd0c048b409d5f1a41f55f9ae7fb76b8e7",
+    "engineFilesSha256": "9606c390d26378d4eb6a947e584d0c03d6e35424a8614761e2eb6df569716c62",
+    "changedSourceFiles": []
+  },
+  "modelCalls": 0,
+  "stage": "completed",
+  "preparation": {
+    "status": "READY",
+    "attempts": [],
+    "manager": "pnpm",
+    "managerVersion": "8.15.3",
+    "lockSha256": "ace96ac8df9fe7c64880d02538412cb8cb09f1ba119e1a1711d5ebaaa84f9edc",
+    "generatedDeclarations": []
+  },
+  "input": {
+    "selection": "versioned-index",
+    "index": {
+      "file": "bench/regression-inputs.json",
+      "canonicalSha256": "d6d79642befe99eb3b03239a24ac971e5f43969f7d8b06df61efc8d6808fd424"
+    },
+    "file": "bench/holdout-recordings/it-tools-1368.json",
+    "source": "scripted-with-authored-targets",
+    "sha256": "66ec7e813ed3e77bf762b31ea8c6c4608b3895091cfeffadd9e5a345939cac14",
+    "canonicalSha256": "de24e099cec7a8ac27c6ec9f149c66041eb4e1f11ec26b0571474710a7c43ebb",
+    "definitionRevision": 1,
+    "authoredCheckpoints": [],
+    "steps": 2,
+    "authoredTargets": [
+      {
+        "index": 1,
+        "action": "click",
+        "target": [
+          {
+            "by": "css",
+            "value": "h1 + div button"
+          }
+        ],
+        "reason": "The unnamed favorite button is scoped to the tool header."
+      }
+    ],
+    "dropped": null,
+    "expectation": {
+      "kind": "count",
+      "target": [
+        {
+          "by": "css",
+          "value": "a[href=\"/hash-text\"]"
+        }
+      ],
+      "equals": 2
+    },
+    "also": [
+      {
+        "kind": "visible",
+        "target": [
+          {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          }
+        ]
+      }
+    ]
+  },
+  "fixtureRuntime": {
+    "entry": "bench/vite-it-tools-serve.mjs",
+    "sha256": "7dd4228f057f41f5212a63399eff83240302db10e226eac8064c53f8dae9b9cf",
+    "cache": "per-checkout",
+    "dependencyMode": "linked-cache",
+    "preparation": "Vite4 resolveConfig/optimizeDeps before listen; marked and dompurify included from the observed dependency graph; no application-source or check changes"
+  },
+  "browser": {
+    "channel": "msedge",
+    "version": "156.0.4314.56"
+  },
+  "execution": {
+    "rawStepTimeoutMs": 10000,
+    "replayStepTimeoutMs": 10000,
+    "reductionMaxMs": 30000
+  },
+  "rawRecording": {
+    "status": "TEST_INVALID",
+    "tally": {
+      "step-error": 1
+    },
+    "reason": "target ambiguous",
+    "stepIndex": 1,
+    "disabledSteps": [],
+    "resolutionProfile": {},
+    "durationMs": 11331
+  },
+  "lock": {
+    "status": "REPRODUCED",
+    "red": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "1 matching elements",
+      "signature": {
+        "kind": "count",
+        "target": "css=a[href=\"/hash-text\"]",
+        "actual": "1",
+        "resolution": {
+          "by": "css",
+          "value": "a[href=\"/hash-text\"]",
+          "collection": true
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "count",
+              "target": "css=a[href=\"/hash-text\"]",
+              "actual": "1",
+              "resolution": {
+                "by": "css",
+                "value": "a[href=\"/hash-text\"]",
+                "collection": true
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "pass",
+            "resolution": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "step:1": [
+          "{\"by\":\"css\",\"value\":\"h1 + div button\"}"
+        ],
+        "final:0": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"Hash text\",\"role\":\"heading\"}"
+        ]
+      },
+      "visibilityHistory": [
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 1,
+            "elapsedMs": 2788
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 1,
+            "elapsedMs": 2772
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 1,
+            "elapsedMs": 2787
+          }
+        }
+      ],
+      "durationMs": 8394
+    }
+  },
+  "minimize": {
+    "status": "DONE",
+    "confirmed": true,
+    "original": 2,
+    "shortened": 1,
+    "stats": {
+      "trials": 1,
+      "probeRuns": 2,
+      "cacheHits": 1,
+      "unresolved": 0,
+      "differentFailure": 0,
+      "stepTimeoutMs": 3377,
+      "durationMs": 14703,
+      "modelCalls": 0
+    },
+    "steps": [
+      {
+        "action": "goto",
+        "url": "/hash-text"
+      }
+    ],
+    "fixedComparison": {
+      "status": "REPRODUCED",
+      "tally": {
+        "fail": 3
+      },
+      "observed": "1 matching elements",
+      "signature": {
+        "kind": "count",
+        "target": "css=a[href=\"/hash-text\"]",
+        "actual": "1",
+        "resolution": {
+          "by": "css",
+          "value": "a[href=\"/hash-text\"]",
+          "collection": true
+        },
+        "check": 0,
+        "checks": [
+          {
+            "check": 0,
+            "outcome": "fail",
+            "signature": {
+              "kind": "count",
+              "target": "css=a[href=\"/hash-text\"]",
+              "actual": "1",
+              "resolution": {
+                "by": "css",
+                "value": "a[href=\"/hash-text\"]",
+                "collection": true
+              }
+            }
+          },
+          {
+            "check": 1,
+            "outcome": "pass",
+            "resolution": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            }
+          }
+        ]
+      },
+      "disabledSteps": [],
+      "resolutionProfile": {
+        "final:0": [
+          "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"}"
+        ],
+        "final:1": [
+          "{\"by\":\"role\",\"name\":\"Hash text\",\"role\":\"heading\"}"
+        ]
+      },
+      "visibilityHistory": [
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 0,
+            "elapsedMs": 1823
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 0,
+            "elapsedMs": 1877
+          }
+        },
+        {
+          "final:1": {
+            "seen": true,
+            "candidate": {
+              "by": "role",
+              "role": "heading",
+              "name": "Hash text"
+            },
+            "source": "final-check",
+            "stepIndex": 0,
+            "elapsedMs": 1874
+          }
+        }
+      ],
+      "durationMs": 5625
+    },
+    "agreesWithFullRecording": false
+  },
+  "negativeControl": {
+    "verdict": "STILL_FAILING",
+    "tally": {
+      "fail": 3
+    },
+    "reason": null,
+    "observed": "1 matching elements",
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"css\",\"value\":\"h1 + div button\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"Hash text\",\"role\":\"heading\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 2794
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 2664
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 2738
+        }
+      }
+    ],
+    "durationMs": 8239,
+    "caseSha256": "3a23d92339c347fb4f2dcea8ff716c7709aab8567541e1093d6b6324b4affa3f",
+    "lockSha256": "b7c8b0fbb67e5c4e5d7811519c7fba87b99c53f8bbfe7422426a7ee8b3f5bb77"
+  },
+  "fixed": {
+    "verdict": "NEEDS_REVIEW",
+    "tally": {
+      "pass": 3
+    },
+    "reason": null,
+    "observed": null,
+    "reviewReasons": [
+      "baseline-not-reproduced"
+    ],
+    "resolutionProfile": {
+      "step:1": [
+        "{\"by\":\"css\",\"value\":\"h1 + div button\"}"
+      ],
+      "final:0": [
+        "{\"by\":\"css\",\"collection\":true,\"value\":\"a[href=\\\"/hash-text\\\"]\"}"
+      ],
+      "final:1": [
+        "{\"by\":\"role\",\"name\":\"Hash text\",\"role\":\"heading\"}"
+      ]
+    },
+    "visibilityHistory": [
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 3422
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 3487
+        }
+      },
+      {
+        "final:1": {
+          "seen": true,
+          "candidate": {
+            "by": "role",
+            "role": "heading",
+            "name": "Hash text"
+          },
+          "source": "final-check",
+          "stepIndex": 1,
+          "elapsedMs": 3517
+        }
+      }
+    ],
+    "baselineControl": {
+      "status": "TEST_INVALID",
+      "tally": {
+        "step-error": 3
+      },
+      "observed": null,
+      "signatureKey": null,
+      "matchesLockedFailure": false,
+      "resolutionChanges": [],
+      "resolutionProfile": {},
+      "runtimeInputs": [
+        {
+          "path": "node_modules",
+          "mode": "shared-dependencies"
+        }
+      ],
+      "reason": "target not-found",
+      "durationMs": 30875
+    },
+    "durationMs": 10469,
+    "caseSha256": "3a23d92339c347fb4f2dcea8ff716c7709aab8567541e1093d6b6324b4affa3f",
+    "lockSha256": "b7c8b0fbb67e5c4e5d7811519c7fba87b99c53f8bbfe7422426a7ee8b3f5bb77"
+  },
+  "fullPathOutcome": {
+    "verdict": "NEEDS_REVIEW",
+    "protectedInputsUnchanged": true,
+    "expectedOutcome": false
+  },
+  "protectedInputs": {
+    "unchanged": true,
+    "caseSha256": "0becbf85c82d947f0a6bb1b530c2eec9ce8dc4be0cf9d032e56364032fccff88",
+    "lockSha256": "194c098f74e4cdeeff380b6e157da40a30f31955fbce50fe21f5d4803715e69b"
+  },
+  "status": "NEEDS_REVIEW",
+  "expectedOutcome": false,
+  "durationMs": 198433
+}

@@ -1,6 +1,9 @@
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { withBaseline } from '../src/core/baseline.js';
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, realpath, rm, writeFile, symlink, unlink, rmdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
@@ -10,6 +13,7 @@ import { git, snapshotTree, describeTreeChanges } from '../src/core/snapshot.js'
 import { lockCase, verifyCase, Verdict } from '../src/core/caselock.js';
 import { freePort, serveSpec } from './helpers.js';
 
+const execFileAsync = promisify(execFile);
 let env;
 before(async () => { env = await launchBrowser(); });
 after(async () => { await env?.browser.close(); });
@@ -112,4 +116,39 @@ test('baseline runtime links are cleaned without deleting original dependencies'
   assert.ok(result.baselineControl.runtimeInputs.some((input) => input.path === '.env'));
   assert.equal(await readFile(join(root, 'node_modules', 'sentinel.txt'), 'utf8'), 'keep me');
   assert.doesNotMatch(JSON.stringify(result), /TEST_ONLY_RUNTIME_INPUT=present/);
+});
+
+test('baseline entrypoint and imported modules share one root through a temporary-directory alias', async (t) => {
+  const root = await repository(t);
+  await writeFile(join(root, 'root-check.mjs'), [
+    "import { dirname } from 'node:path';",
+    "import { fileURLToPath } from 'node:url';",
+    "console.log(JSON.stringify({ cwd: process.cwd(), moduleRoot: dirname(fileURLToPath(import.meta.url)) }));",
+  ].join('\n') + '\n');
+  const tree = await snapshotTree(root);
+  const before = await git(root, ['worktree', 'list', '--porcelain']);
+  const actualTemp = await realpath(tmpdir());
+  const container = await mkdtemp(join(actualTemp, 'buggps-temp-alias-test-'));
+  const alias = join(container, 'temp');
+  const oldTemp = process.env.TEMP;
+  const oldTmp = process.env.TMP;
+  try {
+    await symlink(actualTemp, alias, process.platform === 'win32' ? 'junction' : 'dir');
+    process.env.TEMP = alias; process.env.TMP = alias;
+    await withBaseline(root, tree, { command: [process.execPath, join(root, 'root-check.mjs')], url: 'http://127.0.0.1:9/' }, async (directory, serve) => {
+      const { stdout } = await execFileAsync(serve.command[0], serve.command.slice(1), { cwd: directory, windowsHide: true, timeout: 5000 });
+      const report = JSON.parse(stdout);
+      assert.equal(report.cwd, report.moduleRoot, 'The restored app must resolve its working directory and imported modules from the same root');
+    });
+  } finally {
+    if (oldTemp === undefined) delete process.env.TEMP; else process.env.TEMP = oldTemp;
+    if (oldTmp === undefined) delete process.env.TMP; else process.env.TMP = oldTmp;
+    await unlink(alias).catch((error) => { if (error.code !== 'ENOENT') throw error; });
+    const target = await realpath(container);
+    assert.equal(dirname(target), actualTemp);
+    assert.ok(basename(target).startsWith('buggps-temp-alias-test-'));
+    await rmdir(target);
+  }
+  assert.equal(await git(root, ['worktree', 'list', '--porcelain']), before);
+  assert.equal(await snapshotTree(root), tree);
 });
