@@ -12,6 +12,7 @@ import { minimize } from '../src/core/minimize.js';
 import { EVALUATOR_VERSION } from '../src/core/oracle.js';
 import { git } from '../src/core/snapshot.js';
 import { freePort } from '../test/helpers.js';
+import { selectRegressionInputs } from './regression-inputs.mjs';
 
 const source = fileURLToPath(new URL('..', import.meta.url));
 const manifest = JSON.parse(await readFile(new URL('./holdout-cases.json', import.meta.url), 'utf8'));
@@ -24,12 +25,17 @@ const requested = process.argv.slice(2);
 if (requested.some((id) => !manifest.cases.some((c) => c.id === id))) throw new Error('Unknown dataset case');
 const selected = manifest.cases.filter((c) => !requested.length || requested.includes(c.id));
 const outputDir = resolve(process.env.BUGGPS_HOLDOUT_OUT ?? join(source, 'bench/results'));
-const inputDir = resolve(process.env.BUGGPS_HOLDOUT_INPUTS ?? join(source, 'bench/holdout-recordings'));
 await mkdir(outputDir, { recursive: true });
+let inputSelection;
+let inputSelectionError;
+try {
+  inputSelection = await selectRegressionInputs({ source, manifest, inputDir: process.env.BUGGPS_HOLDOUT_INPUTS, indexFile: process.env.BUGGPS_HOLDOUT_INDEX });
+} catch (error) { inputSelectionError = error; }
 const runtime = { commit: (await git(source, ['rev-parse', 'HEAD'])).trim(), node: process.version, platform: process.platform, arch: process.arch, ci: 'true' };
 runtime.runnerSha256 = hash(await readFile(fileURLToPath(import.meta.url)));
+runtime.inputSelectorSha256 = hash(await readFile(new URL('./regression-inputs.mjs', import.meta.url)));
 runtime.engineFilesSha256 = hash(JSON.stringify(await Promise.all((await readdir(join(source, 'src/core'))).filter((n) => n.endsWith('.js')).sort().map(async (name) => [name, hash(await readFile(join(source, 'src/core', name)))]))));
-runtime.changedSourceFiles = (await git(source, ['diff', '--name-only', 'HEAD', '--', 'src/core', 'bench/holdout.mjs'])).trim().split('\n').filter(Boolean);
+runtime.changedSourceFiles = (await git(source, ['diff', '--name-only', 'HEAD', '--', 'src/core', 'bench/holdout.mjs', 'bench/regression-inputs.mjs', 'bench/regression-inputs.json'])).trim().split('\n').filter(Boolean);
 // Vite 4 otherwise exits when its noninteractive stdin closes. No application source is changed.
 process.env.CI = 'true';
 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -52,6 +58,7 @@ for (const spec of selected) {
   let dir;
   const oldSecrets = new Map();
   try {
+    if (inputSelectionError) throw inputSelectionError;
     const entry = state.cases.find((c) => c.id === spec.id);
     out.preparation = { status: entry?.status ?? 'MISSING', attempts: (entry?.attempts ?? []).map((a) => ({ status: a.status, reason: a.reason?.replaceAll(root, '<fixture-root>') })), manager: entry?.manager, managerVersion: entry?.managerVersion, lockSha256: entry?.lockSha256 };
     if (entry?.status !== 'READY') { out.status = 'ENV_BLOCKED'; out.reason = 'Fixture preparation did not complete'; continue; }
@@ -66,9 +73,8 @@ for (const spec of selected) {
     // declarations in the snapshot; retain their patch hash instead of hiding the changes.
     out.preparation.generatedDeclarations = await Promise.all(changed.map(async (path) => ({ path, sha256: hash(await readFile(join(dir, path))) })));
     if (changed.length) out.preparation.generatedPatchSha256 = hash(await git(dir, ['diff', 'HEAD', '--', ...changed]));
-    const bytes = await readFile(join(inputDir, spec.id + '.json'));
-    const draft = JSON.parse(bytes);
-    out.input = { source: draft.source, sha256: hash(bytes), canonicalSha256: hash(JSON.stringify(draft)), definitionRevision: draft.definitionRevision ?? 1, definitionBasis: draft.definitionBasis, authoredCheckpoints: draft.authoredCheckpoints ?? [], steps: draft.steps.length, authoredTargets: draft.targetOverrides ?? [], dropped: draft.dropped ?? null, expectation: draft.expectation, also: draft.also ?? [] };
+    const { bytes, draft, definitionFile } = await inputSelection.load(spec.id);
+    out.input = { selection: inputSelection.mode, index: inputSelection.index, file: definitionFile, source: draft.source, sha256: hash(bytes), canonicalSha256: hash(JSON.stringify(draft)), definitionRevision: draft.definitionRevision ?? 1, definitionBasis: draft.definitionBasis, authoredCheckpoints: draft.authoredCheckpoints ?? [], steps: draft.steps.length, authoredTargets: draft.targetOverrides ?? [], dropped: draft.dropped ?? null, expectation: draft.expectation, also: draft.also ?? [] };
     if (draft.captureFailure) { out.status = 'TEST_INVALID'; out.reason = draft.captureFailure.reason; out.captureFailure = draft.captureFailure; continue; }
     if (draft.captureIssues !== undefined && (!Array.isArray(draft.captureIssues) || draft.captureIssues.length)) { out.status = 'TEST_INVALID'; out.reason = 'Recording includes unsupported input or invalid capture diagnostics'; out.captureIssues = draft.captureIssues; continue; }
     for (const [name, value] of Object.entries(draft.fixtureSecrets ?? {})) {
@@ -114,7 +120,7 @@ for (const spec of selected) {
     out.status = out.fixed.verdict;
     out.expectedOutcome = out.fixed.verdict === spec.expectedFixedVerdict && out.negativeControl.verdict === 'STILL_FAILING' && out.protectedInputs.unchanged;
   } catch (error) {
-    out.status = error.name === 'EnvBlockedError' ? 'ENV_BLOCKED' : error.code === 'ENOENT' ? 'TEST_INVALID' : 'RUNNER_ERROR';
+    out.status = error.name === 'EnvBlockedError' ? 'ENV_BLOCKED' : error.name === 'TestDefinitionError' || error.code === 'ENOENT' ? 'TEST_INVALID' : 'RUNNER_ERROR';
     out.reason = String(error.message).replaceAll(root, '<fixture-root>').replaceAll(source, '<source-root>').slice(0, 1600);
   } finally {
     if (readme && dir) await writeFile(join(dir, 'README.md'), readme);
@@ -128,3 +134,4 @@ for (const spec of selected) {
   }
 }
 await writeFile(join(outputDir, `holdout-batch-${stamp}.json`), JSON.stringify({ schema: 'buggps.holdout-batch/v1', dataset: manifest.dataset, denominator: manifest.denominator, attempted: results.length, runtime, results: results.map((r) => ({ case: r.case, status: r.status, expectedOutcome: r.expectedOutcome ?? false })) }, null, 2) + '\n', { flag: 'wx' });
+if (results.some((result) => !result.expectedOutcome)) process.exitCode = 1;

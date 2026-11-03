@@ -15,9 +15,15 @@ node bench/holdout.mjs
 
 准备程序会从官方仓库创建独立临时工作区，按锁文件安装依赖，关闭依赖安装脚本。需有 Git、Node、npm、足够的磁盘空间、网络和系统 Edge/Chrome；首次准备耗时由仓库和网络决定。工作区状态保存在被忽略的 `.buggps/holdout/workspaces.json`。`BUGGPS_HOLDOUT_STATE` 可指向已有状态文件；运行器只接受本程序格式的独立临时工作区。
 
+默认从 [`regression-inputs.json`](regression-inputs.json) 选择全部 12 例的版本化定义，包括 v3 导出文件名、v3 另存为及 v5 编辑器输入。索引固定数据集、分母、每例文件、定义版本和内容指纹，公式为 `sha256(JSON.stringify(JSON.parse(fileUtf8)))`；JSON 缩进和换行变化不影响指纹，业务值或键顺序变化需要更新索引并重新验收。输入不匹配时记录 `TEST_INVALID`，不启动该例浏览器。
+
+历史复验可显式设置 `BUGGPS_HOLDOUT_INPUTS` 指向版本目录；自定义完整索引可用 `BUGGPS_HOLDOUT_INDEX`，两者不能同时设置。恢复默认索引前应移除这两个环境变量。每例结果记录实际选择方式、定义文件、输入指纹和索引指纹；运行信息另外记录选择器源码指纹。
+
 每个有完整录制定义的案例会检查原始录制、连续 3 次原失败、预算内缩减、无效改动仍失败、上游修复，以及需要时的独立基线对照。运行器不调用模型；它检验浏览器执行和判定内核。真实模型工作流由 `npm run test:live-model` 单独验证，复用已经登录的 DSH 账号，需显式提供 `BUGGPS_DSH_DIR`。
 
 结果写入 `bench/results/holdout-*.json`。可通过位置参数单独运行一个案例，例如 `node bench/holdout.mjs it-tools-1359`；单个案例的成功不能代表 12 个案例全部成功。输入定义尚缺失时明确记录 `TEST_INVALID`，不会跳过。
+
+任一案例未达到清单预设结果，进程结束时返回非零。全局索引无效时为全部选中案例写出 `TEST_INVALID`，保留分母；`NEEDS_REVIEW` 是否符合预设仍由冻结清单决定。
 
 ## 如何读结果
 
@@ -38,7 +44,7 @@ JWT 案例只使用无认证能力的合成夹具，录制仍保留敏感字段�
 
 `drawdb-1066` 的首份定义将相邻标题节点之间的视觉间距误写成字符串空格，旧输入和失败结果继续保留。`holdout-recordings/v2/drawdb-1066.json` 从干净原始版本重新录制，在另存为前固定标题、要求操作后标题完全相同，并继续要求创建 Copy 链接。新定义记录原始提交、前一输入指纹和版本；必须重新建立 RED，不能沿用旧锁。
 
-## 自选人工体验反馈
+## 导出文件名的版本化定义
 
 `drawdb-1031` 的[第 3 版执行定义](holdout-recordings/v3/drawdb-1031.json)是根据应用源码编写的路径：保存 `New`，在同一浏览器上下文中重新进入编辑器并确认已加载标题，再选择最近图表并首次导出。文件名前缀仍要求为 `New_`。原 11 步路径未复现、v2 错误的第二次数据库弹窗假设及其 `TEST_INVALID` 结果均保留。v3 的原代码、无关改动、上游修复与独立原代码对照符合预设结果；15→15 的预算耗尽不计缩减收益。[最新历史索引](results/regression-summary-012c4ecf2d0d.json)保留 33 次尝试，12 例各自最近一次结果为 11 `VERIFIED`、1 预期 `NEEDS_REVIEW`，尚不是同一最终提交的统一验收。
 
@@ -47,7 +53,10 @@ JWT 案例只使用无认证能力的合成夹具，录制仍保留敏感字段�
 ```powershell
 $env:BUGGPS_HOLDOUT_INPUTS = (Resolve-Path bench/holdout-recordings/v3).Path
 node bench/holdout.mjs drawdb-1031
+Remove-Item Env:BUGGPS_HOLDOUT_INPUTS
 ```
+
+## 自选人工体验反馈
 
 可用 `node bench/real.mjs serve drawdb-943` 启动旧开发案例，再用 CLI `record` 或插件工具录制。工具栏可以标注预期、检查点和关键步骤；操作范围及限制以 [README](../README.md#保护机制与已知限制) 为准。
 

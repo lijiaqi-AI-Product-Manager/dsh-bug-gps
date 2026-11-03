@@ -1,0 +1,81 @@
+{
+  "schema": "buggps.regression-inputs/v1",
+  "dataset": "browser-state-12",
+  "denominator": 12,
+  "manifestCanonicalSha256": "9025471be1c314eec2ac347a6e4b1c566bf5fd829969198b03eb590b004a4937",
+  "fingerprint": "sha256(JSON.stringify(JSON.parse(fileUtf8)))",
+  "cases": [
+    {
+      "id": "drawdb-1037",
+      "file": "bench/holdout-recordings/drawdb-1037.json",
+      "definitionRevision": 1,
+      "canonicalSha256": "4ee45d71f5f0f675c7b8c10378903e58591626fd3729c797bd07a0002840880f"
+    },
+    {
+      "id": "drawdb-1031",
+      "file": "bench/holdout-recordings/v3/drawdb-1031.json",
+      "definitionRevision": 3,
+      "canonicalSha256": "6b7e65b5f37dada5664dbef61d32239af842e43681fcc7bd1b02730ad841fffa"
+    },
+    {
+      "id": "drawdb-1066",
+      "file": "bench/holdout-recordings/v3/drawdb-1066.json",
+      "definitionRevision": 3,
+      "canonicalSha256": "d6a570768a1e7827a79b452a35a1e8d0654c2cc3339365ca8fda7c5a9c15f46d"
+    },
+    {
+      "id": "chartdb-1031",
+      "file": "bench/holdout-recordings/v5/chartdb-1031.json",
+      "definitionRevision": 5,
+      "canonicalSha256": "84af705a77f9f58e9d202fb76cadc0a85f7b07f03bec3477cbbbc966442bfb7b"
+    },
+    {
+      "id": "chartdb-1061",
+      "file": "bench/holdout-recordings/chartdb-1061.json",
+      "definitionRevision": 1,
+      "canonicalSha256": "43b5c6f3e08db6ba423f82f30257f1f70197af2ac375118ac91dc0aa407e87ac"
+    },
+    {
+      "id": "chartdb-1089",
+      "file": "bench/holdout-recordings/v5/chartdb-1089.json",
+      "definitionRevision": 5,
+      "canonicalSha256": "21348a6a995036c8ab4e319b462e584ca48ff06d4549c6d8a0678c9009e244eb"
+    },
+    {
+      "id": "chartdb-1045",
+      "file": "bench/holdout-recordings/chartdb-1045.json",
+      "definitionRevision": 1,
+      "canonicalSha256": "964c9fad8bf9c0505137def6e8fd800c5e6468d2663756aa511cb412165f08f2"
+    },
+    {
+      "id": "it-tools-1359",
+      "file": "bench/holdout-recordings/it-tools-1359.json",
+      "definitionRevision": 1,
+      "canonicalSha256": "e00d351b25b2c6ea7fa7a23655f6adb0b7d34d9368a4536d574dd4be97834555"
+    },
+    {
+      "id": "it-tools-872",
+      "file": "bench/holdout-recordings/it-tools-872.json",
+      "definitionRevision": 1,
+      "canonicalSha256": "143bc0dfcc2a765a031724ac31f2a957a1d4c3d334bd59cbed5c256e408e842b"
+    },
+    {
+      "id": "it-tools-799",
+      "file": "bench/holdout-recordings/it-tools-799.json",
+      "definitionRevision": 1,
+      "canonicalSha256": "a9a0a632ee63ecd18f78ba92b3fcfb25f401254541b1dae9f6b13cc7cd38760a"
+    },
+    {
+      "id": "it-tools-1368",
+      "file": "bench/holdout-recordings/it-tools-1368.json",
+      "definitionRevision": 1,
+      "canonicalSha256": "de24e099cec7a8ac27c6ec9f149c66041eb4e1f11ec26b0571474710a7c43ebb"
+    },
+    {
+      "id": "qwerty-learner-793",
+      "file": "bench/holdout-recordings/qwerty-learner-793.json",
+      "definitionRevision": 1,
+      "canonicalSha256": "e1481035fe616ec8170e00f962e4a6374e284297746d8646f57459f8b8ebdfa4"
+    }
+  ]
+}
