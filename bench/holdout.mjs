@@ -33,6 +33,7 @@ try {
 } catch (error) { inputSelectionError = error; }
 const runtime = { commit: (await git(source, ['rev-parse', 'HEAD'])).trim(), node: process.version, platform: process.platform, arch: process.arch, ci: 'true' };
 runtime.runnerSha256 = hash(await readFile(fileURLToPath(import.meta.url)));
+runtime.setupSha256 = hash(await readFile(new URL('./setup-holdout.mjs', import.meta.url)));
 runtime.inputSelectorSha256 = hash(await readFile(new URL('./regression-inputs.mjs', import.meta.url)));
 runtime.engineFilesSha256 = hash(JSON.stringify(await Promise.all((await readdir(join(source, 'src/core'))).filter((n) => n.endsWith('.js')).sort().map(async (name) => [name, hash(await readFile(join(source, 'src/core', name)))]))));
 runtime.changedSourceFiles = (await git(source, ['diff', '--name-only', 'HEAD', '--', 'src/core', 'bench/holdout.mjs', 'bench/regression-inputs.mjs', 'bench/regression-inputs.json'])).trim().split('\n').filter(Boolean);

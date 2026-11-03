@@ -32,10 +32,13 @@ for (const spec of selected) {
   delete entry.reason; await save();
   try {
     const mirror = join(root, 'repos', spec.project + '.git');
-    if (!existsSync(mirror)) git(['clone', '--mirror', '--filter=blob:none', spec.repo + '.git', mirror]);
+    if (!existsSync(mirror)) {
+      git(['init', '--bare', mirror]);
+      git(['--git-dir', mirror, 'remote', 'add', 'origin', spec.repo + '.git']);
+    }
     for (const revision of [spec.buggyCommit, spec.fixCommit]) {
       try { git(['--git-dir', mirror, 'cat-file', '-e', revision + '^{commit}']); }
-      catch { git(['--git-dir', mirror, 'fetch', '--no-tags', '--depth=1', 'origin', revision]); }
+      catch { git(['--git-dir', mirror, 'fetch', '--no-tags', '--depth=1', '--no-filter', 'origin', revision]); }
     }
     git(['--git-dir', mirror, 'worktree', 'add', '--detach', entry.dir, spec.buggyCommit]);
     const packageText = await readFile(join(entry.dir, 'package.json'), 'utf8');
