@@ -53,10 +53,22 @@ test('missing browser is an EnvBlockedError with a next step, never a silent dow
   });
 });
 
-test('non-deterministic bug is FLAKY', async () => {
+test('mixed browser outcomes are FLAKY across isolated contexts', async () => {
   const s = await recordSession(env.browser, env.url, 'flaky-total');
-  const r = await reproduce(env.browser, s, { baseUrl: env.url, runs: 10 });
+  let trial = 0;
+  const controlledBrowser = {
+    async newContext(options) {
+      const context = await env.browser.newContext(options);
+      // Exercise both outcomes in the real page without relying on random sampling.
+      await context.addInitScript((value) => { Math.random = () => value; }, trial++ % 2 === 0 ? 0.1 : 0.9);
+      return context;
+    },
+  };
+  const r = await reproduce(controlledBrowser, s, { baseUrl: env.url, runs: 10 });
   assert.equal(r.status, Status.FLAKY, JSON.stringify(r.tally));
+  assert.equal(trial, 10);
+  assert.deepEqual(r.tally, { fail: 5, pass: 5 });
+  assert.deepEqual(r.trials.map((result) => result.outcome), Array.from({ length: 10 }, (_, index) => index % 2 === 0 ? 'fail' : 'pass'));
 });
 
 test('uncaught page error is reproduced with a normalized signature', async () => {
