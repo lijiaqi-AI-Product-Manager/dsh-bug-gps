@@ -9,13 +9,15 @@ BugGPS는 DeepSeek Harness(DSH) 플러그인입니다. 이미 발견한 브라�
 > 아래 명령은 고정된 Git 소스를 설치합니다. npm 경로는 대상 버전이 실제로 배포된 뒤 사용하세요. [배포 상태](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)를 확인할 수 있습니다. 호환성 확인 대상은 DSH **0.2.1-rc.5**의 `headless` / `web`입니다.
 
 ```bash
-dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#9f256807809e4780d6f22ff6491c7a125ef5de82'
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#306971c417e0bdca3ac930507c1bb57e2236dcbf'
 dsh --profile web --dump-config
 ```
 
 예시는 `web`입니다. 헤드리스 환경에서는 두 명령 모두 `headless`로 바꾸세요. 설정 레이어를 확인하고 해당 인스턴스를 재시작한 다음, 대상 Git 프로젝트에서 `buggps_status`를 호출하세요. 데스크톱은 별도 검증이 필요합니다.
 
 [설치 및 제거(중국어·영어)](../installation.md) · [과거 검증 기록(고정 소스)](../verification/1.0.0/README.md). 각 기록은 해당 소스와 범위를 명시하며, 현재 검증 상태는 배포 체크리스트에서 확인합니다.
+
+업그레이드 후에는 이전 브라우저 기록을 다시 만드세요. 잠글 때 기록한 텍스트, 입력값과 표시 상태를 확인합니다. 프레임이나 다른 탭의 작업이 있으면 미완료 기록으로 처리합니다.
 
 ![BugGPS](../media/buggps-demo.gif)
 
@@ -26,8 +28,9 @@ dsh --profile web --dump-config
 Node.js ≥20, Git, 설치된 Microsoft Edge 또는 Google Chrome이 필요합니다. 기록된 Windows 검증은 Node 24.22.0과 Edge 156을 사용했습니다. 모든 브라우저와 운영체제의 지원을 뜻하지는 않습니다.
 
 ```bash
-git clone --branch release/v1.0.0-ready --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
+git checkout --detach 306971c417e0bdca3ac930507c1bb57e2236dcbf
 npm ci
 node bin/buggps.js demo ../buggps-demo
 node bin/buggps.js doctor --repo ../buggps-demo

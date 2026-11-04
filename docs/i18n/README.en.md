@@ -9,13 +9,15 @@ BugGPS is a DeepSeek Harness (DSH) plugin for a browser problem you can already 
 > The commands below install a pinned Git revision. Use the npm path after the requested version is published. Check [release status](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4). Compatibility is limited to DSH **0.2.1-rc.5**, `headless` / `web`.
 
 ```bash
-dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#9f256807809e4780d6f22ff6491c7a125ef5de82'
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#306971c417e0bdca3ac930507c1bb57e2236dcbf'
 dsh --profile web --dump-config
 ```
 
 This example uses `web`; use `headless` in both commands for a headless instance. Confirm the configuration layer, restart that instance, then call `buggps_status` in the target Git project. Desktop acceptance is separate.
 
 [Install and remove (Chinese/English)](../installation.md) · [Historical evidence (pinned source)](../verification/1.0.0/README.md). Each record identifies its own source and scope; current checks are tracked in the release checklist.
+
+After upgrading, record older browser drafts again. Locking checks the captured text, values and visibility. Actions in embedded frames or other tabs keep the draft incomplete.
 
 ![BugGPS](../media/buggps-demo.gif)
 
@@ -26,8 +28,9 @@ The demo uses scripted actions on the included seeded example and preset changes
 Requires Node.js ≥20, Git, and an installed Microsoft Edge or Google Chrome. The recorded Windows checks use Node 24.22.0 and Edge 156; this does not establish support for every browser or operating system.
 
 ```bash
-git clone --branch release/v1.0.0-ready --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
+git checkout --detach 306971c417e0bdca3ac930507c1bb57e2236dcbf
 npm ci
 node bin/buggps.js demo ../buggps-demo
 node bin/buggps.js doctor --repo ../buggps-demo

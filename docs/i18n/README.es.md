@@ -9,13 +9,15 @@ BugGPS es un plugin para DeepSeek Harness (DSH), orientado a problemas del naveg
 > Los siguientes comandos instalan una revisión fija de Git. Usa la ruta npm cuando la versión solicitada esté publicada. Consulta el [estado de publicación](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4). La compatibilidad se limita a DSH **0.2.1-rc.5**, `headless` / `web`.
 
 ```bash
-dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#9f256807809e4780d6f22ff6491c7a125ef5de82'
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#306971c417e0bdca3ac930507c1bb57e2236dcbf'
 dsh --profile web --dump-config
 ```
 
 El ejemplo usa `web`; cambia ambos comandos a `headless` para una instancia sin interfaz. Confirma la capa de configuración, reinicia esa instancia y llama a `buggps_status` en el proyecto Git de destino. El escritorio requiere una validación aparte.
 
 [Instalación y eliminación (chino/inglés)](../installation.md) · [Registros históricos (revisión fija)](../verification/1.0.0/README.md). Cada registro identifica su fuente y alcance; las comprobaciones actuales están en la lista de publicación.
+
+Tras actualizar, vuelve a grabar los registros antiguos. El bloqueo comprueba el texto, los valores y la visibilidad capturados. Las acciones en marcos u otras pestañas dejan la grabación incompleta.
 
 ![BugGPS](../media/buggps-demo.gif)
 
@@ -26,8 +28,9 @@ La demostración controla mediante un script el ejemplo incluido con un fallo in
 Requiere Node.js ≥20, Git y Microsoft Edge o Google Chrome instalado. Las comprobaciones documentadas de Windows usan Node 24.22.0 y Edge 156; no acreditan todos los navegadores ni sistemas.
 
 ```bash
-git clone --branch release/v1.0.0-ready --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
+git checkout --detach 306971c417e0bdca3ac930507c1bb57e2236dcbf
 npm ci
 node bin/buggps.js demo ../buggps-demo
 node bin/buggps.js doctor --repo ../buggps-demo

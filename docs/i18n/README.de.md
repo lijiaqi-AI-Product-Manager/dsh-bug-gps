@@ -9,13 +9,15 @@ BugGPS ist ein Plugin für DeepSeek Harness (DSH). Es richtet sich an bereits en
 > Die folgenden Befehle installieren einen festgelegten Git-Stand. Den npm-Weg erst nach Veröffentlichung der gewünschten Version verwenden. Den [Veröffentlichungsstand](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4) prüfen. Unterstützt wird DSH **0.2.1-rc.5**, `headless` / `web`.
 
 ```bash
-dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#9f256807809e4780d6f22ff6491c7a125ef5de82'
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#306971c417e0bdca3ac930507c1bb57e2236dcbf'
 dsh --profile web --dump-config
 ```
 
 Das Beispiel nutzt `web`; für eine Headless-Instanz beide Befehle auf `headless` umstellen. Nach Bestätigung der Konfigurationsebene die Instanz neu starten und `buggps_status` im Ziel-Git-Projekt aufrufen. Der Desktop ist gesondert zu prüfen.
 
 [Installation und Entfernen (Chinesisch/Englisch)](../installation.md) · [Historische Prüfungen (festgelegter Quellstand)](../verification/1.0.0/README.md). Jeder Nachweis nennt seinen Quellstand und Geltungsbereich; aktuelle Prüfungen stehen in der Veröffentlichungscheckliste.
+
+Nach einem Update ältere Browseraufzeichnungen neu erstellen. Beim Festschreiben werden erfasster Text, Werte und Sichtbarkeit geprüft. Aktionen in Frames oder anderen Tabs lassen die Aufzeichnung unvollständig.
 
 ![BugGPS](../media/buggps-demo.gif)
 
@@ -26,8 +28,9 @@ Die Demo steuert das mitgelieferte Beispiel mit eingebautem Fehler per Skript un
 Benötigt Node.js ≥20, Git sowie Microsoft Edge oder Google Chrome. Die dokumentierten Windows-Prüfungen verwenden Node 24.22.0 und Edge 156. Andere Browser und Betriebssysteme sind damit nicht abgedeckt.
 
 ```bash
-git clone --branch release/v1.0.0-ready --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
+git checkout --detach 306971c417e0bdca3ac930507c1bb57e2236dcbf
 npm ci
 node bin/buggps.js demo ../buggps-demo
 node bin/buggps.js doctor --repo ../buggps-demo

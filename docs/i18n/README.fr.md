@@ -9,13 +9,15 @@ BugGPS est un plugin pour DeepSeek Harness (DSH), destiné aux problèmes de nav
 > Les commandes ci-dessous installent une révision Git fixe. Utilisez le chemin npm après la publication de la version demandée. Consultez l'[état de publication](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4). La compatibilité se limite à DSH **0.2.1-rc.5**, `headless` / `web`.
 
 ```bash
-dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#9f256807809e4780d6f22ff6491c7a125ef5de82'
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#306971c417e0bdca3ac930507c1bb57e2236dcbf'
 dsh --profile web --dump-config
 ```
 
 L'exemple utilise `web` ; remplacez-le par `headless` dans les deux commandes pour une instance sans interface. Confirmez la couche de configuration, redémarrez cette instance, puis appelez `buggps_status` dans le projet Git cible. Le bureau nécessite une validation séparée.
 
 [Installation et suppression (chinois/anglais)](../installation.md) · [Résultats historiques (révision fixe)](../verification/1.0.0/README.md). Chaque résultat précise sa source et sa portée ; les vérifications actuelles figurent dans la liste de publication.
+
+Après la mise à jour, recommencez les anciens enregistrements. Le verrouillage vérifie le texte, les valeurs et la visibilité capturés. Les actions dans des cadres intégrés ou d’autres onglets rendent l’enregistrement incomplet.
 
 ![BugGPS](../media/buggps-demo.gif)
 
@@ -26,8 +28,9 @@ La démonstration pilote par script l'exemple fourni, qui contient un défaut vo
 Nécessite Node.js ≥20, Git et Microsoft Edge ou Google Chrome installé. Les contrôles Windows documentés utilisent Node 24.22.0 et Edge 156 ; ils ne couvrent pas tous les navigateurs et systèmes.
 
 ```bash
-git clone --branch release/v1.0.0-ready --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
+git checkout --detach 306971c417e0bdca3ac930507c1bb57e2236dcbf
 npm ci
 node bin/buggps.js demo ../buggps-demo
 node bin/buggps.js doctor --repo ../buggps-demo

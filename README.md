@@ -14,7 +14,7 @@ DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标�
 > 以下命令安装固定 Git 源码；npm 路径适用于已经公开发布的版本。发布状态见[发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)。兼容范围为 DSH **0.2.1-rc.5** 的 `headless` / `web`，已记录的环境为 Windows。
 
 ```bash
-dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#9f256807809e4780d6f22ff6491c7a125ef5de82'
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#306971c417e0bdca3ac930507c1bb57e2236dcbf'
 dsh --profile web --dump-config
 ```
 
@@ -24,11 +24,12 @@ dsh --profile web --dump-config
 
 ## 试用内置示例
 
-从源码试用时，使用下面的版本分支准备依赖。运行记录、支持范围与实际发布状态见 [发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)：
+从源码试用时，使用下面的固定源码准备依赖。运行记录、支持范围与实际发布状态见 [发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)：
 
 ```bash
-git clone --branch release/v1.0.0-ready --single-branch https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
+git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
+git checkout --detach 306971c417e0bdca3ac930507c1bb57e2236dcbf
 npm ci
 ```
 
