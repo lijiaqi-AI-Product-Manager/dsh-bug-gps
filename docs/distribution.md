@@ -41,6 +41,7 @@ BugGPS 的目标发布版本为 1.0.0；当前仍在准备，尚未发布 npm。
 | [DeepseekPlugin](https://deepseekplugin.org/en/docs/submit-plugin) | 公开仓库 URL；以 topic、bundle 或明确的 DSH 说明识别，读取公开 README、许可与元数据。页面声明识别后发布，但需实际查询项目页确认，不把识别当作运行验收。 |
 | [DSH Directory](https://dsh.directory/about) | topic 或仓库投稿，按默认分支包路径检测静态 bundle，信号不合成为质量认证。本次首页和提交页未能完成实时读取，投稿可用性保留待核实。 |
 | [DSH Plugin Radar](https://github.com/AdamPlatin123/dsh-plugin-radar) | 当前源码说明由组织管线生产快照，本仓承载镜像与社区登记。topic 自动发现或 `PLUGINS.md` PR；镜像、兼容记录和推荐分别核对，不照搬搜索缓存中的旧身份。 |
+| [dsh-plugins.org](https://dsh-plugins.org/en/about) / [lwmxiaobei 目录](https://github.com/lwmxiaobei/dsh-plugins) | topic、根 bundle 与包元数据；缺失或错误条目走该仓库 Issue。与 `dshplugins.org` 是不同站点，不沿用另一站的收录状态。 |
 
 ## 独立申请与精选
 
@@ -65,6 +66,15 @@ BugGPS 的目标发布版本为 1.0.0；当前仍在准备，尚未发布 npm。
 | [DSHToolkit](https://dsh.thyfwq.com/submit/) | 网站指向 `dshtoolkit/directory` 的申请 Issue，提供仓库、英文简介、分类并要求近期维护；该仓库本次通过 GitHub API 返回 404。先确认有效投稿渠道，不向其他仓库替代投稿。 |
 | [DSH Plugins Marketplace](https://dsh-plugins-mp.com/) | 搜索结果能看到项目详情，但本次官网实时读取超时，独立投稿路径尚未确认。其展示的 HackSing 等仓库是被索引的项目，不能据此认定这些仓库就是市场数据上游。 |
 | [Mayfly 社区目录](https://github.com/Ephemeral-AI-Lab/dsh-plugins/blob/main/registry/community/README.md) | 独立 manifest PR、固定 Git 或 npm 来源、真实能力与 surface 声明，还要求作者在自己的仓库公开链接申请以确认授权。其前端与宿主组合尚未验收，只记录为有条件入口，不增加兼容层或声明支持。 |
+| [DSH Marketplace](https://dshmarketplace.dev/submit) / [独立精选库](https://github.com/DshMarketPlace/awesome-dsh-plugin/blob/main/CONTRIBUTING.md) | topic 或仓库表单进入普通目录；精选另外提交 `data/curated.yml`，连同缓存快照和双语生成 README。其精选库与 `awesome-dsh-plugin/awesome-dsh-plugin` 独立，精选校验还要求对方目录里已有可安装记录。第五份导出仅为 Development 分类的单条 YAML 片段，尚未通过对方完整验证。 |
+| [dshplugin.me](https://github.com/dshplugin-me/dsh-plugin-radar#submit-your-plugin) | 可向 `dshplugin-me/dsh-plugin-radar` 提交仓库登记 Issue；真实 bundle、topic 和克制简介是前置条件。与 AdamPlatin123 的同名雷达分别跟踪。只有实际详情页生效后才使用其 Indexed 徽章。 |
+| [dsh-plugins.net](https://dsh-plugins.net/submit/) / [证据口径](https://dsh-plugins.net/methodology/) | 表单填写名称、包名、仓库、简介、插件版本、最低宿主版本、分类和权限，只复制 Markdown 并打开 GitHub Discussions，不直接送审。需实际发布并留下 Discussion 链接。该站明确不执行安装或运行检查，不将静态证据分数称为认证。 |
+| [dshplugins.com](https://dshplugins.com/submit) | 会话检查后的公开仓库投稿，管理员复核后发布；准确提供安装格式、profile、必要依赖、权限与限制。会话检查尚未完成，不把静态页面读取算成提交或登录成功。 |
+| [dsplugin.app](https://github.com/vbarter/dsh-plugin-registry#用户如何发布) | 仓库预检后进入 `vbarter/dsh-plugin-registry` 的提交 Issue，再由 Action 开 PR、维护者合并后更新站点。与 `dshplugin.app` 不同；发现 PR 或 Manifest 形态检查均不等于已安装或已精选。 |
+
+DSH Marketplace 的公开搜索与完整 format 1 索引在 2026-11-04 00:32 UTC 均未发现 BugGPS；索引的 1,728 个条目已通过 rc.5 原生解析。这只是该时点的检索和协议记录，未进行市场侧安装验收，详见[观测台账](../distribution/targets.json)。搜索 API、原生索引、站点 CLI、插件和 MCP 共用目录，不计为五次独立收录。
+
+若市场只测过旧宿主，提供精确 rc.5 证据并申请相应版本复测；不为获得标签扩大 `engines.dsh`。包实际进入目录后，再核对该站保留的完整 profile 安装命令、重启和人工配置说明，避免目录卡片产生错误的首次体验。
 
 ## 评测目录与其他精选清单
 
@@ -85,7 +95,7 @@ BugGPS 的目标发布版本为 1.0.0；当前仍在准备，尚未发布 npm。
 | [walkinglabs](https://github.com/walkinglabs/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md) | 按源码层面的 DSH 规则提供中性描述和兼容范围，在所属章节按字母排序。 |
 | [kejixiaoliang](https://github.com/kejixiaoliang/awesome-dsh-plugins/blob/main/CONTRIBUTING.md) | 在 `plugins/<分类>.md` 增加条目，不照搬其他目录的生成文件或旧 manifest 示例。 |
 | [white0dew](https://github.com/white0dew/awesome-dsh-plugins/blob/main/CONTRIBUTING.md) | 更新 `data/sources/` 来源快照并生成内容，不手改生成的 TypeScript；Featured 由编辑判断，不自行授予。 |
-| [cccakeee](https://github.com/cccakeee/awesome-dsh-plugins/blob/main/docs/CONTRIBUTING.zh-CN.md) | 主目录数据为 `data/verified-plugins.csv`，全量发现与主目录分开；提交精确安装方法、原生证据、许可与风险。其 README 指向的同构网站本次读取超时，不能据此认定网站不存在。 |
+| [cccakeee](https://github.com/cccakeee/awesome-dsh-plugins/blob/main/docs/CONTRIBUTING.zh-CN.md) / [deepseekharnessplugins.com](https://deepseekharnessplugins.com/submit) | 网站已实际返回 HTTP200，并声明由此清单同步。旧站点投稿页只描述 README 改动，当前上游贡献指南要求先补 `data/verified-plugins.csv`，再更新分类 README；按当前上游准备原生入口、精确安装、许可和权限证据。合并和网站同步分别核查，不把 topic 当作该站唯一数据源。 |
 | [Omni DSH](https://github.com/diegosouzapw/awesome-omni-dsh-plugins/blob/main/CONTRIBUTING.md) | 每个分支和 PR 仅一个作者命名空间 YAML；绑定原仓库节点 ID、完整提交、原生入口、真实仓库 Star 和许可。第四份条目已按原始 Schema 准备，使用固定 Git 来源，保持 `eligible`，由维护者执行来源门控。 |
 
 ## 已发生的申请

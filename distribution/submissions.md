@@ -38,10 +38,19 @@
 | [Omni DSH](https://github.com/diegosouzapw/awesome-omni-dsh-plugins/blob/main/CONTRIBUTING.md) | 第四份导出 YAML、原仓库节点 ID、完整提交、作者、真实 Star 与许可。 | 一分支一条目，公开字段来自原仓库的固定提交；保持 `eligible` 和空 smokeTest，由维护者执行来源门控。 |
 | [bruc3van 自荐](https://github.com/bruc3van/awesome-dsh-plugin/blob/main/CONTRIBUTING.md) | 仅向 `SHOWCASE.md` 末尾各追加一条中英自荐，并在 PR 给出用途与受众。 | 仓库必须超过 10 个真实 Star，当前 1 Star 暂不满足；自荐不等于编辑精选，不提交生成预览。 |
 | [web-casa 清单](https://github.com/web-casa/Awesome-DeepSeek-Harness-Plugins/blob/main/CONTRIBUTING.md) | 通过 cordis.run 的正式表单。 | 不向生成 README 或数据文件提交新增插件；与 cordis.run 归并为同一上游申请。 |
+| [DSH Marketplace](https://dshmarketplace.dev/submit) / [独立精选](https://github.com/DshMarketPlace/awesome-dsh-plugin/blob/main/CONTRIBUTING.md) | 普通目录填写仓库；精选使用第五份导出片段，追加到 `categories[slug=dev].plugins`。 | 先通过其真实目录中的可安装记录门槛；随后生成并提交缓存与双语 README，不能只交 YAML 或自行增加 Featured 徽章。 |
+| [dshplugin.me](https://github.com/dshplugin-me/dsh-plugin-radar#submit-your-plugin) | 登记 Issue：仓库与一句用途说明。 | topic、真实入口、事实性描述；记录实际详情页 URL 后才使用 Indexed 徽章。 |
+| [dsh-plugins.org](https://dsh-plugins.org/en/about) | topic 自动发现；缺失或更正走 `lwmxiaobei/dsh-plugins` 的 Issue。 | 默认分支的根 bundle 和元数据有效；与无连字符的 dshplugins.org 分开检查。 |
+| [dsh-plugins.net](https://dsh-plugins.net/submit/) | 必填名称、包名、仓库、简介、版本、宿主版本、分类及逐行权限。表单只生成 Discussion 草稿。 | 按正常流程实际发布 Discussion，保存链接；包名是身份字段，不能因此宣称 npm 已发布。其证据分数不包含运行验证。 |
+| [dshplugins.com](https://dshplugins.com/submit) | 会话检查后的公开仓库与安装格式投稿。 | 先完成正常会话检查及管理员审核；不复用另一目录的登录状态或推荐标记。 |
+| [dsplugin.app](https://github.com/vbarter/dsh-plugin-registry#用户如何发布) | `vbarter/dsh-plugin-registry` 的 Plugin Submission Issue：仓库 URL、owner/repo、备注。 | Issue → 预检 → 审核 PR → 维护者合并 → 站点观察；与 dshplugin.app 独立。 |
+| [cccakeee](https://github.com/cccakeee/awesome-dsh-plugins/blob/main/docs/CONTRIBUTING.zh-CN.md) | 先更新 `data/verified-plugins.csv`，再更新所属 README 分类；附精确安装、挂载证据、许可、活动日期及权限。 | 以当前上游指南为准；deepseekharnessplugins.com 旧投稿页只写 README，不能代替上游要求。 |
 
 DSH Directory、DSHToolkit 与 DSH Plugins Marketplace 的投稿页面或指定仓库尚需确认可用性，保持跟踪，不把访问失败判断成拒绝或不收录。Mayfly 社区目录另有 manifest、作者授权和前端能力协议；当前只记录入口，待其实际宿主与版本相容时再准备条目，不从示例复制不存在的工具、权限或已验证字段。
 
 ## 精选申请依据
+
+权限说明应覆盖：本地工作区、Git 与任务产物读写；浏览器控制；开发服务与受控进程；目标应用的网络请求；通过 DSH 已有模型配置处理必要摘要。分享导出由用户选择，提交材料不附浏览器凭据、私有页面或本机路径。逐项按实际版本填写，不将工作区分支称为安全沙箱。
 
 提供一个完整可复核的外部案例：原问题、原预期、固定检查、补丁、候选验证及新建原代码对照。植入问题示例与外部案例分别标注，GIF 仅用于理解流程。若缩减没有收益，明确保留原路径。
 

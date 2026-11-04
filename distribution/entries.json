@@ -125,6 +125,15 @@
           "comment": null
         }
       }
+    },
+    "dsh-marketplace-dev": {
+      "guide": "https://github.com/DshMarketPlace/awesome-dsh-plugin/blob/main/CONTRIBUTING.md",
+      "target": "data/curated.yml#categories[slug=dev].plugins",
+      "category": "dev",
+      "scope": "Prepared list-item fragment only; catalog admission and upstream live validation are pending. Not a complete curated.yml or generated snapshot.",
+      "entry": {
+        "repo": "lijiaqi-AI-Product-Manager/dsh-bug-gps"
+      }
     }
   }
 }

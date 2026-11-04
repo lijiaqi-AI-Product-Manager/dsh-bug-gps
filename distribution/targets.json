@@ -568,7 +568,7 @@
       "aliases": [
         "https://deepseekharnessplugins.com"
       ],
-      "aliasLiveRead": "timed out; address evidenced by upstream README"
+      "aliasLiveRead": "HTTP200 on2026-11-04; current upstream contribution guide requires verified-plugins.csv and README, while the older website submission page only describes README edits"
     },
     {
       "id": "gordensun",
@@ -725,6 +725,106 @@
       ]
     },
     {
+      "id": "dsh-marketplace-dev",
+      "url": "https://dshmarketplace.dev/submit",
+      "rules": "https://github.com/DshMarketPlace/awesome-dsh-plugin/blob/main/CONTRIBUTING.md",
+      "intake": "topic-or-form-then-curated-pr",
+      "source": "topic-and-community-registry-with-independent-curated-list",
+      "prepared": "entry",
+      "recommendation": "independent-curated-pr-after-catalog-admission",
+      "requires": [
+        "default-branch",
+        "live-installable-catalog-record",
+        "current-curated-snapshot-and-readme-generation",
+        "maintainer-review"
+      ],
+      "aliases": [
+        "https://github.com/DshMarketPlace/awesome-dsh-plugin",
+        "https://dshmarketplace.dev/market/index.json"
+      ]
+    },
+    {
+      "id": "dshplugin-me",
+      "url": "https://dshplugin.me/",
+      "rules": "https://github.com/dshplugin-me/dsh-plugin-radar#submit-your-plugin",
+      "intake": "topic-or-submission-issue",
+      "source": "dsh-topic-and-reviewed-plugin-profiles",
+      "prepared": "submission-fields",
+      "recommendation": "indexed-profile-badge-after-listing",
+      "requires": [
+        "default-branch",
+        "functional-plugin-and-factual-description",
+        "reviewed-canonical-profile-url"
+      ],
+      "aliases": [
+        "https://github.com/dshplugin-me/dsh-plugin-radar"
+      ]
+    },
+    {
+      "id": "dsh-plugins-hyphen-org",
+      "url": "https://dsh-plugins.org/en",
+      "rules": "https://dsh-plugins.org/en/about",
+      "intake": "topic-or-correction-issue",
+      "source": "lwmxiaobei/dsh-plugins",
+      "prepared": "metadata",
+      "recommendation": "no-separate-editorial-route-confirmed",
+      "requires": [
+        "default-branch",
+        "valid-root-bundle",
+        "actual-detail-page-observation"
+      ],
+      "aliases": [
+        "https://github.com/lwmxiaobei/dsh-plugins"
+      ]
+    },
+    {
+      "id": "dsh-plugins-net",
+      "url": "https://dsh-plugins.net/submit/",
+      "rules": "https://dsh-plugins.net/methodology/",
+      "intake": "form-generated-discussion-draft",
+      "prepared": "submission-fields",
+      "recommendation": "no-runtime-verification-or-certification",
+      "requires": [
+        "default-branch",
+        "package-and-exact-host-version",
+        "permission-declaration",
+        "actual-public-discussion-submission",
+        "maintainer-review"
+      ]
+    },
+    {
+      "id": "dshplugins-com",
+      "url": "https://dshplugins.com/submit",
+      "rules": "https://dshplugins.com/submit",
+      "intake": "session-dependent-form-and-admin-review",
+      "prepared": "conditional",
+      "recommendation": "reviewed-listing-is-not-certification",
+      "requires": [
+        "default-branch",
+        "normal-session-check",
+        "documented-install-format-and-profile",
+        "admin-review"
+      ]
+    },
+    {
+      "id": "dsplugin-app",
+      "url": "https://dsplugin.app/",
+      "rules": "https://github.com/vbarter/dsh-plugin-registry#用户如何发布",
+      "intake": "submission-issue-then-maintainer-pr",
+      "source": "topic-discovery-and-maintainer-merged-catalog",
+      "prepared": "submission-fields",
+      "recommendation": "manifest-shape-check-is-not-runtime-verification",
+      "requires": [
+        "default-branch",
+        "valid-root-bundle",
+        "canonical-repository",
+        "maintainer-merged-catalog-pr"
+      ],
+      "aliases": [
+        "https://github.com/vbarter/dsh-plugin-registry"
+      ]
+    },
+    {
       "id": "mayfly-community",
       "url": "https://github.com/Ephemeral-AI-Lab/dsh-plugins",
       "rules": "https://github.com/Ephemeral-AI-Lab/dsh-plugins/blob/main/registry/community/README.md",
@@ -760,5 +860,26 @@
     }
   ],
   "observedListings": [],
+  "catalogObservations": [
+    {
+      "target": "dsh-marketplace-dev",
+      "checkedAt": "2026-11-04T00:32:22.583Z",
+      "url": "https://dshmarketplace.dev/api/v1/plugins?q=dsh-bug-gps&limit=5",
+      "httpStatus": 200,
+      "matches": 0,
+      "scope": "Documented public search response at this time; no submission or admission claim"
+    },
+    {
+      "target": "dsh-marketplace-dev",
+      "checkedAt": "2026-11-04T00:32:22.669Z",
+      "url": "https://dshmarketplace.dev/market/index.json",
+      "httpStatus": 200,
+      "pluginRecords": 1728,
+      "matches": 0,
+      "nativeParser": "DSH0.2.1-rc.5 format1 passed",
+      "sha256": "764ea456535c301e21e33c9bc8e034b187a6c9b3885aa7be9b18e3042dfd5458",
+      "scope": "Complete public index parsed; parser compatibility does not establish plugin installation or task success"
+    }
+  ],
   "awardedRecommendations": []
 }
