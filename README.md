@@ -1,6 +1,14 @@
+![BugGPS · Record the bug. Verify the fix. · 录下问题，按原预期复核修复。](docs/media/buggps-hero.webp)
+
+[![GitHub release](https://img.shields.io/github/v/release/lijiaqi-AI-Product-Manager/dsh-bug-gps?color=24bfa5)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/releases/latest) [![npm publication pending](https://img.shields.io/badge/npm-pending-64748b?logo=npm)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4) [![CI](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/actions/workflows/test.yml/badge.svg?event=pull_request)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/actions/workflows/test.yml) [![CLI Node 20 or newer](https://img.shields.io/badge/CLI_Node-%E2%89%A520-43853d?logo=node.js)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/docs/installation.md) [![DSH 0.2.1-rc.5](https://img.shields.io/badge/DSH-0.2.1--rc.5-0d9488)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/docs/host-compatibility.md) [![MIT license](https://img.shields.io/github/license/lijiaqi-AI-Product-Manager/dsh-bug-gps?color=3b82f6)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/LICENSE)
+
+[安装 / Install](docs/installation.md) · [演示 / Demo](docs/media/buggps-demo.gif) · [运行依据 / Evidence](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)
+
 # BugGPS · dsh-bug-gps
 
 **简体中文** · [English](docs/i18n/README.en.md) · [日本語](docs/i18n/README.ja.md) · [한국어](docs/i18n/README.ko.md) · [Deutsch](docs/i18n/README.de.md) · [Français](docs/i18n/README.fr.md) · [Español](docs/i18n/README.es.md) · [Português (Brasil)](docs/i18n/README.pt-BR.md)
+
+![BugGPS 流程示意 / Workflow illustration: Record → Lock → Fix → Replay → Original-code control.](docs/media/buggps-workflow.webp)
 
 **录下问题，按原预期复核修复。**
 **Record the bug. Verify the fix against the original expectation.**
