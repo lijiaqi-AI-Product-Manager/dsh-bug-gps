@@ -90,6 +90,11 @@ const messages = {
     expectedPrompt: 'Conteúdo atual: {value}\nQual deveria ser?', checkpointPrompt: 'O que deve ser exibido nesta etapa?', summary: 'Verificações de aceitação', remaining: 'Mais {n} resultados esperados',
   },
 };
+const shortIssueMessages = {
+  'zh-CN': '{n} 项录制问题', en: 'Recording issues: {n}', ja: '記録の問題 {n} 件', ko: '기록 문제 {n}개',
+  de: 'Aufnahmeprobleme: {n}', fr: 'Problèmes : {n}', es: 'Problemas: {n}', 'pt-BR': 'Problemas: {n}',
+};
+for (const [language, issueShort] of Object.entries(shortIssueMessages)) messages[language].issueShort = issueShort;
 const acknowledgementMessages = {
   'zh-CN': ['正在确认记录…', '尚未确认全部记录，请检查宿主任务后重试结束。'],
   en: ['Confirming recording…', 'Some recording events are unconfirmed. Check the host task, then try finishing again.'],
@@ -125,14 +130,15 @@ function installToolbar(i18n) {
     root.innerHTML = `<style>
       *{box-sizing:border-box}section{font:14px/1.45 system-ui,-apple-system,sans-serif;color:#f1f5f9;background:#151b26;border:1px solid #64748b;border-radius:12px;box-shadow:0 5px 24px #0005;padding:12px;width:100%;max-height:calc(100dvh - 24px);overflow:auto}
       header{display:flex;gap:8px;align-items:center}.brand{flex:1;min-width:0}strong{font-size:15px}#status{display:block;font-size:12px;color:#cbd5e1;overflow-wrap:anywhere}button,select,summary{font:inherit;min-height:44px;border-radius:7px}button,select{color:inherit;background:#243044;border:1px solid #64748b;padding:8px;cursor:pointer}button{min-width:44px;overflow-wrap:anywhere}button:hover,summary:hover{background:#34445d}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #a5b4fc;outline-offset:2px}button[aria-pressed=true]{background:#1847a0;border-color:#93c5fd}button:disabled,select:disabled{opacity:.55;cursor:default}select{max-width:110px;width:110px}#collapse,#finish-mini,#cancel-mini{flex:0 0 44px;width:44px}p{margin:8px 0}.hint,.counts{font-size:12px;color:#cbd5e1}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}summary{padding:10px 4px;cursor:pointer}ul{margin:6px 0;padding-left:20px}li{overflow-wrap:anywhere}#checks{font-size:13px}.notice{color:#bfdbfe}#issues,#warning{border:1px solid #e6ae48;border-radius:7px;background:#382b14;color:#ffe3a1;padding:8px;font-size:13px}#warning .grid{grid-template-columns:1fr}footer{display:flex;gap:8px;margin-top:8px}footer button{flex:1}#finish,#finish-mini,#incomplete{background:#762d35;border-color:#e2999f}#finish:hover,#finish-mini:hover,#incomplete:hover{background:#903945}[hidden]{display:none!important}#cancel{background:#243044}#no-error-set{color:#ffe3a1}
+      @media(max-width:400px){header:has(select:not([hidden])){display:grid;grid-template-columns:minmax(0,1fr) auto auto}header:has(select:not([hidden])) .brand{grid-column:1/-1}header select{width:100%;max-width:none}}
     </style>
     <section aria-label="BugGPS"><header><div class="brand"><strong>BugGPS</strong><span id="status" role="status" aria-live="polite" aria-atomic="true"></span></div><select id="language"><option value="zh-CN">简体中文</option><option value="en">English</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="pt-BR">Português (BR)</option></select><button id="cancel-mini" hidden>×</button><button id="finish-mini" hidden>■</button><button id="collapse" aria-controls="body" aria-expanded="true">⌄</button></header>
-      <div id="body"><p id="help" class="hint"></p><div class="grid"><button data-k="text"></button><button data-k="visible"></button></div>
-      <details><summary id="more"></summary><div class="grid"><button data-k="value"></button><button data-k="hidden"></button><button data-k="no-page-error"></button><button data-k="checkpoint"></button><button id="pin"></button><button id="move"></button></div></details>
+      <div id="body"><p id="help" class="hint"></p><div id="capture-actions" class="grid"><button data-k="text"></button><button data-k="visible"></button></div>
+      <details id="extra-controls"><summary id="more"></summary><div class="grid"><button data-k="value"></button><button data-k="hidden"></button><button data-k="no-page-error"></button><button data-k="checkpoint"></button><button id="pin"></button><button id="move"></button></div></details>
       <div id="checks"><strong id="summary"></strong><p id="expectations"></p><ul id="check-list"></ul><p id="remaining" class="hint" hidden></p><p id="counts" class="counts"></p></div>
       <p id="notice" class="notice" hidden></p><p id="issues" role="alert" hidden></p>
       <div id="warning" role="alert" hidden><p id="missing"></p><div class="grid"><button id="continue"></button><button id="incomplete"></button></div></div>
-      <footer><button id="cancel" hidden></button><button id="finish"></button></footer></div>
+      <footer id="actions-footer"><button id="cancel" hidden></button><button id="finish"></button></footer></div>
     </section>`;
     document.documentElement.appendChild(host);
     const el = (id) => root.getElementById(id);
@@ -158,7 +164,7 @@ function installToolbar(i18n) {
     const label = (node, key) => { const value = tr(key); text(node, value); node.title = value; };
     const render = () => {
       const picking = Boolean(window.__buggpsPickKind);
-      const status = state.stopped ? tr('stopped') : finishing ? tr('syncing') : picking ? tr('picking') : state.issueCount ? tr('issues', { n: state.issueCount }) : notice ? tr(notice) : tr('recording');
+      const status = state.stopped ? tr('stopped') : finishing ? tr('syncing') : picking ? tr('picking') : state.issueCount ? tr('issueShort', { n: state.issueCount }) : notice ? tr(notice) : tr('recording');
       text(el('status'), status + ' · ' + tr('steps', { n: state.stepCount }));
       root.querySelector('section').lang = state.language;
       el('language').value = state.language;
@@ -176,6 +182,7 @@ function installToolbar(i18n) {
         el(id).title = tr(cancel ? 'cancel' : 'finish');
       }
       text(el('help'), tr(picking ? window.__buggpsPickKind === 'checkpoint' ? 'checkpointHelp' : 'pickHelp' : 'help'));
+      for (const id of ['help', 'capture-actions', 'extra-controls', 'checks', 'actions-footer']) el(id).hidden = warning;
       for (const button of root.querySelectorAll('button[data-k]')) {
         label(button, kindKey(button.dataset.k));
         button.setAttribute('aria-pressed', String(window.__buggpsPickKind === button.dataset.k));
@@ -191,9 +198,9 @@ function installToolbar(i18n) {
       el('remaining').hidden = state.expectationCount <= entries.length;
       text(el('remaining'), tr('remaining', { n: state.expectationCount - entries.length }));
       text(el('counts'), tr('checkpoints', { n: state.checkpointCount }) + ' · ' + tr('pins', { n: state.pinCount }));
-      el('issues').hidden = !state.issueCount;
+      el('issues').hidden = !state.issueCount || warning;
       text(el('issues'), tr('issues', { n: state.issueCount }));
-      el('notice').hidden = !notice;
+      el('notice').hidden = !notice || warning;
       if (notice) text(el('notice'), tr(notice));
       el('warning').hidden = !warning;
       text(el('missing'), warning ? tr(state.issueCount ? 'unsupported-input' : 'missing') : '');
@@ -280,11 +287,12 @@ function installToolbar(i18n) {
       } finally {
         clearTimeout(timer);
         finishing = false; render();
+        if (warning && !state.collapsed) el('continue').focus();
       }
     };
     for (const id of ['finish', 'finish-mini']) el(id).addEventListener('click', () => void finish());
     el('incomplete').addEventListener('click', () => void finish(true));
-    el('continue').addEventListener('click', () => { warning = false; render(); });
+    el('continue').addEventListener('click', () => { warning = false; render(); el('capture-actions').querySelector('button').focus(); });
     el('collapse').addEventListener('click', () => { pickerCollapsed = false; state.collapsed = !state.collapsed; render(); void submit({ type: 'toolbar', collapsed: state.collapsed }); });
     const changeLanguage = () => {
       const language = el('language').value;

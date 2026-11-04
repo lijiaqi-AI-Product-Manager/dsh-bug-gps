@@ -61,6 +61,31 @@ test('finishing without a positive expectation requires an explicit incomplete f
   assert.equal(rec.result.expectation, null);
 });
 
+test('warning recovery stays visible and keyboard reachable in all eight languages on a narrow screen', async (t) => {
+  const { rec, page, ui } = await begin(t);
+  await page.setViewportSize({ width: 320, height: 480 });
+  await page.locator('[contenteditable=true]').fill('sample');
+  await page.waitForFunction(() => window.__buggpsToolbarState.issueCount === 1);
+  await ui.locator('#finish').click();
+  for (const language of ['zh-CN', 'en', 'ja', 'ko', 'de', 'fr', 'es', 'pt-BR']) {
+    await ui.getByRole('combobox').selectOption(language);
+    await page.waitForFunction((value) => window.__buggpsToolbarState.language === value, language);
+    const layout = await ui.locator('#incomplete').evaluate((button) => {
+      const box = button.getBoundingClientRect();
+      const section = button.getRootNode().querySelector('section');
+      return { visible: box.width > 0 && box.height >= 44 && box.top >= 0 && box.bottom <= innerHeight,
+        noHorizontalOverflow: section.scrollWidth <= section.clientWidth + 1 };
+    });
+    assert.equal(layout.visible, true, language + ': incomplete recovery is outside the visible viewport');
+    assert.equal(layout.noHorizontalOverflow, true, language + ': panel overflows horizontally');
+  }
+  await ui.locator('#continue').click();
+  assert.equal(await ui.locator('#warning').isVisible(), false);
+  assert.equal(await ui.locator('#finish').isVisible(), true);
+  assert.equal(await ui.locator('button[data-k=text]').isVisible(), true);
+  await rec.stop();
+});
+
 test('unsupported input remains visible without copying its text into the toolbar', async (t) => {
   const { rec, page, ui } = await begin(t);
   await page.getByRole('textbox', { name: 'Notes', exact: true }).fill('private draft content');
