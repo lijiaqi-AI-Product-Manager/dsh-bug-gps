@@ -459,7 +459,10 @@ const RECORDER_SCRIPT = String.raw`(() => {
     }
     if (e.key === 'Enter' && (el instanceof HTMLInputElement)) send({ action: 'press', target: candidates(el), value: 'Enter', wasEnabled: controlEnabled(el) });
     else if (e.key === ' ' && !e.repeat && el instanceof Element && !el.closest('input,textarea,[contenteditable=true]')) {
-      const control = el.closest('button,[role=button],[role=combobox]');
+      let control = null;
+      for (let node = el; node && node !== document.body; node = node.parentElement) {
+        if (node.tagName === 'BUTTON' || ['button', 'combobox'].includes(roleOf(node))) { control = node; break; }
+      }
       if (control) {
         spaceClickTarget = control;
         send({ action: 'press', target: candidates(control), value: 'Space', wasEnabled: controlEnabled(control) });
@@ -550,11 +553,15 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   };
   const toolbarDocuments = new WeakMap();
   const toolbarNavigations = new WeakMap();
-  context.on('page', (page) => page.on('framenavigated', (frame) => {
-    toolbarNavigations.set(frame, (toolbarNavigations.get(frame) ?? 0) + 1);
-    const entry = toolbarDocuments.get(frame);
-    if (entry) entry.current = null;
-  }));
+  let recordingPage;
+  context.on('page', (page) => {
+    recordingPage ??= page;
+    page.on('framenavigated', (frame) => {
+      toolbarNavigations.set(frame, (toolbarNavigations.get(frame) ?? 0) + 1);
+      const entry = toolbarDocuments.get(frame);
+      if (entry) entry.current = null;
+    });
+  });
   const validDocument = (id) => typeof id === 'string' && id.length > 0 && id.length <= 128;
   const registerToolbar = async (frame, id) => {
     if (!frame || !validDocument(id)) return false;
@@ -585,6 +592,12 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
     return fresh;
   };
   await context.exposeBinding('__buggpsRecord', (source, ev) => {
+    // The replay contract currently addresses the original top-level page only. Never
+    // flatten a frame/tab action into an identically named control in that page.
+    if (source.page !== recordingPage || source.frame !== recordingPage.mainFrame()) {
+      if (ev && ev.type !== 'toolbar') recordEvent({ type: 'capture-issue', code: 'unsupported-context', message: 'Actions in embedded frames or additional pages are not supported. Record the scenario in the original top-level page.' });
+      return view();
+    }
     recordEvent(ev?.type === 'toolbar' ? orderedPreference(source, ev) : ev);
     return view();
   });

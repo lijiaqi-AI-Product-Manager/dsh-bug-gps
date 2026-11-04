@@ -16,12 +16,16 @@ const pages = {
   '/role-list': '<aside aria-label="Tools">' + action('role="button link"') + '</aside>',
   '/unknown-role': action('role="unknown-role button link"'),
   '/implicit-role': action('role="unknown-role"'),
+  '/role-key': '<div role="unknown-role button" tabindex="0" onkeydown="if(event.key===\' \')setOut(\'BUG\')">Launch</div>',
   '/label-priority': '<span id="caption">Launch</span>' + action('aria-labelledby="caption" aria-label="Wrong"'),
   '/missing-label': action('aria-labelledby="missing" aria-label="Launch"'),
   '/unnamed-region': '<aside>' + action() + '</aside><main><button>Launch</button></main>',
   '/duplicate-region': '<aside>' + action() + '</aside><aside><button>Launch</button></aside>',
   '/unlocatable': '<div class="custom-action" style="width:100px;height:40px;background:gray" onclick="setOut(\'BUG\')"></div>',
   '/fault': action('id="fault"'),
+  '/frame': action() + '<iframe src="/child" title="Embedded action"></iframe>',
+  '/child': '<button onclick="parent.setOut(\'BUG\')">Launch</button>',
+  '/popup': '<a href="/child" target="_blank">Open action</a>',
 };
 let server; let env; let baseUrl;
 before(async () => {
@@ -47,6 +51,31 @@ async function capture(t, path, act) {
   const steps = await rec.stop();
   return { rec, steps, definition: { ...rec.result, source: 'recorded', steps, expectation, expectedFrom: 'BUG', capturedChecks: [{ kind: expectation.kind, target: expectation.target, observed: 'BUG' }], observeMs: 0 } };
 }
+
+test('a role fallback control preserves its Space activation', async (t) => {
+  const { steps, definition } = await capture(t, '/role-key', (page) => page.getByRole('button', { name: 'Launch' }).press('Space'));
+  assert.equal(steps.filter((step) => step.action === 'press').length, 1);
+  const result = await reproduce(env.browser, definition, { baseUrl, runs: 1 });
+  assert.equal(result.status, Status.REPRODUCED, JSON.stringify(result));
+  assert.equal(result.observed, 'BUG');
+});
+
+test('embedded actions cannot be replayed against a same-named main-page control', async (t) => {
+  const { rec, definition } = await capture(t, '/frame', (page) => page.frameLocator('iframe').getByRole('button', { name: 'Launch' }).click());
+  assert.ok(rec.result.captureIssues.some((issue) => issue.code === 'unsupported-context'));
+  assert.equal(definition.steps.filter((step) => step.action === 'click').length, 0);
+  const result = await reproduce(env.browser, definition, { baseUrl, runs: 1 });
+  assert.equal(result.status, Status.TEST_INVALID, JSON.stringify(result));
+});
+
+test('actions in an additional page keep the recording incomplete', async (t) => {
+  const rec = await startRecording(env.browser, { baseUrl, startPath: '/popup' });
+  t.after(() => rec.stop());
+  const [popup] = await Promise.all([rec.page.waitForEvent('popup'), rec.page.getByRole('link', { name: 'Open action' }).click()]);
+  await popup.getByRole('button', { name: 'Launch' }).click();
+  await rec.stop();
+  assert.ok(rec.result.captureIssues.some((issue) => issue.code === 'unsupported-context'));
+});
 
 for (const path of ['/role-list', '/unknown-role', '/implicit-role', '/label-priority', '/missing-label']) {
   test('record and replay preserve browser role/name semantics: ' + path, async (t) => {

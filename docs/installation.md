@@ -21,6 +21,8 @@ dsh --profile web --dump-config
 
 当前采集协议为 `buggps.capture/v2`，检查器为 `buggps.oracle/v10`。升级后应重新录制旧的浏览器草稿；不通过补填版本号迁移。录制中的全部文本、输入值和可见性检查保存原始观察状态，锁定时必须逐次匹配，防止遗漏操作后绑定另一种失败。无法定位的动作、采集异常或写入确认失败会保留为录制问题，草稿不可锁定。
 
+当前重放上下文只包含原始顶层页面。iframe 或额外标签页中的动作会使草稿不可锁定，不会映射到主页面的同名控件；需要先将场景限制在同一顶层页面。支持范围外的交互不能作为已验证结果继续使用。
+
 旧的已锁用例与运行记录继续保留，但不能直接作为新检查器下的当前修复依据。结构化编写的草稿仍可使用原有格式，验收条件由项目需求确定。完整流程应重新建立原代码失败、候选通过与新建原代码对照，不降低断言或跳过失败步骤。
 
 ## 已发布 npm 版本
@@ -52,5 +54,7 @@ Use the pinned Git source above when the requested version is absent from the re
 The standalone CLI was checked at Node 20.0.0; the DSH host checks use Node 24. A configuration layer in `--dump-config` confirms configuration, while `buggps_status` and the complete task check tool registration and execution. Desktop acceptance remains separate.
 
 Re-record older browser drafts after upgrading to capture protocol `buggps.capture/v2` and evaluator `buggps.oracle/v10`; adding a version field is not a migration. Recorded text, values and visibility must match their captured original states before locking. Missing action targets, capture errors and unconfirmed writes keep a draft incomplete. Preserve earlier cases and records as history, then establish fresh evidence with the current evaluator. Structured authored cases retain their existing format.
+
+Replay currently addresses the original top-level page. Actions inside an iframe or an additional page make the recording incomplete; they are never mapped to same-named controls on the main page. Keep a recorded scenario in one top-level page.
 
 The commands use `web`; use `headless` instead for a headless instance. Remove the package from the same Profile with `dsh plugin --profile web remove dsh-bug-gps`. Verify that its dependency and configuration layer are gone, then restart. Existing project cases, patches and run artifacts remain in the project. The [historical evidence](verification/1.0.0/README.md) identifies its own source and distinguishes installation, execution and directory admission.
