@@ -9,7 +9,7 @@ BugGPS ist ein Plugin für DeepSeek Harness (DSH). Es richtet sich an bereits en
 > Die folgenden Befehle installieren einen festgelegten Git-Stand. Den npm-Weg erst nach Veröffentlichung der gewünschten Version verwenden. Den [Veröffentlichungsstand](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4) prüfen. Unterstützt wird DSH **0.2.1-rc.5**, `headless` / `web`.
 
 ```bash
-dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#345b2744ffac9fd5d70fa0a31c3060b67b5918b2'
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#9f256807809e4780d6f22ff6491c7a125ef5de82'
 dsh --profile web --dump-config
 ```
 
