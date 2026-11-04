@@ -11,13 +11,16 @@ DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标�
 
 <sub>演示由脚本操作仓库自带的植入 bug 示例，并应用预置的错误和正确修改。页面与工具结果来自实际运行，采用关键帧剪辑；片长不代表任务耗时。结果卡片为演示排版，光标与字幕叠加。查看 [本次场景与运行摘要](docs/media/demo-run.json)；真实 DSH 集成另见测试说明。重新生成：`npm run demo:gif`（需要 ffmpeg）。也有 [MP4 版本](docs/media/buggps-demo.mp4)。</sub>
 
-> 安装来源：registry 中尚无目标版本时使用固定 Git 源码；npm 命令仅在相应版本真实存在后执行。发布状态见[发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)。兼容范围为 DSH **0.2.1-rc.5**，已记录的环境为 Windows。
+> 以下命令安装固定 Git 源码；npm 路径适用于已经公开发布的版本。发布状态见[发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)。兼容范围为 DSH **0.2.1-rc.5** 的 `headless` / `web`，已记录的环境为 Windows。
 
 ```bash
-dsh plugin --profile headless add dsh-bug-gps@1.0.0
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#345b2744ffac9fd5d70fa0a31c3060b67b5918b2'
+dsh --profile web --dump-config
 ```
 
-可直接使用经过验证的固定 Git 版本，见 [安装与移除](docs/installation.md)。当前版本的 [运行依据](docs/verification/1.0.0/README.md)记录 238 项检查、固定案例组、实际账户场景和分发路径，并区分各自的验证范围。
+这里以 `web` 为例；无界面实例将两处 Profile 改为 `headless`。确认配置层后重启对应实例，在目标 Git 项目中调用 `buggps_status`；桌面入口需独立验收。完整步骤及 npm 路径见 [安装与移除](docs/installation.md)。
+
+[历史运行依据](docs/verification/1.0.0/README.md)记录固定案例、账号流程和分发路径，每份记录绑定自己的源码与范围。最新验收进展见[发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)。
 
 ## 试用内置示例
 

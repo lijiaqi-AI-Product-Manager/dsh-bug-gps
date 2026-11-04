@@ -6,11 +6,11 @@ registry 中尚无目标版本时，使用下面的固定 Git 源码；npm 命�
 
 先准备 DSH 0.2.1-rc.5、Git、PATH 中的 pnpm ≥10，以及系统 Edge 或 Chrome。独立 CLI 最低 Node 20.0.0 已实测，DSH 宿主验收环境使用 Node 24；不将前者当成所有宿主组合的保证。
 
-下面以 `headless` 为例；使用 Web 实例时，将两处 Profile 名称改为该实例实际使用的 `web`。桌面实例的 Profile 和内置版本应独立确认，当前记录不替代桌面验收。
+下面以 `web` 为例；使用无界面实例时，将两处 Profile 名称改为该实例实际使用的 `headless`。桌面实例的 Profile 和内置版本应独立确认，当前记录不替代桌面验收。
 
 ```bash
-dsh plugin --profile headless add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#0a2148647119ad81795b0ed3d9cfa512bf3b928c'
-dsh --profile headless --dump-config
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#345b2744ffac9fd5d70fa0a31c3060b67b5918b2'
+dsh --profile web --dump-config
 ```
 
 确认输出包含 `dsh-bug-gps` 配置层，重启对应实例，在目标 Git 项目中调用 `buggps_status`。完整任务还需要应用开发服务和 `buggps.config.json` 的独立 `serve` 配置；配置层出现只表示配置写入，工具注册及任务执行分别确认。
@@ -22,8 +22,8 @@ dsh --profile headless --dump-config
 先确认官方 registry 已存在 `dsh-bug-gps@1.0.0`，再执行以下命令；版本不存在时使用上面的固定 Git 来源。
 
 ```bash
-dsh plugin --profile headless add dsh-bug-gps@1.0.0
-dsh --profile headless --dump-config
+dsh plugin --profile web add dsh-bug-gps@1.0.0
+dsh --profile web --dump-config
 ```
 
 npm 安装后同样需要重启对应实例并调用 `buggps_status`。发布后的 registry 冷安装记录与本地 tarball、Git 安装记录分别保存。
@@ -33,8 +33,8 @@ npm 安装后同样需要重启对应实例并调用 `buggps_status`。发布后
 对安装时使用的同一个 Profile 执行：
 
 ```bash
-dsh plugin --profile headless remove dsh-bug-gps
-dsh --profile headless --dump-config
+dsh plugin --profile web remove dsh-bug-gps
+dsh --profile web --dump-config
 ```
 
 确认依赖和配置层移除后，重启该实例。项目中的 `.buggps` 场景、补丁及运行产物继续保留；卸载插件不会替你删除这些项目资料。需要清理时，由项目所有者明确选择具体内容。
@@ -45,4 +45,4 @@ Use the pinned Git source above when the requested version is absent from the re
 
 The standalone CLI was checked at Node 20.0.0; the DSH host checks use Node 24. A configuration layer in `--dump-config` confirms configuration, while `buggps_status` and the complete task check tool registration and execution. Desktop acceptance remains separate.
 
-Remove the package from the same Profile with `dsh plugin --profile headless remove dsh-bug-gps`. Verify that its dependency and configuration layer are gone, then restart. Existing project cases, patches and run artifacts remain in the project. The [versioned evidence](verification/1.0.0/README.md) distinguishes installation, execution and directory admission.
+The commands use `web`; use `headless` instead for a headless instance. Remove the package from the same Profile with `dsh plugin --profile web remove dsh-bug-gps`. Verify that its dependency and configuration layer are gone, then restart. Existing project cases, patches and run artifacts remain in the project. The [historical evidence](verification/1.0.0/README.md) identifies its own source and distinguishes installation, execution and directory admission.

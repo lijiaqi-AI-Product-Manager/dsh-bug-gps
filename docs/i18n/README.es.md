@@ -6,13 +6,16 @@
 
 BugGPS es un plugin para DeepSeek Harness (DSH), orientado a problemas del navegador ya identificados. Registra acciones y resultados esperados, establece un fallo reproducible y comprueba el código modificado con las mismas condiciones y una versión base independiente.
 
-> Si la versión solicitada no existe en el registry, usa una revisión fija de Git. Ejecuta los comandos npm cuando esa versión esté publicada. Consulta el [estado de publicación](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4). La compatibilidad se limita a DSH **0.2.1-rc.5**.
+> Los siguientes comandos instalan una revisión fija de Git. Usa la ruta npm cuando la versión solicitada esté publicada. Consulta el [estado de publicación](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4). La compatibilidad se limita a DSH **0.2.1-rc.5**, `headless` / `web`.
 
 ```bash
-dsh plugin --profile headless add dsh-bug-gps@1.0.0
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#345b2744ffac9fd5d70fa0a31c3060b67b5918b2'
+dsh --profile web --dump-config
 ```
 
-[Instalación y eliminación (chino/inglés)](../installation.md) · [Comprobaciones y alcance por versión](../verification/1.0.0/README.md).
+El ejemplo usa `web`; cambia ambos comandos a `headless` para una instancia sin interfaz. Confirma la capa de configuración, reinicia esa instancia y llama a `buggps_status` en el proyecto Git de destino. El escritorio requiere una validación aparte.
+
+[Instalación y eliminación (chino/inglés)](../installation.md) · [Registros históricos (revisión fija)](../verification/1.0.0/README.md). Cada registro identifica su fuente y alcance; las comprobaciones actuales están en la lista de publicación.
 
 ![BugGPS](../media/buggps-demo.gif)
 

@@ -6,13 +6,16 @@
 
 BugGPS는 DeepSeek Harness(DSH) 플러그인입니다. 이미 발견한 브라우저 문제의 동작과 기대 결과를 기록하고 반복 가능한 실패를 고정합니다. 수정 후에도 같은 검사와 독립된 기준 코드로 결과를 확인합니다.
 
-> registry에 대상 버전이 없으면 고정된 Git 소스를 사용하세요. npm 설치 명령은 해당 버전이 실제로 배포된 뒤 실행합니다. [배포 상태](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)를 확인할 수 있습니다. 호환성 확인 대상은 DSH **0.2.1-rc.5**입니다.
+> 아래 명령은 고정된 Git 소스를 설치합니다. npm 경로는 대상 버전이 실제로 배포된 뒤 사용하세요. [배포 상태](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)를 확인할 수 있습니다. 호환성 확인 대상은 DSH **0.2.1-rc.5**의 `headless` / `web`입니다.
 
 ```bash
-dsh plugin --profile headless add dsh-bug-gps@1.0.0
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#345b2744ffac9fd5d70fa0a31c3060b67b5918b2'
+dsh --profile web --dump-config
 ```
 
-[설치 및 제거(중국어·영어)](../installation.md) · [버전별 확인 범위](../verification/1.0.0/README.md).
+예시는 `web`입니다. 헤드리스 환경에서는 두 명령 모두 `headless`로 바꾸세요. 설정 레이어를 확인하고 해당 인스턴스를 재시작한 다음, 대상 Git 프로젝트에서 `buggps_status`를 호출하세요. 데스크톱은 별도 검증이 필요합니다.
+
+[설치 및 제거(중국어·영어)](../installation.md) · [과거 검증 기록(고정 소스)](../verification/1.0.0/README.md). 각 기록은 해당 소스와 범위를 명시하며, 현재 검증 상태는 배포 체크리스트에서 확인합니다.
 
 ![BugGPS](../media/buggps-demo.gif)
 

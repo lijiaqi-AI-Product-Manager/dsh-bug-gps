@@ -6,13 +6,16 @@
 
 BugGPS は DeepSeek Harness（DSH）のプラグインです。すでに見つかっているブラウザー上の不具合を対象に、操作と期待する結果を記録し、再現可能な失敗を固定します。修正後も同じ条件と独立したベースラインで確認します。
 
-> 対象版が registry にない場合は固定 Git ソースを利用してください。npm のインストールコマンドは対象版の公開を確認してから実行します。[公開状況](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)を確認できます。互換性確認対象は DSH **0.2.1-rc.5** です。
+> 以下のコマンドは固定 Git ソースをインストールします。npm 経由では対象版の公開を確認してから実行してください。[公開状況](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)を確認できます。互換性確認対象は DSH **0.2.1-rc.5** の `headless` / `web` です。
 
 ```bash
-dsh plugin --profile headless add dsh-bug-gps@1.0.0
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#345b2744ffac9fd5d70fa0a31c3060b67b5918b2'
+dsh --profile web --dump-config
 ```
 
-[インストールと削除（中国語・英語）](../installation.md) · [バージョン別の検証範囲](../verification/1.0.0/README.md)。
+例は `web` です。ヘッドレス環境では両方を `headless` に変更します。設定レイヤーを確認して対象インスタンスを再起動し、対象 Git プロジェクトで `buggps_status` を呼び出してください。デスクトップ版は別途検証が必要です。
+
+[インストールと削除（中国語・英語）](../installation.md) · [過去の検証記録（固定ソース）](../verification/1.0.0/README.md)。各記録は固有のソースと範囲に対応し、現在の確認状況は公開チェックリストで追跡します。
 
 ![BugGPS](../media/buggps-demo.gif)
 

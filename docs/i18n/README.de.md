@@ -6,13 +6,16 @@
 
 BugGPS ist ein Plugin für DeepSeek Harness (DSH). Es richtet sich an bereits entdeckte Browserfehler: Aktionen und erwartetes Ergebnis erfassen, einen wiederholbaren Fehler festhalten und den geänderten Code mit denselben Prüfungen und einer unabhängigen Ausgangsversion verifizieren.
 
-> Fehlt die gewünschte Version in der Registry, einen festgelegten Git-Stand verwenden. npm-Befehle erst nach der tatsächlichen Veröffentlichung dieser Version ausführen. Den [Veröffentlichungsstand](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4) prüfen. Unterstützt wird DSH **0.2.1-rc.5**.
+> Die folgenden Befehle installieren einen festgelegten Git-Stand. Den npm-Weg erst nach Veröffentlichung der gewünschten Version verwenden. Den [Veröffentlichungsstand](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4) prüfen. Unterstützt wird DSH **0.2.1-rc.5**, `headless` / `web`.
 
 ```bash
-dsh plugin --profile headless add dsh-bug-gps@1.0.0
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#345b2744ffac9fd5d70fa0a31c3060b67b5918b2'
+dsh --profile web --dump-config
 ```
 
-[Installation und Entfernen (Chinesisch/Englisch)](../installation.md) · [Versionsbezogene Prüfungen](../verification/1.0.0/README.md).
+Das Beispiel nutzt `web`; für eine Headless-Instanz beide Befehle auf `headless` umstellen. Nach Bestätigung der Konfigurationsebene die Instanz neu starten und `buggps_status` im Ziel-Git-Projekt aufrufen. Der Desktop ist gesondert zu prüfen.
+
+[Installation und Entfernen (Chinesisch/Englisch)](../installation.md) · [Historische Prüfungen (festgelegter Quellstand)](../verification/1.0.0/README.md). Jeder Nachweis nennt seinen Quellstand und Geltungsbereich; aktuelle Prüfungen stehen in der Veröffentlichungscheckliste.
 
 ![BugGPS](../media/buggps-demo.gif)
 

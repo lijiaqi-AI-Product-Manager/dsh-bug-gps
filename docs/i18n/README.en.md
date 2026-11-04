@@ -6,13 +6,16 @@
 
 BugGPS is a DeepSeek Harness (DSH) plugin for a browser problem you can already describe or reproduce. Capture the actions and the intended result, establish a repeatable failure, then verify the changed code with the same checks and a fresh baseline control.
 
-> Use a pinned Git source when the requested version is absent from the registry. Run npm installation commands only after that version exists. Check [release status](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4). Compatibility is limited to DSH **0.2.1-rc.5**.
+> The commands below install a pinned Git revision. Use the npm path after the requested version is published. Check [release status](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4). Compatibility is limited to DSH **0.2.1-rc.5**, `headless` / `web`.
 
 ```bash
-dsh plugin --profile headless add dsh-bug-gps@1.0.0
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#345b2744ffac9fd5d70fa0a31c3060b67b5918b2'
+dsh --profile web --dump-config
 ```
 
-[Install and remove (Chinese/English)](../installation.md) · [Versioned checks and scope](../verification/1.0.0/README.md).
+This example uses `web`; use `headless` in both commands for a headless instance. Confirm the configuration layer, restart that instance, then call `buggps_status` in the target Git project. Desktop acceptance is separate.
+
+[Install and remove (Chinese/English)](../installation.md) · [Historical evidence (pinned source)](../verification/1.0.0/README.md). Each record identifies its own source and scope; current checks are tracked in the release checklist.
 
 ![BugGPS](../media/buggps-demo.gif)
 
