@@ -1,6 +1,6 @@
 {
   "checkedOn": "2026-11-04",
-  "publication": "GitHub v1.0.0 available; catalog submissions in progress; npm pending",
+  "publication": "GitHub and npm1.0.0 published; catalog submissions and editorial reviews tracked separately",
   "catalogs": {
     "awesome-dsh-plugin": {
       "guide": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md",
@@ -48,7 +48,8 @@
         "added": "2026-11-04",
         "lastVerified": "2026-11-04",
         "verifiedAgainst": "0.2.1-rc.5",
-        "status": "unverified"
+        "status": "unverified",
+        "npm": "dsh-bug-gps"
       }
     },
     "diegosouzapw": {
@@ -136,5 +137,12 @@
         "repo": "lijiaqi-AI-Product-Manager/dsh-bug-gps"
       }
     }
+  },
+  "npmPublication": {
+    "version": "1.0.0",
+    "publishedAt": "2026-11-04T13:29:07.607Z",
+    "registry": "https://registry.npmjs.org",
+    "publisher": "qgauss",
+    "integrity": "sha512-CGfhaHK4QGhYLCuVjjt8auT/+gOXHPvppvyBZFoH5xMVxoIMkvf2S72sstgZMDRf+lBOq83QEfbOj5Fi9jJkjA=="
   }
 }

@@ -1,0 +1,134 @@
+{
+  "schema": "buggps.npm-release-verification/v1",
+  "checkedAt": "2026-11-04T13:45:47.803Z",
+  "package": "dsh-bug-gps",
+  "version": "1.0.0",
+  "publisher": "qgauss",
+  "publishedAt": "2026-11-04T13:29:07.607Z",
+  "registry": "https://registry.npmjs.org",
+  "npm": "https://www.npmjs.com/package/dsh-bug-gps",
+  "artifact": {
+    "source": "6aa4a9d191a408ebf982e657432ba66549fffabe",
+    "bytes": 103121,
+    "files": 39,
+    "sha256": "0c53335173dd70bdf46e8ea7f4ef33c32fa37b20eb8db168b6221e09d0da9803",
+    "integrity": "sha512-CGfhaHK4QGhYLCuVjjt8auT/+gOXHPvppvyBZFoH5xMVxoIMkvf2S72sstgZMDRf+lBOq83QEfbOj5Fi9jJkjA==",
+    "shasum": "571368124385ce8540894f126ea17e5d31656bea",
+    "anonymousDownload": true,
+    "exactSealedBytesMatched": true
+  },
+  "profiles": [
+    {
+      "profile": "headless",
+      "host": "0.2.1-rc.5",
+      "passed": true,
+      "cleaned": true,
+      "filesMatched": 39,
+      "installed": true,
+      "layerPresent": true,
+      "removedDependency": true,
+      "layerRemoved": true
+    },
+    {
+      "profile": "web",
+      "host": "0.2.1-rc.5",
+      "passed": true,
+      "cleaned": true,
+      "filesMatched": 39,
+      "installed": true,
+      "layerPresent": true,
+      "removedDependency": true,
+      "layerRemoved": true
+    }
+  ],
+  "web": {
+    "host": "0.2.1-rc.5",
+    "provider": "scripted-local-fixture",
+    "checks": [
+      {
+        "name": "official rc.5",
+        "passed": true
+      },
+      {
+        "name": "web configuration contains the package",
+        "passed": true
+      },
+      {
+        "name": "owned scripted provider ready",
+        "passed": true
+      },
+      {
+        "name": "scripted tool workflow reached its final provider step",
+        "passed": true
+      },
+      {
+        "name": "actual web Profile",
+        "passed": true
+      },
+      {
+        "name": "unauthenticated web HTTP requires normal auth",
+        "passed": true
+      },
+      {
+        "name": "authenticated web frontend rendered",
+        "passed": true
+      },
+      {
+        "name": "Session prompt accepted",
+        "passed": true
+      },
+      {
+        "name": "different process and Session working directories",
+        "passed": true
+      },
+      {
+        "name": "four package tools available to the web Session",
+        "passed": true
+      },
+      {
+        "name": "web Session skill loads on demand",
+        "passed": true
+      },
+      {
+        "name": "web Session resolves its own project configuration",
+        "passed": true
+      },
+      {
+        "name": "case lock created in Session project",
+        "passed": true
+      },
+      {
+        "name": "unchanged code remains distinct",
+        "passed": true
+      },
+      {
+        "name": "protected write denied in web Session",
+        "passed": true
+      },
+      {
+        "name": "wrong repair rejected",
+        "passed": true
+      },
+      {
+        "name": "real repair verified",
+        "passed": true
+      },
+      {
+        "name": "case unchanged across all guarded stages",
+        "passed": true
+      },
+      {
+        "name": "no case written into process working directory",
+        "passed": true
+      },
+      {
+        "name": "recorded fresh original-code control matches",
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "cleaned": true,
+    "ownedProcessesStopped": true
+  },
+  "scope": "Windows, Node24, official DSH0.2.1-rc.5 headless/web. npm install path is checked separately from Git and Release paths. Web workflow uses a scripted local provider and a seeded example; no desktop or new actual-provider claim."
+}

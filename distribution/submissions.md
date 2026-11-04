@@ -10,7 +10,7 @@
 - 英文简介：Records browser bugs, freezes expected results, and verifies fixes against a fresh original-code control.
 - 许可：MIT。
 - 宿主：DeepSeek Harness 0.2.1-rc.5；当前声明 headless / web，桌面入口待独立验收。
-- 包名：`dsh-bug-gps`；当前尚未发布 npm，不将待发布包名填为已发布的安装来源。
+- 包名：`dsh-bug-gps`；npm 1.0.0 已公开；使用 `dsh-bug-gps@1.0.0`，完整性与安装范围见 [npm 记录](../docs/verification/1.0.0/npm.json)。
 - 图标与截图：仓库内 `assets/buggps-icon.png`、根 `screenshots.json`。默认分支资源实际存在后才提交绝对链接。
 - 分类意图：浏览器调试、开发工具、问题复现与修复复核；按对方枚举映射。
 

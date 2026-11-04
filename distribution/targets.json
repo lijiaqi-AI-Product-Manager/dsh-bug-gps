@@ -3,15 +3,19 @@
   "rulesCheckedOn": "2026-11-04",
   "release": {
     "version": "1.0.0",
-    "npmPublished": false,
+    "npmPublished": true,
     "defaultBranchReady": true,
     "desktopAccepted": false,
     "githubReleased": true,
     "githubRelease": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/releases/tag/v1.0.0",
     "releaseSource": "6aa4a9d191a408ebf982e657432ba66549fffabe",
-    "testedGitSource": "c48aa094b6b32731d517fb0026cceccdae60e117"
+    "testedGitSource": "c48aa094b6b32731d517fb0026cceccdae60e117",
+    "npmVersion": "1.0.0",
+    "npmPublishedAt": "2026-11-04T13:29:07.607Z",
+    "npmIntegrity": "sha512-CGfhaHK4QGhYLCuVjjt8auT/+gOXHPvppvyBZFoH5xMVxoIMkvf2S72sstgZMDRf+lBOq83QEfbOj5Fi9jJkjA==",
+    "npmVerification": "docs/verification/1.0.0/npm.json"
   },
-  "observation": "Known discovery entrances, submitted applications and observed source records. Shared feeds, source admission, public listings, installation and editorial recommendations are tracked separately.",
+  "observation": "Dated catalog submissions and public records. npm1.0.0 is published and anonymously installed in clean headless/web Profiles; each directory admission, install label and recommendation remains separate.",
   "targets": [
     {
       "id": "awesome-dsh-plugin",
@@ -95,7 +99,7 @@
         "npm-for-installation"
       ],
       "status": "admitted",
-      "nextAction": "Observe public rendering and actual installation independently."
+      "nextAction": "Catalog entry is merged; the documented collector detects the newly published npm package automatically. Observe the install label and actual directory install separately."
     },
     {
       "id": "dshworks",
@@ -109,7 +113,7 @@
         "npm-for-native-index"
       ],
       "status": "listed-metadata-correction-pending",
-      "nextAction": "Published source entry observed; await capability-tag correction and independently verify native installation after npm publication."
+      "nextAction": "npm1.0.0 is published; await capability-tag correction and observe the native index source."
     },
     {
       "id": "brade-marketplace",
@@ -329,8 +333,8 @@
         "default-branch",
         "normal-security-verification"
       ],
-      "status": "submission-merged",
-      "nextAction": "PR185 passed upstream validation and merged; public index and directory installation remain separately observed."
+      "status": "listed",
+      "nextAction": "Public catalog is observed at release commit6aa4a9d; its wrapper CLI remains a separate validation scope."
     },
     {
       "id": "dsh-plus",
@@ -385,8 +389,8 @@
         "sign-in",
         "human-review"
       ],
-      "status": "blocked-on-npm-and-login",
-      "nextAction": "Published npm package and normal sign-in required; generated web-casa list shares this intake."
+      "status": "blocked-on-login",
+      "nextAction": "npm1.0.0 is published; complete the normal signed-in submission and review."
     },
     {
       "id": "dshmarket-ai",
@@ -1303,8 +1307,8 @@
       "submittedAt": "2026-11-04T11:32:03.508Z",
       "productRelease": "1.0.0",
       "catalogCommit": "2c41f374bed59f9fba41d216a16bd623ff5d91d9",
-      "status": "submission merged; public catalog integration pending observation",
-      "admitted": false,
+      "status": "merged and public catalog observed",
+      "admitted": true,
       "recommended": false,
       "mergedAt": "2026-11-04T11:40:03Z",
       "checks": [
@@ -1575,6 +1579,24 @@
       "status": "showcase published; editorial decision pending",
       "admitted": false,
       "recommended": false
+    },
+    {
+      "target": "dsh-market-bingling",
+      "kind": "metadata-correction",
+      "url": "https://github.com/2BingLing/dsh-market/issues/334",
+      "submittedAt": "2026-11-04T12:06:39.972Z",
+      "status": "submitted; maintainer processing pending",
+      "admitted": false,
+      "recommended": false
+    },
+    {
+      "target": "cccakeee",
+      "kind": "candidate-nomination",
+      "url": "https://github.com/cccakeee/awesome-dsh-plugins/issues/54",
+      "submittedAt": "2026-11-04T12:11:06.110Z",
+      "status": "submitted; maintainer processing pending",
+      "admitted": false,
+      "recommended": false
     }
   ],
   "observedListings": [
@@ -1584,7 +1606,7 @@
       "url": "https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/813",
       "checkedOn": "2026-11-04",
       "catalogCommit": "2c90dd134584450cfc1b14d464457653d220374c",
-      "installation": "browse-only until published npm mapping is available",
+      "installation": "Catalog admission observed; npm1.0.0 now published and cold-installed independently; directory install label still requires observation.",
       "recommended": false
     },
     {
@@ -1604,7 +1626,7 @@
       "catalogCommit": "30faf0079b47b1606587ed880a43e9706d8a1347",
       "catalogStatus": "verified",
       "labelScope": "Directory-owned structural label, not a runtime certification or full security review",
-      "installation": "npm-native installation not established; metadata correction issue #217 submitted",
+      "installation": "npm1.0.0 published and cold-installed independently; directory-native source and metadata correction still require observation.",
       "recommended": false
     },
     {
@@ -1626,6 +1648,20 @@
       ],
       "labelScope": "Directory labels and sort keys are not an editorial recommendation or full runtime certification",
       "installation": "earlier source still indexed; use tested Git or GitHub Release install while maintainer upgrade is pending",
+      "recommended": false
+    },
+    {
+      "target": "dsh-pub",
+      "kind": "public-catalog",
+      "url": "https://dsh.pub/zh/plugins/dsh-bug-gps/",
+      "checkedAt": "2026-11-04T11:57:55.484Z",
+      "source": {
+        "repository": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps",
+        "directory": "",
+        "commit": "6aa4a9d191a408ebf982e657432ba66549fffabe"
+      },
+      "installable": true,
+      "installation": "Directory metadata observed; native npm cold installs are recorded separately; wrapper CLI not exercised.",
       "recommended": false
     }
   ],
@@ -1678,5 +1714,5 @@
     }
   ],
   "awardedRecommendations": [],
-  "observedAt": "2026-11-04T11:49:08.579Z"
+  "observedAt": "2026-11-04T13:45:47.810Z"
 }

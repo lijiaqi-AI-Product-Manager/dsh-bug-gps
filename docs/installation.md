@@ -1,6 +1,16 @@
 # 安装与移除 / Install and remove
 
-registry 中尚无目标版本时，使用下面的固定 Git 源码；npm 命令只用于已经真实发布的版本。[发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)记录当前状态，[运行依据](verification/1.0.0/README.md)区分安装、工具执行与其他验收范围。
+`dsh-bug-gps@1.0.0` 已在官方 npm registry 公开，默认使用已发布版本安装。固定 Git 和 GitHub Release 安装包作为备用来源。[发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)记录当前状态，[运行依据](verification/1.0.0/README.md)区分安装、工具执行与其他验收范围。
+
+## 从 npm 安装
+
+```bash
+dsh plugin --profile web add dsh-bug-gps@1.0.0
+
+dsh --profile web --dump-config
+```
+
+重启同一实例，在目标 Git 项目调用 `buggps_status`。无界面实例改用 `--profile headless`。正式 registry 的匿名下载、两个全新 Profile 的安装/移除与官方 Web 完整流程见 [npm 发行记录](verification/1.0.0/npm.json)。
 
 ## 固定源码
 
@@ -15,7 +25,7 @@ dsh --profile web --dump-config
 
 确认输出包含 `dsh-bug-gps` 配置层，重启对应实例，在目标 Git 项目中调用 `buggps_status`。完整任务还需要应用开发服务和 `buggps.config.json` 的独立 `serve` 配置；配置层出现只表示配置写入，工具注册及任务执行分别确认。
 
-本地 checkout 或当前 `npm pack` 得到的 `.tgz` 也可作为 `add` 的来源。正式 npm 发布后，再使用对应已存在版本的 npm 安装命令，不把待发布包名当作现在可下载的来源。
+本地 checkout 或当前 `npm pack` 得到的 `.tgz` 也可作为 `add` 的来源。npm 安装命令见首节；备用来源的运行环境要求相同。
 
 ## 升级已有场景
 
@@ -24,17 +34,6 @@ dsh --profile web --dump-config
 当前重放上下文只包含原始顶层页面。iframe 或额外标签页中的动作会使草稿不可锁定，不会映射到主页面的同名控件；需要先将场景限制在同一顶层页面。支持范围外的交互不能作为已验证结果继续使用。
 
 旧的已锁用例与运行记录继续保留，但不能直接作为新检查器下的当前修复依据。结构化编写的草稿仍可使用原有格式，验收条件由项目需求确定。完整流程应重新建立原代码失败、候选通过与新建原代码对照，不降低断言或跳过失败步骤。
-
-## 已发布 npm 版本
-
-先确认官方 registry 已存在 `dsh-bug-gps@1.0.0`，再执行以下命令；版本不存在时使用上面的固定 Git 来源。
-
-```bash
-dsh plugin --profile web add dsh-bug-gps@1.0.0
-dsh --profile web --dump-config
-```
-
-npm 安装后同样需要重启对应实例并调用 `buggps_status`。发布后的 registry 冷安装记录与本地 tarball、Git 安装记录分别保存。
 
 ## 移除
 
@@ -49,7 +48,7 @@ dsh --profile web --dump-config
 
 ## English
 
-Use the pinned Git source above when the requested version is absent from the registry. Run the npm command only after `dsh-bug-gps@1.0.0` actually exists. The release checklist records availability; Git, tarball and registry installation evidence have separate scopes. Use the Profile your running instance actually owns; restart it after adding or removing the plugin. Git, pnpm ≥10, a system Chrome/Edge and an application serve configuration are required.
+Install the published `dsh-bug-gps@1.0.0` from npm using the first command above. Pinned Git and GitHub Release sources remain available as alternatives. The release checklist records availability; Git, tarball and registry installation evidence have separate scopes. Use the Profile your running instance actually owns; restart it after adding or removing the plugin. Git, pnpm ≥10, a system Chrome/Edge and an application serve configuration are required.
 
 The standalone CLI was checked at Node 20.0.0; the DSH host checks use Node 24. A configuration layer in `--dump-config` confirms configuration, while `buggps_status` and the complete task check tool registration and execution. Desktop acceptance remains separate.
 

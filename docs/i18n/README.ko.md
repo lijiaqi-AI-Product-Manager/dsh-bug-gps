@@ -1,6 +1,6 @@
 ![BugGPS · Record the bug. Verify the fix. · 录下问题，按原预期复核修复。](../media/buggps-hero.webp)
 
-[![GitHub release](https://img.shields.io/github/v/release/lijiaqi-AI-Product-Manager/dsh-bug-gps?color=24bfa5)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/releases/latest) [![npm publication pending](https://img.shields.io/badge/npm-pending-64748b?logo=npm)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4) [![CI](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/actions/workflows/test.yml/badge.svg?event=pull_request)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/actions/workflows/test.yml) [![CLI Node 20 or newer](https://img.shields.io/badge/CLI_Node-%E2%89%A520-43853d?logo=node.js)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/docs/installation.md) [![DSH 0.2.1-rc.5](https://img.shields.io/badge/DSH-0.2.1--rc.5-0d9488)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/docs/host-compatibility.md) [![MIT license](https://img.shields.io/github/license/lijiaqi-AI-Product-Manager/dsh-bug-gps?color=3b82f6)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/lijiaqi-AI-Product-Manager/dsh-bug-gps?color=24bfa5)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/releases/latest) [![npm version](https://img.shields.io/npm/v/dsh-bug-gps?logo=npm&color=24bfa5)](https://www.npmjs.com/package/dsh-bug-gps) [![CI](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/actions/workflows/test.yml/badge.svg?event=pull_request)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/actions/workflows/test.yml) [![CLI Node 20 or newer](https://img.shields.io/badge/CLI_Node-%E2%89%A520-43853d?logo=node.js)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/docs/installation.md) [![DSH 0.2.1-rc.5](https://img.shields.io/badge/DSH-0.2.1--rc.5-0d9488)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/docs/host-compatibility.md) [![MIT license](https://img.shields.io/github/license/lijiaqi-AI-Product-Manager/dsh-bug-gps?color=3b82f6)](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/blob/main/LICENSE)
 
 [安装 / Install](../installation.md) · [演示 / Demo](../media/buggps-demo.gif) · [运行依据 / Evidence](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)
 
@@ -14,10 +14,10 @@
 
 BugGPS는 DeepSeek Harness(DSH) 플러그인입니다. 이미 발견한 브라우저 문제의 동작과 기대 결과를 기록하고 반복 가능한 실패를 고정합니다. 수정 후에도 같은 검사와 독립된 기준 코드로 결과를 확인합니다.
 
-> 아래 명령은 고정된 Git 소스를 설치합니다. npm 경로는 대상 버전이 실제로 배포된 뒤 사용하세요. [배포 상태](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)를 확인할 수 있습니다. 호환성 확인 대상은 DSH **0.2.1-rc.5**의 `headless` / `web`입니다.
+> npm에 공개된 **1.0.0**을 설치합니다. 확인한 환경은 Windows의 DSH **0.2.1-rc.5**, `headless` / `web`입니다. 고정 Git 및 Release 설치 방법은 [설치 안내](../installation.md)를 참고하세요.
 
 ```bash
-dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#c48aa094b6b32731d517fb0026cceccdae60e117'
+dsh plugin --profile web add dsh-bug-gps@1.0.0
 dsh --profile web --dump-config
 ```
 
