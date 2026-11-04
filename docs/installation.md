@@ -9,7 +9,7 @@ registry 中尚无目标版本时，使用下面的固定 Git 源码；npm 命�
 下面以 `web` 为例；使用无界面实例时，将两处 Profile 名称改为该实例实际使用的 `headless`。桌面实例的 Profile 和内置版本应独立确认，当前记录不替代桌面验收。
 
 ```bash
-dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#69033fc4c5bc9aa92594311486c48b4efc3cd1a1'
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#c48aa094b6b32731d517fb0026cceccdae60e117'
 dsh --profile web --dump-config
 ```
 
