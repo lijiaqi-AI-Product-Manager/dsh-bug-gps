@@ -132,7 +132,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
   const textHits = (root, value) => [...root.querySelectorAll('*')].filter((n) =>
     clean(n.textContent) === value && visible(n) && ![...n.children].some((c) => clean(c.textContent) === value));
 
-  function scoped(el, role, text) {
+  function scoped(el, role, text, name = '') {
     for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
       const ar = roleOf(a);
       if (!ar) continue;
@@ -149,9 +149,10 @@ const RECORDER_SCRIPT = String.raw`(() => {
         continue;
       }
       const peerSel = '[role=' + role + ']' + (ROLE_TAGS[role] ? ',' + ROLE_TAGS[role] : '');
-      const peers = [...a.querySelectorAll(peerSel)].filter((n) => roleOf(n) === role && visible(n));
+      const peers = [...a.querySelectorAll(peerSel)].filter((n) =>
+        roleOf(n) === role && visible(n) && (!name || nameOf(n, role) === name));
       const index = peers.indexOf(el);
-      if (index >= 0) return { by: 'role', role, within: { role: ar, name: an }, index };
+      if (index >= 0) return { by: 'role', role, ...(name ? { name } : {}), within: { role: ar, name: an }, index };
     }
     return null;
   }
@@ -178,7 +179,16 @@ const RECORDER_SCRIPT = String.raw`(() => {
         return out;
       }
     }
-    if (role && name) out.push({ by: 'role', role, name });
+    if (role && name) {
+      const selector = '[role=' + role + ']' + (ROLE_TAGS[role] ? ',' + ROLE_TAGS[role] : '');
+      const matches = [...document.querySelectorAll(selector)].filter((node) =>
+        roleOf(node) === role && nameOf(node, role) === name && visible(node));
+      if (matches.length > 1) {
+        const s = scoped(el, role, undefined, name);
+        if (s) out.push(s);
+      }
+      out.push({ by: 'role', role, name });
+    }
     // Keep a meaningful unique action name even when it also contains an image.
     if (imgName && imgName !== name) out.push({ by: 'role', role, ...(name ? { name } : {}), child: { role: 'img', name: imgName } });
     const label = labelText(el);
