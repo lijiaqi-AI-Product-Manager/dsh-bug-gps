@@ -1,6 +1,6 @@
 {
   "checkedOn": "2026-11-04",
-  "publication": "prepared; not submitted or published",
+  "publication": "GitHub v1.0.0 available; catalog submissions in progress; npm pending",
   "catalogs": {
     "awesome-dsh-plugin": {
       "guide": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md",
@@ -13,7 +13,8 @@
           "en": "Records browser bugs, freezes expected results, and verifies fixes against a fresh original-code control.",
           "zh": "录制浏览器问题、固定预期，并通过独立原代码对照复核修复。"
         },
-        "icon": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/main/assets/buggps-icon.png"
+        "icon": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/main/assets/buggps-icon.png",
+        "tarball": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/releases/download/v1.0.0/dsh-bug-gps-1.0.0.tgz"
       }
     },
     "1024-store": {

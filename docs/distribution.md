@@ -1,23 +1,37 @@
 # 插件目录与市场分发
 
-BugGPS 的目标发布版本为 1.0.0；当前仍在准备，尚未发布 npm。检索、收录、安装和推荐分别核对，不将一种状态当作另一种。规则核对日期：2026-11-04。
+BugGPS v1.0.0 已通过 GitHub Release 公开，npm 尚未发布。检索、收录、安装和推荐分别核对，不将一种状态当作另一种。规则核对日期：2026-11-04。各入口的实际提交链接、观察记录和后续条件见[状态清单](../distribution/targets.json)与[分发跟踪](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/82)。
 
 仓库已设置双语功能说明及 `dsh-plugin`、`dsh`、`deepseek-harness` 等相关 topic。包声明 `dsh.bundle.patch`、真实 JavaScript 入口、MIT 许可、准确的仓库映射和精确 DSH 兼容范围，安装不依赖构建脚本。市场元数据声明 `headless` / `web`；需要重启，并配置目标项目、Git、已有浏览器和开发服务。桌面路径尚未完成独立验收，不提前声明。
 
-[`screenshots.json`](../screenshots.json) 控制两张已有界面截图的顺序，中文在前、英文在后。截图展示植入问题示例的录制和预期设置，不表示截图本身完成了修复验证。市场图标为 [180 像素 PNG](../assets/buggps-icon.png)，另保留 [SVG 源文件](../assets/buggps-icon.svg)。
+[`screenshots.json`](../screenshots.json) 包含双语宣传首图、明确标注的流程示意图，以及中文、英文两张实际界面截图。前两张用于介绍产品；后两张展示植入问题示例的录制和预期设置，不表示截图本身完成了修复验证。只接收实际使用截图的目录使用后两张。市场图标为 [180 像素 PNG](../assets/buggps-icon.png)，另保留 [SVG 源文件](../assets/buggps-icon.svg)。
+
+## 投稿快照
+
+以下为 2026-11-04T11:49Z 的记录；后续进展见分发跟踪。
+
+本次核对覆盖 77 个已知发现入口，包括共享数据源和目录；它们不是 77 家独立市场或安装量。本轮提交 14 个目录 PR（其中 3 个已合并）、12 个 Issue、1 份正常网站表单及 1 篇案例展示，并更新两份既有申请。复用 13 个现有 fork，只有缺少可复用 fork 的 DSH.pub 新建了一个。所有结果均以链接和具体范围为准。
+
+- 已合并：[1024 #813](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/813)、[vvlife #178](https://github.com/vvlife/awesome-deepseek-harness-plugins/pull/178)、[DSH.pub #185](https://github.com/dsh-pub/dsh-pub/pull/185)。DSH.pub 的投稿合并与公开索引部署分开；1024 的 npm 安装能力仍待包发布。
+- DSH Open 已收录，但公开索引仍使用较早提交；[已请求升级](https://github.com/polang233/dsh-plugin-index/issues/224#issuecomment-6629316339)，期间使用本仓库已验证的 Git 或 Release 安装路径。
+- dshworks 已观察到公开条目；[标签更正 #217](https://github.com/dshworks/awesome-dsh-plugins/issues/217)请求按实际开发工具能力分类。
+- [主目录 #11967](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/11967) 投稿检查通过，等待维护者。其共享下游仍需逐个观察。
+- [HackSing 案例展示](https://github.com/HackSing/dsh-plugins/discussions/354)已发布；编辑推荐、精选和其他目录授予的标签未自行填写。
+
+登录、正常验证码、npm 发布、真实 Star 门槛、组织成员范围及先普通收录后精选等条件保留在状态清单中，不通过刷量或绕过流程处理。
 
 ## 共享目录与原生发现
 
 | 入口 | 数据来源与需要完成的事 | 当前状态 |
 | --- | --- | --- |
-| [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md) / [官网](https://awesome-dsh-plugin.com) | 单独 YAML；真实 bundle、公开源码、仓库满一天、topic、事实性双语描述。icon 用 GitHub 托管位图，截图由插件仓库声明。 | [条目与导出命令](../distribution/README.md)已准备，待最终默认分支后提交。 |
+| [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md) / [官网](https://awesome-dsh-plugin.com) | 单独 YAML；真实 bundle、公开源码、仓库满一天、topic、事实性双语描述。icon 用 GitHub 托管位图，截图由插件仓库声明。 | [PR #11967](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/11967) 已提交，投稿检查通过，待维护者审核。 |
 | [dsh-market](https://github.com/dsh-market/dsh-market#submit-your-plugin) / [dshmarket.com](https://dshmarket.com/zh/) | 使用上述目录；按其上游收录，避免重复投稿市场程序仓库。 | 等待上游收录，不宣称已上架。 |
 | [DSH 原生自定义市场](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md) | rc.5 的 `@deepseek-ai/dsh-plugin-market-index` 使用 format 1；目录生成器提供索引，无需在 BugGPS 内加入市场服务。awesome 的生成器会跳过没有 npm 包、版本或发布时间的条目；独立 Git 索引也可使用完整提交。 | npm 正式发布后核对目录索引与实际安装来源。 |
 | [dsh-find-plugin](https://github.com/awesome-dsh-plugin/dsh-find-plugin) | 搜索 GitHub topic，并可补充 awesome 目录描述。 | topic 已设置，等待实际索引结果。 |
 | [PetCT 市场](https://github.com/PetCT/dsh-plugin-marketplace)及其他声明使用 awesome 数据的客户端 | 共享 `plugins.json`，通常不需要为插件增加运行时适配层。 | 上游收录后分别查询，不能把共享源数当成独立安装数。 |
 | [DeepSeekDSH](https://deepseekdsh.com/zh/plugins/explore) | 官网明确使用 awesome 的发现数据及 YELEBAI 的独立安装结构记录；两者更新分开。该站不重新分发第三方安装命令。 | 通过共享上游接入，另查详情和对应版本的记录。 |
-| [1024 Store](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md) / [deepseek1024.com](https://deepseek1024.com/) | 一个分类 JSON；核对默认分支 manifest 与补丁。最新贡献规则和安装端将无 npm 条目作为浏览用途，不能把网页收录当成一键可装。 | 条目已准备；npm 发布与安装入口待核对。 |
-| [dshworks](https://github.com/dshworks/awesome-dsh-plugins/blob/main/CONTRIBUTING.md) / [dsh.works](https://dsh.works/awesome-dsh-plugins/) | 结构化 JSON 与生成 README；自动发现只是候选队列，需要维护者接纳。原生索引仅纳入已确认 npm 身份和 bundle 的条目。 | 条目以 `unverified` 准备；编辑精选需单独认可。 |
+| [1024 Store](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md) / [deepseek1024.com](https://deepseek1024.com/) | 一个分类 JSON；核对默认分支 manifest 与补丁。最新贡献规则和安装端将无 npm 条目作为浏览用途，不能把网页收录当成一键可装。 | [PR #813](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/813) 已合并；npm 发布前按浏览条目跟踪。 |
+| [dshworks](https://github.com/dshworks/awesome-dsh-plugins/blob/main/CONTRIBUTING.md) / [dsh.works](https://dsh.works/awesome-dsh-plugins/) | 结构化 JSON 与生成 README；候选、正式目录和原生安装索引分开。原生索引还要求已确认 npm 身份和 bundle。 | 已在公开 `data/plugins.json` 观察到条目及目录授予的结构标签；未重复新增。目录标签不代表完整运行或安全验收，编辑精选另行决定。 |
 
 ## 自动发现与组合来源
 
@@ -100,7 +114,7 @@ DSH Marketplace 的公开搜索与完整 format 1 索引在 2026-11-04 00:32 UTC
 
 ## 已发生的申请
 
-[HackSing #351](https://github.com/HackSing/dsh-plugins/issues/351) 与 [DSH Open #224](https://github.com/polang233/dsh-plugin-index/issues/224) 已由维护者账号提交，均固定经过验证的完整 Git 提交，明确说明 npm 尚未发布、已验收范围及其余未验收部分。目前均待审核，未确认收录或推荐。其他结构化目录条目仍为准备状态；准备材料中的新来源不自动改变已经提交的申请来源。
+[HackSing #351](https://github.com/HackSing/dsh-plugins/issues/351) 已更新正式发行材料，仍待审核；[DSH Open #224](https://github.com/polang233/dsh-plugin-index/issues/224) 已获收录，现申请更换旧固定 Git 来源。目录 PR、Issue、表单和案例展示分别保存在[状态清单](../distribution/targets.json)；其中已合并和已观察条目明确标注，不将准备材料、表单接收或目录标签当成安装与推荐结果。
 
 ## 发布与跟踪
 

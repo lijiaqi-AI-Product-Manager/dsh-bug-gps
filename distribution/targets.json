@@ -4,10 +4,14 @@
   "release": {
     "version": "1.0.0",
     "npmPublished": false,
-    "defaultBranchReady": false,
-    "desktopAccepted": false
+    "defaultBranchReady": true,
+    "desktopAccepted": false,
+    "githubReleased": true,
+    "githubRelease": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/releases/tag/v1.0.0",
+    "releaseSource": "6aa4a9d191a408ebf982e657432ba66549fffabe",
+    "testedGitSource": "c48aa094b6b32731d517fb0026cceccdae60e117"
   },
-  "observation": "Intake preparation and two submitted applications. Search visibility, admission, installation and recommendations are tracked separately.",
+  "observation": "Known discovery entrances, submitted applications and observed source records. Shared feeds, source admission, public listings, installation and editorial recommendations are tracked separately.",
   "targets": [
     {
       "id": "awesome-dsh-plugin",
@@ -19,7 +23,9 @@
       "requires": [
         "default-branch",
         "hosted-assets"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "dsh-market",
@@ -31,7 +37,9 @@
       "recommendation": "not-confirmed",
       "requires": [
         "upstream-admission"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Observe the named upstream feed after admission."
     },
     {
       "id": "dsh-native-index",
@@ -44,7 +52,9 @@
       "requires": [
         "actual-index-entry",
         "compatible-install-source"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-find-plugin",
@@ -55,7 +65,9 @@
       "recommendation": "not-confirmed",
       "requires": [
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "petct-market",
@@ -67,7 +79,9 @@
       "recommendation": "not-confirmed",
       "requires": [
         "upstream-admission"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Observe the named upstream feed after admission."
     },
     {
       "id": "1024-store",
@@ -79,7 +93,9 @@
       "requires": [
         "default-branch",
         "npm-for-installation"
-      ]
+      ],
+      "status": "admitted",
+      "nextAction": "Observe public rendering and actual installation independently."
     },
     {
       "id": "dshworks",
@@ -91,7 +107,9 @@
       "requires": [
         "default-branch",
         "npm-for-native-index"
-      ]
+      ],
+      "status": "listed-metadata-correction-pending",
+      "nextAction": "Published source entry observed; await capability-tag correction and independently verify native installation after npm publication."
     },
     {
       "id": "brade-marketplace",
@@ -102,7 +120,9 @@
       "recommendation": "not-confirmed",
       "requires": [
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dshmk",
@@ -114,7 +134,9 @@
       "requires": [
         "dsh-plugin-and-deepseek-harness-topics",
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dshfind",
@@ -125,7 +147,9 @@
       "recommendation": "editorial",
       "requires": [
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-index",
@@ -137,7 +161,9 @@
       "requires": [
         "bounded-topic-candidate-set",
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dshhub-dev",
@@ -149,7 +175,9 @@
       "requires": [
         "default-branch",
         "working-install-command"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-market-bingling",
@@ -160,7 +188,9 @@
       "recommendation": "site-scoring",
       "requires": [
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-plugin-org",
@@ -172,7 +202,9 @@
       "requires": [
         "default-branch",
         "npm-for-client-installation"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dshx-cn",
@@ -184,7 +216,9 @@
       "requires": [
         "default-branch",
         "working-install-command"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-wink",
@@ -195,7 +229,9 @@
       "recommendation": "repository-ranking",
       "requires": [
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "cclank-directory",
@@ -207,7 +243,9 @@
       "requires": [
         "default-branch",
         "specific-commit-review"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-hub-cc",
@@ -218,7 +256,9 @@
       "recommendation": "not-confirmed",
       "requires": [
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "unified-market",
@@ -231,7 +271,9 @@
       "requires": [
         "upstream-indexing",
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Observe the named upstream feed after admission."
     },
     {
       "id": "deepseek404",
@@ -243,7 +285,9 @@
       "requires": [
         "snapshot-refresh",
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-open",
@@ -255,7 +299,9 @@
       "requires": [
         "npm-or-approved-fixed-git",
         "default-branch"
-      ]
+      ],
+      "status": "source-upgrade-requested",
+      "nextAction": "Already admitted, but the native index still points to an earlier Git commit; maintainer recheck requested on original issue."
     },
     {
       "id": "dsh-plugin-hub",
@@ -268,7 +314,9 @@
         "default-branch",
         "sign-in",
         "candidate-review"
-      ]
+      ],
+      "status": "blocked-on-login",
+      "nextAction": "Normal signed-in application required."
     },
     {
       "id": "dsh-pub",
@@ -280,7 +328,9 @@
       "requires": [
         "default-branch",
         "normal-security-verification"
-      ]
+      ],
+      "status": "submission-merged",
+      "nextAction": "PR185 passed upstream validation and merged; public index and directory installation remain separately observed."
     },
     {
       "id": "dsh-plus",
@@ -292,7 +342,9 @@
       "requires": [
         "default-branch",
         "public-contact-address"
-      ]
+      ],
+      "status": "blocked-on-form-requirements",
+      "nextAction": "Official form requires a contact email and normal verification."
     },
     {
       "id": "dsh-store",
@@ -304,7 +356,9 @@
       "requires": [
         "default-branch",
         "working-install-command"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "dsh-hub-org",
@@ -315,7 +369,9 @@
       "recommendation": "featured-intake-not-confirmed",
       "requires": [
         "confirm-intake"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "cordis-run",
@@ -328,7 +384,9 @@
         "published-npm",
         "sign-in",
         "human-review"
-      ]
+      ],
+      "status": "blocked-on-npm-and-login",
+      "nextAction": "Published npm package and normal sign-in required; generated web-casa list shares this intake."
     },
     {
       "id": "dshmarket-ai",
@@ -339,7 +397,9 @@
       "recommendation": "featured-intake-not-confirmed",
       "requires": [
         "confirm-intake"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "sandbase-leaderboard",
@@ -350,7 +410,9 @@
       "recommendation": "not-confirmed",
       "requires": [
         "confirm-intake"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "tyeclipse",
@@ -362,7 +424,9 @@
       "requires": [
         "default-branch",
         "working-install-command"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "dshx-hub",
@@ -375,7 +439,9 @@
         "default-branch",
         "compatibility-evidence",
         "maintained-release"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dshplugin-app",
@@ -387,7 +453,9 @@
       "requires": [
         "default-branch",
         "normal-security-verification"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-tui-directory",
@@ -400,7 +468,9 @@
         "actual-extension-scope",
         "readme-backlink",
         "default-branch"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-so",
@@ -412,7 +482,9 @@
       "requires": [
         "compatible-review-host",
         "actual-runtime-evidence"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dshbase",
@@ -424,7 +496,9 @@
       "requires": [
         "compatible-review-host",
         "actual-runtime-evidence"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dpharness",
@@ -436,7 +510,9 @@
       "requires": [
         "compatible-review-host",
         "actual-runtime-evidence"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dshplugins-org",
@@ -449,7 +525,9 @@
       "requires": [
         "snapshot-refresh",
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Observe the named upstream feed after admission."
     },
     {
       "id": "dshtool-cn",
@@ -461,7 +539,9 @@
       "requires": [
         "default-branch",
         "maintainer-admission"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "libukai",
@@ -473,7 +553,9 @@
       "requires": [
         "default-branch",
         "current-contribution-rules"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "0xsline",
@@ -486,7 +568,9 @@
         "public-topic-for-catalog",
         "organization-or-member-project-for-curated-list"
       ],
-      "source": "public-topic-and-private-dsh-external-hub"
+      "source": "public-topic-and-private-dsh-external-hub",
+      "status": "conditional",
+      "nextAction": "The member-project list requires dsh-external membership; topic discovery is a separate route."
     },
     {
       "id": "vvlife",
@@ -498,7 +582,9 @@
       "requires": [
         "topic-for-generated-list",
         "separate-curated-readme-pr"
-      ]
+      ],
+      "status": "admitted",
+      "nextAction": "Observe public rendering and actual installation independently."
     },
     {
       "id": "walkinglabs",
@@ -511,7 +597,9 @@
         "default-branch",
         "source-level-dsh-policy",
         "alphabetical-neutral-compatible-entry"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "kejixiaoliang",
@@ -523,7 +611,9 @@
       "requires": [
         "default-branch",
         "one-row-in-correct-category-file"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "bruc3van",
@@ -538,7 +628,9 @@
         "one-owner-entry-bilingual-pr"
       ],
       "observedStars": 1,
-      "observedAt": "2026-11-03T19:12:43.344Z"
+      "observedAt": "2026-11-03T19:12:43.344Z",
+      "status": "ineligible",
+      "nextAction": "Author showcase needs more than10 real stars; observed1. No submission."
     },
     {
       "id": "web-casa-list",
@@ -551,7 +643,9 @@
         "cordis-run-admission",
         "generated-index-refresh"
       ],
-      "source": "cordis-run"
+      "source": "cordis-run",
+      "status": "shared-intake",
+      "nextAction": "Use cordis.run formal submission; do not edit generated lists."
     },
     {
       "id": "cccakeee",
@@ -568,7 +662,9 @@
       "aliases": [
         "https://deepseekharnessplugins.com"
       ],
-      "aliasLiveRead": "HTTP200 on2026-11-04; current upstream contribution guide requires verified-plugins.csv and README, while the older website submission page only describes README edits"
+      "aliasLiveRead": "HTTP200 on2026-11-04; current upstream contribution guide requires verified-plugins.csv and README, while the older website submission page only describes README edits",
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "gordensun",
@@ -580,7 +676,9 @@
       "requires": [
         "default-branch",
         "use-case-and-installation-rationale"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "white0dew",
@@ -593,7 +691,9 @@
         "default-branch",
         "source-snapshot-update-and-generation",
         "no-hand-edit-of-generated-content"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "diegosouzapw",
@@ -607,7 +707,9 @@
         "one-entry-per-branch-and-pr",
         "actual-own-repository-stars",
         "maintainer-provenance-gate"
-      ]
+      ],
+      "status": "prepared",
+      "nextAction": "Local schema and duplicate checks passed; required native CLI checks remain unexecuted. No submission."
     },
     {
       "id": "deepseekplugin-org",
@@ -619,7 +721,9 @@
       "requires": [
         "default-branch",
         "actual-detail-and-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-directory",
@@ -632,7 +736,9 @@
         "default-branch",
         "static-bundle-contract",
         "confirm-live-submission-page"
-      ]
+      ],
+      "status": "needs-current-address",
+      "nextAction": "Referenced GitHub repository returned404; not treated as proof that the service no longer exists."
     },
     {
       "id": "dshpluginstore-com",
@@ -645,7 +751,9 @@
         "default-branch",
         "working-install-command",
         "human-review"
-      ]
+      ],
+      "status": "needs-confirmed-intake",
+      "nextAction": "Public form has no explicit action or active submission handler; no acceptance receipt established."
     },
     {
       "id": "dshplugin-dev",
@@ -658,7 +766,9 @@
         "default-branch",
         "editorial-policy",
         "candidate-validation-and-publication"
-      ]
+      ],
+      "status": "candidate-lead-submitted",
+      "nextAction": "Issue #5 supplies public source evidence; formal form still requires normal verification and publication review."
     },
     {
       "id": "dshtoolkit",
@@ -670,7 +780,9 @@
       "requires": [
         "confirm-intake-repository",
         "default-branch"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "dsh-plugins-mp",
@@ -682,7 +794,9 @@
       "requires": [
         "confirm-live-intake",
         "actual-search-result"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
     },
     {
       "id": "hacksing-directory",
@@ -695,7 +809,9 @@
         "default-branch",
         "install-and-removal-instructions",
         "disclosed-verification-scope"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "deepseekdsh",
@@ -708,7 +824,9 @@
       "requires": [
         "upstream-admission",
         "separate-registry-version-check"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Observe the named upstream feed after admission."
     },
     {
       "id": "dsh-plugin-radar",
@@ -722,7 +840,9 @@
         "default-branch",
         "current-registration-template",
         "snapshot-and-mirror-date-check"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "dsh-marketplace-dev",
@@ -741,7 +861,9 @@
       "aliases": [
         "https://github.com/DshMarketPlace/awesome-dsh-plugin",
         "https://dshmarketplace.dev/market/index.json"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Normal form accepted; curated PR waits for an actual installable catalog record."
     },
     {
       "id": "dshplugin-me",
@@ -758,7 +880,9 @@
       ],
       "aliases": [
         "https://github.com/dshplugin-me/dsh-plugin-radar"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "dsh-plugins-hyphen-org",
@@ -775,7 +899,9 @@
       ],
       "aliases": [
         "https://github.com/lwmxiaobei/dsh-plugins"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "dsh-plugins-net",
@@ -790,7 +916,9 @@
         "permission-declaration",
         "actual-public-discussion-submission",
         "maintainer-review"
-      ]
+      ],
+      "status": "prepared",
+      "nextAction": "Website creates a Discussion draft; no published Discussion receipt established."
     },
     {
       "id": "dshplugins-com",
@@ -804,7 +932,9 @@
         "normal-session-check",
         "documented-install-format-and-profile",
         "admin-review"
-      ]
+      ],
+      "status": "blocked-on-login",
+      "nextAction": "Normal website session required; no authenticated form submission completed."
     },
     {
       "id": "dsplugin-app",
@@ -822,7 +952,9 @@
       ],
       "aliases": [
         "https://github.com/vbarter/dsh-plugin-registry"
-      ]
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
     },
     {
       "id": "mayfly-community",
@@ -836,30 +968,667 @@
         "fixed-install-source",
         "honest-surfaces-and-capabilities",
         "public-author-listing-authorization"
-      ]
+      ],
+      "status": "discovery-ready",
+      "nextAction": "Metadata prerequisites prepared; actual listing and any remaining intake rules still require confirmation."
+    },
+    {
+      "id": "anil",
+      "url": "https://github.com/Anil-matcha/awesome-dsh-plugin",
+      "rules": "https://github.com/Anil-matcha/awesome-dsh-plugin",
+      "intake": "curated-pr",
+      "prepared": "entry",
+      "recommendation": "curated-list",
+      "requires": [
+        "public-default-branch",
+        "maintainer-review"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "beancookie",
+      "url": "https://github.com/beancookie/awesome-dsh-plugin",
+      "rules": "https://github.com/beancookie/awesome-dsh-plugin",
+      "intake": "curated-pr",
+      "prepared": "entry",
+      "recommendation": "curated-list",
+      "requires": [
+        "public-default-branch",
+        "maintainer-review"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "community",
+      "url": "https://github.com/awesome-deepseekharness/awesome-deepseek-harness",
+      "rules": "https://github.com/awesome-deepseekharness/awesome-deepseek-harness",
+      "intake": "curated-pr",
+      "prepared": "entry",
+      "recommendation": "curated-list",
+      "requires": [
+        "public-default-branch",
+        "maintainer-review"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "dshwiki",
+      "url": "https://github.com/ai798-Lab/DSHwiki",
+      "rules": "https://github.com/ai798-Lab/DSHwiki",
+      "intake": "submission-issue",
+      "prepared": "submission-fields",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "maintainer-review"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "harnesscatalog",
+      "url": "https://github.com/huodesheng/awesome-deepseek-harness",
+      "rules": "https://github.com/huodesheng/awesome-deepseek-harness",
+      "intake": "submission-issue",
+      "prepared": "submission-fields",
+      "recommendation": "editorial-review",
+      "requires": [
+        "maintainer-review"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "herdeny",
+      "url": "https://github.com/Herdeny/awesome-dsh-plugins-2026",
+      "rules": "https://github.com/Herdeny/awesome-dsh-plugins-2026",
+      "intake": "curated-pr",
+      "prepared": "entry",
+      "recommendation": "curated-list",
+      "requires": [
+        "public-default-branch",
+        "maintainer-review"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "jiji262",
+      "url": "https://github.com/jiji262/awesome-deepseek-harness",
+      "rules": "https://github.com/jiji262/awesome-deepseek-harness",
+      "intake": "curated-pr",
+      "prepared": "entry",
+      "recommendation": "curated-list",
+      "requires": [
+        "public-default-branch",
+        "maintainer-review"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "laoba-market",
+      "url": "https://dsh-marketplace.laoba.me/",
+      "rules": "https://github.com/SCP-008-1/dshop",
+      "intake": "topic-or-correction-issue",
+      "prepared": "submission-fields",
+      "recommendation": "not-confirmed",
+      "requires": [
+        "topic-sync",
+        "actual-search-result"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "sihanteng",
+      "url": "https://github.com/SihanTeng/awesome-deepseek-harness-plugins",
+      "rules": "https://github.com/SihanTeng/awesome-deepseek-harness-plugins",
+      "intake": "curated-pr",
+      "prepared": "entry",
+      "recommendation": "curated-list",
+      "requires": [
+        "public-default-branch",
+        "maintainer-review"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "zeropoint",
+      "url": "https://github.com/ZeroPointRepo/awesome-dsh-plugins",
+      "rules": "https://github.com/ZeroPointRepo/awesome-dsh-plugins",
+      "intake": "curated-pr",
+      "prepared": "entry",
+      "recommendation": "curated-list",
+      "requires": [
+        "public-default-branch",
+        "maintainer-review"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "zhiyuan",
+      "url": "https://github.com/Zhiyuan-Fan/Awesome-DeepSeek-Harness-Plugins",
+      "rules": "https://github.com/Zhiyuan-Fan/Awesome-DeepSeek-Harness-Plugins",
+      "intake": "curated-pr",
+      "prepared": "entry",
+      "recommendation": "curated-list",
+      "requires": [
+        "public-default-branch",
+        "maintainer-review"
+      ],
+      "status": "submitted",
+      "nextAction": "Await normal maintainer processing; do not duplicate submission."
+    },
+    {
+      "id": "jqueryscript",
+      "url": "https://github.com/jqueryscript/awesome-dsh-plugins",
+      "rules": "https://github.com/jqueryscript/awesome-dsh-plugins/blob/main/CONTRIBUTING.md",
+      "intake": "curated-pr",
+      "prepared": "conditional",
+      "recommendation": "curated-list",
+      "requires": [
+        "at-least-30-real-stars"
+      ],
+      "status": "ineligible",
+      "nextAction": "At least30 real stars required; observed1. No submission."
     }
   ],
   "submissions": [
     {
+      "target": "1024-store",
+      "kind": "catalog-pr",
+      "url": "https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/813",
+      "submittedAt": "2026-11-04T10:20:29.968Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "2c90dd134584450cfc1b14d464457653d220374c",
+      "status": "catalog PR merged",
+      "admitted": true,
+      "recommended": false,
+      "mergedAt": "2026-11-04T10:20:53Z",
+      "checks": [
+        {
+          "name": "merge",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "static-review",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "target": "anil",
+      "kind": "catalog-pr",
+      "url": "https://github.com/Anil-matcha/awesome-dsh-plugin/pull/20",
+      "submittedAt": "2026-11-04T10:29:31.348Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "55fc823a8923c92162a900010f9f61a5ffb5d135",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "dshplugin-dev",
+      "kind": "candidate-lead",
+      "url": "https://github.com/arkyu2077/awesome-dsh-plugin/issues/5",
+      "submittedAt": "2026-11-04T11:29:48.212Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "source lead submitted; formal website application not completed",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "awesome-dsh-plugin",
+      "kind": "catalog-pr",
+      "url": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/11967",
+      "submittedAt": "2026-11-04T10:20:14.470Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "4060fe475345c1926f790e7d12f13592dee72e03",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": [
+        {
+          "name": "Submission gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "check",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "target": "beancookie",
+      "kind": "catalog-pr",
+      "url": "https://github.com/beancookie/awesome-dsh-plugin/pull/266",
+      "submittedAt": "2026-11-04T10:29:01.333Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "7a203a67f7a064d1ee8b1c3aaaf7f5fc8574d630",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "community",
+      "kind": "catalog-pr",
+      "url": "https://github.com/awesome-deepseekharness/awesome-deepseek-harness/pull/213",
+      "submittedAt": "2026-11-04T10:29:17.357Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "b71db708790a6eb0fa0b06cdd71138afc26ea1be",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": [
+        {
+          "name": "curate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "gate",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Sourcery review",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "audit",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "submission-guard",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "target": "dsh-plugins-hyphen-org",
+      "kind": "submission-issue",
+      "url": "https://github.com/lwmxiaobei/dsh-plugins/issues/2",
+      "submittedAt": "2026-11-04T10:56:55.673Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "dsh-store",
+      "kind": "submission-issue",
+      "url": "https://github.com/AI-Scarlett/DSH-Store/issues/1753",
+      "submittedAt": "2026-11-04T11:29:50.102Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "dshplugin-me",
+      "kind": "submission-issue",
+      "url": "https://github.com/dshplugin-me/dsh-plugin-radar/issues/8",
+      "submittedAt": "2026-11-04T10:56:50.561Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "dsh-pub",
+      "kind": "catalog-pr",
+      "url": "https://github.com/dsh-pub/dsh-pub/pull/185",
+      "submittedAt": "2026-11-04T11:32:03.508Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "2c41f374bed59f9fba41d216a16bd623ff5d91d9",
+      "status": "submission merged; public catalog integration pending observation",
+      "admitted": false,
+      "recommended": false,
+      "mergedAt": "2026-11-04T11:40:03Z",
+      "checks": [
+        {
+          "name": "Merge validated submission",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Integrate merged submission",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Validate plugin submission",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "target": "dshwiki",
+      "kind": "submission-issue",
+      "url": "https://github.com/ai798-Lab/DSHwiki/issues/1",
+      "submittedAt": "2026-11-04T11:38:09.998Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "dshworks",
+      "kind": "metadata-correction",
+      "url": "https://github.com/dshworks/awesome-dsh-plugins/issues/217",
+      "submittedAt": "2026-11-04T11:47:49.661Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "correction submitted; listing already observed",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "dsplugin-app",
+      "kind": "submission-issue",
+      "url": "https://github.com/vbarter/dsh-plugin-registry/issues/517",
+      "submittedAt": "2026-11-04T10:56:47.217Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "gordensun",
+      "kind": "submission-issue",
+      "url": "https://github.com/GordenSun/awesome-dsh-plugins/issues/10",
+      "submittedAt": "2026-11-04T11:29:53.466Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "harnesscatalog",
+      "kind": "submission-issue",
+      "url": "https://github.com/huodesheng/awesome-deepseek-harness/issues/1",
+      "submittedAt": "2026-11-04T11:38:08.191Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "herdeny",
+      "kind": "catalog-pr",
+      "url": "https://github.com/Herdeny/awesome-dsh-plugins-2026/pull/13",
+      "submittedAt": "2026-11-04T11:31:34.864Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "5779f5c4a6076d1a589b192b1ee5077d0a142eb3",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": [
+        {
+          "name": "audit",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "GitGuardian Security Checks",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "target": "jiji262",
+      "kind": "catalog-pr",
+      "url": "https://github.com/jiji262/awesome-deepseek-harness/pull/53",
+      "submittedAt": "2026-11-04T10:47:49.624Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "6cd6644ea26d7a90fd68d1bc061b1fe63ef19617",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "kejixiaoliang",
+      "kind": "catalog-pr",
+      "url": "https://github.com/kejixiaoliang/awesome-dsh-plugins/pull/189",
+      "submittedAt": "2026-11-04T10:48:07.715Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "fe78bac40363129f83cf59b98c29f66935089e04",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "laoba-market",
+      "kind": "sync-correction",
+      "url": "https://github.com/SCP-008-1/dshop/issues/68",
+      "submittedAt": "2026-11-04T11:44:30.462Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "dsh-plugin-radar",
+      "kind": "catalog-pr",
+      "url": "https://github.com/AdamPlatin123/dsh-plugin-radar/pull/1036",
+      "submittedAt": "2026-11-04T10:32:28.502Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "b093a68fc3c7b78e0a213fce17b251c9d821de92",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "sihanteng",
+      "kind": "catalog-pr",
+      "url": "https://github.com/SihanTeng/awesome-deepseek-harness-plugins/pull/69",
+      "submittedAt": null,
+      "productRelease": "1.0.0",
+      "catalogCommit": "ac4ae745ba8cc19e1a57809536014db690d321cb",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "tyeclipse",
+      "kind": "submission-issue",
+      "url": "https://github.com/TYEclipse/dsh-plugins-hub/issues/81",
+      "submittedAt": "2026-11-04T11:33:30.872Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "vvlife",
+      "kind": "catalog-pr",
+      "url": "https://github.com/vvlife/awesome-deepseek-harness-plugins/pull/178",
+      "submittedAt": "2026-11-04T10:31:58.766Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "21383feec270cb6c55716f412e71d259d0808768",
+      "status": "catalog PR merged",
+      "admitted": true,
+      "recommended": false,
+      "mergedAt": "2026-11-04T10:32:18Z",
+      "checks": [
+        {
+          "name": "review",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "target": "walkinglabs",
+      "kind": "submission-issue",
+      "url": "https://github.com/walkinglabs/awesome-deepseek-harness-plugins/issues/148",
+      "submittedAt": "2026-11-04T10:56:53.195Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": null,
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "zeropoint",
+      "kind": "catalog-pr",
+      "url": "https://github.com/ZeroPointRepo/awesome-dsh-plugins/pull/31",
+      "submittedAt": "2026-11-04T10:32:12.715Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "97c12bde63988a5e7a1c2ef7ddaac61642003042",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
+      "target": "zhiyuan",
+      "kind": "catalog-pr",
+      "url": "https://github.com/Zhiyuan-Fan/Awesome-DeepSeek-Harness-Plugins/pull/109",
+      "submittedAt": "2026-11-04T10:31:44.474Z",
+      "productRelease": "1.0.0",
+      "catalogCommit": "6641751ee1169ae77acf6c1f0bd3ee5b8ee90da8",
+      "status": "submitted; review pending",
+      "admitted": false,
+      "recommended": false,
+      "checks": []
+    },
+    {
       "target": "hacksing-directory",
+      "kind": "existing-application-update",
       "url": "https://github.com/HackSing/dsh-plugins/issues/351",
-      "submittedAt": "2026-11-03T18:58:03.577Z",
-      "source": "9cab2a1285caef92c81453843098767005c43509",
-      "status": "submitted; admission pending",
+      "updatedAt": "2026-11-04T11:22:42.005Z",
+      "source": "c48aa094b6b32731d517fb0026cceccdae60e117",
+      "status": "formal-release evidence updated; review pending",
       "admitted": false,
       "recommended": false
     },
     {
       "target": "dsh-open",
+      "kind": "existing-application-update",
       "url": "https://github.com/polang233/dsh-plugin-index/issues/224",
-      "submittedAt": "2026-11-03T20:09:49Z",
-      "source": "9cab2a1285caef92c81453843098767005c43509",
-      "status": "submitted; admission pending",
+      "updatedAt": "2026-11-04T11:22:40.413Z",
+      "source": "c48aa094b6b32731d517fb0026cceccdae60e117",
+      "status": "listed with earlier Git source; corrected-source upgrade requested",
+      "admitted": true,
+      "recommended": false,
+      "followup": "https://github.com/polang233/dsh-plugin-index/issues/224#issuecomment-6629316339"
+    },
+    {
+      "target": "dsh-marketplace-dev",
+      "kind": "website-form",
+      "url": "https://dshmarketplace.dev/submit",
+      "submittedAt": "2026-11-04T10:51:34.207Z",
+      "status": "form accepted; manual publication pending",
+      "formHTTPStatus": 200,
+      "accepted": true,
+      "admitted": false,
+      "recommended": false
+    },
+    {
+      "target": "hacksing-directory",
+      "kind": "showcase-and-editorial-request",
+      "url": "https://github.com/HackSing/dsh-plugins/discussions/354",
+      "submittedAt": "2026-11-04T11:39:42.423Z",
+      "status": "showcase published; editorial decision pending",
       "admitted": false,
       "recommended": false
     }
   ],
-  "observedListings": [],
+  "observedListings": [
+    {
+      "target": "1024-store",
+      "kind": "merged-catalog-entry",
+      "url": "https://github.com/imsai-sh/awesome-deepseek-harness-plugins/pull/813",
+      "checkedOn": "2026-11-04",
+      "catalogCommit": "2c90dd134584450cfc1b14d464457653d220374c",
+      "installation": "browse-only until published npm mapping is available",
+      "recommended": false
+    },
+    {
+      "target": "vvlife",
+      "kind": "merged-catalog-entry",
+      "url": "https://github.com/vvlife/awesome-deepseek-harness-plugins/pull/178",
+      "checkedOn": "2026-11-04",
+      "catalogCommit": "21383feec270cb6c55716f412e71d259d0808768",
+      "installation": "not separately tested through this directory",
+      "recommended": false
+    },
+    {
+      "target": "dshworks",
+      "kind": "published-source-catalog",
+      "url": "https://github.com/dshworks/awesome-dsh-plugins/blob/30faf0079b47b1606587ed880a43e9706d8a1347/data/plugins.json",
+      "checkedOn": "2026-11-04",
+      "catalogCommit": "30faf0079b47b1606587ed880a43e9706d8a1347",
+      "catalogStatus": "verified",
+      "labelScope": "Directory-owned structural label, not a runtime certification or full security review",
+      "installation": "npm-native installation not established; metadata correction issue #217 submitted",
+      "recommended": false
+    },
+    {
+      "target": "dsh-open",
+      "kind": "native-index-entry",
+      "url": "https://dshopen.org/zh/plugins/dsh-bug-gps/",
+      "checkedAt": "2026-11-04T11:46:23.123Z",
+      "version": "1.0.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps",
+        "commit": "9cab2a1285caef92c81453843098767005c43509"
+      },
+      "sourceUpgradeRequested": "c48aa094b6b32731d517fb0026cceccdae60e117",
+      "sourceUpgradePending": true,
+      "labels": [
+        "verified",
+        "updated-recent"
+      ],
+      "labelScope": "Directory labels and sort keys are not an editorial recommendation or full runtime certification",
+      "installation": "earlier source still indexed; use tested Git or GitHub Release install while maintainer upgrade is pending",
+      "recommended": false
+    }
+  ],
   "catalogObservations": [
     {
       "target": "dsh-marketplace-dev",
@@ -879,7 +1648,35 @@
       "nativeParser": "DSH0.2.1-rc.5 format1 passed",
       "sha256": "764ea456535c301e21e33c9bc8e034b187a6c9b3885aa7be9b18e3042dfd5458",
       "scope": "Complete public index parsed; parser compatibility does not establish plugin installation or task success"
+    },
+    {
+      "target": "dsh-open",
+      "checkedAt": "2026-11-04T11:46:23.123Z",
+      "url": "https://dshopen.org/index.json",
+      "httpStatus": 200,
+      "matches": 1,
+      "sha256": "9518fbbbdb9fcfd6db6e69df75352116ccc6c869016ba053e191e589176b2dea",
+      "scope": "Complete native index; current Git source inspected"
+    },
+    {
+      "target": "dsh-pub",
+      "checkedAt": "2026-11-04T11:46:23.068Z",
+      "url": "https://dsh.pub/plugins.json",
+      "httpStatus": "unavailable",
+      "matches": null,
+      "sha256": null,
+      "scope": "Public response only; a failed fetch is not an absent listing"
+    },
+    {
+      "target": "dsh-marketplace-dev",
+      "checkedAt": "2026-11-04T11:46:23.814Z",
+      "url": "https://dshmarketplace.dev/api/v1/plugins?q=dsh-bug-gps&limit=5",
+      "httpStatus": 200,
+      "matches": 0,
+      "sha256": "82237a7a29c4d3ae5cfa2a46abfd74f98190b198f13876b20cf4505acd83f5b0",
+      "scope": "Public search response only; accepted form is not public admission"
     }
   ],
-  "awardedRecommendations": []
+  "awardedRecommendations": [],
+  "observedAt": "2026-11-04T11:49:08.579Z"
 }

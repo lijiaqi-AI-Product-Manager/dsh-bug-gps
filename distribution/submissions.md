@@ -1,6 +1,6 @@
 # 独立目录申请材料
 
-结构化目录条目仍在准备；[HackSing #351](https://github.com/HackSing/dsh-plugins/issues/351) 与 [DSH Open #224](https://github.com/polang233/dsh-plugin-index/issues/224) 的收录申请已提交，均待审核。对外提交前先核对目标读取的是默认分支还是固定提交、实际压缩包、版本及最新规则。只引用公开材料与经过筛选的运行摘要，不上传本地原始事件、账户配置、业务截图或私有项目。
+各入口的实际提交、已观察收录和后续条件见[状态清单](targets.json)。[HackSing #351](https://github.com/HackSing/dsh-plugins/issues/351) 待审核；[DSH Open #224](https://github.com/polang233/dsh-plugin-index/issues/224) 已获收录，现已申请将旧 Git 来源升级为修正后的固定提交，等待维护者复核。对外提交前核对目标读取的是默认分支还是固定提交、实际安装包、版本及最新规则。只引用公开材料与经过筛选的运行摘要，不上传本地原始事件、账户配置、业务截图或私有项目。
 
 ## 可复用字段
 
@@ -56,7 +56,7 @@ DSH Directory、DSHToolkit 与 DSH Plugins Marketplace 的投稿页面或指定�
 
 同时提供安装要求、精确宿主范围、已知限制、失败分类、相关版本的检查链接及问题反馈入口。维护者可以判断其适用性，不能将材料准备或普通收录写成获得推荐。
 
-[1.0.0 准备版本的摘要](../docs/verification/1.0.0/README.md)提供 238 项检查、固定源码 11 VERIFIED / 1 NEEDS_REVIEW、两个植入问题的真实提供方流程，以及四条安装/移除路径。金额成本未知，缩减收益未证实；旧外部项目实际修复记录按其自己的提交阅读。摘要不包含原始事件、模型正文、工具输入、本机路径或账号标识。
+[历史准备阶段摘要](../docs/verification/1.0.0/README.md)保留其各自源码下的 238 项检查与案例范围。正式 v1.0.0 的 [CI](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/actions/runs/41791518733)通过 287/287 Windows 检查、官方宿主 4/4 和最低运行时消费；[固定 12 案例](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/actions/runs/41791518490)为 11 VERIFIED / 1 预期 NEEDS_REVIEW，12 个预定分类全部匹配。公开包冷安装、字节校验及 Web 工具流程的后续依据见[发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)。历史参考补丁回归、植入示例和实际账户任务分别说明；金额成本未知，缩减收益未证实。公开摘要不包含凭据和原始提供方事件。
 
 有公开申请流程的按流程提交；没有单独精选入口的，通过其允许的普通投稿附一次事实性说明，不批量私信、不反复催促、不刷版本或交换 Star。获得标签后再引用对方实际页面和适用版本。
 

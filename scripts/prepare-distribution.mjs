@@ -54,7 +54,8 @@ for (const name of ['preinstall', 'install', 'postinstall', 'prepare']) assert.o
 
 const a = entries.catalogs['awesome-dsh-plugin'].entry;
 assert.equal(a.url, repository); assert.equal(a.name, slug); assert.equal(a.category, 'browser');
-assert.deepEqual(Object.keys(a).sort(), ['url', 'name', 'category', 'description', 'icon'].sort());
+assert.deepEqual(Object.keys(a).sort(), ['url', 'name', 'category', 'description', 'icon', 'tarball'].sort());
+assert.equal(a.tarball, repository + '/releases/download/v' + pkg.version + '/' + pkg.name + '-' + pkg.version + '.tgz', 'Prebuilt source must use the matching fixed GitHub Release asset');
 assert.ok(a.description.en.endsWith('.') && a.description.zh.endsWith('。'));
 assert.ok(a.icon.startsWith('https://raw.githubusercontent.com/' + slug + '/main/'));
 const b = entries.catalogs['1024-store'].entry;
@@ -136,7 +137,8 @@ if (args.length) {
   await mkdir(out);
   const quote = (value) => JSON.stringify(value);
   const yaml = ['url: ' + quote(a.url), 'name: ' + quote(a.name), 'category: ' + a.category,
-    'description:', '  en: ' + quote(a.description.en), '  zh: ' + quote(a.description.zh), 'icon: ' + quote(a.icon)].join('\n') + '\n';
+    'description:', '  en: ' + quote(a.description.en), '  zh: ' + quote(a.description.zh), 'icon: ' + quote(a.icon),
+    'tarball: ' + quote(a.tarball)].join('\n') + '\n';
   await writeFile(join(out, 'lijiaqi-AI-Product-Manager__dsh-bug-gps.yml'), yaml, { flag: 'wx' });
   await writeFile(join(out, 'lijiaqi-ai-product-manager--dsh-bug-gps.json'), JSON.stringify(b, null, 2) + '\n', { flag: 'wx' });
   await writeFile(join(out, 'dshworks-entry.json'), JSON.stringify(c, null, 2) + '\n', { flag: 'wx' });

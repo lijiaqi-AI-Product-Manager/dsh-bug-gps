@@ -1,8 +1,8 @@
 # 目录收录材料
 
-当前是提交准备材料，不表示已经收录、获得推荐或发布 npm。
+这里保存各目录的投稿模板。GitHub v1.0.0 已公开，npm 尚未发布；送审、收录、检索和推荐分别记录，实时进展见 [分发跟踪](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/82)。
 
-五份结构化目录材料尚未送审；[HackSing #351](https://github.com/HackSing/dsh-plugins/issues/351) 与 [DSH Open #224](https://github.com/polang233/dsh-plugin-index/issues/224) 的独立申请已提交，均待审核。
+五份结构化材料按各自规则使用，不能将一份模板的状态套用到其他目录。已送审链接及可观察结果见 [状态清单](targets.json)；未获得的收录或推荐不自行填写。
 
 ```bash
 npm run check:distribution
@@ -19,10 +19,10 @@ node scripts/prepare-distribution.mjs --out .buggps/catalog-submission
 | [Omni DSH](https://github.com/diegosouzapw/awesome-omni-dsh-plugins/blob/main/CONTRIBUTING.md) | 一个作者命名空间的 `.yaml`，仅提交到 `catalog/plugins/`。导出采用 YAML 1.2 支持的 JSON 语法，字段与原始 Schema 一致。固定完整源码、原仓库节点 ID 和真实 Star，保持 `eligible`，不自行宣称维护者已收录或运行验收。 |
 | [DSH Marketplace 精选](https://github.com/DshMarketPlace/awesome-dsh-plugin/blob/main/CONTRIBUTING.md) | `dsh-marketplace-curated-fragment.yml` 是 `data/curated.yml` 的 Development（`slug: dev`）分类下一个列表项，不能覆盖完整目录。先确认普通目录已有可安装记录，再按对方流程提交 YAML、`data/marketplace-cache.json` 与双语生成 README。该精选库独立于首行的 awesome-dsh-plugin；片段导出不表示通过了对方验证。 |
 
-提交前，默认分支必须已有最终代码、入口、补丁、图标与截图。现在 icon 指向未来合并后的默认分支路径，不能在资源尚未生效时将草案直接送审。`added` 与 `lastVerified` 是准备材料的日期，正式提交前按真实状态核对。
+提交前，默认分支必须已有最终代码、入口、补丁、图标与截图。现有图标与录制界面已在默认分支可用；新增预览图须等相应提交整合后再用于主分支链接。`added` 与 `lastVerified` 是准备材料的日期，正式提交前按真实状态核对。
 
 上述默认分支要求适用于从默认分支读取资源的条目；Omni 使用独立固定提交及同提交的媒体链接。其 Star 与检查日期是观测快照，正式投稿前重新读取，并由维护者核对来源。一次仅送审该市场需要的单个条目，不将五个目录的产物一起提交。
 
-发布 npm 后，补充 dshworks 的真实包名，并核对 registry 中的 `repository` 映射。awesome-dsh-plugin 的 npm 映射由其采集器读取，条目中不添加 `npm` 键。GitHub Release 备用包使用固定 tag URL；若使用 `latest/download/`，资产文件名须保持不含版本，防止下次发版链接失效。
+发布 npm 后，补充 dshworks 的真实包名，并核对 registry 中的 `repository` 映射。awesome-dsh-plugin 的 npm 映射由其采集器读取，条目中不添加 `npm` 键。模板使用已公开且经过冷安装的固定 Release `tarball`，不会随下一次版本切换失效。GitHub Release 备用包使用固定 tag URL；若使用 `latest/download/`，资产文件名须保持不含版本，防止下次发版链接失效。
 
 其他已核查入口、推荐机制与待办见 [多市场分发](../docs/distribution.md)。独立表单、Issue 和精选申请的可复用字段见 [申请材料](submissions.md)，主要入口的来源、前置条件与真实提交状态见 [状态清单](targets.json)。清单中的准备状态不表示已被收录或推荐。
