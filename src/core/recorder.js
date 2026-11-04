@@ -53,14 +53,14 @@ const RECORDER_SCRIPT = String.raw`(() => {
     let width = innerWidth;
     let height = innerHeight;
     window.addEventListener('resize', () => {
-      if (window.__buggpsStopCapture) return;
+      if (window.__buggpsStopSystemCapture) return;
       if (innerWidth === width && innerHeight === height) return;
       width = innerWidth;
       height = innerHeight;
       send({ type: 'viewport', width, height });
     });
     document.addEventListener('fullscreenchange', () => {
-      if (window.__buggpsStopCapture) return;
+      if (window.__buggpsStopSystemCapture) return;
       if (!document.fullscreenElement) send({ type: 'fullscreen-exit' });
     });
   }
@@ -634,10 +634,14 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
           const frames = context.pages().flatMap((item) => item.frames());
           if (!frames.length) throw new Error('Recording page closed before acknowledgement');
           await Promise.race([
-            Promise.all(frames.map((frame) => frame.evaluate(() => {
+            Promise.all(frames.map((frame) => frame.evaluate(async () => {
               window.__buggpsStopCapture = true;
               window.__buggpsCancelHover?.();
               if (typeof window.__buggpsFlushRecording !== 'function') throw new Error('Recorder is not available');
+              // Browser fullscreen/resize notifications can arrive after the initiating
+              // operation resolves. Drain them before freezing system state as well.
+              await new Promise((resolve) => setTimeout(resolve, 100));
+              window.__buggpsStopSystemCapture = true;
               return window.__buggpsFlushRecording();
             }))),
             new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Recording acknowledgement timed out')), 2000); }),
