@@ -14,7 +14,7 @@ DeepSeek Harness（DSH）插件。你在浏览器里把 bug 操作一遍，标�
 > 以下命令安装固定 Git 源码；npm 路径适用于已经公开发布的版本。发布状态见[发布清单](https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/issues/4)。兼容范围为 DSH **0.2.1-rc.5** 的 `headless` / `web`，已记录的环境为 Windows。
 
 ```bash
-dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#306971c417e0bdca3ac930507c1bb57e2236dcbf'
+dsh plugin --profile web add 'git+https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git#69033fc4c5bc9aa92594311486c48b4efc3cd1a1'
 dsh --profile web --dump-config
 ```
 
@@ -29,7 +29,7 @@ dsh --profile web --dump-config
 ```bash
 git clone https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps.git
 cd dsh-bug-gps
-git checkout --detach 306971c417e0bdca3ac930507c1bb57e2236dcbf
+git checkout --detach 69033fc4c5bc9aa92594311486c48b4efc3cd1a1
 npm ci
 ```
 
@@ -49,7 +49,7 @@ node bin/buggps.js doctor --repo ../buggps-demo
 
 录制工具栏默认简体中文，可切换英语、日语、韩语、德语、法语、西班牙语和巴西葡萄牙语。输入值、应消失、不应报错、检查点和关键步骤在「更多检查」中。选取页面元素时面板自动收起，确认或取消后恢复；Esc 可以取消选取。已设置的预期、检查点与关键步骤持续显示，语言、位置和收起状态跨页保留。
 
-结束前会确认已发送的记录。缺少正向预期、操作无法定位、输入不受支持或确认超时都会显示原因；保留未完成记录不会得到修复已验证的结论。可查看 [中文界面](docs/media/toolbar/zh-CN.png) 与 [英文界面](docs/media/toolbar/en.png)。截图由脚本操作内置植入问题示例，展示录制与预期设置，没有执行修复验证；从源码重新生成：`npm run demo:toolbar`。
+结束前会确认已发送的记录。有问题时，警告面板聚焦原因和两种处理选项；窄屏分行显示状态与语言控件，键盘焦点进入处理按钮，返回后恢复录制控件。缺少正向预期、操作无法定位、输入不受支持或确认超时都会显示原因；保留未完成记录不会得到修复已验证的结论。可查看 [中文界面](docs/media/toolbar/zh-CN.png) 与 [英文界面](docs/media/toolbar/en.png)。截图由脚本操作内置植入问题示例，展示录制与预期设置，没有执行修复验证；从源码重新生成：`npm run demo:toolbar`。
 
 1. **录制**（`buggps_record`）：浏览器打开，你操作一遍，在工具栏上标出：
    - **预期**：文本 / 输入值 / 应可见 / 应消失 / 不应报错。先标“不应报错”再标一个正向预期时，两个都会保留。
