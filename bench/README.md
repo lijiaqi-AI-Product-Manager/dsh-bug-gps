@@ -11,7 +11,7 @@ node bench/holdout.mjs it-tools-799
 
 每个案例分别运行原始路径、锁定复现、预算内缩减、非功能修改的负向控制、参考修复及新建原代码对照。预期和锁在控制阶段保持不变。环境失败、无效定义、不稳定、状态失效或任何不符预期的结果均保留，不能只取候选通过作为整例成功。
 
-历史 IT-Tools 的 AutoImport 会在开发服务中改写已跟踪的 `.eslintrc-auto-import.json`。`fixture-source.mjs` 只将固定上游 Vite 配置中的 `AutoImport.eslintrc.enabled` 从 `true` 改为 `false`，关闭编辑器元数据生成。配置在锁定前写入自有工作区，其原始、配置后和补丁指纹均进入记录，并随冻结快照用于候选与新建原代码对照。工具业务源码、动作、断言、超时和产品的代码变化检查保持原有规则。
+历史 IT-Tools 的 AutoImport 与 Components 会在开发服务中改写已跟踪的 `.eslintrc-auto-import.json`、`auto-imports.d.ts` 和 `components.d.ts`。`fixture-source.mjs` 关闭固定上游 Vite 配置中的 `AutoImport.eslintrc.enabled`、`AutoImport.dts` 与 `Components.dts`，停止编辑器元数据输出。配置在锁定前写入自有工作区，其原始、配置后和补丁指纹均进入记录，并随冻结快照用于候选与新建原代码对照。工具业务源码、动作、断言、超时和产品的代码变化检查保持原有规则。
 
 预热产生的声明文件仍进入快照并记录内容。任何额外配置或业务源码变化都会阻止准备；执行过程中发生的文件变化仍会导致状态失效。历史失败记录不被后续通过结果替换，原始配置与受控配置下的结果分别阅读。
 

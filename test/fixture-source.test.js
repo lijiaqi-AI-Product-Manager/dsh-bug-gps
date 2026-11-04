@@ -7,7 +7,7 @@ import { prepareFixtureSource } from '../bench/fixture-source.mjs';
 import { git } from '../src/core/snapshot.js';
 import { tempRepo } from './helpers.js';
 
-const original = "import AutoImport from 'unplugin-auto-import/vite';\nexport default { plugins: [AutoImport({ imports: ['vue'], eslintrc: { enabled: true } })] };\n";
+const original = "import AutoImport from 'unplugin-auto-import/vite';\nimport Components from 'unplugin-vue-components/vite';\nexport default { plugins: [AutoImport({ imports: ['vue'], eslintrc: { enabled: true } }), Components({ dirs: ['src'] })] };\n";
 const hash = value => createHash('sha256').update(value).digest('hex');
 async function fixture(t, configuration = original) {
   const repo = await tempRepo();
@@ -19,17 +19,21 @@ async function fixture(t, configuration = original) {
   return repo.root;
 }
 
-test('historical fixture metadata is explicit, repeatable and limited to the generated ESLint option', async t => {
+test('historical fixture metadata is explicit, repeatable and limited to generated editor outputs', async t => {
   const dir = await fixture(t);
   const before = await readFile(join(dir, 'app.js'));
   const first = await prepareFixtureSource(dir, 'it-tools');
   const configured = await readFile(join(dir, 'vite.config.ts'), 'utf8');
-  assert.equal(configured, original.replace('enabled: true', 'enabled: false'));
+  assert.equal(configured, original.replace('enabled: true', 'enabled: false')
+    .replace('AutoImport({', 'AutoImport({\n      dts: false,').replace('Components({', 'Components({\n      dts: false,'));
   assert.deepEqual(await readFile(join(dir, 'app.js')), before);
   assert.equal(first.fixtureConfiguration.upstreamSha256, hash(original));
   assert.equal(first.fixtureConfiguration.configuredSha256, hash(configured));
   assert.equal((await git(dir, ['diff', '--name-only', 'HEAD'])).trim(), 'vite.config.ts');
   assert.deepEqual(await prepareFixtureSource(dir, 'it-tools'), first);
+  await writeFile(join(dir, 'vite.config.ts'), original.replace('enabled: true', 'enabled: false'));
+  assert.deepEqual(await prepareFixtureSource(dir, 'it-tools'), first);
+  assert.deepEqual(first.fixtureConfiguration.options, ['AutoImport.eslintrc.enabled=false', 'AutoImport.dts=false', 'Components.dts=false']);
 });
 
 test('warmed declarations remain unchanged and their content is recorded', async t => {

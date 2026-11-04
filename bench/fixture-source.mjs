@@ -20,24 +20,32 @@ export async function prepareFixtureSource(dir, project) {
     const path = 'vite.config.ts';
     const original = normalized(await git(dir, ['show', 'HEAD:' + path]));
     const option = /(\beslintrc:\s*\{\s*enabled:\s*)true(\s*,?\s*\})/g;
-    if (!original.includes("from 'unplugin-auto-import/vite'") || [...original.matchAll(option)].length !== 1) {
+    const autoImport = /\bAutoImport\(\s*\{/g;
+    const components = /\bComponents\(\s*\{/g;
+    if (!original.includes("from 'unplugin-auto-import/vite'")
+      || !original.includes("from 'unplugin-vue-components/vite'")
+      || [...original.matchAll(option)].length !== 1
+      || [...original.matchAll(autoImport)].length !== 1
+      || [...original.matchAll(components)].length !== 1) {
       throw new Error('Unsupported historical AutoImport ESLint configuration');
     }
-    const configured = original.replace(option, '$1false$2');
+    const eslintOnly = original.replace(option, '$1false$2');
+    const configured = eslintOnly.replace(autoImport, '$&\n      dts: false,').replace(components, '$&\n      dts: false,');
     const current = await readFile(join(dir, path), 'utf8');
-    if (![original, configured].includes(normalized(current))) {
+    // The exact earlier ESLint-only fixture is a known preparation state, not a free edit.
+    if (![original, eslintOnly, configured].includes(normalized(current))) {
       throw new Error('Fixture Vite configuration has changes beyond the recorded metadata option');
     }
     const bytes = current.includes('\r\n') ? configured.replace(/\n/g, '\r\n') : configured;
     if (bytes !== current) await writeFile(join(dir, path), bytes);
     fixtureConfiguration = {
       path,
-      option: 'AutoImport.eslintrc.enabled=false',
+      options: ['AutoImport.eslintrc.enabled=false', 'AutoImport.dts=false', 'Components.dts=false'],
       upstreamSha256: hash(original),
       configuredSha256: hash(configured),
       worktreeSha256: hash(bytes),
       patchSha256: hash(await git(dir, ['diff', 'HEAD', '--', path])),
-      scope: 'Disable generated ESLint metadata only; the frozen snapshot carries this configuration into the candidate and fresh original-code control.',
+      scope: 'Disable generated ESLint and declaration metadata only; the frozen snapshot carries this configuration into the candidate and fresh original-code control.',
     };
   }
   const generated = changed.filter(file => declarations.includes(file));
