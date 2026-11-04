@@ -7,10 +7,11 @@ import { validateObserveMs } from './observation.js';
 import { browserOptions, validateViewport } from './browser-options.js';
 import { canonicalJson } from './canonical.js';
 import { validatePasteStep } from './editor-input.js';
+import { validateRecording } from './recording-contract.js';
 
 // Includes action resolution semantics: earlier runs must not remain current after
 // changing which recorded target receives an action.
-export const EVALUATOR_VERSION = 'buggps.oracle/v9';
+export const EVALUATOR_VERSION = 'buggps.oracle/v10';
 
 export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'count', 'no-page-error', 'no-console-error', 'no-failed-request'];
 // "Nothing went wrong" kinds. On their own they cannot show the feature works again (deleting
@@ -61,6 +62,7 @@ export function validateCase(testCase) {
   if (testCase.captureIssues !== undefined && !Array.isArray(testCase.captureIssues)) throw new TestDefinitionError('captureIssues must be an array');
   if (testCase.captureIssues?.length) throw new TestDefinitionError('Recording is incomplete: ' + testCase.captureIssues.slice(0, 3).map((issue) => typeof issue?.message === 'string' ? issue.message.slice(0, 500) : 'unsupported input').join('; '));
   validateExpectation(testCase.expectation);
+  validateRecording(testCase);
   for (const e of testCase.also ?? []) validateExpectation(e);
   validateObserveMs(testCase.observeMs);
   browserOptions(testCase.browser);

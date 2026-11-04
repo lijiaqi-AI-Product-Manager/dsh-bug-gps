@@ -102,12 +102,12 @@ async function run() {
       const how = await rec.finished;
       const steps = await rec.stop();
       const out = resolve(o.out ?? `.buggps/drafts/case-${Date.now()}.json`);
-      const { expectation, also, browser, captureIssues } = rec.result;
-      const body = { schema: 'buggps.draft/v1', source: 'recorded', baseUrl, steps, expectation, ...(also.length ? { also } : {}), ...(captureIssues.length ? { captureIssues } : {}), browser, expectedFrom: rec.result.expectedFrom, recordedAt: new Date().toISOString(), endedBy: how };
+      const { expectation, also, browser, captureIssues, captureVersion, capturedChecks } = rec.result;
+      const body = { schema: 'buggps.draft/v1', source: 'recorded', captureVersion, capturedChecks, baseUrl, steps, expectation, ...(also.length ? { also } : {}), ...(captureIssues.length ? { captureIssues } : {}), browser, expectedFrom: rec.result.expectedFrom, recordedAt: new Date().toISOString(), endedBy: how };
       await mkdir(dirname(out), { recursive: true });
       await writeFile(out, JSON.stringify(body, null, 2));
       if (captureIssues.length) {
-        print(`TEST_INVALID: recording includes unsupported input -> ${out}\n${captureIssues.map((issue) => issue.message).join('\n')}`, { status: 'TEST_INVALID', file: out, captureIssues });
+        print(`TEST_INVALID: recording is incomplete -> ${out}\n${captureIssues.map((issue) => issue.message).join('\n')}`, { status: 'TEST_INVALID', file: out, captureIssues });
         return 3;
       }
       const warn = body.expectation ? '' : '\nWARNING: no expectation set; add one before reproduce/lock.';

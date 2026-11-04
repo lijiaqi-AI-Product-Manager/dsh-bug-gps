@@ -154,8 +154,14 @@ test('record: toolbar flow saves a draft the agent can lock', async () => {
   const r = await recTools[0].execute({ url: server.url, name: 'by hand' }, exec());
   assert.equal(r.status, 'RECORDED', JSON.stringify(r));
   assert.match(r.draft, /^\.buggps\/drafts\/[0-9a-f-]+\.json$/);
-  assert.equal(JSON.parse(await readFile(join(repo.root, r.draft), 'utf8')).name, 'by hand');
-  assert.ok(JSON.parse(await readFile(join(repo.root, r.draft), 'utf8')).browser.viewport.width > 0);
+  const draft = JSON.parse(await readFile(join(repo.root, r.draft), 'utf8'));
+  assert.equal(draft.name, 'by hand');
+  assert.ok(draft.browser.viewport.width > 0);
+  assert.equal(draft.source, 'recorded');
+  assert.equal(draft.captureVersion, 'buggps.capture/v2');
+  assert.equal(draft.capturedChecks[0].observed, '$18.00');
   assert.equal(r.user_saw, '$18.00'); // the repo's code is fixed by now, so the page is right
   assert.equal(r.key_steps.length, 1);
+  const replay = await recTools.find((tool) => tool.name === 'buggps_lock').execute({ draft: r.draft, case_id: 'recorded-bridge', serve: serveCmd, serve_url: serve.url, minimize: false }, exec());
+  assert.equal(replay.status, 'NOT_REPRODUCED', JSON.stringify(replay));
 });

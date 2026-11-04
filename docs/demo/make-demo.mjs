@@ -191,7 +191,7 @@ await clickWith(page, page.getByRole('button', { name: /结束/ }), '结束录�
 await rec.finished;
 const steps = await rec.stop();
 await mkdir(join(repo, '.buggps', 'drafts'), { recursive: true });
-await writeFile(join(repo, '.buggps', 'drafts', 'coupon.json'), JSON.stringify({ schema: 'buggps.draft/v1', source: 'recorded', steps, browser: rec.result.browser, expectation: rec.result.expectation }));
+await writeFile(join(repo, '.buggps', 'drafts', 'coupon.json'), JSON.stringify({ schema: 'buggps.draft/v1', source: 'recorded', captureVersion: rec.result.captureVersion, capturedChecks: rec.result.capturedChecks, expectedFrom: rec.result.expectedFrom, steps, browser: rec.result.browser, expectation: rec.result.expectation }));
 
 // ---------- scene 2: lock ----------
 const lockArgs = { draft: '.buggps/drafts/coupon.json', case_id: 'coupon' };

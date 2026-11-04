@@ -64,7 +64,7 @@ test('finishing without a positive expectation requires an explicit incomplete f
 test('unsupported input remains visible without copying its text into the toolbar', async (t) => {
   const { rec, page, ui } = await begin(t);
   await page.getByRole('textbox', { name: 'Notes', exact: true }).fill('private draft content');
-  await ui.getByText('1 项输入问题，当前记录不可用于验证。', { exact: true }).waitFor();
+  await ui.getByText('1 项录制问题，当前记录不可用于验证。', { exact: true }).waitFor();
   assert.equal((await ui.innerText()).includes('private draft content'), false);
   assert.equal(rec.result.captureIssues.length, 1);
 });

@@ -24,6 +24,7 @@ import { EnvBlockedError, TestDefinitionError } from './errors.js';
 import { validateCaseId } from './case-id.js';
 import { withBaseline } from './baseline.js';
 import { canonicalJson, resolutionChanges } from './canonical.js';
+import { matchesRecordedState } from './recording-contract.js';
 export { canonicalJson } from './canonical.js';
 
 export const CASE_SCHEMA = 'buggps.case/v1';
@@ -67,8 +68,8 @@ export function hashLock(lock) {
 }
 
 export function hashCase(testCase) {
-  const { steps, minimizedSteps, expectation, also, observeMs, serve, match, browser } = testCase;
-  return createHash('sha256').update(canonicalJson({ schema: CASE_SCHEMA, steps, minimizedSteps, expectation, also, observeMs, serve, match: match ?? 'strict', browser })).digest('hex');
+  const { steps, minimizedSteps, expectation, also, observeMs, serve, match, browser, source, captureVersion, capturedChecks, expectedFrom } = testCase;
+  return createHash('sha256').update(canonicalJson({ schema: CASE_SCHEMA, steps, minimizedSteps, expectation, also, observeMs, serve, match: match ?? 'strict', browser, ...(source === 'recorded' ? { source, captureVersion, capturedChecks, expectedFrom } : {}) })).digest('hex');
 }
 
 const casesDir = (repo) => join(repo, '.buggps', 'cases');
@@ -153,6 +154,7 @@ export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs 
   const contract = { ...testCase, observeMs };
   const red = await reproduce(browser, contract, { baseUrl, runs, signal });
   if (red.status !== Status.REPRODUCED) return { status: red.status, reason: red.reason, red };
+  if (!matchesRecordedState(contract, red)) return { status: Status.TEST_INVALID, reason: 'Replay did not reach the captured original state. Start a new recording and confirm the original result.', red };
   let minimizedSteps;
   let redMinimized;
   if (testCase.minimizedSteps) {
@@ -172,6 +174,7 @@ export async function lockCase(browser, env, repoDir, testCase, { baseUrl, runs 
     steps: testCase.steps,
     ...(minimizedSteps ? { minimizedSteps } : {}),
     expectation: testCase.expectation,
+    ...(testCase.source === 'recorded' ? { source: 'recorded', captureVersion: testCase.captureVersion, capturedChecks: testCase.capturedChecks, expectedFrom: testCase.expectedFrom } : {}),
     ...(testCase.browser ? { browser: testCase.browser } : {}),
     ...(testCase.also?.length ? { also: testCase.also } : {}),
     observeMs,

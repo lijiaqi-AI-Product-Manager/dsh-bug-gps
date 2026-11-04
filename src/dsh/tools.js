@@ -16,6 +16,7 @@ import { EnvBlockedError, TestDefinitionError } from '../core/errors.js';
 import { expectationLabel, stepLabel } from '../core/describe.js';
 import { CONFIG_FILE, readProjectConfig as readConfig, applyProjectConfig } from '../core/config.js';
 import { parseCaseText } from '../core/case-input.js';
+import { matchesRecordedState } from '../core/recording-contract.js';
 import { renderToolText } from './output.js';
 
 const OUTPUT = {
@@ -155,10 +156,10 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
         const draftId = randomUUID();
         const file = join(cwd, '.buggps', 'drafts', `${draftId}.json`);
         await mkdir(join(cwd, '.buggps', 'drafts'), { recursive: true });
-        const { expectation, also, expectedFrom, browser, captureIssues } = rec.result;
-        await writeFile(file, JSON.stringify({ schema: 'buggps.draft/v1', id: draftId, name: String(args.name ?? '').slice(0, 200), source: 'recorded', baseUrl: args.url, steps, expectation, ...(also.length ? { also } : {}), ...(captureIssues.length ? { captureIssues } : {}), browser, expectedFrom, recordedAt: new Date().toISOString(), endedBy: how }, null, 2), { flag: 'wx' });
+        const { expectation, also, expectedFrom, browser, captureIssues, captureVersion, capturedChecks } = rec.result;
+        await writeFile(file, JSON.stringify({ schema: 'buggps.draft/v1', id: draftId, name: String(args.name ?? '').slice(0, 200), source: 'recorded', captureVersion, capturedChecks, baseUrl: args.url, steps, expectation, ...(also.length ? { also } : {}), ...(captureIssues.length ? { captureIssues } : {}), browser, expectedFrom, recordedAt: new Date().toISOString(), endedBy: how }, null, 2), { flag: 'wx' });
         const draft = relative(cwd, file).replace(/\\/g, '/');
-        if (captureIssues.length) return { status: 'TEST_INVALID', draft, message: 'recording contains input that cannot be replayed faithfully', capture_issues: captureIssues, next: 'Start a new recording. In a supported Monaco editor use Select All followed by Paste; unsupported editor actions must be resolved before locking.' };
+        if (captureIssues.length) return { status: 'TEST_INVALID', draft, message: 'recording is incomplete and cannot be replayed faithfully', capture_issues: captureIssues, next: 'Review the capture issues and start a new recording. Controls need a unique accessible label or stable test id; supported Monaco input needs Select All followed by Paste. Unconfirmed recording events must be resolved before locking.' };
         if (!expectation) {
           return { status: 'NO_EXPECTATION', draft, steps: steps.length, next: 'The user did not set the correct expectation. Ask them to record again and use the toolbar ("预期文本 / 预期输入值 / 应可见 / 不应报错") before pressing stop. Do not invent one.' };
         }
@@ -200,7 +201,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
       let draft;
       try { draft = parseCaseText(await readFile(draftPath, 'utf8')); }
       catch (err) { return json({ status: 'TEST_INVALID', message: err instanceof TestDefinitionError ? err.message : 'Cannot read draft; check the path and permissions.', next: LOCK_NEXT[Status.TEST_INVALID] }); }
-      if (draft.captureIssues?.length) return json({ status: 'TEST_INVALID', message: 'recording is incomplete', capture_issues: draft.captureIssues, next: 'Record the input again using a supported input method; incomplete drafts cannot be locked.' });
+      if (draft.captureIssues?.length) return json({ status: 'TEST_INVALID', message: 'recording is incomplete', capture_issues: draft.captureIssues, next: 'Resolve the reported recording issues and record the scenario again; incomplete drafts cannot be locked.' });
       let serve;
       let config;
       try {
@@ -223,6 +224,7 @@ export function createToolSpecs({ resolveCwd, guardActive, onProject = () => {},
           if (red.status !== Status.REPRODUCED) {
             return { status: red.status, tally: red.tally, observed: red.observed, reason: red.reason, step: red.stepIndex !== null && draft.steps[red.stepIndex] ? stepLabel(draft.steps[red.stepIndex]) : null, next: LOCK_NEXT[red.status] ?? NEXT[red.status] };
           }
+          if (!matchesRecordedState(testCase, red)) return { status: Status.TEST_INVALID, message: 'Replay did not reach the captured original state.', next: 'Start a new recording and confirm that replay reaches the original observed result.' };
           let m = null;
           if (args.minimize !== false) // Shortening is a reading aid (the full recording decides), so it gets a fixed budget and
           // returns the best confirmed result so far instead of keeping the user waiting.

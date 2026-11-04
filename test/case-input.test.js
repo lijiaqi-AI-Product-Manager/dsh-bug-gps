@@ -10,6 +10,7 @@ import { createToolSpecs } from '../src/dsh/tools.js';
 
 const expectation = { kind: 'text', target: [{ by: 'css', value: '#total' }], equals: 'OK' };
 const definition = { steps: [{ action: 'goto', url: '/' }], expectation };
+const recorded = { ...definition, source: 'recorded', captureVersion: 'buggps.capture/v2', expectedFrom: 'BUG', capturedChecks: [{ kind: 'text', target: expectation.target, observed: 'BUG' }] };
 const cli = fileURLToPath(new URL('../bin/buggps.js', import.meta.url));
 const invalidCases = [null, [], 'private input', 17,
   { ...definition, steps: {} }, { ...definition, steps: null }, { ...definition, steps: [null] }, { ...definition, steps: ['click'] },
@@ -21,6 +22,13 @@ const invalidCases = [null, [], 'private input', 17,
   { ...definition, steps: [{ action: 'unknown', target: expectation.target }] },
   { ...definition, steps: [{ action: 'goto', url: '/', check: null }] },
   { ...definition, minimizedSteps: [null] },
+  { ...definition, source: 'recorded' },
+  { ...recorded, captureVersion: 'buggps.capture/unknown' },
+  { ...recorded, capturedChecks: {} },
+  { ...recorded, capturedChecks: [] },
+  { ...recorded, capturedChecks: [null] },
+  { ...recorded, expectedFrom: 'private-fixture-value' },
+  { ...recorded, expectation: { ...expectation, comparison: 'startsWith' } },
 ];
 
 test('malformed case structures return TEST_INVALID without opening a context', async () => {

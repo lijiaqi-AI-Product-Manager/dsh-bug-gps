@@ -6,6 +6,7 @@ import { secretName } from './secrets.js';
 import { EnvBlockedError, TestDefinitionError } from './errors.js';
 import { CODE_EDITOR_SELECTOR, MAX_EDITOR_CLIPBOARD_BYTES } from './editor-input.js';
 import { TOOLBAR_SCRIPT, TOOLBAR_LANGUAGES, recordingToolbarState } from './recording-toolbar.js';
+import { CAPTURE_VERSION, CAPTURE_STATE_KINDS } from './recording-contract.js';
 
 const RECORDER_SCRIPT = String.raw`(() => {
   if (window.__buggpsRecorderInstalled) return;
@@ -15,8 +16,10 @@ const RECORDER_SCRIPT = String.raw`(() => {
   const pendingRecords = new Set();
   let recordingConnectionFailed = false;
   window.__buggpsFlushRecording = async () => {
-    const completed = await Promise.all([...pendingRecords]);
-    if (recordingConnectionFailed || completed.some((ok) => !ok)) throw new Error('Recording acknowledgement failed');
+    do {
+      const completed = await Promise.all([...pendingRecords]);
+      if (recordingConnectionFailed || completed.some((ok) => !ok)) throw new Error('Recording acknowledgement failed');
+    } while (pendingRecords.size);
   };
   const send = (ev) => {
     const completed = Promise.resolve().then(() => window.__buggpsRecord(ev)).then((view) => {
@@ -29,6 +32,14 @@ const RECORDER_SCRIPT = String.raw`(() => {
     return completed;
   };
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
+  // The role tokens supported by the pinned replay engine; abstract and unknown tokens
+  // must not become selectors. The first supported token is the ARIA fallback role.
+  const roles = new Set('alert alertdialog application article banner blockquote button caption cell checkbox code columnheader combobox complementary contentinfo definition deletion dialog directory document emphasis feed figure form generic grid gridcell group heading img insertion link list listbox listitem log main marquee math meter menu menubar menuitem menuitemcheckbox menuitemradio navigation none note option paragraph presentation progressbar radio radiogroup region row rowgroup rowheader scrollbar search searchbox separator slider spinbutton status strong subscript superscript switch tab table tablist tabpanel term textbox time timer toolbar tooltip tree treegrid treeitem'.split(' '));
+  const listen = (type, handler) => document.addEventListener(type, (event) => {
+    if (window.__buggpsStopCapture) return;
+    try { handler(event); }
+    catch { captureIssue('A browser action could not be captured. Start a new recording after resolving the unsupported control.', 'capture-error'); }
+  }, true);
   const documentId = Date.now().toString(36) + Math.random().toString(36).slice(2);
   const elementIds = new WeakMap();
   let elementCount = 0;
@@ -42,18 +53,20 @@ const RECORDER_SCRIPT = String.raw`(() => {
     let width = innerWidth;
     let height = innerHeight;
     window.addEventListener('resize', () => {
+      if (window.__buggpsStopCapture) return;
       if (innerWidth === width && innerHeight === height) return;
       width = innerWidth;
       height = innerHeight;
       send({ type: 'viewport', width, height });
     });
     document.addEventListener('fullscreenchange', () => {
+      if (window.__buggpsStopCapture) return;
       if (!document.fullscreenElement) send({ type: 'fullscreen-exit' });
     });
   }
 
   function roleOf(el) {
-    const explicit = el.getAttribute('role');
+    const explicit = (el.getAttribute('role') || '').trim().split(/\s+/).find((role) => roles.has(role));
     if (explicit) return explicit;
     const tag = el.tagName.toLowerCase();
     const type = (el.getAttribute('type') || '').toLowerCase();
@@ -72,6 +85,8 @@ const RECORDER_SCRIPT = String.raw`(() => {
     if (tag === 'dialog') return 'dialog';
     if (tag === 'aside') return 'complementary';
     if (tag === 'nav') return 'navigation';
+    if (tag === 'main') return 'main';
+    if (tag === 'article') return 'article';
     if (tag === 'li') return 'listitem';
     if (tag === 'tr') return 'row';
     if ((tag === 'section' || tag === 'form') && (el.hasAttribute('aria-label') || el.hasAttribute('aria-labelledby'))) return tag === 'form' ? 'form' : 'region';
@@ -106,24 +121,28 @@ const RECORDER_SCRIPT = String.raw`(() => {
   }
 
   function nameOf(el, role) {
+    const by = el.getAttribute('aria-labelledby');
+    if (by) {
+      const refs = by.trim().split(/\s+/).map((id) => el.getRootNode().getElementById?.(id)).filter(Boolean);
+      if (refs.length) return clean(refs.map((node) => node.getAttribute('aria-label') || (node.tagName === 'IMG' ? node.getAttribute('alt') : null) || node.textContent).join(' '));
+    }
     const aria = el.getAttribute('aria-label');
     if (aria) return clean(aria);
-    const by = el.getAttribute('aria-labelledby');
-    if (by) return clean(by.split(/\s+/).map((id) => document.getElementById(id)?.textContent).join(' '));
     const label = labelText(el);
     if (label) return label;
     if (['button', 'link', 'heading', 'menuitem', 'menuitemcheckbox', 'tab', 'option', 'radio', 'treeitem', 'switch'].includes(role)) {
-      return clean(nameFromContent(el) || el.value);
+      return clean(nameFromContent(el) || el.value || el.getAttribute('title'));
     }
     if (role === 'img') return clean(el.getAttribute('alt'));
     // Chromium falls back to the placeholder (then title) for unlabeled text inputs.
     if (['textbox', 'searchbox', 'spinbutton', 'combobox'].includes(role)) return clean(el.getAttribute('placeholder') || el.getAttribute('title'));
-    return '';
+    return clean(el.getAttribute('title'));
   }
 
-  // Unnamed controls (icon-only buttons) are located inside the nearest named container whose
-  // role+name is unique on the page, by position among visible peers with the same role.
-  const ANCHOR_ROLES = ['dialog', 'region', 'group', 'listitem', 'row', 'form', 'tabpanel', 'article', 'navigation', 'complementary', 'menu', 'listbox', 'toolbar'];
+  // A container must be unique by exact role and name, including an explicitly empty name.
+  // Only author-named roles may anchor an unnamed scope; rows can derive names from content.
+  const ANCHOR_ROLES = ['dialog', 'region', 'group', 'listitem', 'row', 'form', 'tabpanel', 'article', 'navigation', 'complementary', 'main', 'menu', 'listbox', 'toolbar'];
+  const UNNAMED_ANCHORS = new Set(['dialog', 'group', 'tabpanel', 'article', 'navigation', 'complementary', 'main', 'menu', 'listbox', 'toolbar']);
   const ROLE_TAGS = { button: 'button,input[type=button],input[type=submit],input[type=reset]', link: 'a[href]', textbox: 'input,textarea', checkbox: 'input[type=checkbox]' };
   // Layout visibility only: overlay libraries toggle aria-hidden on everything else while a
   // popover opens/closes, which would make every container look hidden at event time.
@@ -137,9 +156,9 @@ const RECORDER_SCRIPT = String.raw`(() => {
       const ar = roleOf(a);
       if (!ar) continue;
       const an = nameOf(a, ar);
-      if (!an) continue;
+      if (!an && !UNNAMED_ANCHORS.has(ar)) continue;
       if (!ANCHOR_ROLES.includes(ar) && !(ar === 'button' && !role && an === text)) continue;
-      const sel = '[role=' + ar + ']' + ({ button: ',button,input[type=button],input[type=submit],input[type=reset]', dialog: ',dialog', complementary: ',aside', navigation: ',nav', listitem: ',li', row: ',tr', region: ',section', form: ',form' }[ar] || '');
+      const sel = '[role~="' + ar + '"]' + ({ button: ',button,input[type=button],input[type=submit],input[type=reset]', dialog: ',dialog', complementary: ',aside', navigation: ',nav', main: ',main', article: ',article', listitem: ',li', row: ',tr', region: ',section', form: ',form' }[ar] || '');
       const same = [...document.querySelectorAll(sel)].filter((n) => roleOf(n) === ar && nameOf(n, ar) === an && visible(n));
       if (same.length !== 1) continue;
       if (!role) {
@@ -148,7 +167,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
         if (index >= 0) return { by: 'text', value: text, within: { role: ar, name: an }, index };
         continue;
       }
-      const peerSel = '[role=' + role + ']' + (ROLE_TAGS[role] ? ',' + ROLE_TAGS[role] : '');
+      const peerSel = '[role~="' + role + '"]' + (ROLE_TAGS[role] ? ',' + ROLE_TAGS[role] : '');
       const peers = [...a.querySelectorAll(peerSel)].filter((n) =>
         roleOf(n) === role && visible(n) && (!name || nameOf(n, role) === name));
       const index = peers.indexOf(el);
@@ -170,7 +189,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
     const img = role ? el.querySelector('img[alt],[role=img][aria-label]') : null;
     const imgName = img && clean(img.getAttribute('alt') || img.getAttribute('aria-label'));
     if (role && name && imgName && imgName !== name) {
-      const selector = '[role=' + role + ']' + (ROLE_TAGS[role] ? ',' + ROLE_TAGS[role] : '');
+      const selector = '[role~="' + role + '"]' + (ROLE_TAGS[role] ? ',' + ROLE_TAGS[role] : '');
       const peers = [...document.querySelectorAll(selector)].filter((node) => roleOf(node) === role && visible(node));
       const repeatedName = peers.filter((node) => nameOf(node, role) === name).length > 1;
       const imagePeers = peers.filter((node) => [...node.querySelectorAll('img[alt],[role=img][aria-label]')].some((child) => clean(child.getAttribute('alt') || child.getAttribute('aria-label')) === imgName));
@@ -180,7 +199,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
       }
     }
     if (role && name) {
-      const selector = '[role=' + role + ']' + (ROLE_TAGS[role] ? ',' + ROLE_TAGS[role] : '');
+      const selector = '[role~="' + role + '"]' + (ROLE_TAGS[role] ? ',' + ROLE_TAGS[role] : '');
       const matches = [...document.querySelectorAll(selector)].filter((node) =>
         roleOf(node) === role && nameOf(node, role) === name && visible(node));
       if (matches.length > 1) {
@@ -241,7 +260,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
   let pendingHover = null;
   const cancelHover = () => { if (pendingHover) { pendingHover.disconnect(); pendingHover = null; } };
   window.__buggpsCancelHover = cancelHover;
-  document.addEventListener('mouseover', (e) => {
+  listen('mouseover', (e) => {
     if (fromToolbar(e) || window.__buggpsPickKind) return;
     const el = e.target instanceof Element ? e.target : null;
     if (!el || el === lastHover || el.closest(POPUP)) return;
@@ -252,14 +271,14 @@ const RECORDER_SCRIPT = String.raw`(() => {
       const opened = muts.some((m) => [...m.addedNodes].some((n) => n instanceof Element && (n.matches(POPUP) || n.querySelector(POPUP))));
       if (!opened || pendingHover !== obs) return;
       cancelHover();
-      const target = candidates(trigger);
-      if (target.length) send({ action: 'hover', target });
+      try { send({ action: 'hover', target: candidates(trigger) }); }
+      catch { captureIssue('A hover action could not be captured. Start a new recording after resolving the unsupported control.', 'capture-error'); }
     });
     pendingHover = obs;
     obs.observe(document.body, { childList: true, subtree: true });
     setTimeout(() => { if (pendingHover === obs) cancelHover(); }, 600);
   }, true);
-  for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, cancelHover, true);
+  for (const type of ['pointerdown', 'keydown', 'input']) listen(type, cancelHover);
 
   const CLICKABLE = 'button,a[href],[role=button],[role=link],[role=tab],[role=menuitem],[role=radio],[role=option],summary,input[type=button],input[type=submit]';
   // Fields whose value must never leave the page: the step stores a reference instead.
@@ -278,16 +297,16 @@ const RECORDER_SCRIPT = String.raw`(() => {
   const fromToolbar = (e) => e.target instanceof Element && e.target.closest('#__buggps_toolbar');
   let replacementTarget = null;
   let pastedTarget = null;
-  const captureIssue = (message) => {
-    send({ type: 'capture-issue', code: 'editor-input', message });
+  function captureIssue(message, code = 'editor-input') {
+    send({ type: 'capture-issue', code, message });
     window.__buggpsToast && window.__buggpsToast('unsupported-input');
-  };
-  document.addEventListener('pointerdown', (e) => {
+  }
+  listen('pointerdown', (e) => {
     if (fromToolbar(e)) return;
     replacementTarget = null;
     pastedTarget = null;
   }, true);
-  document.addEventListener('paste', (e) => {
+  listen('paste', (e) => {
     if (fromToolbar(e) || !(e.target instanceof Element)) return;
     const el = e.target;
     if (!el.closest('.monaco-editor')) {
@@ -331,7 +350,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
     window.__buggpsRestoreApplicationFocus();
     window.__buggpsToast && window.__buggpsToast('selection-cancelled');
   };
-  document.addEventListener('focusin', (e) => {
+  listen('focusin', (e) => {
     if (e.target !== replacementTarget) replacementTarget = null;
     if (!fromToolbar(e) && e.target instanceof HTMLElement) lastApplicationFocus = e.target;
   }, true);
@@ -339,12 +358,12 @@ const RECORDER_SCRIPT = String.raw`(() => {
   // Expectation picking: while window.__buggpsPickKind is set, the next click selects an
   // element for the expectation instead of acting on the page (and is not recorded).
   for (const type of ['pointerdown', 'mousedown', 'pointerup', 'mouseup']) {
-    document.addEventListener(type, (e) => {
+    listen(type, (e) => {
       if (window.__buggpsPickKind && !fromToolbar(e)) { e.preventDefault(); e.stopImmediatePropagation(); }
     }, true);
   }
 
-  document.addEventListener('click', (e) => {
+  listen('click', (e) => {
     if (fromToolbar(e)) return;
     const kind = window.__buggpsPickKind;
     if (kind) {
@@ -368,7 +387,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
         send({ type: 'checkpoint', check: { kind: ck, target, ...(equals !== undefined ? { equals } : {}) } }).then((ok) => { if (ok) window.__buggpsToast && window.__buggpsToast('checkpoint-set'); });
         return;
       }
-      const current = kind === 'value' ? (el.value ?? '') : clean(el.textContent);
+      const current = kind === 'value' ? (el.value ?? '') : ['visible', 'hidden'].includes(kind) ? visible(el) && getComputedStyle(el).visibility !== 'hidden' : clean(el.textContent);
       let equals;
       if (kind === 'text' || kind === 'value') {
         equals = window.prompt(window.__buggpsFormatMessage ? window.__buggpsFormatMessage('expectedPrompt', { value: current }) : 'BugGPS: current content: "' + current + '"\nWhat should it be?', current);
@@ -392,7 +411,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
   function clickTarget(node) {
     let pointer = null;
     for (let el = node; el && el !== document.body; el = el.parentElement) {
-      if (el.matches(CLICKABLE)) return el;
+      if (el.matches(CLICKABLE) || ['button', 'link', 'tab', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'radio', 'option'].includes(roleOf(el))) return el;
       if (el.matches('[role=dialog],[role=none],[role=presentation]')) break;
       if (el.onclick) return el;
       if (getComputedStyle(el).cursor === 'pointer') pointer = el;
@@ -401,7 +420,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
     return pointer || node.closest(CLICKABLE);
   }
 
-  document.addEventListener('input', (e) => {
+  listen('input', (e) => {
     if (fromToolbar(e)) return;
     const el = e.target;
     if (el instanceof Element && el.closest(codeEditorSelector)) {
@@ -417,13 +436,14 @@ const RECORDER_SCRIPT = String.raw`(() => {
     send({ action: 'fill', target: candidates(el), value: el.value, identity, wasEnabled: controlEnabled(el) });
   }, true);
 
-  document.addEventListener('change', (e) => {
+  listen('change', (e) => {
+    if (fromToolbar(e)) return;
     const el = e.target;
     if (el instanceof HTMLSelectElement) send({ action: 'select', target: candidates(el), value: el.value, wasEnabled: controlEnabled(el) });
     else if (el instanceof HTMLInputElement && ['checkbox', 'radio'].includes(el.type)) send({ action: 'check', target: candidates(el), value: el.checked, wasEnabled: controlEnabled(el) });
   }, true);
 
-  document.addEventListener('keydown', (e) => {
+  listen('keydown', (e) => {
     if (e.key === 'Escape' && window.__buggpsPickKind) {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -448,7 +468,7 @@ const RECORDER_SCRIPT = String.raw`(() => {
     // Escape closes popovers/dialogs wherever focus is; replay presses it page-wide.
     else if (e.key === 'Escape') send({ action: 'key', target: [{ by: 'page' }], value: 'Escape' });
   }, true);
-  document.addEventListener('keyup', (e) => {
+  listen('keyup', (e) => {
     if (e.key !== ' ') return;
     const control = spaceClickTarget;
     setTimeout(() => { if (spaceClickTarget === control) spaceClickTarget = null; }, 0);
@@ -471,7 +491,7 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   const dropped = [];
   // The first check remains primary; additional targets and kinds remain independent.
   // Selecting the same target and kind again edits only that condition.
-  const result = { expectation: null, also: [], expectedFrom: null, captureIssues: [] };
+  const result = { source: 'recorded', captureVersion: CAPTURE_VERSION, capturedChecks: [], expectation: null, also: [], expectedFrom: null, captureIssues: [] };
   let finish;
   const finished = new Promise((r) => { finish = r; });
   let lastFillIdentity = null;
@@ -483,7 +503,7 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
   const preferences = { language: 'zh-CN', collapsed: false, corner: 'br' };
   const view = () => toolbar ? recordingToolbarState(steps, result, preferences, ++toolbarRevision, stopRequested) : null;
   const recordEvent = (ev) => {
-    if (!recordingActive) return;
+    if (!recordingActive || !ev) return;
     if (ev?.type === 'toolbar') {
       if (TOOLBAR_LANGUAGES.includes(ev.language)) preferences.language = ev.language;
       if (typeof ev.collapsed === 'boolean') preferences.collapsed = ev.collapsed;
@@ -502,7 +522,10 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
       if (!result.captureIssues.some((item) => item.code === issue.code && item.message === issue.message)) { result.captureIssues.push(issue); dropped.push(issue); }
       return;
     }
-    if (!ev?.target?.length) { dropped.push(ev); return; }
+    if (!ev?.target?.length) {
+      recordEvent({ type: 'capture-issue', code: 'action-target', message: 'A browser action has no replayable target. Start a new recording with a uniquely labelled control or stable test id.' });
+      return;
+    }
     const { identity, ...action } = ev;
     ev = action;
     if (ev.secret !== undefined) {
@@ -584,7 +607,7 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
     throw new EnvBlockedError(`${reason} at ${startUrl.href}`, 'Check that the development server is running and inspect its compilation or network errors, then retry recording.');
   }
   result.browser = await page.evaluate(() => ({ viewport: { width: innerWidth, height: innerHeight }, locale: navigator.language, timezoneId: Intl.DateTimeFormat().resolvedOptions().timeZone, deviceScaleFactor: devicePixelRatio }));
-  let stopped = false;
+  let stopPromise;
   return {
     page,
     steps,
@@ -592,13 +615,29 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
     result,
     finished,
     async stop() {
-      if (!stopped) {
-        stopped = true;
-        // Let in-flight binding calls land before closing.
-        await page.waitForTimeout(100).catch(() => {});
-        recordingActive = false;
-        await context.close().catch(() => {});
-      }
+      stopPromise ??= (async () => {
+        let timer;
+        try {
+          const frames = context.pages().flatMap((item) => item.frames());
+          if (!frames.length) throw new Error('Recording page closed before acknowledgement');
+          await Promise.race([
+            Promise.all(frames.map((frame) => frame.evaluate(() => {
+              window.__buggpsStopCapture = true;
+              window.__buggpsCancelHover?.();
+              if (typeof window.__buggpsFlushRecording !== 'function') throw new Error('Recorder is not available');
+              return window.__buggpsFlushRecording();
+            }))),
+            new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Recording acknowledgement timed out')), 2000); }),
+          ]);
+        } catch {
+          recordEvent({ type: 'capture-issue', code: 'recording-connection', message: 'Recording events were not fully acknowledged before finishing; this draft is incomplete.' });
+        } finally {
+          clearTimeout(timer);
+          recordingActive = false;
+          await context.close().catch(() => {});
+        }
+      })();
+      await stopPromise;
       return steps.map((s) => ({ ...s }));
     },
   };
@@ -607,6 +646,9 @@ export async function startRecording(browser, { baseUrl, startPath = '/', toolba
 function addExpectation(result, exp, current) {
   const p = result.expectation;
   const keyOf = (e) => JSON.stringify([e.kind, e.target ?? null]);
+  if (CAPTURE_STATE_KINDS.includes(exp.kind)) {
+    result.capturedChecks = [...result.capturedChecks.filter((check) => keyOf(check) !== keyOf(exp)), { kind: exp.kind, target: exp.target, observed: current }];
+  }
   if (!p || keyOf(p) === keyOf(exp)) {
     result.expectation = exp;
     result.expectedFrom = current ?? null;
