@@ -42,6 +42,92 @@ test('an action waits for its named container before using a matching page-wide 
   assert.deepEqual(result.resolutionProfile['step:1'], [canonicalJson(scoped)]);
 });
 
+test('an action resamples its preferred role when the DOM changes between candidate queries', async () => {
+  const preferred = { by: 'role', role: 'textbox', name: 'Preferred' };
+  const fallback = { by: 'label', value: 'Fallback' };
+  let revealed = false;
+  let fallbackValue;
+  const result = await runTrial(env.browser, {
+    baseUrl,
+    steps: [{ action: 'goto', url: '/missing' }, { action: 'fill', target: [preferred, fallback], value: 'UPDATED' }],
+    expectation: { kind: 'value', target: [{ by: 'css', value: '#preferred' }], equals: 'UPDATED' },
+    stepTimeoutMs: 2000,
+    probe: async (page, index) => {
+      if (index === 0) {
+        await page.setContent('<!doctype html><input id="preferred" aria-label="Preferred" aria-hidden="true"><label for="fallback">Fallback</label><input id="fallback">');
+        const getByRole = page.getByRole.bind(page);
+        page.getByRole = (...args) => {
+          const locator = getByRole(...args);
+          const count = locator.count.bind(locator);
+          locator.count = async () => {
+            const observed = await count();
+            if (!revealed && observed === 0) {
+              revealed = true;
+              await page.locator('#preferred').evaluate(element => element.removeAttribute('aria-hidden'));
+            }
+            return observed;
+          };
+          return locator;
+        };
+      } else {
+        fallbackValue = await page.locator('#fallback').inputValue();
+      }
+    },
+  });
+  assert.equal(revealed, true);
+  assert.equal(result.outcome, 'pass', JSON.stringify(result));
+  assert.deepEqual(result.resolutionProfile['step:1'], [canonicalJson(preferred)]);
+  assert.equal(fallbackValue, '');
+});
+
+test('a missing preferred action target permits its exact fallback within a shorter budget', async (t) => {
+  const page = await pageFor(t);
+  const preferred = { by: 'role', role: 'button', name: 'Missing' };
+  const fallback = { by: 'css', value: '#pick' };
+  const pauses = [];
+  const pause = page.waitForTimeout.bind(page);
+  page.waitForTimeout = async ms => { pauses.push(ms); await pause(ms); };
+  const result = await resolveTarget(page, [preferred, fallback], { timeoutMs: 200, preferRecordedOrder: true });
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.used, fallback);
+  assert.ok(pauses.length > 0, 'the earlier candidate must get a chance to appear');
+  assert.ok(pauses.reduce((sum, ms) => sum + ms, 0) <= 200);
+});
+
+test('cancelling an ordinary preferred-target wait prevents its fallback action', async () => {
+  const controller = new AbortController();
+  let timer;
+  let clicked = false;
+  try {
+    const result = await runTrial(env.browser, {
+      baseUrl,
+      steps: [{ action: 'goto', url: '/missing' }, { action: 'click', target: [{ by: 'role', role: 'button', name: 'Missing' }, { by: 'css', value: '#pick' }] }],
+      expectation: { kind: 'text', target: [{ by: 'css', value: '#out' }], equals: 'GOOD' },
+      stepTimeoutMs: 4000,
+      signal: controller.signal,
+      probe: async (page, index) => {
+        if (index !== 0) return;
+        await page.exposeFunction('recordPick', () => { clicked = true; });
+        timer = setTimeout(() => controller.abort(), 80);
+      },
+    });
+    assert.equal(result.outcome, 'aborted');
+    assert.equal(clicked, false);
+  } finally { clearTimeout(timer); }
+});
+
+test('an observation samples an available fallback without an action preference delay', async (t) => {
+  const page = await pageFor(t);
+  page.waitForTimeout = () => { throw new Error('observation must not wait for action preference'); };
+  const preferred = { by: 'role', role: 'button', name: 'Missing' };
+  const fallback = { by: 'css', value: '#pick' };
+  for (const options of [{ timeoutMs: 0, preferRecordedOrder: true }, { timeoutMs: 2000 }]) {
+    const result = await resolveTarget(page, [preferred, fallback], options);
+    assert.equal(result.ok, true);
+    assert.deepEqual(result.used, fallback);
+  }
+});
+
 test('a permanently missing scope keeps its exact fallback within the caller budget', async (t) => {
   const page = await pageFor(t);
   const pauses = [];

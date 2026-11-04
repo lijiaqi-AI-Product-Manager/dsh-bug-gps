@@ -8,7 +8,9 @@ import { browserOptions, validateViewport } from './browser-options.js';
 import { canonicalJson } from './canonical.js';
 import { validatePasteStep } from './editor-input.js';
 
-export const EVALUATOR_VERSION = 'buggps.oracle/v8';
+// Includes action resolution semantics: earlier runs must not remain current after
+// changing which recorded target receives an action.
+export const EVALUATOR_VERSION = 'buggps.oracle/v9';
 
 export const EXPECTATION_KINDS = ['text', 'value', 'visible', 'hidden', 'count', 'no-page-error', 'no-console-error', 'no-failed-request'];
 // "Nothing went wrong" kinds. On their own they cannot show the feature works again (deleting

@@ -257,7 +257,7 @@ async function runStep(page, step, { baseUrl, stepTimeoutMs, navTimeoutMs, signa
   }
   const value = resolveValue(step.value);
   if (!value.ok) return { ok: false, env: true, reason: value.reason };
-  const t = await resolveTarget(page, step.target, { timeoutMs: stepTimeoutMs, signal });
+  const t = await resolveTarget(page, step.target, { timeoutMs: stepTimeoutMs, signal, preferRecordedOrder: true });
   if (signal?.aborted) return { ok: false, reason: 'aborted' };
   if (!t.ok) return { ok: false, reason: `target ${targetFailureReason(t)}` };
   const loose = Boolean(t.used?.loose);

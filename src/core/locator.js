@@ -1,6 +1,7 @@
 // Step targets are recorded as an ordered list of candidate locators. Replay uses the first
-// candidate that resolves to exactly one element. Indices only apply inside a unique
-// recorded container; coordinates are never used.
+// candidate that resolves to exactly one element, allowing preferred action targets a
+// bounded readiness window. Indices only apply inside a unique recorded container;
+// coordinates are never used.
 import { TestDefinitionError } from './errors.js';
 import { canonicalJson } from './canonical.js';
 
@@ -81,7 +82,7 @@ export function targetFailureReason(result) {
 const PREFERRED_MATCH_MS = 1500;
 const withoutScope = ({ within, index, ...rest }) => canonicalJson(rest);
 
-export async function resolveTarget(page, target, { timeoutMs = 2000, signal } = {}) {
+export async function resolveTarget(page, target, { timeoutMs = 2000, signal, preferRecordedOrder = false } = {}) {
   if (!Number.isFinite(timeoutMs) || timeoutMs < 0) throw new TestDefinitionError('Locator timeoutMs must be a finite, non-negative number');
   const candidates = candidatesOf(target);
   const started = Date.now();
@@ -95,6 +96,7 @@ export async function resolveTarget(page, target, { timeoutMs = 2000, signal } =
     lastCounts = [];
     scopeCounts = [];
     const pendingScopes = new Set();
+    let pendingCandidate = false;
     for (const c of candidates) {
       if (signal?.aborted) return { ok: false, reason: 'aborted' };
       const scope = targetScope(page, c);
@@ -103,13 +105,17 @@ export async function resolveTarget(page, target, { timeoutMs = 2000, signal } =
       if (size !== 1) {
         lastCounts.push(0);
         if (size === 0) pendingScopes.add(withoutScope(c));
+        pendingCandidate = true;
         continue;
       }
       const loc = candidateLocator(page, c);
       const n = await loc.count();
       lastCounts.push(n);
       if (signal?.aborted) return { ok: false, reason: 'aborted' };
-      if (n === 1 && (c.within || !pendingScopes.has(withoutScope(c)) || fallbackReady())) return { ok: true, locator: loc, used: c };
+      const ready = fallbackReady();
+      if (n === 1 && (!preferRecordedOrder || !pendingCandidate || ready)
+        && (c.within || !pendingScopes.has(withoutScope(c)) || ready)) return { ok: true, locator: loc, used: c };
+      if (n !== 1) pendingCandidate = true;
       if (c.within && n === 0) pendingScopes.add(withoutScope(c));
     }
     // Weaker fallback: a recorded role name that is a substring of the real accessible name

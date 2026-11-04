@@ -90,7 +90,7 @@ test('other schemas, unknown verdicts and incomplete timestamps cannot mask a re
 test('historical results stay visible but require current run and locked evaluators', async (t) => {
   const f = await fixture(t);
   const scenarios = [
-    ['old-run', {}, { evaluator: 'buggps.oracle/v7' }],
+    ['old-run', {}, { evaluator: 'buggps.oracle/v8' }],
     ['missing-run', {}, { evaluator: undefined }],
     ['old-lock', { lockedEvaluator: 'buggps.oracle/v7' }, {}],
     ['missing-lock', { lockedEvaluator: undefined }, {}],
