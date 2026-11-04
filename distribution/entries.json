@@ -54,7 +54,7 @@
       "guide": "https://github.com/diegosouzapw/awesome-omni-dsh-plugins/blob/main/CONTRIBUTING.md",
       "target": "catalog/plugins/lijiaqi-ai-product-manager-dsh-bug-gps.yaml",
       "observation": {
-        "checkedAt": "2026-11-03T19:12:43.344Z",
+        "checkedAt": "2026-11-04T02:09:56.470Z",
         "starsSource": "https://api.github.com/repos/lijiaqi-AI-Product-Manager/dsh-bug-gps",
         "stars": 1,
         "scope": "prepared; subject to maintainer admission"
@@ -79,7 +79,7 @@
           "repository": "https://github.com/lijiaqi-AI-Product-Manager/dsh-bug-gps",
           "repositoryNodeId": "R_kgDOVfhbfA",
           "subpath": null,
-          "commit": "0a2148647119ad81795b0ed3d9cfa512bf3b928c"
+          "commit": "81df82213778cbcd4f7e5dbf203fdee0793ac578"
         },
         "creator": {
           "github": "lijiaqi-AI-Product-Manager"
@@ -104,19 +104,19 @@
         },
         "verification": {
           "status": "eligible",
-          "checkedAt": "2026-11-03T21:52:59.450Z",
+          "checkedAt": "2026-11-04T02:09:56.470Z",
           "repositoryIdentity": "resolved",
           "smokeTest": null
         },
         "media": [
           {
             "kind": "screenshot",
-            "url": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/0a2148647119ad81795b0ed3d9cfa512bf3b928c/docs/media/toolbar/zh-CN.png",
+            "url": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/81df82213778cbcd4f7e5dbf203fdee0793ac578/docs/media/toolbar/zh-CN.png",
             "alt": "Scripted recording toolbar on the seeded example, Simplified Chinese."
           },
           {
             "kind": "screenshot",
-            "url": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/0a2148647119ad81795b0ed3d9cfa512bf3b928c/docs/media/toolbar/en.png",
+            "url": "https://raw.githubusercontent.com/lijiaqi-AI-Product-Manager/dsh-bug-gps/81df82213778cbcd4f7e5dbf203fdee0793ac578/docs/media/toolbar/en.png",
             "alt": "Scripted recording toolbar on the seeded example, English."
           }
         ],
@@ -124,6 +124,15 @@
           "discussion": null,
           "comment": null
         }
+      }
+    },
+    "dsh-marketplace-dev": {
+      "guide": "https://github.com/DshMarketPlace/awesome-dsh-plugin/blob/main/CONTRIBUTING.md",
+      "target": "data/curated.yml#categories[slug=dev].plugins",
+      "category": "dev",
+      "scope": "Prepared list-item fragment only; catalog admission and upstream live validation are pending. Not a complete curated.yml or generated snapshot.",
+      "entry": {
+        "repo": "lijiaqi-AI-Product-Manager/dsh-bug-gps"
       }
     }
   }

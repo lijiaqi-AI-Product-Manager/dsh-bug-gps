@@ -2,7 +2,7 @@
 
 当前是提交准备材料，不表示已经收录、获得推荐或发布 npm。
 
-四份结构化目录条目尚未送审；[HackSing #351](https://github.com/HackSing/dsh-plugins/issues/351) 与 [DSH Open #224](https://github.com/polang233/dsh-plugin-index/issues/224) 的独立申请已提交，均待审核。
+五份结构化目录材料尚未送审；[HackSing #351](https://github.com/HackSing/dsh-plugins/issues/351) 与 [DSH Open #224](https://github.com/polang233/dsh-plugin-index/issues/224) 的独立申请已提交，均待审核。
 
 ```bash
 npm run check:distribution
@@ -17,10 +17,11 @@ node scripts/prepare-distribution.mjs --out .buggps/catalog-submission
 | [1024 Store 目录](https://github.com/imsai-sh/awesome-deepseek-harness-plugins/blob/main/CONTRIBUTING.md) | 只新增生成的 JSON 到 `catalog/plugins/`，不改生成文件。当前分类为 `dev`。条目元数据的贡献约定为 CC0-1.0；不改变 BugGPS 源码的 MIT 许可。 |
 | [dshworks](https://github.com/dshworks/awesome-dsh-plugins/blob/main/CONTRIBUTING.md) | 把生成的 entry 追加到 `data/plugins.json` 的 `plugins`，运行对方的校验与 README 生成，再按规则提交两者。保持 `unverified`，由维护者复核；不自行设为 `featured` 或 `official`。 |
 | [Omni DSH](https://github.com/diegosouzapw/awesome-omni-dsh-plugins/blob/main/CONTRIBUTING.md) | 一个作者命名空间的 `.yaml`，仅提交到 `catalog/plugins/`。导出采用 YAML 1.2 支持的 JSON 语法，字段与原始 Schema 一致。固定完整源码、原仓库节点 ID 和真实 Star，保持 `eligible`，不自行宣称维护者已收录或运行验收。 |
+| [DSH Marketplace 精选](https://github.com/DshMarketPlace/awesome-dsh-plugin/blob/main/CONTRIBUTING.md) | `dsh-marketplace-curated-fragment.yml` 是 `data/curated.yml` 的 Development（`slug: dev`）分类下一个列表项，不能覆盖完整目录。先确认普通目录已有可安装记录，再按对方流程提交 YAML、`data/marketplace-cache.json` 与双语生成 README。该精选库独立于首行的 awesome-dsh-plugin；片段导出不表示通过了对方验证。 |
 
 提交前，默认分支必须已有最终代码、入口、补丁、图标与截图。现在 icon 指向未来合并后的默认分支路径，不能在资源尚未生效时将草案直接送审。`added` 与 `lastVerified` 是准备材料的日期，正式提交前按真实状态核对。
 
-上述默认分支要求适用于从默认分支读取资源的条目；Omni 使用独立固定提交及同提交的媒体链接。其 Star 与检查日期是观测快照，正式投稿前重新读取，并由维护者核对来源。一次仅送审该市场需要的单个条目，不将四个目录的产物一起提交。
+上述默认分支要求适用于从默认分支读取资源的条目；Omni 使用独立固定提交及同提交的媒体链接。其 Star 与检查日期是观测快照，正式投稿前重新读取，并由维护者核对来源。一次仅送审该市场需要的单个条目，不将五个目录的产物一起提交。
 
 发布 npm 后，补充 dshworks 的真实包名，并核对 registry 中的 `repository` 映射。awesome-dsh-plugin 的 npm 映射由其采集器读取，条目中不添加 `npm` 键。GitHub Release 备用包使用固定 tag URL；若使用 `latest/download/`，资产文件名须保持不含版本，防止下次发版链接失效。
 

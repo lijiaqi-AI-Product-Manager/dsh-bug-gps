@@ -76,6 +76,11 @@ if (Object.hasOwn(c, 'npm')) {
 }
 
 const d = entries.catalogs.diegosouzapw.entry;
+const curated = entries.catalogs['dsh-marketplace-dev'];
+assert.equal(curated.entry.repo, slug);
+assert.deepEqual(Object.keys(curated.entry), ['repo']);
+assert.equal(curated.category, 'dev');
+assert.equal(curated.target, 'data/curated.yml#categories[slug=dev].plugins');
 const creator = slug.split('/')[0];
 const creatorNamespace = creator.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 assert.equal(d.schemaVersion, 1);
@@ -137,6 +142,8 @@ if (args.length) {
   await writeFile(join(out, 'dshworks-entry.json'), JSON.stringify(c, null, 2) + '\n', { flag: 'wx' });
   // JSON syntax is valid YAML 1.2; keep one source of structured values.
   await writeFile(join(out, d.id + '.yaml'), JSON.stringify(d, null, 2) + '\n', { flag: 'wx' });
+  // This is one list item for the existing Development category, not a replacement catalog.
+  await writeFile(join(out, 'dsh-marketplace-curated-fragment.yml'), '- repo: ' + quote(curated.entry.repo) + '\n', { flag: 'wx' });
 }
 console.log(JSON.stringify({ package: pkg.name, version: pkg.version, catalogs: Object.keys(entries.catalogs), screenshots: screenshots.length,
   profiles: pkg.dsh.marketplace.profiles, targets: targets.targets.length, publication: entries.publication, exported: args.length > 0 }));
